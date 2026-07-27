@@ -30,10 +30,12 @@ export interface MercadoPagoWebhookNotification {
 }
 
 export const mercadoPagoService = {
-  // Configuração padrão do Mercado Pago
+  // Configuração de Produção do Mercado Pago (Chaves Reais)
   config: {
-    publicKey: import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY || 'APP_USR-PUBLIC-KEY-DEMO',
-    accessToken: import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN || 'APP_USR-ACCESS-TOKEN-DEMO',
+    publicKey: import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY || 'APP_USR-6b1d8ec0-b676-4b76-94e2-fa93815bdf9a',
+    accessToken: import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN || 'APP_USR-6046515884311678-072714-83486595dbf221e8bfa381f51db9be33-2635035017',
+    clientId: import.meta.env.VITE_MERCADO_PAGO_CLIENT_ID || '6046515884311678',
+    clientSecret: import.meta.env.VITE_MERCADO_PAGO_CLIENT_SECRET || 'ZlKiaCRAHzEnccaxfibIPtYuLoBBLkpE',
     webhookUrl: window.location.origin + '/api/webhooks/mercado-pago'
   },
 
