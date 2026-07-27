@@ -68,6 +68,13 @@ class ReportErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
             <p className="text-xs text-red-700">
               Ocorreu um problema ao formatar um dos campos do relatório. Os dados foram extraídos com sucesso.
             </p>
+            {this.state.error && (
+              <pre className="text-[10px] text-left font-mono bg-red-100 p-2.5 rounded-lg text-red-800 overflow-x-auto max-h-40 my-2">
+                {this.state.error.toString()}
+                {'\n'}
+                {this.state.error.stack}
+              </pre>
+            )}
           </div>
           <Button
             onClick={() => this.setState({ hasError: false, error: null })}
