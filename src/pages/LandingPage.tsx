@@ -251,22 +251,22 @@ const LandingPage: React.FC = () => {
             {/* Hero Left Content */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               
-              {/* Badge de Confiança CNJ & Matrícula Simples */}
+              {/* Badge de Destaque da Ferramenta */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm font-extrabold shadow-sm">
                 <Sparkles className="w-4 h-4 text-emerald-400" />
-                <span>IA Registrária • Leitura & Resumo Inteligente de Certidões</span>
+                <span>Analisador Inteligente de Matrículas de Imóveis</span>
               </div>
 
-              {/* Headline Principal Focada no Benefício Central */}
+              {/* Headline Principal Instantaneamente Clara */}
               <div className="space-y-4">
                 <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
-                  Entenda Qualquer Matrícula de Imóvel em Segundos —{' '}
+                  Análise e Auditoria de Matrículas de Imóveis{' '}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500">
-                    Com Leitura Clara e Objetiva.
+                    em Segundos.
                   </span>
                 </h1>
                 <p className="text-base sm:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                  Faça o upload da certidão em PDF. Nossa tecnologia de inteligência registrária audita <strong>100% das páginas</strong>, sintetiza a cadeia dominial, identifica apontamentos e apresenta o diagnósticos claro em menos de 30 segundos.
+                  Envie o PDF da certidão e receba a análise completa instantaneamente: proprietários atuais, histórico dominial, penhoras, hipotecas, georreferenciamento e o Score de Risco Registral.
                 </p>
               </div>
 
@@ -297,12 +297,12 @@ const LandingPage: React.FC = () => {
                         <FileUp className="w-5 h-5 stroke-[2.5]" />
                       </div>
                       <div className="text-left">
-                        <span className="text-xs font-black text-white block">Arraste ou Selecione o PDF da Matrícula</span>
-                        <span className="text-[11px] text-slate-400 font-medium">Processamento registrário instantâneo com síntese objetiva</span>
+                        <span className="text-xs font-black text-white block">Envie o PDF da Matrícula do Imóvel Aqui</span>
+                        <span className="text-[11px] text-slate-400 font-medium">Análise automática instantânea com síntese dos 12 módulos registrais</span>
                       </div>
                     </div>
                     <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shrink-0">
-                      Analisar PDF ⚡
+                      Analisar Agora ⚡
                     </Button>
                   </div>
                 </Link>
