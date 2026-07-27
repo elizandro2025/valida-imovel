@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
+import { subscriptionService } from '@/services/subscriptionService';
 import { MatriculaChat } from './MatriculaChat';
 
 // Helper ultra-seguro para impedir erros de React child em objetos/arrays
@@ -160,6 +162,20 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('parecer');
 
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(() => subscriptionService.getStatus().active);
+
+  useEffect(() => {
+    const handleSubChange = (e: any) => {
+      if (e.detail && typeof e.detail.active === 'boolean') {
+        setIsSubscribed(e.detail.active);
+      } else {
+        setIsSubscribed(subscriptionService.getStatus().active);
+      }
+    };
+    window.addEventListener('valida_subscription_updated', handleSubChange);
+    return () => window.removeEventListener('valida_subscription_updated', handleSubChange);
+  }, []);
+
   if (!report) return null;
 
   // 12 Modules Data Extractors com fallbacks ultra-seguros
@@ -201,6 +217,14 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
 
   // Copiar Todos os Campos em formato de texto estruturado
   const handleCopyAllFields = () => {
+    if (!isSubscribed) {
+      toast({
+        title: "🔒 Recurso Bloqueado — Plano R$ 99,90",
+        description: "Assine o Plano 6 Meses Ilimitados por R$ 99,90 para liberar a cópia rápida de todos os campos.",
+        variant: "destructive"
+      });
+      return;
+    }
     const fullText = `
 === DADOS COMPLETOS EXTRAÍDOS — VALIDA IMÓVEL ===
 MATRÍCULA: ${renderSafe(ident.matricula)}
@@ -296,6 +320,14 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
   // GERADOR EXECUTIVO DE PDF PROFISSIONAL (10/10 HIGH-FIDELITY LEGALTECH - MATEMATICAMENTE PERFEITO)
   const exportToPDF = async () => {
+    if (!isSubscribed) {
+      toast({
+        title: "🔒 Dossiê PDF Bloqueado — Plano R$ 99,90",
+        description: "Assine o Plano 6 Meses Ilimitados por R$ 99,90 para exportar o relatório notarial completo em PDF.",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsExporting(true);
 
     try {
@@ -607,8 +639,39 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </div>
           </div>
 
-          {/* Quick Share Buttons */}
+          {/* Quick Share Buttons & Paywall Toggle */}
           <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+            {/* Status da Assinatura & Botão de Teste de Paywall */}
+            {isSubscribed ? (
+              <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Assinatura 6 Meses Ativa</span>
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
+                <Lock className="w-3.5 h-3.5 text-amber-600" />
+                <span>Visualização Gratuita (Com Blur)</span>
+              </Badge>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (isSubscribed) {
+                  subscriptionService.clearSubscription();
+                  toast({ title: '🔒 Modo Paywall Ativado', description: 'Simulando experiência de usuário não pagante com Blur.' });
+                } else {
+                  subscriptionService.activate6MonthsUnlimited('TEST-TOGGLE');
+                  toast({ title: '🔓 Assinatura Liberada!', description: 'Relatório desbloqueado com sucesso.' });
+                }
+              }}
+              className="text-xs font-bold border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl gap-1.5 px-3 py-1.5"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+              {isSubscribed ? 'Testar Bloqueio (Blur)' : 'Simular Liberação'}
+            </Button>
+
             <Button
               variant="outline"
               size="sm"
@@ -630,22 +693,12 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </Button>
 
             <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopySummary}
-              className="border-slate-200 text-slate-600 hover:text-slate-900 rounded-xl text-xs font-semibold gap-1.5 flex-1 sm:flex-none"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? 'Copiado' : 'Copiar Resumo'}
-            </Button>
-
-            <Button
               onClick={exportToPDF}
               disabled={isExporting}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-600/20 gap-1.5 flex-1 sm:flex-none"
+              className={`${isSubscribed ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-800 hover:bg-slate-700'} text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-600/20 gap-1.5 flex-1 sm:flex-none`}
             >
-              <Download className="w-3.5 h-3.5" />
-              {isExporting ? 'Exportando PDF Completo...' : 'Exportar PDF Completo (12 Módulos)'}
+              {isSubscribed ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5 text-amber-400" />}
+              {isExporting ? 'Exportando PDF...' : 'Exportar PDF Completo'}
             </Button>
           </div>
         </div>
@@ -745,28 +798,32 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </Card>
       </div>
 
-        {/* Main Navigation Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-6 bg-slate-100 rounded-xl p-1 h-auto">
-            <TabsTrigger value="parecer" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Diagnóstico Fácil
-            </TabsTrigger>
-            <TabsTrigger value="chat" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <MessageSquare className="w-3.5 h-3.5 text-emerald-600" /> Pergunte à IA
-            </TabsTrigger>
-            <TabsTrigger value="imovel" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <Building2 className="w-3.5 h-3.5 text-emerald-600" /> Endereço & Tamanho
-            </TabsTrigger>
-            <TabsTrigger value="proprietarios" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <Users className="w-3.5 h-3.5 text-emerald-600" /> Donos do Imóvel
-            </TabsTrigger>
-            <TabsTrigger value="onus" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <AlertTriangle className="w-3.5 h-3.5 text-emerald-600" /> Dívidas & Bloqueios
-            </TabsTrigger>
-            <TabsTrigger value="especiais" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <Landmark className="w-3.5 h-3.5 text-emerald-600" /> Regras & Marinha
-            </TabsTrigger>
-          </TabsList>
+        {/* Main Navigation Tabs com Suporte a Bloqueio por Blur (Paywall de Alta Conversão) */}
+        <div className="relative mt-6">
+          
+          {/* Conteúdo de Abas com Blur se !isSubscribed */}
+          <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-6 bg-slate-100 rounded-xl p-1 h-auto">
+                <TabsTrigger value="parecer" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Diagnóstico Fácil
+                </TabsTrigger>
+                <TabsTrigger value="chat" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-600" /> Pergunte à IA
+                </TabsTrigger>
+                <TabsTrigger value="imovel" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <Building2 className="w-3.5 h-3.5 text-emerald-600" /> Endereço & Tamanho
+                </TabsTrigger>
+                <TabsTrigger value="proprietarios" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <Users className="w-3.5 h-3.5 text-emerald-600" /> Donos do Imóvel
+                </TabsTrigger>
+                <TabsTrigger value="onus" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <AlertTriangle className="w-3.5 h-3.5 text-emerald-600" /> Dívidas & Bloqueios
+                </TabsTrigger>
+                <TabsTrigger value="especiais" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <Landmark className="w-3.5 h-3.5 text-emerald-600" /> Regras & Marinha
+                </TabsTrigger>
+              </TabsList>
 
           {/* TAB CHAT DA MATRÍCULA */}
           <TabsContent value="chat" className="mt-5">
@@ -1334,6 +1391,73 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
       </Tabs>
     </div>
+
+    {/* Paywall Lock Overlay Card (Sobremesa de Alta Conversão) */}
+    {!isSubscribed && (
+      <div className="absolute inset-0 z-40 flex items-start justify-center pt-8 sm:pt-16 p-4 sm:p-6 bg-slate-950/45 backdrop-blur-xs rounded-3xl">
+        <Card className="max-w-xl w-full bg-slate-950/95 border-2 border-emerald-500/80 shadow-2xl p-6 sm:p-8 rounded-3xl text-center space-y-6 text-white relative overflow-hidden animate-fade-in">
+          
+          {/* Aura Glow Background */}
+          <div className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="mx-auto w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/40 shadow-lg shadow-emerald-500/20">
+            <Lock className="w-7 h-7 stroke-[2.5]" />
+          </div>
+
+          <div className="space-y-2">
+            <Badge className="bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3.5 py-1 rounded-full mx-auto">
+              🔒 Relatório Completo dos 12 Módulos Bloqueado
+            </Badge>
+            <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              Desbloqueie o Diagnóstico Notarial & Dossiê PDF
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-md mx-auto">
+              A IA Registrária concluiu a auditoria dos proprietários, ônus, penhoras CNIB, georreferenciamento e histórico dominial desta certidão. Assine agora para visualizar todos os dados sem restrições.
+            </p>
+          </div>
+
+          <div className="p-4 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-center justify-between gap-4 text-left">
+            <div>
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Plano 6 Meses Ilimitado</span>
+              <span className="text-2xl font-black text-white">R$ 99,90 <span className="text-xs font-normal text-emerald-400">/ 180 dias</span></span>
+            </div>
+            <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 font-bold text-xs">
+              Liberação em 5 seg
+            </Badge>
+          </div>
+
+          <div className="space-y-3 pt-1">
+            <Link to="/pagamento-pix" className="block w-full">
+              <Button size="lg" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base py-6 rounded-2xl shadow-xl shadow-emerald-500/30 transition-all hover:scale-[1.02]">
+                <Zap className="mr-2 h-5 w-5 fill-slate-950" />
+                Desbloquear Relatório por R$ 99,90
+              </Button>
+            </Link>
+
+            <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 font-medium">
+              <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Garantia Mercado Pago</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Liberação via Webhook</span>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-center gap-3">
+            <button
+              onClick={() => {
+                subscriptionService.activate6MonthsUnlimited('SIM-DEV');
+                toast({ title: '🔓 Assinatura Simulada!', description: 'Modo ilimitado ativado com sucesso.' });
+              }}
+              className="text-[11px] text-slate-400 hover:text-emerald-400 underline font-mono cursor-pointer"
+            >
+              [Simular Liberação de Assinatura para Testes]
+            </button>
+          </div>
+
+        </Card>
+      </div>
+    )}
+
+  </div>
+</div>
   );
 };
 

@@ -18,14 +18,13 @@ export const subscriptionService = {
     try {
       const stored = localStorage.getItem(SUB_STORAGE_KEY);
       if (!stored) {
-        // Fallback Padrão: 6 Meses Ilimitados Ativos
-        const defaultExpiry = Date.now() + (180 * 24 * 60 * 60 * 1000); // 180 dias
+        // Padrão sem pagamento: Assinatura Inativa (Exibe Bloqueio Paywall Blur)
         return {
-          active: true,
-          planName: 'Plano 6 Meses Ilimitado',
-          expiresAt: new Date(defaultExpiry).toISOString(),
-          daysRemaining: 180,
-          unlimited: true
+          active: false,
+          planName: 'Sem Assinatura Ativa',
+          expiresAt: null,
+          daysRemaining: 0,
+          unlimited: false
         };
       }
 
@@ -46,13 +45,19 @@ export const subscriptionService = {
     } catch (e) {
       console.error('Erro ao ler assinatura:', e);
       return {
-        active: true,
-        planName: 'Plano 6 Meses Ilimitado',
-        expiresAt: new Date(Date.now() + 180 * 86400 * 1000).toISOString(),
-        daysRemaining: 180,
-        unlimited: true
+        active: false,
+        planName: 'Sem Assinatura Ativa',
+        expiresAt: null,
+        daysRemaining: 0,
+        unlimited: false
       };
     }
+  },
+
+  // Limpa assinatura para testes de visualização com Blur Paywall
+  clearSubscription: () => {
+    localStorage.removeItem(SUB_STORAGE_KEY);
+    window.dispatchEvent(new CustomEvent('valida_subscription_updated', { detail: { active: false } }));
   },
 
   // Ativa automaticamente 6 meses de acesso ilimitado após webhook/Pix Mercado Pago
