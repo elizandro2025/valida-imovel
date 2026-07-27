@@ -22,7 +22,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
     {
       id: '1',
       sender: 'assistant',
-      text: 'Olá! Sou o Assistente Especialista da Matrícula. Faça qualquer pergunta sobre o documento e responderei citando os atos registrais exatos.',
+      text: 'Olá! Sou o Especialista em Inteligência Registrária do Valida Imóvel 🏛️. Analisei minuciosamente esta matrícula e estou à disposição para responder qualquer dúvida sobre titulares, valores de venda, hipotecas, penhoras, áreas e certidões recomendadas. Como posso te ajudar?',
       timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -35,11 +35,11 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
   }, [messages, isTyping]);
 
   const quickQuestions = [
-    "É seguro comprar este imóvel hoje?",
-    "Quem é o verdadeiro dono que deve assinar o contrato?",
-    "O imóvel tem dívida com banco, penhora ou processo?",
-    "Quanto foi pago na última compra deste imóvel?",
-    "O terreno tem restrição para construir ou ambiental?"
+    "🛡️ Qual o diagnóstico de segurança jurídica deste imóvel?",
+    "👤 Quem é o legítimo proprietário que deve assinar a venda?",
+    "🚨 O imóvel possui hipoteca, alienação ou penhora ativa?",
+    "📐 Qual a metragem e a caracterização do terreno/unidade?",
+    "📋 Quais certidões devo solicitar para fechar o negócio?"
   ];
 
   const handleSendMessage = async (queryText?: string) => {
@@ -64,20 +64,24 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
         {
           role: "system",
           content: "SISTEMA DE ASSISTENTE JURÍDICO REGISTRÁRIO:\n" +
-            "Você é um Advogado Registrador Especialista da plataforma Valida Imóvel.\n" +
-            "Sua função é responder dúvidas sobre a matrícula enviada de forma concisa, extremamente técnica e amigável.\n" +
-            "REGRA IMPORTANTE: Responda APENAS com base nos dados do relatório da matrícula fornecido. Cite atos específicos (ex: R-3, AV-5) quando aplicável. Se a informação não constar, diga claramente que não foi encontrada na matrícula.\n\n" +
+            "Você é um Especialista em Direito Imobiliário e Auditoria Registrária da plataforma Valida Imóvel.\n" +
+            "Sua missão é responder às dúvidas do usuário sobre a matrícula imobiliária fornecida com máxima precisão técnica, linguagem direta, humana e 100% livre de jargões desnecessários ou termos pejorativos.\n\n" +
+            "DIRETRIZES DE RESPOSTA:\n" +
+            "1. Sempre cite os atos registrais específicos (ex: R-1/142.890, AV-3, R-5) para embasamento.\n" +
+            "2. Responda apenas com dados contidos no relatório da matrícula.\n" +
+            "3. Se a informação não constar, informe gentilmente que ela não está registrada na certidão analisada.\n" +
+            "4. Mantenha um tom profissional, acolhedor e altamente esclarecedor.\n\n" +
             "Retorne a resposta estritamente neste formato JSON:\n" +
             '{\n  "resposta": "Sua resposta formatada em texto claro com marcações markdown quando útil."\n}'
         },
         {
           role: "user",
-          content: `DADOS EXTRAÍDOS DA MATRÍCULA:\n${reportContext}\n\nPERGUNTA DO USUÁRIO:\n${textToSend}`
+          content: `DADOS DA MATRÍCULA IMOBILIÁRIA AUDITADA:\n${reportContext}\n\nPERGUNTA DO USUÁRIO:\n${textToSend}`
         }
       ];
 
       const res = await chatJSON(promptMessages, 1000, 1, "mistral-small-latest");
-      const assistantText = res?.resposta || "Não foi possível encontrar essa informação específica na matrícula fornecida.";
+      const assistantText = res?.resposta || "Não foi possível identificar esse dado específico no texto extraído da matrícula.";
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -94,7 +98,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
         {
           id: (Date.now() + 1).toString(),
           sender: 'assistant',
-          text: 'Desculpe, ocorreu uma oscilação na resposta da IA. Por favor, tente novamente.',
+          text: 'Desculpe, ocorreu uma breve oscilação no serviço de resposta. Por favor, refaça sua pergunta.',
           timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -113,13 +117,13 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
             </div>
             <div>
               <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                Chat Inteligente com a Matrícula
+                Agente de Inteligência Registrária
                 <Badge variant="outline" className="border-emerald-300 text-emerald-700 bg-emerald-50 text-[10px]">
-                  IA Registrária Conectada
+                  IA Conectada à Matrícula
                 </Badge>
               </CardTitle>
               <CardDescription className="text-xs text-slate-500">
-                Tire dúvidas em tempo real com respostas baseadas exclusivamente na matrícula carregada.
+                Respostas diretas e precisas fundamentadas nos atos oficiais do Cartório de Imóveis.
               </CardDescription>
             </div>
           </div>

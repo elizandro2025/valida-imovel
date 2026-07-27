@@ -811,18 +811,20 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl text-white space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
               <Bot className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-extrabold text-white">Agente de IA Registrária</h3>
-                <Badge className="bg-emerald-500 text-slate-950 font-extrabold text-[10px] uppercase">
-                  Assistente de Dúvidas
+                <h3 className="text-sm sm:text-base font-extrabold text-white">
+                  Agente de Inteligência Registrária IA
+                </h3>
+                <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-extrabold text-[10px] uppercase">
+                  100% Conectado à Matrícula
                 </Badge>
               </div>
-              <p className="text-xs text-slate-400 font-medium mt-0.5">
-                Faça perguntas em linguagem natural sobre esta certidão e receba a interpretação técnica citando os atos registrais.
+              <p className="text-xs text-slate-300 font-medium mt-0.5">
+                Tire dúvidas em linguagem natural. Respostas fundamentadas com citação direta dos atos registrais (R-1, AV-2, penhoras, áreas e proprietários).
               </p>
             </div>
           </div>
@@ -831,10 +833,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             variant="outline"
             size="sm"
             onClick={() => setShowAiChat(!showAiChat)}
-            className="border-slate-700 bg-slate-800 text-slate-200 hover:text-white rounded-xl text-xs font-bold gap-1.5 px-4 py-2"
+            className="border-slate-700 bg-slate-800 text-emerald-400 hover:text-white hover:bg-slate-700 rounded-xl text-xs font-bold gap-1.5 px-4 py-2 shadow-sm"
           >
             <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-            {showAiChat ? 'Ocultar Assistente IA' : 'Abrir Chat com a IA'}
+            {showAiChat ? 'Ocultar Assistente IA' : 'Perguntar ao Agente de IA'}
             {showAiChat ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </Button>
         </div>
