@@ -144,6 +144,22 @@ const LandingPage: React.FC = () => {
       rating: 5,
       avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80',
       location: 'Curitiba, PR'
+    },
+    {
+      name: 'Técnico Márcio Oliveira',
+      role: 'Técnico em Agrimensura & Geoprocessamento (CRT/MS)',
+      content: 'A extração automática de coordenadas UTM e delimitação de confronto no módulo de Georreferenciamento accelera a montagem de processos no SIGEF.',
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=256&q=80',
+      location: 'Campo Grande, MS'
+    },
+    {
+      name: 'Técnica Beatriz Siqueira',
+      role: 'Técnica Registral & Escrevente Notarial',
+      content: 'No cotidiano cartorário, conferir averbações em certidões de 30 páginas era exaustivo. A IA Registrária organiza os 12 módulos notariais com perfeição.',
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=256&q=80',
+      location: 'Porto Alegre, RS'
     }
   ];
 
