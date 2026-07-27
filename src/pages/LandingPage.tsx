@@ -236,13 +236,22 @@ const LandingPage: React.FC = () => {
         </div>
       </header>
 
-      {/* 🚀 HERO SECTION (DESIGN MINIMALISTA ESTILO CHATGPT / PERPLEXITY) */}
+      {/* 🚀 HERO SECTION COM IMAGEM DE FUNDO DA MATRÍCULA E DESIGN MINIMALISTA */}
       <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-20 overflow-hidden bg-slate-950 text-white border-b border-slate-900">
         
+        {/* Background Image: Matrícula de Imóvel Cartorária */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-25 pointer-events-none mix-blend-luminosity filter contrast-125 scale-105"
+          style={{ backgroundImage: "url('/hero_matricula_bg.png')" }}
+        />
+
+        {/* Ambient Dark Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/65 to-slate-950 pointer-events-none" />
+
         {/* Background Ambient Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-20">
-          <div className="absolute -top-20 left-1/3 w-96 h-96 bg-emerald-500/40 rounded-full blur-3xl" />
-          <div className="absolute top-10 right-1/3 w-96 h-96 bg-teal-500/30 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-30">
+          <div className="absolute -top-20 left-1/3 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl" />
+          <div className="absolute top-10 right-1/3 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
