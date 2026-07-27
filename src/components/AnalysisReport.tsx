@@ -9,7 +9,7 @@ import {
   Building2, Users, Calendar, Scale, Home, MapPin, Clock, AlertCircle,
   Sparkles, FileCheck, Printer, ArrowUpRight, Share2, Compass, Zap, Lock, RefreshCw, Check,
   TreePine, Landmark, ShieldAlert, FileQuestion, Key, CheckCircle, RefreshCcw,
-  MessageSquare, CheckSquare, ArrowRight, DollarSign, Search, MessageCircle, X
+  MessageSquare, CheckSquare, ArrowRight, DollarSign, Search, MessageCircle, X, Bot, ChevronDown, ChevronUp
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { useToast } from '@/hooks/use-toast';
@@ -28,12 +28,13 @@ const renderSafe = (value: any, fallback: string = 'Não informado'): string => 
     return value.map(v => renderSafe(v, '')).filter(Boolean).join(', ');
   }
   if (typeof value === 'object') {
-    const valid = Object.entries(value)
-      .filter(([_, v]) => v !== null && v !== undefined && v !== '')
-      .map(([k, v]) => `${k.replace(/_/g, ' ')}: ${renderSafe(v, '')}`);
-    return valid.length > 0 ? valid.join(' | ') : fallback;
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return fallback;
+    }
   }
-  return String(value);
+  return fallback;
 };
 
 // Error Boundary para evitar tela branca caso ocorra alguma falha na renderização de dados
@@ -805,37 +806,68 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </Card>
       </div>
 
-        {/* Main Navigation Tabs com Suporte a Bloqueio por Blur (Paywall de Alta Conversão) */}
-        <div className="relative mt-6">
-          
-          {/* Conteúdo de Abas com Blur se !isSubscribed */}
-          <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-6 bg-slate-100 rounded-xl p-1 h-auto">
-                <TabsTrigger value="parecer" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Diagnóstico Fácil
-                </TabsTrigger>
-                <TabsTrigger value="chat" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  <MessageSquare className="w-3.5 h-3.5 text-emerald-600" /> Pergunte à IA
-                </TabsTrigger>
-                <TabsTrigger value="imovel" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  <Building2 className="w-3.5 h-3.5 text-emerald-600" /> Endereço & Tamanho
-                </TabsTrigger>
-                <TabsTrigger value="proprietarios" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  <Users className="w-3.5 h-3.5 text-emerald-600" /> Donos do Imóvel
-                </TabsTrigger>
-                <TabsTrigger value="onus" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  <AlertTriangle className="w-3.5 h-3.5 text-emerald-600" /> Dívidas & Bloqueios
-                </TabsTrigger>
-                <TabsTrigger value="especiais" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  <Landmark className="w-3.5 h-3.5 text-emerald-600" /> Regras & Marinha
-                </TabsTrigger>
-              </TabsList>
+      {/* 🤖 SEÇÃO DEDICADA DO AGENTE DE IA REGISTRÁRIA (SEPARADO DOS MÓDULOS DE AUDITORIA) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl text-white space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shrink-0">
+              <Bot className="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-extrabold text-white">Agente de IA Registrária</h3>
+                <Badge className="bg-emerald-500 text-slate-950 font-extrabold text-[10px] uppercase">
+                  Assistente de Dúvidas
+                </Badge>
+              </div>
+              <p className="text-xs text-slate-400 font-medium mt-0.5">
+                Faça perguntas em linguagem natural sobre esta certidão e receba a interpretação técnica citando os atos registrais.
+              </p>
+            </div>
+          </div>
 
-          {/* TAB CHAT DA MATRÍCULA */}
-          <TabsContent value="chat" className="mt-5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAiChat(!showAiChat)}
+            className="border-slate-700 bg-slate-800 text-slate-200 hover:text-white rounded-xl text-xs font-bold gap-1.5 px-4 py-2"
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+            {showAiChat ? 'Ocultar Assistente IA' : 'Abrir Chat com a IA'}
+            {showAiChat ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </Button>
+        </div>
+
+        {showAiChat && (
+          <div className="pt-2 animate-fade-in">
             <MatriculaChat report={report} />
-          </TabsContent>
+          </div>
+        )}
+      </div>
+
+      {/* Main Navigation Tabs para os 12 Módulos da Matrícula */}
+      <div className="relative mt-6">
+        
+        {/* Conteúdo de Abas com Blur se !isSubscribed */}
+        <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-slate-100 rounded-xl p-1 h-auto">
+              <TabsTrigger value="parecer" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Diagnóstico Fácil
+              </TabsTrigger>
+              <TabsTrigger value="imovel" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Building2 className="w-3.5 h-3.5 text-emerald-600" /> Endereço & Tamanho
+              </TabsTrigger>
+              <TabsTrigger value="proprietarios" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Users className="w-3.5 h-3.5 text-emerald-600" /> Donos do Imóvel
+              </TabsTrigger>
+              <TabsTrigger value="onus" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <AlertTriangle className="w-3.5 h-3.5 text-emerald-600" /> Dívidas & Bloqueios
+              </TabsTrigger>
+              <TabsTrigger value="especiais" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Landmark className="w-3.5 h-3.5 text-emerald-600" /> Regras & Marinha
+              </TabsTrigger>
+            </TabsList>
 
           {/* TAB 1: PARECER & RISCO */}
           <TabsContent value="parecer" className="mt-5 space-y-6">
