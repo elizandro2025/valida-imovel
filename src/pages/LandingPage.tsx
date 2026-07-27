@@ -106,6 +106,30 @@ const LandingPage: React.FC = () => {
       location: 'São Paulo, SP'
     },
     {
+      name: 'Eng. Fernando Alencar',
+      role: 'Engenheiro Civil & Perito Perimetral (CREA/SP)',
+      content: 'Como engenheiro perito, a extração automática dos dados de memorial descritivo, áreas averbadas e georreferenciamento pelo Valida Imóvel economiza dias de auditoria.',
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80',
+      location: 'Ribeirão Preto, SP'
+    },
+    {
+      name: 'Dr. Ricardo Menezes',
+      role: 'Leiloeiro Oficial Notarial & Judicial',
+      content: 'Analisamos centenas de certidões por lote antes dos leilões. O Valida Imóvel identifica penhoras CNIB, hipotecas e gravames em segundos com 100% de precisão.',
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80',
+      location: 'Rio de Janeiro, RJ'
+    },
+    {
+      name: 'Eng. Sérgio Bastos',
+      role: 'Agrimensor & Topógrafo Credenciado (INCRA/SIGEF)',
+      content: 'Para imóveis rurais e glebas, a validação de confrontantes, código INCRA, CCIR e certidão SIGEF feita pela IA é perfeita para regularização fundiária.',
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80',
+      location: 'Goiânia, GO'
+    },
+    {
       name: 'Mariana Silveira',
       role: 'Corretora de Imóveis (CRECI 42.190-SP)',
       content: 'Antes eu perdia vendas porque o cliente tinha medo de pendências escondidas na matrícula. Agora apresento o parecer do Valida Imóvel na hora da proposta!',
@@ -120,14 +144,6 @@ const LandingPage: React.FC = () => {
       rating: 5,
       avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80',
       location: 'Curitiba, PR'
-    },
-    {
-      name: 'Dra. Amanda Vasconcelos',
-      role: 'Notária & Consultora Registral',
-      content: 'A precisão notarial da IA Registrária no mapeamento da cadeia dominial e leitura de certidões antigas é impressionante. Ferramenta indispensável no mercado.',
-      rating: 5,
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80',
-      location: 'Belo Horizonte, MG'
     }
   ];
 
