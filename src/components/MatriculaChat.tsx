@@ -17,6 +17,44 @@ interface MatriculaChatProps {
   report: any;
 }
 
+// Helper para renderizar o texto do Chat sem exibir asteriscos brutos (convertendo markdown em HTML typography)
+const renderFormattedText = (text: string, isUser: boolean = false) => {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return (
+    <div className="space-y-1.5">
+      {lines.map((line, lineIdx) => {
+        if (!line.trim()) return <div key={lineIdx} className="h-1" />;
+
+        // Separa expressões entre **negrito** ou *itálico*
+        const parts = line.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+
+        return (
+          <p key={lineIdx} className="leading-relaxed">
+            {parts.map((part, partIdx) => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                return (
+                  <strong key={partIdx} className={`font-bold ${isUser ? 'text-emerald-300' : 'text-slate-900 font-extrabold'}`}>
+                    {part.slice(2, -2)}
+                  </strong>
+                );
+              }
+              if (part.startsWith('*') && part.endsWith('*')) {
+                return (
+                  <em key={partIdx} className={isUser ? 'text-slate-200' : 'text-slate-700 font-medium'}>
+                    {part.slice(1, -1)}
+                  </em>
+                );
+              }
+              return part;
+            })}
+          </p>
+        );
+      })}
+    </div>
+  );
+};
+
 export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -66,13 +104,14 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
           content: "SISTEMA DE ASSISTENTE JURÍDICO REGISTRÁRIO:\n" +
             "Você é um Especialista em Direito Imobiliário e Auditoria Registrária da plataforma Valida Imóvel.\n" +
             "Sua missão é responder às dúvidas do usuário sobre a matrícula imobiliária fornecida com máxima precisão técnica, linguagem direta, humana e 100% livre de jargões desnecessários ou termos pejorativos.\n\n" +
-            "DIRETRIZES DE RESPOSTA:\n" +
+            "REGRAS DE FORMATAÇÃO E ESTILO:\n" +
             "1. Sempre cite os atos registrais específicos (ex: R-1/142.890, AV-3, R-5) para embasamento.\n" +
-            "2. Responda apenas com dados contidos no relatório da matrícula.\n" +
-            "3. Se a informação não constar, informe gentilmente que ela não está registrada na certidão analisada.\n" +
-            "4. Mantenha um tom profissional, acolhedor e altamente esclarecedor.\n\n" +
+            "2. NÃO use marcas de asterisco brutas em excesso. Prefira usar tópicos limpos com emojis (•, 📌, 🏛️, 👤) e quebras de linha claras.\n" +
+            "3. Responda apenas com dados contidos no relatório da matrícula.\n" +
+            "4. Se a informação não constar, informe gentilmente que ela não está registrada na certidão analisada.\n" +
+            "5. Mantenha um tom profissional, acolhedor e altamente esclarecedor.\n\n" +
             "Retorne a resposta estritamente neste formato JSON:\n" +
-            '{\n  "resposta": "Sua resposta formatada em texto claro com marcações markdown quando útil."\n}'
+            '{\n  "resposta": "Sua resposta formatada em texto limpo e legível."\n}'
         },
         {
           role: "user",
@@ -148,7 +187,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
                   ? 'bg-slate-900 text-white rounded-tr-none'
                   : 'bg-white border border-slate-200/80 text-slate-800 shadow-sm rounded-tl-none'
               }`}>
-                {msg.text}
+                {renderFormattedText(msg.text, msg.sender === 'user')}
               </div>
               <span className={`text-[10px] text-slate-400 block px-1 ${msg.sender === 'user' ? 'text-right' : ''}`}>
                 {msg.timestamp}
