@@ -99,21 +99,35 @@ const LandingPage: React.FC = () => {
   const testimonials = [
     {
       name: 'Dr. Roberto Magalhães',
-      role: 'Advogado Especialista em Direito Imobiliário',
+      role: 'Advogado Especialista em Direito Imobiliário (OAB/SP)',
       content: 'O Valida Imóvel reduziu o tempo de Due Diligence da minha equipe de 4 dias para segundos. O Dossiê PDF gerado é impecável e passa extrema segurança aos nossos clientes.',
-      rating: 5
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80',
+      location: 'São Paulo, SP'
     },
     {
       name: 'Mariana Silveira',
       role: 'Corretora de Imóveis (CRECI 42.190-SP)',
       content: 'Antes eu perdia vendas porque o cliente tinha medo de pendências escondidas na matrícula. Agora apresento o parecer do Valida Imóvel na hora da proposta!',
-      rating: 5
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80',
+      location: 'Campinas, SP'
     },
     {
       name: 'Carlos Eduardo Faria',
-      role: 'Investidor Imobiliário & Arrematante',
+      role: 'Investidor Imobiliário & Arrematante de Leilões',
       content: 'Em leilões e compra de imóveis, segundos valem ouro. A detecção automática de penhoras CNIB e alienação me salvou de um prejuízo gigantesco.',
-      rating: 5
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80',
+      location: 'Curitiba, PR'
+    },
+    {
+      name: 'Dra. Amanda Vasconcelos',
+      role: 'Notária & Consultora Registral',
+      content: 'A precisão notarial da IA Registrária no mapeamento da cadeia dominial e leitura de certidões antigas é impressionante. Ferramenta indispensável no mercado.',
+      rating: 5,
+      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80',
+      location: 'Belo Horizonte, MG'
     }
   ];
 
@@ -538,27 +552,36 @@ const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((t, i) => (
-              <Card key={i} className="bg-slate-900 border-slate-800 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
+              <Card key={i} className="bg-slate-900 border-slate-800 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-emerald-500/40 transition-all group">
                 <div className="space-y-3">
-                  <div className="flex gap-1 text-amber-400">
-                    {[...Array(t.rating)].map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1 text-amber-400">
+                      {[...Array(t.rating)].map((_, idx) => (
+                        <Star key={idx} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    {t.location && (
+                      <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        {t.location}
+                      </span>
+                    )}
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed font-medium">
+                  <p className="text-xs text-slate-300 italic leading-relaxed font-medium">
                     "{t.content}"
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-slate-800 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center shadow-inner">
-                    {t.name.charAt(0)}
-                  </div>
+                  <img
+                    src={t.avatar}
+                    alt={t.name}
+                    className="w-11 h-11 rounded-full object-cover border-2 border-emerald-500/40 shadow-md group-hover:scale-105 transition-transform"
+                  />
                   <div>
-                    <h4 className="text-xs font-bold text-white">{t.name}</h4>
-                    <p className="text-[11px] text-slate-400 font-medium">{t.role}</p>
+                    <h4 className="text-xs font-black text-white">{t.name}</h4>
+                    <p className="text-[10px] text-slate-400 font-medium leading-snug">{t.role}</p>
                   </div>
                 </div>
               </Card>
