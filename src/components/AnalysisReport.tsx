@@ -169,6 +169,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
   const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('parecer');
+  const [showAiChat, setShowAiChat] = useState(false);
 
   const [isSubscribed, setIsSubscribed] = useState<boolean>(() => subscriptionService.getStatus().active);
 
