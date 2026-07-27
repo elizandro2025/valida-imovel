@@ -263,7 +263,7 @@ export const AuthPage: React.FC = () => {
                   <div className="flex items-start gap-2">
                     <span className="font-bold text-emerald-700 flex-shrink-0">1.</span>
                     <span>
-                      <Link to="/pagamento-pix" className="font-semibold text-emerald-700 hover:underline">Realize o pagamento via PIX (R$ 49,90)</Link> no Mercado Pago
+                      <Link to="/pagamento-pix" className="font-semibold text-emerald-700 hover:underline">Realize o pagamento via PIX (R$ 99,90)</Link> no Mercado Pago
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
@@ -416,7 +416,7 @@ export const AuthPage: React.FC = () => {
                       <div className="text-center text-[11px] text-slate-500 bg-slate-50 rounded-xl p-3 border border-slate-200">
                         Para acesso completo,{' '}
                         <Link to="/pagamento-pix" className="font-semibold text-emerald-700 hover:underline">
-                          realize o pagamento via PIX (R$ 49,90)
+                          realize o pagamento via PIX (R$ 99,90)
                         </Link>
                       </div>
                     </CardFooter>

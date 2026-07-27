@@ -1,4 +1,4 @@
-// Webhook Service for Automated Pix Payment Processing (R$ 49.90 / 6 Months Unlimited)
+// Webhook Service for Automated Pix Payment Processing (R$ 99.90 / 6 Months Unlimited)
 import { subscriptionService } from './subscriptionService';
 
 export interface PixWebhookPayload {
@@ -26,8 +26,8 @@ export const pixWebhookService = {
   processWebhookPayload: (payload: PixWebhookPayload) => {
     console.log('⚡ Webhook Pix recebido:', payload);
 
-    // Valida o valor da oferta de R$ 49,90 (com tolerância para centavos)
-    if (payload.amount >= 49.00 && (payload.event === 'PAYMENT_RECEIVED' || payload.event === 'PIX_CONFIRMED')) {
+    // Valida o valor da oferta de R$ 99,90 (com tolerância para centavos)
+    if (payload.amount >= 90.00 && (payload.event === 'PAYMENT_RECEIVED' || payload.event === 'PIX_CONFIRMED')) {
       // Libera automaticamente 6 meses de acesso ilimitado
       subscriptionService.activate6MonthsUnlimited(payload.transactionId);
 
@@ -44,7 +44,7 @@ export const pixWebhookService = {
     const payload: PixWebhookPayload = {
       event: 'PAYMENT_RECEIVED',
       transactionId: txId,
-      amount: 49.90,
+      amount: 99.90,
       currency: 'BRL',
       timestamp: new Date().toISOString()
     };

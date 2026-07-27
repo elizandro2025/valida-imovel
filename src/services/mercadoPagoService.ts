@@ -3,7 +3,7 @@ import { subscriptionService } from './subscriptionService';
 import { pixWebhookService } from './pixWebhookService';
 
 export interface MercadoPagoPaymentRequest {
-  transaction_amount: number; // 49.90
+  transaction_amount: number; // 99.90
   description: string; // "Valida Imóvel — 6 Meses de Acesso Ilimitado"
   payer: {
     email: string;
@@ -41,7 +41,7 @@ export const mercadoPagoService = {
 
   // Cria um pagamento Pix real via API do Mercado Pago (ou retorna payload resiliente)
   createPixPayment: async (data: Partial<MercadoPagoPaymentRequest> = {}) => {
-    const amount = data.transaction_amount || 49.90;
+    const amount = data.transaction_amount || 99.90;
     const description = data.description || 'Valida Imóvel — 6 Meses de Acesso Ilimitado';
     const email = data.payer?.email || 'cliente@validaimovel.com.br';
 
@@ -77,7 +77,7 @@ export const mercadoPagoService = {
           success: true,
           payment_id: String(result.id),
           status: result.status,
-          qr_code: qrCodeData?.qr_code || '00020101021126580014br.gov.bcb.pix0136d590019b-ff54-4394-8a51-a00d19638262520400005303986540549.905802BR5922ELIZANDRO FIUZA AQUINO6009SAO PAULO622905251KA1980K3RED4377RADXF0N9C630485CB',
+          qr_code: qrCodeData?.qr_code || '00020101021126580014br.gov.bcb.pix0136d590019b-ff54-4394-8a51-a00d19638262520400005303986540599.905802BR5922ELIZANDRO FIUZA AQUINO6009SAO PAULO622905251KA1980K3RED4377RADXF0N9C630485CB',
           qr_code_base64: qrCodeData?.qr_code_base64 ? `data:image/png;base64,${qrCodeData.qr_code_base64}` : null,
           ticket_url: result.transaction_details?.external_resource_url || `https://www.mercadopago.com.br/payments/${result.id}/ticket`,
           amount: amount
@@ -93,10 +93,10 @@ export const mercadoPagoService = {
       success: true,
       payment_id: mockPaymentId,
       status: 'pending',
-      qr_code: '00020101021126580014br.gov.bcb.pix0136d590019b-ff54-4394-8a51-a00d19638262520400005303986540549.905802BR5922ELIZANDRO FIUZA AQUINO6009SAO PAULO622905251KA1980K3RED4377RADXF0N9C630485CB',
+      qr_code: '00020101021126580014br.gov.bcb.pix0136d590019b-ff54-4394-8a51-a00d19638262520400005303986540599.905802BR5922ELIZANDRO FIUZA AQUINO6009SAO PAULO622905251KA1980K3RED4377RADXF0N9C630485CB',
       qr_code_base64: null,
       ticket_url: `https://www.mercadopago.com.br/payments/${mockPaymentId}/ticket`,
-      amount: 49.90
+      amount: 99.90
     };
   },
 
@@ -140,7 +140,7 @@ export const mercadoPagoService = {
       pixWebhookService.processWebhookPayload({
         event: 'PIX_CONFIRMED',
         transactionId: txId,
-        amount: 49.90,
+        amount: 99.90,
         currency: 'BRL',
         timestamp: new Date().toISOString()
       });

@@ -28,7 +28,7 @@ export const PixPaymentPage: React.FC = () => {
   const [copied, setCopied] = useState(false);
 
   const [pixKey] = useState(
-    '00020101021126580014br.gov.bcb.pix0136d590019b-ff54-4394-8a51-a00d19638262520400005303986540549.905802BR5922ELIZANDRO FIUZA AQUINO6009SAO PAULO622905251KA1980K3RED4377RADXF0N9C630485CB'
+    '00020101021126580014br.gov.bcb.pix0136d590019b-ff54-4394-8a51-a00d19638262520400005303986540599.905802BR5922ELIZANDRO FIUZA AQUINO6009SAO PAULO622905251KA1980K3RED4377RADXF0N9C630485CB'
   );
 
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 29, seconds: 59 });
@@ -184,7 +184,7 @@ export const PixPaymentPage: React.FC = () => {
                 <div className="pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
                   <div>
                     <span className="text-xs text-slate-500 line-through font-bold block">De R$ 199,90</span>
-                    <span className="text-3xl sm:text-4xl font-black text-white">R$ 49,<span className="text-xl">90</span></span>
+                    <span className="text-3xl sm:text-4xl font-black text-white">R$ 99,<span className="text-xl">90</span></span>
                   </div>
                   <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 font-bold text-xs">
                     Economia de 75%
@@ -364,7 +364,7 @@ export const PixPaymentPage: React.FC = () => {
                         </p>
                       </div>
                       <Button
-                        onClick={() => window.open(`https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=VAL-IMV-4990`, '_blank')}
+                        onClick={() => window.open(`https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=VAL-IMV-9990`, '_blank')}
                         className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-6 py-5 rounded-xl shadow-lg gap-2"
                       >
                         Pagar no Cartão via Mercado Pago <ArrowRight className="w-4 h-4" />

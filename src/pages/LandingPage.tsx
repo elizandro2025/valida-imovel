@@ -146,7 +146,7 @@ const LandingPage: React.FC = () => {
       {/* 🔴 CRO BANNER SUPERIOR DE URGÊNCIA & OFERTA */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white text-xs sm:text-sm font-extrabold py-2.5 px-4 text-center shadow-lg flex items-center justify-center gap-2 flex-wrap">
         <Flame className="w-4 h-4 text-amber-300 animate-bounce" />
-        <span>OFERTA DE LANÇAMENTO: 6 MESES ILIMITADOS POR APENAS R$ 49,90</span>
+        <span>OFERTA DE LANÇAMENTO: 6 MESES ILIMITADOS POR APENAS R$ 99,90</span>
         <div className="bg-slate-950/40 px-2.5 py-0.5 rounded-full text-amber-300 font-mono text-xs flex items-center gap-1 border border-amber-400/30">
           <Timer className="w-3.5 h-3.5" />
           <span>{String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
@@ -238,7 +238,7 @@ const LandingPage: React.FC = () => {
                   <Link to="/pagamento-pix" className="w-full sm:w-auto">
                     <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-700 bg-slate-900/90 text-slate-200 hover:bg-slate-800 hover:text-white font-bold text-base px-6 py-7 rounded-2xl">
                       <CreditCard className="mr-2 h-5 w-5 text-emerald-400" />
-                      Assinar 6 Meses (R$ 49,90)
+                      Assinar 6 Meses (R$ 99,90)
                     </Button>
                   </Link>
                 </div>
@@ -435,7 +435,7 @@ const LandingPage: React.FC = () => {
 
                 <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl space-y-1">
                   <span className="text-[11px] font-extrabold text-emerald-400 uppercase tracking-wider block">Custo por Matrícula</span>
-                  <span className="font-bold text-emerald-300 text-base">Apenas R$ 49,90 (6 Meses Ilimitados)</span>
+                  <span className="font-bold text-emerald-300 text-base">Apenas R$ 99,90 (6 Meses Ilimitados)</span>
                 </div>
 
                 <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl space-y-1">
@@ -592,7 +592,7 @@ const LandingPage: React.FC = () => {
             <div className="p-6 bg-slate-900/90 border border-slate-800 rounded-3xl max-w-md mx-auto space-y-4 shadow-inner">
               <div className="text-xs text-slate-400 line-through font-bold">De R$ 199,90</div>
               <div className="flex items-baseline justify-center gap-1">
-                <span className="text-5xl sm:text-6xl font-black text-white">R$ 49</span>
+                <span className="text-5xl sm:text-6xl font-black text-white">R$ 99</span>
                 <span className="text-2xl font-extrabold text-white">,90</span>
               </div>
               <span className="text-xs text-emerald-400 font-extrabold block">Pagamento Único via Pix ou Cartão (Ativação em 5 seg)</span>
@@ -681,7 +681,7 @@ const LandingPage: React.FC = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 p-3 sm:hidden shadow-2xl backdrop-blur-md flex items-center justify-between gap-3">
         <div>
           <span className="text-xs font-black text-white block">Valida Imóvel (6 Meses)</span>
-          <span className="text-[11px] font-extrabold text-emerald-400 block">Apenas R$ 49,90</span>
+          <span className="text-[11px] font-extrabold text-emerald-400 block">Apenas R$ 99,90</span>
         </div>
         <Link to="/pagamento-pix">
           <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shadow-md">

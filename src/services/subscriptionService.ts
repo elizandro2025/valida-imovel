@@ -62,7 +62,7 @@ export const subscriptionService = {
     const subData = {
       active: true,
       planName: 'Plano 6 Meses Ilimitado',
-      price: 49.90,
+      price: 99.90,
       expiresAt: expiresAt,
       unlimited: true,
       txId: txId,
