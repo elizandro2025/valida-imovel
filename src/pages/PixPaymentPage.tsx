@@ -183,11 +183,11 @@ export const PixPaymentPage: React.FC = () => {
 
                 <div className="pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
                   <div>
-                    <span className="text-xs text-slate-500 line-through font-bold block">De R$ 199,90</span>
+                    <span className="text-xs text-slate-500 line-through font-bold block">De R$ 599,40</span>
                     <span className="text-3xl sm:text-4xl font-black text-white">R$ 99,<span className="text-xl">90</span></span>
                   </div>
                   <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 font-bold text-xs">
-                    Economia de 75%
+                    Economia de R$ 499,50 (83% OFF)
                   </Badge>
                 </div>
               </div>

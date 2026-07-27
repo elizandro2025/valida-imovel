@@ -192,7 +192,7 @@ const LandingPage: React.FC = () => {
       {/* 🔴 CRO BANNER SUPERIOR DE URGÊNCIA & OFERTA */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white text-xs sm:text-sm font-extrabold py-2.5 px-4 text-center shadow-lg flex items-center justify-center gap-2 flex-wrap">
         <Flame className="w-4 h-4 text-amber-300 animate-bounce" />
-        <span>OFERTA DE LANÇAMENTO: 6 MESES ILIMITADOS POR APENAS R$ 99,90</span>
+        <span>OPORTUNIDADE ÚNICA: DE R$ 599,40 POR APENAS R$ 99,90 (6 MESES ILIMITADOS)</span>
         <div className="bg-slate-950/40 px-2.5 py-0.5 rounded-full text-amber-300 font-mono text-xs flex items-center gap-1 border border-amber-400/30">
           <Timer className="w-3.5 h-3.5" />
           <span>{String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
@@ -632,7 +632,7 @@ const LandingPage: React.FC = () => {
             <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
 
             <Badge className="bg-emerald-500 text-slate-950 font-black text-xs uppercase px-4 py-1.5 rounded-full mx-auto">
-              ⚡ Oferta Especial de Lançamento
+              ⚡ OPORTUNIDADE IMPERDÍVEL — 83% DE DESCONTO
             </Badge>
 
             <div className="space-y-3">
@@ -645,12 +645,12 @@ const LandingPage: React.FC = () => {
             </div>
 
             <div className="p-6 bg-slate-900/90 border border-slate-800 rounded-3xl max-w-md mx-auto space-y-4 shadow-inner">
-              <div className="text-xs text-slate-400 line-through font-bold">De R$ 199,90</div>
+              <div className="text-xs text-slate-400 line-through font-bold">De R$ 599,40</div>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-5xl sm:text-6xl font-black text-white">R$ 99</span>
                 <span className="text-2xl font-extrabold text-white">,90</span>
               </div>
-              <span className="text-xs text-emerald-400 font-extrabold block">Pagamento Único via Pix ou Cartão (Ativação em 5 seg)</span>
+              <span className="text-xs text-emerald-400 font-extrabold block">Economia de R$ 499,50 • Pagamento Único (Pix ou Cartão)</span>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3 text-left text-xs text-slate-300 font-semibold max-w-lg mx-auto">
