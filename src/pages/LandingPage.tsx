@@ -257,16 +257,16 @@ const LandingPage: React.FC = () => {
                 <span>IA Registrária • Leitura & Resumo Inteligente de Certidões</span>
               </div>
 
-              {/* Headline Principal Focada no Benefício Central (Estilo Matrícula Simples) */}
+              {/* Headline Principal Focada no Benefício Central */}
               <div className="space-y-4">
                 <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
                   Entenda Qualquer Matrícula de Imóvel em Segundos —{' '}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500">
-                    Sem Juridiquês.
+                    Com Leitura Clara e Objetiva.
                   </span>
                 </h1>
                 <p className="text-base sm:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                  Faça o upload do PDF da certidão. Nossa IA Registrária varre <strong>100% das páginas</strong>, traduz termos cartorários denso em linguagem simples, detecta penhoras e calcula o Score de Risco em menos de 30 segundos.
+                  Faça o upload da certidão em PDF. Nossa tecnologia de inteligência registrária audita <strong>100% das páginas</strong>, sintetiza a cadeia dominial, identifica apontamentos e apresenta o diagnósticos claro em menos de 30 segundos.
                 </p>
               </div>
 
@@ -289,7 +289,7 @@ const LandingPage: React.FC = () => {
                   </Link>
                 </div>
 
-                {/* Dropzone Direct Box Estilo Matrícula Simples */}
+                {/* Dropzone Direct Box */}
                 <Link to="/app" className="block pt-1">
                   <div className="p-4 bg-slate-900/90 border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 rounded-2xl transition-all cursor-pointer group text-center lg:text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
                     <div className="flex items-center gap-3">
@@ -298,7 +298,7 @@ const LandingPage: React.FC = () => {
                       </div>
                       <div className="text-left">
                         <span className="text-xs font-black text-white block">Arraste ou Selecione o PDF da Matrícula</span>
-                        <span className="text-[11px] text-slate-400 font-medium">Processamento registrário instantâneo sem juridiquês</span>
+                        <span className="text-[11px] text-slate-400 font-medium">Processamento registrário instantâneo com síntese objetiva</span>
                       </div>
                     </div>
                     <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shrink-0">
@@ -449,10 +449,10 @@ const LandingPage: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div>
                   <h3 className="text-lg font-black text-slate-300">Análise Manual Tradicional</h3>
-                  <span className="text-xs text-slate-500">Lenta, cara e sujeita a erros humanos</span>
+                  <span className="text-xs text-slate-500">Requer verificação exaustiva folha por folha</span>
                 </div>
-                <div className="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center font-bold">
-                  ❌
+                <div className="w-9 h-9 rounded-xl bg-slate-800 text-slate-400 flex items-center justify-center font-bold">
+                  📋
                 </div>
               </div>
 
@@ -468,8 +468,8 @@ const LandingPage: React.FC = () => {
                 </div>
 
                 <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl space-y-1">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block">Segurança Jurídica</span>
-                  <span className="font-bold text-red-400">Risco de omitir penhoras em certidões de 20 páginas</span>
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block">Conferência Registrária</span>
+                  <span className="font-bold text-slate-300">Exige verificação minuciosa de cada ato averbado ao longo das páginas</span>
                 </div>
               </div>
             </Card>
@@ -658,7 +658,7 @@ const LandingPage: React.FC = () => {
                 Acesso Ilimitado por 6 Meses
               </h2>
               <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-medium">
-                Analise quantas matrículas quiser por 180 dias. Sem mensalidades recorrentes, sem pegadinhas.
+                Analise quantas matrículas quiser por 180 dias. Sem mensalidades adicionais e com transparência total.
               </p>
             </div>
 
