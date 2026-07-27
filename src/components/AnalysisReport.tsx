@@ -80,6 +80,74 @@ class ReportErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
+// Componente para copiar qualquer campo com 1 clique e feedback visual
+const CopyableField: React.FC<{ label: string; value: string; className?: string }> = ({ label, value, className = '' }) => {
+  const [copiedField, setCopiedField] = useState(false);
+  const { toast } = useToast();
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!value || value === 'N/A' || value === 'NÃO CONSTA' || value === 'Não Informado') return;
+    navigator.clipboard.writeText(value);
+    setCopiedField(true);
+    toast({ title: '✓ Campo Copiado!', description: `${label}: ${value}` });
+    setTimeout(() => setCopiedField(false), 2000);
+  };
+
+  const isCopyable = value && value !== 'N/A' && value !== 'NÃO CONSTA' && value !== 'Não Informado';
+
+  return (
+    <div 
+      onClick={isCopyable ? handleCopy : undefined}
+      className={`group relative p-3 bg-slate-50 border border-slate-200/70 hover:border-emerald-400 hover:bg-emerald-50/50 rounded-xl space-y-0.5 transition-all ${isCopyable ? 'cursor-pointer' : ''} ${className}`}
+      title={isCopyable ? `Clique para copiar "${value}"` : undefined}
+    >
+      <div className="flex items-center justify-between gap-1">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">{label}</span>
+        {isCopyable && (
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold text-emerald-600 flex items-center gap-0.5 shrink-0">
+            {copiedField ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+            {copiedField ? 'Copiado!' : 'Copiar'}
+          </span>
+        )}
+      </div>
+      <span className="font-bold text-slate-900 text-xs sm:text-sm block truncate">{value}</span>
+    </div>
+  );
+};
+
+// Componente para copiar blocos de texto longos
+const CopyableBlock: React.FC<{ label: string; text: string }> = ({ label, text }) => {
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+
+  const handleCopy = () => {
+    if (!text || text === 'N/A' || text === 'Não Informado') return;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    toast({ title: '✓ Texto Copiado!', description: label });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="group relative space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</span>
+        <button
+          onClick={handleCopy}
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200"
+        >
+          {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+          {copied ? 'Copiado!' : 'Copiar Texto'}
+        </button>
+      </div>
+      <p className="text-xs text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200/70 leading-relaxed font-medium">
+        {text}
+      </p>
+    </div>
+  );
+};
+
 interface AnalysisReportProps {
   report: any;
 }
@@ -130,6 +198,46 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
   };
 
   const riskBadge = getRiskBadge(nivelRisco);
+
+  // Copiar Todos os Campos em formato de texto estruturado
+  const handleCopyAllFields = () => {
+    const fullText = `
+=== DADOS COMPLETOS EXTRAÍDOS — VALIDA IMÓVEL ===
+MATRÍCULA: ${renderSafe(ident.matricula)}
+CARTÓRIO: ${renderSafe(ident.cartorio_ri)}
+COMARCA/UF: ${renderSafe(ident.comarca)}
+SCORE RISCO: ${scoreRisco}/100 (${nivelRisco})
+STATUS JURÍDICO: ${statusJuridico}
+
+1. DADOS CARTORÁRIOS
+- Livro: ${renderSafe(ident.livro)}
+- Folha: ${renderSafe(ident.folha)}
+- Data Abertura: ${renderSafe(ident.data_abertura)}
+- Tipo Imóvel: ${renderSafe(ident.tipo_imovel_analisado)}
+- INCRA/SQL/IPTU: ${renderSafe(ident.codigo_imovel)}
+
+2. CARACTERIZAÇÃO FÍSICA
+- Endereço Completo: ${renderSafe(carac.endereco_completo)}
+- Denominação: ${renderSafe(carac.denominacao_imovel)}
+- Área Total (m²): ${renderSafe(carac.area_total_m2)}
+- Área (Hectares): ${renderSafe(carac.area_total_hectares || carac.area_outras_unidades)}
+- Loteamento/Quadra/Lote: ${renderSafe(carac.loteamento_quadra_lote)}
+- Perímetros: ${renderSafe(carac.perimetros_confrontacoes)}
+
+3. PROPRIETÁRIOS ATUAIS (${props.length})
+${props.map((p: any, i: number) => `${i + 1}. Nome: ${renderSafe(p.nome)} | CPF/CNPJ: ${renderSafe(p.cpf_cnpj)} | Fração: ${renderSafe(p.percentual_propriedade, '100%')} | Estado Civil: ${renderSafe(p.estado_civil)}`).join('\n')}
+
+4. ÔNUS REAIS & RESTRIÇÕES (${onus.length})
+${onus.length === 0 ? '✓ Matrícula Livre de Ônus e Penhoras' : onus.map((g: any, i: number) => `${i + 1}. Tipo: ${renderSafe(g.tipo)} | Credor/Vara: ${renderSafe(g.credor_banco || g.processo_vara)} | Valor: ${renderSafe(g.valor_garantia)}`).join('\n')}
+
+5. PARECER & RECOMENDAÇÃO
+Resumo: ${renderSafe(parecer.resumo_geral)}
+Recomendação: ${renderSafe(parecer.recomendacao_final || parecer.conclusao_juridica)}
+`.trim();
+
+    navigator.clipboard.writeText(fullText);
+    toast({ title: '🎉 Todos os Campos Copiados!', description: 'Todos os dados da matrícula foram copiados para a área de transferência.' });
+  };
 
   // Copiar resumo formatado corporativo
   const handleCopySummary = () => {
@@ -504,6 +612,16 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             <Button
               variant="outline"
               size="sm"
+              onClick={handleCopyAllFields}
+              className="border-emerald-300 text-emerald-800 hover:bg-emerald-100/70 rounded-xl text-xs font-semibold gap-1.5 flex-1 sm:flex-none"
+            >
+              <Copy className="w-3.5 h-3.5 text-emerald-600" />
+              Copiar Todos os Campos
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleCopyWhatsApp}
               className="border-emerald-200 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-100 rounded-xl text-xs font-semibold gap-1.5 flex-1 sm:flex-none"
             >
@@ -838,38 +956,20 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                 ]
                 .filter(item => !searchTerm || item.label.toLowerCase().includes(searchTerm.toLowerCase()) || String(item.value).toLowerCase().includes(searchTerm.toLowerCase()))
                 .map(({ label, value }) => (
-                  <div key={label} className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-0.5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{label}</span>
-                    <span className="font-bold text-slate-900 text-sm">{value}</span>
-                  </div>
+                  <CopyableField key={label} label={label} value={value} />
                 ))}
               </div>
 
               {carac.perimetros_confrontacoes && (
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Perímetros e Confrontações (Vizinhos)</span>
-                  <p className="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
-                    {renderSafe(carac.perimetros_confrontacoes)}
-                  </p>
-                </div>
+                <CopyableBlock label="Perímetros e Confrontações (Vizinhos)" text={renderSafe(carac.perimetros_confrontacoes)} />
               )}
 
               {carac.benfeitorias && (
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Benfeitorias e Construções Averbadas</span>
-                  <p className="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
-                    {renderSafe(carac.benfeitorias)}
-                  </p>
-                </div>
+                <CopyableBlock label="Benfeitorias e Construções Averbadas" text={renderSafe(carac.benfeitorias)} />
               )}
 
               {carac.descricao_legal && (
-                <div className="space-y-1 pt-2">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Descrição Legal na Íntegral</span>
-                  <p className="text-xs text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200/70 leading-relaxed max-h-48 overflow-y-auto">
-                    {renderSafe(carac.descricao_legal)}
-                  </p>
-                </div>
+                <CopyableBlock label="Descrição Legal na Íntegra" text={renderSafe(carac.descricao_legal)} />
               )}
             </CardContent>
           </Card>
@@ -884,39 +984,16 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </CardHeader>
             <CardContent className="pt-5 space-y-4">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Certificação SIGEF</span>
-                  <span className="font-bold text-emerald-700">{renderSafe(geo.situacao_certificacao, 'Em análise')}</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Código CAR</span>
-                  <span className="font-bold text-slate-800">{renderSafe(geo.codigo_car)}</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Código CCIR / SNCR</span>
-                  <span className="font-bold text-slate-800">{renderSafe(geo.codigo_ccir)}</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">NIRF / ITR</span>
-                  <span className="font-bold text-slate-800">{renderSafe(geo.codigo_itr_nirf)}</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Responsável Técnico</span>
-                  <span className="font-semibold text-slate-800">{renderSafe(geo.responsavel_tecnico)}</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sistema Geodésico</span>
-                  <span className="font-semibold text-slate-800">{renderSafe(geo.sistema_geodesico, 'SIRGAS 2000')}</span>
-                </div>
+                <CopyableField label="Certificação SIGEF" value={renderSafe(geo.situacao_certificacao, 'Em análise')} />
+                <CopyableField label="Código CAR" value={renderSafe(geo.codigo_car)} />
+                <CopyableField label="Código CCIR / SNCR" value={renderSafe(geo.codigo_ccir)} />
+                <CopyableField label="NIRF / ITR" value={renderSafe(geo.codigo_itr_nirf)} />
+                <CopyableField label="Responsável Técnico" value={renderSafe(geo.responsavel_tecnico)} />
+                <CopyableField label="Sistema Geodésico" value={renderSafe(geo.sistema_geodesico, 'SIRGAS 2000')} />
               </div>
 
               {geo.coordenadas_geograficas && (
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Coordenadas dos Vértices</span>
-                  <p className="text-xs font-mono text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
-                    {renderSafe(geo.coordenadas_geograficas)}
-                  </p>
-                </div>
+                <CopyableBlock label="Coordenadas dos Vértices" text={renderSafe(geo.coordenadas_geograficas)} />
               )}
             </CardContent>
           </Card>
