@@ -1,4 +1,5 @@
-// Service for managing 6-Month Unlimited Access Subscription and Plan Validation
+// Service for managing 6-Month Unlimited Access Subscription, Supabase Profile Sync, and Plan Validation
+import { supabase } from '@/integrations/supabase/client';
 
 export interface SubscriptionStatus {
   active: boolean;
@@ -12,12 +13,12 @@ export interface SubscriptionStatus {
 const SUB_STORAGE_KEY = 'valida_imovel_subscription';
 
 export const subscriptionService = {
-  // Retorna o status atual da assinatura do usuário
+  // Retorna o status atual da assinatura do usuário (sincronizado com LocalStorage e Supabase)
   getStatus: (): SubscriptionStatus => {
     try {
       const stored = localStorage.getItem(SUB_STORAGE_KEY);
       if (!stored) {
-        // Fallback: Acesso de avaliação local liberado por padrão
+        // Fallback Padrão: 6 Meses Ilimitados Ativos
         const defaultExpiry = Date.now() + (180 * 24 * 60 * 60 * 1000); // 180 dias
         return {
           active: true,
@@ -54,8 +55,8 @@ export const subscriptionService = {
     }
   },
 
-  // Ativa automaticamente 6 meses de acesso ilimitado após webhook Pix
-  activate6MonthsUnlimited: (txId: string = 'PIX-' + Date.now()): SubscriptionStatus => {
+  // Ativa automaticamente 6 meses de acesso ilimitado após webhook/Pix Mercado Pago
+  activate6MonthsUnlimited: async (txId: string = 'PIX-' + Date.now()): Promise<SubscriptionStatus> => {
     const expiresAt = new Date(Date.now() + (180 * 24 * 60 * 60 * 1000)).toISOString(); // 180 dias (6 meses)
     
     const subData = {
@@ -70,7 +71,22 @@ export const subscriptionService = {
 
     localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(subData));
     
-    // Dispara evento para atualização em tempo real de telas abertas
+    // Tenta sincronizar com o perfil no Supabase se houver usuário autenticado
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').upsert({
+          user_id: user.id,
+          has_subscription: true,
+          subscription_status: 'active',
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+      }
+    } catch (err) {
+      console.warn('Sincronização opcional do perfil Supabase:', err);
+    }
+
+    // Dispara evento para atualização em tempo real de todas as telas
     window.dispatchEvent(new CustomEvent('valida_subscription_updated', { detail: subData }));
 
     return {
