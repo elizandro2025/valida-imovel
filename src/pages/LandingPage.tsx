@@ -199,234 +199,131 @@ const LandingPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 🟢 HEADER / NAVBAR SLIM & FIXO */}
-      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      {/* 🟢 HEADER / NAVBAR SLIM & FIXO ESTILO AI PLATFORM */}
+      <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-              <FileCheck className="w-5.5 h-5.5 stroke-[2.2]" />
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform font-black">
+              <Sparkles className="w-4 h-4 stroke-[2.5]" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-white block leading-tight">
+              <span className="text-lg font-black tracking-tight text-white block leading-tight">
                 Valida<span className="text-emerald-400">Imóvel</span>
               </span>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block -mt-1">
-                IA Registrária Ativa
-              </span>
             </div>
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden sm:inline-flex">
+              AI 2.0
+            </Badge>
           </Link>
 
           {/* Navigation Actions */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-800 font-bold text-xs sm:text-sm px-3 sm:px-4 rounded-xl">
+              <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-800/60 font-semibold text-xs px-3.5 h-9 rounded-xl">
                 Entrar
               </Button>
             </Link>
 
-            <Link to="/pagamento-pix">
-              <Button className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm px-4 sm:px-6 shadow-lg shadow-emerald-600/30 rounded-xl transition-all hover:scale-105">
+            <Link to="/app">
+              <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs px-4 h-9 shadow-lg shadow-emerald-500/20 rounded-xl transition-all hover:scale-105">
                 <span>Analisar Matrícula</span>
-                <ArrowRight className="ml-1.5 w-4 h-4" />
+                <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
               </Button>
             </Link>
           </div>
         </div>
       </header>
 
-      {/* 🚀 HERO SECTION (PRIMEIRA DOBRA DE ALTA CONVERSÃO) */}
-      <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-20 overflow-hidden bg-slate-950 text-white border-b border-slate-800/80">
+      {/* 🚀 HERO SECTION (DESIGN MINIMALISTA ESTILO CHATGPT / PERPLEXITY) */}
+      <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-20 overflow-hidden bg-slate-950 text-white border-b border-slate-900">
         
         {/* Background Ambient Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-25">
-          <div className="absolute -top-20 left-1/4 w-96 h-96 bg-emerald-500/50 rounded-full blur-3xl" />
-          <div className="absolute top-10 right-1/4 w-96 h-96 bg-teal-500/50 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-20">
+          <div className="absolute -top-20 left-1/3 w-96 h-96 bg-emerald-500/40 rounded-full blur-3xl" />
+          <div className="absolute top-10 right-1/3 w-96 h-96 bg-teal-500/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Hero Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              
-              {/* Badge de Destaque da Ferramenta */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm font-extrabold shadow-sm">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
-                <span>Analisador Inteligente de Matrículas de Imóveis</span>
-              </div>
-
-              {/* Headline Principal Instantaneamente Clara */}
-              <div className="space-y-4">
-                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
-                  Análise e Auditoria de Matrículas de Imóveis{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500">
-                    em Segundos.
-                  </span>
-                </h1>
-                <p className="text-base sm:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                  Envie o PDF da certidão e receba a análise completa instantaneamente: proprietários atuais, histórico dominial, penhoras, hipotecas, georreferenciamento e o Score de Risco Registral.
-                </p>
-              </div>
-
-              {/* CTAs Principais e Widget de Ação Direta */}
-              <div className="pt-2 space-y-4">
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                  <Link to="/app" className="w-full sm:w-auto">
-                    <Button size="lg" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base sm:text-lg px-8 py-7 rounded-2xl shadow-xl shadow-emerald-600/30 transition-all hover:scale-[1.03]">
-                      <Upload className="mr-2.5 h-5 w-5 stroke-[2.5]" />
-                      Analisar Certidão em PDF
-                      <ArrowRight className="ml-2.5 h-5 w-5" />
-                    </Button>
-                  </Link>
-
-                  <Link to="/pagamento-pix" className="w-full sm:w-auto">
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-700 bg-slate-900/90 text-slate-200 hover:bg-slate-800 hover:text-white font-bold text-base px-6 py-7 rounded-2xl">
-                      <CreditCard className="mr-2 h-5 w-5 text-emerald-400" />
-                      Assinar 6 Meses (R$ 99,90)
-                    </Button>
-                  </Link>
-                </div>
-
-                {/* Dropzone Direct Box */}
-                <div className="p-4 bg-slate-900/90 border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 rounded-2xl transition-all cursor-pointer group text-center lg:text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
-                  <Link to="/app" className="flex items-center gap-3 flex-1 text-left">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                      <FileUp className="w-5 h-5 stroke-[2.5]" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-black text-white block">Envie o PDF da Matrícula do Imóvel Aqui</span>
-                      <span className="text-[11px] text-slate-400 font-medium">Análise automática instantânea com síntese dos 12 módulos registrais</span>
-                    </div>
-                  </Link>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Link to="/app?sample=safe">
-                      <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl">
-                        Testar Exemplo ⚡
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Selos de Confiança Próximos ao CTA */}
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-5 text-xs text-slate-400 font-semibold pt-3">
-                  <span className="flex items-center gap-1.5 text-slate-300">
-                    <div className="flex text-amber-400"><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /></div>
-                    <strong className="text-white">4.9/5</strong> (1.840+ avaliações)
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    Lei nº 6.015/73 & Provimento CNJ 89/19
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Lock className="w-4 h-4 text-emerald-400" />
-                    Sigilo Registral LGPD
-                  </span>
-                </div>
-              </div>
-
-              {/* Métricas de Prova Social no Hero */}
-              <div className="pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-                {metrics.map((m, i) => (
-                  <div key={i}>
-                    <div className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight">{m.value}</div>
-                    <div className="text-[11px] text-slate-400 font-medium">{m.label}</div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-
-            {/* Hero Right Visual: Demo Card Interativo da Matrícula em IA */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
-                
-                {/* Aura Glow */}
-                <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-3xl blur-2xl opacity-30 animate-pulse" />
-
-                {/* Card de Demonstração Registral */}
-                <div className="relative bg-slate-900 border border-slate-800 shadow-2xl rounded-3xl overflow-hidden text-white p-5 space-y-4">
-                  
-                  {/* Status Bar */}
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-                      <span className="font-extrabold text-emerald-400 uppercase tracking-wider text-[11px]">
-                        Motor OCR & IA Registrária
-                      </span>
-                    </div>
-                    <Badge variant="outline" className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px] font-bold">
-                      12 Módulos Ativos
-                    </Badge>
-                  </div>
-
-                  {/* Documento Simulado com Scanner */}
-                  <div className="relative bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3 font-mono text-[11px] leading-relaxed text-slate-300 overflow-hidden shadow-inner">
-                    <div className="text-center border-b border-slate-800 pb-2 space-y-0.5">
-                      <div className="font-bold text-white uppercase text-[10px] tracking-wider">
-                        CARTÓRIO DO 1º REGISTRO DE IMÓVEIS — COMARCA DA CAPITAL
-                      </div>
-                      <div className="text-emerald-400 font-extrabold text-xs">
-                        MATRÍCULA Nº 142.890 — LIVRO 2 (REGISTRO GERAL)
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 text-[10px] leading-snug">
-                      <p className="text-slate-400">
-                        <strong className="text-slate-200">IMÓVEL:</strong> Lote de terreno nº 12 da Quadra B, com área total de <span className="bg-emerald-500/20 text-emerald-300 px-1 rounded font-bold">480,00 m²</span>.
-                      </p>
-
-                      <div className="p-2 bg-slate-900 border border-emerald-500/40 rounded-xl space-y-1">
-                        <div className="flex items-center justify-between text-emerald-400 font-bold text-[10px]">
-                          <span>R-3 / 142.890 — TRANSMISSÃO DE PROPRIEDADE</span>
-                          <span className="text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded">EXTRAÍDO VIA IA</span>
-                        </div>
-                        <p className="text-slate-200 text-[10px]">
-                          <strong>Adquirente:</strong> MARCOS VINÍCIUS DOS SANTOS (CPF nº 123.456.789-00).
-                        </p>
-                      </div>
-
-                      <div className="p-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl flex items-center justify-between text-[10px]">
-                        <span className="text-emerald-300 font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Matrícula Auditada — Livre de Ônus
-                        </span>
-                        <span className="text-slate-400 text-[9px]">Zero Penhoras CNIB</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Micro Cards */}
-                  <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-                    <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl flex items-center gap-2">
-                      <Users className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-slate-400 block font-bold">Titular Atual</span>
-                        <span className="text-white font-bold text-[11px] truncate block">Marcos V. Santos</span>
-                      </div>
-                    </div>
-
-                    <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-slate-400 block font-bold">Score de Risco</span>
-                        <span className="text-emerald-400 font-bold text-[11px] block">Baixo (15/100)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Link to="/app" className="block pt-1">
-                    <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl py-4 gap-2 shadow-lg shadow-emerald-600/30">
-                      <FileCheck className="w-4 h-4" /> Testar Auditoria Agora
-                    </Button>
-                  </Link>
-
-                </div>
-              </div>
-            </div>
-
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+          
+          {/* AI Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-emerald-400 text-xs font-semibold shadow-inner">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Inteligência Artificial Registrária Especializada</span>
           </div>
+
+          {/* Clean Headline */}
+          <div className="space-y-4 max-w-4xl mx-auto">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+              Analisador Inteligente de Matrículas de Imóveis
+            </h1>
+            <p className="text-base sm:text-lg text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
+              Auditoria notarial automatizada de 12 módulos, diagnósticos em palavras simples, Score de Risco e emissão de Dossiê em PDF em segundos.
+            </p>
+          </div>
+
+          {/* Central AI Upload Box / Prompt Interface (Estilo ChatGPT / Claude) */}
+          <div className="max-w-2xl mx-auto pt-2">
+            <div className="p-2 sm:p-3 bg-slate-900/90 border border-slate-800/90 shadow-2xl rounded-3xl backdrop-blur-md space-y-3">
+              
+              <Link to="/app" className="block">
+                <div className="p-6 sm:p-8 border-2 border-dashed border-slate-800 hover:border-emerald-500/60 bg-slate-950/60 hover:bg-slate-950/90 rounded-2xl transition-all cursor-pointer group text-center space-y-4">
+                  <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <FileUp className="w-7 h-7 stroke-[2]" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-base font-extrabold text-white">Arraste ou envie a certidão em PDF aqui</h3>
+                    <p className="text-xs text-slate-400 font-medium">Suporta matrículas digitais ou escaneadas de qualquer cartório do Brasil</p>
+                  </div>
+                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-6 py-5 rounded-xl shadow-lg shadow-emerald-500/20">
+                    <Upload className="w-4 h-4 mr-2" /> Enviar PDF para Auditoria IA
+                  </Button>
+                </div>
+              </Link>
+
+              {/* 1-Click Instant Sample Test Bar */}
+              <div className="p-3 bg-slate-950/90 border border-slate-800/80 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <span className="text-slate-400 font-medium text-center sm:text-left flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  Sem arquivo no momento? Teste o sistema em 1 clique:
+                </span>
+                <Link to="/app?sample=safe" className="w-full sm:w-auto">
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 font-bold text-xs rounded-xl h-8">
+                    ⚡ Testar Exemplo Instantâneo
+                  </Button>
+                </Link>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Selos de Confiança Próximos ao CTA */}
+          <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400 font-semibold pt-2">
+            <span className="flex items-center gap-1.5 text-slate-300">
+              <div className="flex text-amber-400"><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /></div>
+              <strong className="text-white">4.9/5</strong> (1.840+ avaliações)
+            </span>
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              Lei nº 6.015/73 & Provimento CNJ 89/19
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Lock className="w-4 h-4 text-emerald-400" />
+              Sigilo Registral LGPD
+            </span>
+          </div>
+
+          {/* Métricas no Hero */}
+          <div className="pt-6 border-t border-slate-900 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto text-center">
+            {metrics.map((m, i) => (
+              <div key={i} className="p-3 bg-slate-900/60 border border-slate-800/80 rounded-2xl">
+                <div className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight">{m.value}</div>
+                <div className="text-[11px] text-slate-400 font-medium">{m.label}</div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </section>
 

@@ -45,38 +45,38 @@ const MatriculaAnalysis: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900/5 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/10 via-slate-50 to-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
-      {/* Glassmorphic App Header */}
-      <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 shadow-lg shadow-slate-950/20 text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white">
+      {/* Glassmorphic App Header Estilo AI Platform */}
+      <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-              <FileCheck className="w-5 h-5 stroke-[2.2]" />
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform font-black">
+              <Sparkles className="w-4 h-4 stroke-[2.5]" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-white block leading-tight">
+              <span className="text-lg font-black tracking-tight text-white block leading-tight">
                 Valida<span className="text-emerald-400">Imóvel</span>
               </span>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block -mt-1">
-                Tech & Trust Legal
-              </span>
             </div>
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden sm:inline-flex">
+              AI Workspace
+            </Badge>
           </Link>
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-bold">
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-extrabold rounded-full">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Plano 6 Meses Ilimitados (Ativo)
             </Badge>
             {user && (
-              <span className="text-xs text-slate-300 hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
+              <span className="text-xs text-slate-400 hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
             )}
             <Button
               variant="outline"
               size="sm"
               onClick={handleSignOut}
-              className="border-slate-700 bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold gap-1.5"
+              className="border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold gap-1.5 h-9"
             >
               <LogOut className="w-3.5 h-3.5" />
               Sair
@@ -86,30 +86,30 @@ const MatriculaAnalysis: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
 
         {/* Hero Title & Subtitle */}
         <div className="text-center space-y-3 animate-fade-in">
-          <Badge variant="outline" className="border-emerald-500/30 text-emerald-700 bg-emerald-50 text-xs font-extrabold px-3.5 py-1 rounded-full shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 mr-1 text-emerald-600 inline" /> Auditoria Registrária Automatizada
+          <Badge variant="outline" className="border-slate-800 text-emerald-400 bg-slate-900 text-xs font-extrabold px-3.5 py-1 rounded-full shadow-inner">
+            <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400 inline" /> Auditoria Registrária Automatizada em Tempo Real
           </Badge>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
             Análise Inteligente de Matrícula Imobiliária
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">
+          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
             Plataforma de inteligência jurídica para auditoria e emissão de parecer de Due Diligence em matrículas de imóveis com Inteligência Artificial Registrária.
           </p>
         </div>
 
         {/* Direct Upload & Analysis Flow */}
         <div className="space-y-8">
-          {/* Upload Card */}
-          <Card className="max-w-2xl mx-auto border-slate-200/80 shadow-xl shadow-slate-200/50 rounded-3xl bg-white/90 backdrop-blur-sm overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+          {/* Upload Card Estilo AI Workspace */}
+          <Card className="max-w-2xl mx-auto border-slate-800 shadow-2xl rounded-3xl bg-slate-900 text-white overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-800/80 bg-slate-950/60">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-extrabold text-slate-900 flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20">
-                    <Upload className="w-4 h-4 stroke-[2.2]" />
+                <CardTitle className="text-base font-extrabold text-white flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+                    <Upload className="w-4 h-4 stroke-[2]" />
                   </div>
                   Upload da Matrícula em PDF
                 </CardTitle>
@@ -124,26 +124,26 @@ const MatriculaAnalysis: React.FC = () => {
                     border-2 border-dashed rounded-2xl p-10 sm:p-12 text-center cursor-pointer
                     transition-all duration-300 group
                     ${isDragActive
-                      ? 'border-emerald-500 bg-emerald-50/80 scale-[0.99]'
-                      : 'border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 hover:shadow-lg'
+                      ? 'border-emerald-500 bg-emerald-500/10 scale-[0.99]'
+                      : 'border-slate-800 hover:border-emerald-500/60 hover:bg-slate-950/60'
                     }
                     ${analysis.isProcessing ? 'pointer-events-none opacity-50' : ''}
                   `}
                 >
                   <input {...getInputProps()} />
                   <div className="space-y-4">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-emerald-100 to-teal-50 text-emerald-600 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                       <Upload className="w-8 h-8 stroke-[1.8]" />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-base font-extrabold text-slate-900">
+                      <h3 className="text-base font-extrabold text-white">
                         {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a matrícula'}
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-500 font-medium">Suporta arquivos PDF digitalizados ou pesquisáveis</p>
+                      <p className="text-xs sm:text-sm text-slate-400 font-medium">Suporta arquivos PDF digitalizados ou pesquisáveis</p>
                     </div>
                     <Button
-                      variant="outline"
-                      className="border-emerald-300 text-emerald-700 bg-emerald-50/50 hover:bg-emerald-600 hover:text-white font-bold rounded-xl text-xs h-10 px-5 shadow-sm transition-all"
+                      size="sm"
+                      className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs h-10 px-5 shadow-lg shadow-emerald-500/20 transition-all"
                       disabled={analysis.isProcessing}
                     >
                       Selecionar Arquivo PDF
