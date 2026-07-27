@@ -237,21 +237,29 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* 🚀 HERO SECTION COM IMAGEM DE FUNDO DA MATRÍCULA E DESIGN MINIMALISTA */}
-      <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-20 overflow-hidden bg-slate-950 text-white border-b border-slate-900">
+      <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-24 overflow-hidden bg-[#050a0a] text-white border-b border-slate-900">
         
-        {/* Background Image: Matrícula de Imóvel Cartorária */}
+        {/* Background Image: Matrícula de Imóvel Cartorária — Premium */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-25 pointer-events-none mix-blend-luminosity filter contrast-125 scale-105"
-          style={{ backgroundImage: "url('/hero_matricula_bg.png')" }}
+          className="absolute inset-0 bg-cover bg-center pointer-events-none scale-105"
+          style={{
+            backgroundImage: "url('/hero_matricula_bg.png')",
+            opacity: 0.38,
+            mixBlendMode: 'screen',
+            filter: 'contrast(1.1) saturate(1.1) brightness(0.9)',
+          }}
         />
 
-        {/* Ambient Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/65 to-slate-950 pointer-events-none" />
+        {/* Vignette / Edge Fade */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_30%,_#050a0a_80%)]" />
 
-        {/* Background Ambient Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none opacity-30">
-          <div className="absolute -top-20 left-1/3 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl" />
-          <div className="absolute top-10 right-1/3 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl" />
+        {/* Bottom Gradient Fade to Section Below */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-[#050a0a] to-transparent" />
+
+        {/* Ambient Emerald Glow */}
+        <div className="absolute inset-0 pointer-events-none opacity-40">
+          <div className="absolute -top-20 left-1/4 w-[500px] h-[500px] bg-emerald-600/20 rounded-full blur-3xl" />
+          <div className="absolute top-16 right-1/4 w-[400px] h-[400px] bg-teal-500/15 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
