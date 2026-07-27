@@ -1,0 +1,267 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
+
+export type UserRole = 'admin' | 'user';
+
+export interface User {
+  id: string;
+  email: string;
+  hasSubscription: boolean;
+  role: UserRole;
+  name?: string;
+  createdAt: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  session: Session | null;
+  isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, name?: string) => Promise<{ error: any }>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  updatePassword: (newPassword: string) => Promise<{ error: any }>;
+  isAdmin: () => boolean;
+  grantAccess: (email: string) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Helper: resolve admin role from env whitelist
+    const resolveRole = (email: string, profileRole?: string): UserRole => {
+      const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || '')
+        .split(',')
+        .map((e: string) => e.trim().toLowerCase())
+        .filter(Boolean);
+      return adminEmails.includes(email.toLowerCase()) || profileRole === 'admin'
+        ? 'admin'
+        : 'user';
+    };
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        if (session?.user) {
+          const userEmail = session.user.email || '';
+
+          // Fetch user profile data
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (profile) {
+            // Profile found — use it
+            const resolvedRole = resolveRole(userEmail, profile.role);
+            setUser({
+              id: session.user.id,
+              email: userEmail,
+              hasSubscription: profile.has_subscription || resolvedRole === 'admin',
+              role: resolvedRole,
+              name: profile.full_name || userEmail.split('@')[0],
+              createdAt: profile.created_at,
+            });
+          } else {
+            // Profile missing — check if admin email and auto-create profile
+            const resolvedRole = resolveRole(userEmail);
+            const isAdminEmail = resolvedRole === 'admin';
+
+            if (isAdminEmail) {
+              // Auto-create profile for admin email on first login
+              const newProfile = {
+                user_id: session.user.id,
+                has_subscription: true,
+                subscription_status: 'active',
+                role: 'admin' as const,
+                full_name: userEmail.split('@')[0],
+              };
+              await supabase.from('profiles').upsert(newProfile, { onConflict: 'user_id' });
+
+              setUser({
+                id: session.user.id,
+                email: userEmail,
+                hasSubscription: true,
+                role: 'admin',
+                name: userEmail.split('@')[0],
+                createdAt: new Date().toISOString(),
+              });
+            } else {
+              // Regular user without profile — set limited access
+              setUser({
+                id: session.user.id,
+                email: userEmail,
+                hasSubscription: false,
+                role: 'user',
+                name: userEmail.split('@')[0],
+                createdAt: new Date().toISOString(),
+              });
+            }
+          }
+        } else {
+          setUser(null);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      return { error };
+    } catch (error) {
+      return { error };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signUp = async (email: string, password: string, name?: string) => {
+    setIsLoading(true);
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: name || email.split('@')[0]
+          }
+        }
+      });
+      return { error };
+    } catch (error) {
+      return { error };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      const redirectUrl = `${window.location.origin}/auth?reset=true`;
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl
+      });
+      return { error };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      return { error };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const signOut = async () => {
+    setIsLoading(true);
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isAdmin = () => {
+    return user?.role === 'admin';
+  };
+
+  // Admin function to grant access to users who paid
+  const grantAccess = async (email: string) => {
+    if (!isAdmin()) {
+      throw new Error('Apenas administradores podem liberar acesso');
+    }
+
+    try {
+      // Create user account with temporary password
+      const tempPassword = 'TempPass123!';
+      const { data, error } = await supabase.auth.admin.createUser({
+        email,
+        password: tempPassword,
+        email_confirm: true,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Update profile with subscription
+      if (data.user) {
+        await supabase
+          .from('profiles')
+          .update({
+            has_subscription: true,
+            subscription_status: 'active'
+          })
+          .eq('user_id', data.user.id);
+      }
+    } catch (error) {
+      console.error('Grant access error:', error);
+      throw error;
+    }
+  };
+
+  const value: AuthContextType = {
+    user,
+    session,
+    isLoading,
+    signIn,
+    signUp,
+    signOut,
+    resetPassword,
+    updatePassword,
+    isAdmin,
+    grantAccess
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

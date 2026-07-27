@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Configurar Admin — Valida Imóvel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a; color: #f1f5f9;
+      min-height: 100vh; display: flex; align-items: flex-start;
+      justify-content: center; padding: 2rem;
+    }
+    .card {
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 1.5rem; padding: 2.5rem; max-width: 600px;
+      width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5); margin-top: 2rem;
+    }
+    .logo { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    .logo-icon { width: 36px; height: 36px; background: #059669; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .logo-text { font-size: 1.15rem; font-weight: 800; }
+    .logo-text span { color: #34d399; }
+    h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .4rem; }
+    p.sub { color: #94a3b8; font-size: .85rem; margin-bottom: 1.5rem; line-height: 1.6; }
+    .info-box { background: #0f172a; border: 1px solid #334155; border-radius: .75rem; padding: 1rem; margin-bottom: 1.25rem; font-size: .8rem; color: #94a3b8; }
+    .info-box .row { display: flex; justify-content: space-between; padding: .25rem 0; }
+    .info-box .row span:last-child { color: #e2e8f0; font-weight: 600; }
+    .btn-row { display: flex; gap: .75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    button {
+      flex: 1; min-width: 140px;
+      background: #059669; color: white; border: none; border-radius: .75rem;
+      padding: .85rem 1rem; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s;
+    }
+    button:hover { background: #047857; }
+    button:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+    button.secondary { background: #1d4ed8; }
+    button.secondary:hover { background: #1e40af; }
+    .log { margin-top: 1rem; background: #0f172a; border: 1px solid #334155; border-radius: .75rem;
+      padding: 1rem; font-size: .78rem; font-family: 'Consolas', monospace; line-height: 2;
+      min-height: 60px; max-height: 340px; overflow-y: auto; }
+    .ok  { color: #34d399; } .err { color: #f87171; }
+    .inf { color: #60a5fa; } .warn { color: #fbbf24; }
+    .log-line { display: flex; gap: .5rem; align-items: flex-start; word-break: break-all; }
+    .success-box { background: #065f46; border: 1px solid #059669; border-radius: 1rem; padding: 1.5rem; margin-top: 1rem; display: none; text-align: center; }
+    .success-box.show { display: block; }
+    .success-box h3 { color: #34d399; font-size: 1.1rem; margin-bottom: .75rem; }
+    .success-box p { color: #6ee7b7; font-size: .85rem; margin-bottom: .4rem; }
+    .success-box a { display: inline-block; margin-top: 1rem; background: #059669; color: white; text-decoration: none; padding: .75rem 2rem; border-radius: .75rem; font-weight: 700; }
+    .sep { border-top: 1px solid #334155; margin: 1.25rem 0; padding-top: 1rem; font-size: .8rem; color: #64748b; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">✓</div>
+    <div class="logo-text">Valida<span>Imóvel</span> — Setup Admin</div>
+  </div>
+
+  <h2>Configurar Conta Admin Master</h2>
+  <p class="sub">Use o <strong>Método 1</strong> (automático). Se der erro, use o <strong>Método 2</strong> (cadastro direto).</p>
+
+  <div class="info-box">
+    <div class="row"><span>📧 Email</span><span>elizandro.aquino@outlook.com</span></div>
+    <div class="row"><span>🔑 Senha</span><span>@1Doc_22</span></div>
+    <div class="row"><span>🛡️ Papel</span><span>Admin Master</span></div>
+  </div>
+
+  <div class="btn-row">
+    <button id="btn1" onclick="runMethod1()">🚀 Método 1 — Admin API</button>
+    <button id="btn2" class="secondary" onclick="runMethod2()">📝 Método 2 — Cadastro Direto</button>
+  </div>
+
+  <div class="log" id="log">Aguardando ação...</div>
+
+  <div class="sep">
+    ℹ️ Método 1 usa a service_role key para criação direta e confirmada.<br>
+    Método 2 cria a conta via cadastro normal (pode exigir confirmar email em <strong>elizandro.aquino@outlook.com</strong>).
+  </div>
+
+  <div class="success-box" id="successBox">
+    <h3>✅ Configuração Concluída!</h3>
+    <p>Conta de administrador criada com sucesso.</p>
+    <p><strong>Email:</strong> elizandro.aquino@outlook.com</p>
+    <p><strong>Senha:</strong> @1Doc_22</p>
+    <a href="http://localhost:8080/auth" target="_blank">🔐 Fazer Login Agora</a>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL   = 'https://zrfawkiaayajpodrhlfr.supabase.co';
+const SERVICE_KEY    = window.SERVICE_ROLE_KEY || '';
+const ANON_KEY       = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyZmF3a2lhYXlhanBvZHJobGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MDA5MTYsImV4cCI6MjA3MTM3NjkxNn0.DafALkXivgqEQTttzHGxrEh2388UkpF5sfruLSxK6tw';
+const ADMIN_EMAIL    = 'elizandro.aquino@outlook.com';
+const ADMIN_PASSWORD = '@1Doc_22';
+
+const logEl = document.getElementById('log');
+function clearLog() { logEl.innerHTML = ''; }
+function log(icon, msg, cls = 'inf') {
+  logEl.innerHTML += `<div class="log-line ${cls}"><span>${icon}</span><span>${msg}</span></div>`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+async function req(path, method, body, authKey, extra = {}) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}${path}`, {
+      method,
+      headers: {
+        'apikey': authKey,
+        'Authorization': `Bearer ${authKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+        ...extra,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    let data;
+    try { data = await res.json(); } catch { data = {}; }
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    return { ok: false, status: 0, data: { error: err.message } };
+  }
+}
+
+// ──────────────────────────────
+// MÉTODO 1 — Admin API com service_role
+// ──────────────────────────────
+async function runMethod1() {
+  clearLog();
+  const btn = document.getElementById('btn1');
+  btn.disabled = true; btn.textContent = '⏳ Aguarde...';
+  document.getElementById('successBox').classList.remove('show');
+
+  try {
+    log('🔑', 'Tentando Admin API com service_role key...');
+
+    // Criar usuário
+    const r = await req('/auth/v1/admin/users', 'POST', {
+      email: ADMIN_EMAIL,
+      password: ADMIN_PASSWORD,
+      email_confirm: true,
+      user_metadata: { full_name: 'Elizandro Aquino' },
+    }, SERVICE_KEY);
+
+    log('📡', `Status: ${r.status} | Resposta: ${JSON.stringify(r.data).substring(0, 200)}`);
+
+    let userId = r.data?.id;
+
+    if (!userId) {
+      // Pode ser que já existe — tentar listar
+      log('🔍', 'Buscando na lista de usuários...', 'warn');
+      const list = await req('/auth/v1/admin/users?per_page=1000', 'GET', null, SERVICE_KEY);
+      log('📡', `Lista status: ${list.status} | ${JSON.stringify(list.data).substring(0, 200)}`);
+
+      if (list.ok && list.data?.users) {
+        const found = list.data.users.find(u => u.email === ADMIN_EMAIL);
+        if (found) {
+          userId = found.id;
+          log('✅', 'Usuário encontrado! ID: ' + userId, 'ok');
+          // Atualizar senha e confirmar email
+          await req(`/auth/v1/admin/users/${userId}`, 'PUT', {
+            password: ADMIN_PASSWORD, email_confirm: true,
+          }, SERVICE_KEY);
+          log('✅', 'Senha e email confirmados!', 'ok');
+        } else {
+          throw new Error('Usuário não encontrado. Tente o Método 2.');
+        }
+      } else {
+        throw new Error(`Admin API bloqueada (status ${list.status}). Tente o Método 2.`);
+      }
+    } else {
+      log('✅', 'Usuário criado! ID: ' + userId, 'ok');
+    }
+
+    await updateProfile(userId, SERVICE_KEY);
+
+    log('🎉', 'SUCESSO! Conta admin configurada.', 'ok');
+    document.getElementById('successBox').classList.add('show');
+    btn.textContent = '✅ Configurado!';
+  } catch(err) {
+    log('❌', 'Erro no Método 1: ' + err.message, 'err');
+    log('💡', 'Clique em "Método 2" para tentar via cadastro direto.', 'warn');
+    btn.disabled = false; btn.textContent = '🔄 Tentar M1 Novamente';
+  }
+}
+
+// ──────────────────────────────
+// MÉTODO 2 — Signup normal + login + update profile
+// ──────────────────────────────
+async function runMethod2() {
+  clearLog();
+  const btn = document.getElementById('btn2');
+  btn.disabled = true; btn.textContent = '⏳ Aguarde...';
+  document.getElementById('successBox').classList.remove('show');
+
+  try {
+    // Tentar signup
+    log('📧', 'Criando conta via signup...');
+    const signup = await req('/auth/v1/signup', 'POST', {
+      email: ADMIN_EMAIL, password: ADMIN_PASSWORD,
+      data: { full_name: 'Elizandro Aquino' },
+    }, ANON_KEY);
+
+    log('📡', `Signup status: ${signup.status} | ${JSON.stringify(signup.data).substring(0, 200)}`);
+
+    const signupOk = signup.ok && (signup.data?.user?.id || signup.data?.id);
+
+    if (!signupOk && !signup.data?.msg?.includes('already')) {
+      const errMsg = signup.data?.error?.message || signup.data?.msg || 'Erro desconhecido';
+      if (!errMsg.toLowerCase().includes('already') && !errMsg.toLowerCase().includes('registered')) {
+        log('⚠️', 'Signup retornou: ' + errMsg, 'warn');
+      }
+    }
+
+    // Tentar login direto
+    log('🔐', 'Fazendo login...');
+    const login = await req('/auth/v1/token?grant_type=password', 'POST', {
+      email: ADMIN_EMAIL, password: ADMIN_PASSWORD,
+    }, ANON_KEY);
+
+    log('📡', `Login status: ${login.status} | ${JSON.stringify(login.data).substring(0, 200)}`);
+
+    if (!login.ok || !login.data?.access_token) {
+      if (login.data?.error_description?.includes('Email not confirmed') || 
+          login.data?.error?.includes('email_not_confirmed')) {
+        log('📬', '⚠️ Precisa confirmar o email!', 'warn');
+        log('📬', 'Verifique sua caixa: elizandro.aquino@outlook.com', 'warn');
+        log('📬', 'Após confirmar, clique "Método 2" novamente.', 'warn');
+        log('💡', 'OU: no Supabase Dashboard → Auth → Users → clique no usuário → "Confirm email"', 'inf');
+        btn.disabled = false; btn.textContent = '🔄 Tentar M2 Após Confirmar';
+        return;
+      }
+      throw new Error('Login falhou: ' + (login.data?.error_description || login.data?.msg || JSON.stringify(login.data)));
+    }
+
+    const { access_token, user } = login.data;
+    log('✅', 'Login OK! ID: ' + user.id, 'ok');
+
+    await updateProfile(user.id, access_token);
+
+    log('🎉', 'SUCESSO! Conta admin configurada.', 'ok');
+    document.getElementById('successBox').classList.add('show');
+    btn.textContent = '✅ Configurado!';
+  } catch(err) {
+    log('❌', 'Erro no Método 2: ' + err.message, 'err');
+    btn.disabled = false; btn.textContent = '🔄 Tentar M2 Novamente';
+  }
+}
+
+// ──────────────────────────────
+// Atualizar / criar perfil
+// ──────────────────────────────
+async function updateProfile(userId, token) {
+  log('📋', 'Verificando tabela profiles...');
+  const getP = await req(`/rest/v1/profiles?user_id=eq.${userId}&select=*`, 'GET', null, token);
+  log('📡', `Profiles GET status: ${getP.status}`);
+
+  const profiles = Array.isArray(getP.data) ? getP.data : [];
+  const profileData = {
+    has_subscription: true,
+    subscription_status: 'active',
+    role: 'admin',
+    full_name: 'Elizandro Aquino',
+  };
+
+  if (profiles.length > 0) {
+    log('🔄', 'Atualizando perfil existente...');
+    const up = await req(`/rest/v1/profiles?user_id=eq.${userId}`, 'PATCH', profileData, token);
+    log('📡', `PATCH status: ${up.status} | ${JSON.stringify(up.data).substring(0, 120)}`);
+    if (up.ok || up.status === 204) log('✅', 'Perfil → ADMIN!', 'ok');
+    else log('⚠️', 'Aviso perfil: ' + JSON.stringify(up.data), 'warn');
+  } else {
+    log('➕', 'Criando perfil...');
+    const ins = await req('/rest/v1/profiles', 'POST', { user_id: userId, ...profileData }, token);
+    log('📡', `POST status: ${ins.status} | ${JSON.stringify(ins.data).substring(0, 120)}`);
+    if (ins.ok || ins.status === 201) log('✅', 'Perfil ADMIN criado!', 'ok');
+    else log('⚠️', 'Aviso: ' + JSON.stringify(ins.data), 'warn');
+  }
+}
+</script>
+</body>
+</html>
