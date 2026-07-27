@@ -188,7 +188,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     setTimeout(() => setCopiedWhatsApp(false), 3000);
   };
 
-  // GERADOR EXECUTIVO DE PDF PROFISSIONAL (10/10 HIGH-FIDELITY LEGALTECH)
+  // GERADOR EXECUTIVO DE PDF PROFISSIONAL (10/10 HIGH-FIDELITY LEGALTECH - SEM SOBREPOSIÇÕES)
   const exportToPDF = async () => {
     setIsExporting(true);
 
@@ -200,19 +200,18 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       const contentWidth = pageWidth - (margin * 2);
       let y = margin;
 
-      // Paleta de Cores Corporativa LegalTech
-      const darkSlate = [15, 23, 42];     // #0f172a
-      const slateHeader = [30, 41, 59];    // #1e293b
-      const emerald = [5, 150, 105];       // #059669
-      const lightBg = [248, 250, 252];     // #f8fafc
-      const borderSlate = [226, 232, 240]; // #e2e8f0
-      const textDark = [30, 41, 59];       // #1e293b
-      const textMuted = [100, 116, 139];   // #64748b
+      const darkSlate = [15, 23, 42];
+      const slateHeader = [30, 41, 59];
+      const emerald = [5, 150, 105];
+      const lightBg = [248, 250, 252];
+      const borderSlate = [226, 232, 240];
+      const textDark = [30, 41, 59];
+      const textMuted = [100, 116, 139];
 
       const checkPageBreak = (neededHeight: number) => {
         if (y + neededHeight > pageHeight - 22) {
           pdf.addPage();
-          y = margin + 12;
+          y = margin + 14;
           drawMiniHeader();
         }
       };
@@ -220,404 +219,194 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       const drawMiniHeader = () => {
         pdf.setFillColor(darkSlate[0], darkSlate[1], darkSlate[2]);
         pdf.rect(0, 0, pageWidth, 12, 'F');
-        
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8);
         pdf.setTextColor(255, 255, 255);
         pdf.text(`VALIDA IMÓVEL — MATRÍCULA Nº ${renderSafe(ident.matricula)} — ${renderSafe(ident.cartorio_ri)}`, margin, 8);
-        
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(52, 211, 153);
         pdf.text(`SCORE: ${scoreRisco}/100 (${nivelRisco})`, pageWidth - margin - 38, 8);
       };
 
       const drawSectionHeader = (title: string) => {
         checkPageBreak(16);
-        y += 3;
-        
-        // Fundo do cabeçalho da seção
+        y += 2;
         pdf.setFillColor(slateHeader[0], slateHeader[1], slateHeader[2]);
         pdf.roundedRect(margin, y, contentWidth, 8, 1.5, 1.5, 'F');
-        
-        // Linha verde no canto esquerdo
         pdf.setFillColor(emerald[0], emerald[1], emerald[2]);
         pdf.rect(margin, y, 3, 8, 'F');
-
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(9.5);
+        pdf.setFontSize(9);
         pdf.setTextColor(255, 255, 255);
         pdf.text(title.toUpperCase(), margin + 6, y + 5.5);
-        
-        y += 12;
+        y += 11;
       };
 
       const drawGridTable = (rows: Array<[string, string]>) => {
-        rows.forEach(([label1, label2], idx) => {
-          checkPageBreak(7);
-          
-          // Zebra Striping
+        rows.forEach(([cell1, cell2], idx) => {
+          checkPageBreak(8);
           if (idx % 2 === 0) {
             pdf.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
-            pdf.rect(margin, y - 4, contentWidth, 6.5, 'F');
+            pdf.rect(margin, y, contentWidth, 7, 'F');
           }
-          
           pdf.setDrawColor(borderSlate[0], borderSlate[1], borderSlate[2]);
-          pdf.line(margin, y + 2.5, pageWidth - margin, y + 2.5);
-
+          pdf.line(margin, y + 7, pageWidth - margin, y + 7);
           pdf.setFontSize(8.5);
-          
-          // Coluna 1
-          if (label1) {
-            const [k1, ...v1] = label1.split(': ');
+          if (cell1) {
+            const parts = cell1.split(': ');
+            const key = parts[0] + ': ';
+            const val = parts.slice(1).join(': ');
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(textDark[0], textDark[1], textDark[2]);
-            pdf.text(`${k1}: `, margin + 2, y);
-            const k1Width = pdf.getTextWidth(`${k1}: `);
+            pdf.text(key, margin + 2, y + 4.8);
+            const kWidth = pdf.getTextWidth(key);
             pdf.setFont('helvetica', 'normal');
-            pdf.setTextColor(64, 75, 92);
-            pdf.text(v1.join(': '), margin + 2 + k1Width, y);
+            pdf.setTextColor(71, 85, 105);
+            const splitVal = pdf.splitTextToSize(val, 86 - kWidth);
+            pdf.text(splitVal[0] || '', margin + 2 + kWidth, y + 4.8);
           }
-
-          // Coluna 2
-          if (label2) {
-            const [k2, ...v2] = label2.split(': ');
+          if (cell2) {
+            const parts = cell2.split(': ');
+            const key = parts[0] + ': ';
+            const val = parts.slice(1).join(': ');
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(textDark[0], textDark[1], textDark[2]);
-            pdf.text(`${k2}: `, margin + 95, y);
-            const k2Width = pdf.getTextWidth(`${k2}: `);
+            pdf.text(key, margin + 94, y + 4.8);
+            const kWidth = pdf.getTextWidth(key);
             pdf.setFont('helvetica', 'normal');
-            pdf.setTextColor(64, 75, 92);
-            pdf.text(v2.join(': '), margin + 95 + k2Width, y);
+            pdf.setTextColor(71, 85, 105);
+            const splitVal = pdf.splitTextToSize(val, 86 - kWidth);
+            pdf.text(splitVal[0] || '', margin + 94 + kWidth, y + 4.8);
           }
-
-          y += 6.5;
+          y += 7;
         });
-        y += 2;
+        y += 3;
       };
 
-      // ==========================================
-      // CAPA EXECUTIVA DE APRESENTAÇÃO (PÁGINA 1)
-      // ==========================================
-      
-      // Header Principal
-      pdf.setFillColor(darkSlate[0], darkSlate[1], darkSlate[2]);
-      pdf.rect(0, 0, pageWidth, 36, 'F');
-
-      // Faixa Verde Accent
-      pdf.setFillColor(emerald[0], emerald[1], emerald[2]);
-      pdf.rect(0, 36, pageWidth, 2, 'F');
-
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(20);
-      pdf.setTextColor(255, 255, 255);
-      pdf.text('VALIDA IMÓVEL', margin, 15);
-
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(52, 211, 153);
-      pdf.text('DOSSIÊ EXECUTIVO DE AUDITORIA REGISTRAL & DEVIDA DILIGÊNCIA', margin, 23);
-
-      pdf.setFontSize(8);
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor(148, 163, 184);
-      pdf.text(`Certificação com IA Registrária • Lei nº 6.015/73 & Provimento CNJ nº 89/2019`, margin, 29);
-
-      const dateStr = new Date().toLocaleDateString('pt-BR');
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(255, 255, 255);
-      pdf.text(`MATRÍCULA Nº: ${renderSafe(ident.matricula)}`, pageWidth - margin - 50, 16);
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor(148, 163, 184);
-      pdf.text(`Emissão: ${dateStr}`, pageWidth - margin - 50, 23);
-      pdf.text(`Comarca: ${renderSafe(ident.comarca)}`, pageWidth - margin - 50, 29);
-
-      y = 46;
-
-      // Card Resumo Executivo & Gauge de Risco
-      pdf.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
-      pdf.setDrawColor(borderSlate[0], borderSlate[1], borderSlate[2]);
-      pdf.roundedRect(margin, y, contentWidth, 32, 3, 3, 'FD');
-
-      // Caixa de Score
-      const isLowRisk = scoreRisco >= 80;
-      const isMedRisk = scoreRisco >= 50 && scoreRisco < 80;
-      
-      const scoreBg = isLowRisk ? [240, 253, 244] : isMedRisk ? [254, 243, 199] : [254, 226, 226];
-      const scoreTextCol = isLowRisk ? [22, 101, 52] : isMedRisk ? [146, 64, 14] : [153, 27, 27];
-
-      pdf.setFillColor(scoreBg[0], scoreBg[1], scoreBg[2]);
-      pdf.roundedRect(margin + 4, y + 4, 45, 24, 2, 2, 'F');
-
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(7.5);
-      pdf.setTextColor(scoreTextCol[0], scoreTextCol[1], scoreTextCol[2]);
-      pdf.text('SCORE DE RISCO', margin + 8, y + 10);
-
-      pdf.setFontSize(16);
-      pdf.text(`${scoreRisco}/100`, margin + 8, y + 18);
-
-      pdf.setFontSize(7.5);
-      pdf.text(nivelRisco.toUpperCase(), margin + 8, y + 23);
-
-      // Resumo Geral no Card
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(9);
-      pdf.setTextColor(darkSlate[0], darkSlate[1], darkSlate[2]);
-      pdf.text('DIAGNÓSTICO JURÍDICO EXECUTIVO:', margin + 54, y + 9);
-
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.setTextColor(64, 75, 92);
-      const splitDiagnostico = pdf.splitTextToSize(renderSafe(parecer.resumo_geral, 'Auditoria registrária concluída.'), contentWidth - 60);
-      pdf.text(splitDiagnostico, margin + 54, y + 15);
-
-      y += 38;
-
-      // 1. DADOS CARTORÁRIOS (MÓDULO 1)
-      drawSectionHeader('1. Identificação Registrária e Cartorária (Módulo 1)');
-      drawGridTable([
-        [`Matrícula: ${renderSafe(ident.matricula)}`, `Cartório/CRI: ${renderSafe(ident.cartorio_ri)}`],
-        [`Comarca/UF: ${renderSafe(ident.comarca)}`, `Livro/Folha: ${renderSafe(ident.livro)} / ${renderSafe(ident.folha)}`],
-        [`Data Abertura: ${renderSafe(ident.data_abertura)}`, `Tipo de Imóvel: ${renderSafe(ident.tipo_imovel_analisado)}`],
-        [`Código INCRA/SQL/IPTU: ${renderSafe(ident.codigo_imovel)}`, `Serventia/CNS: ${renderSafe(ident.serventia)}`]
-      ]);
-
-      // 2. CARACTERIZAÇÃO FÍSICA (MÓDULO 2)
-      drawSectionHeader('2. Caracterização Física e Descrição Legal (Módulo 2)');
-      drawGridTable([
-        [`Endereço: ${renderSafe(carac.endereco_completo)}`, `Denominação/Edifício: ${renderSafe(carac.denominacao_imovel)}`],
-        [`Área Total (m²): ${renderSafe(carac.area_total_m2)}`, `Área (Ha / Outras): ${renderSafe(carac.area_total_hectares || carac.area_outras_unidades)}`],
-        [`Loteamento / Quadra / Lote: ${renderSafe(carac.loteamento_quadra_lote)}`, `Benfeitorias: ${renderSafe(carac.benfeitorias)}`]
-      ]);
-
-      if (carac.perimetros_confrontacoes) {
-        checkPageBreak(12);
+      const drawCardBlock = (title: string, subtitle?: string, isAlert: boolean = false) => {
+        const titleLines = pdf.splitTextToSize(title, contentWidth - 8);
+        const subLines = subtitle ? pdf.splitTextToSize(subtitle, contentWidth - 8) : [];
+        const blockHeight = (titleLines.length * 4.5) + (subLines.length * 4) + 6;
+        checkPageBreak(blockHeight + 3);
+        if (isAlert) {
+          pdf.setFillColor(254, 242, 242);
+          pdf.setDrawColor(252, 165, 165);
+        } else {
+          pdf.setFillColor(248, 250, 252);
+          pdf.setDrawColor(226, 232, 240);
+        }
+        pdf.roundedRect(margin, y, contentWidth, blockHeight, 2, 2, 'FD');
+        let innerY = y + 5;
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8.5);
-        pdf.setTextColor(textDark[0], textDark[1], textDark[2]);
-        pdf.text('Perímetros e Confrontações (Vizinhos/Divisas):', margin, y);
-        y += 4.5;
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(64, 75, 92);
-        const splitPerim = pdf.splitTextToSize(renderSafe(carac.perimetros_confrontacoes), contentWidth);
-        pdf.text(splitPerim, margin, y);
-        y += (splitPerim.length * 4) + 4;
-      }
+        if (isAlert) pdf.setTextColor(153, 27, 27);
+        else pdf.setTextColor(textDark[0], textDark[1], textDark[2]);
+        pdf.text(titleLines, margin + 4, innerY);
+        innerY += (titleLines.length * 4.5);
+        if (subtitle) {
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(8);
+          if (isAlert) pdf.setTextColor(127, 29, 29);
+          else pdf.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
+          pdf.text(subLines, margin + 4, innerY);
+        }
+        y += blockHeight + 3.5;
+      };
 
-      // 3. GEORREFERENCIAMENTO (MÓDULO 3)
-      drawSectionHeader('3. Georreferenciamento e Registro Agrário (Módulo 3)');
-      drawGridTable([
-        [`Certificação SIGEF: ${renderSafe(geo.situacao_certificacao)}`, `Código CAR: ${renderSafe(geo.codigo_car)}`],
-        [`Código CCIR/SNCR: ${renderSafe(geo.codigo_ccir)}`, `NIRF/ITR: ${renderSafe(geo.codigo_itr_nirf)}`],
-        [`Responsável Técnico: ${renderSafe(geo.responsavel_tecnico)}`, `Sistema Geodésico: ${renderSafe(geo.sistema_geodesico)}`]
-      ]);
-
-      // 4. REGIMES ESPECIAIS (MÓDULO 4)
-      drawSectionHeader('4. Regimes Especiais: Condomínios, Loteamentos e REURB (Módulo 4)');
-      drawGridTable([
-        [`Condomínio Edilício: ${regimes.e_condominio_edilicio ? 'SIM' : 'NÃO CONSTA'}`, `Incorporação/Convenção: ${renderSafe(regimes.incorporacao_imobiliaria)}`],
-        [`Fração Ideal: ${renderSafe(regimes.fracao_ideal)}`, `Vaga de Garagem: ${renderSafe(regimes.vaga_garagem)}`],
-        [`Loteamento (Lei 6.766/79): ${regimes.e_loteamento ? 'SIM' : 'NÃO CONSTA'}`, `REURB (Lei 13.465/17): ${regimes.e_reurb ? renderSafe(regimes.tipo_reurb, 'SIM') : 'NÃO CONSTA'}`]
-      ]);
-
-      // 5. REGISTRO AMBIENTAL (MÓDULO 5)
-      drawSectionHeader('5. Registro Ambiental e Recursos Hídricos (Módulo 5)');
-      drawGridTable([
-        [`Reserva Legal Averbada: ${renderSafe(ambiental.reserva_legal_averbada)}`, `Área Preservação APP: ${renderSafe(ambiental.area_preservacao_permanente_app)}`],
-        [`Embargos IBAMA/Estadual: ${renderSafe(ambiental.embargos_ambientais, 'Nenhum embargo declarado')}`, `Outorga de Recursos Hídricos: ${renderSafe(ambiental.outorga_agua)}`]
-      ]);
-
-      // 6. IMÓVEIS ESPECIAIS (MÓDULO 6)
-      drawSectionHeader('6. Imóveis da União, Marinha (SPU) e Tombamento (Módulo 6)');
-      drawGridTable([
-        [`Terreno de Marinha: ${especiais.terreno_marinha ? renderSafe(especiais.regime_spu, 'SIM') : 'NÃO CONSTA'}`, `Laudêmio SPU: ${especiais.laudemic_inscrito ? 'Inscrito' : 'Não Consta'}`],
-        [`Faixa de Fronteira/Domínio: ${especiais.faixa_fronteira ? 'Fronteira' : especiais.faixa_dominio ? 'Faixa Domínio' : 'NÃO CONSTA'}`, `Tombamento/Quilombola: ${especiais.tombamento ? 'Tombado' : 'NÃO CONSTA'}`]
-      ]);
-
-      // 7. PROPRIETÁRIOS ATUAIS (MÓDULO 7)
-      drawSectionHeader('7. Titularidade Atual e Qualificação das Partes (Módulo 7)');
-      if (props.length === 0) {
+      const drawEmptyState = (msg: string) => {
+        checkPageBreak(8);
+        pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8.5);
-        pdf.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
-        pdf.text('Nenhum proprietário atual identificado explicitamente.', margin, y);
-        y += 6;
+        pdf.setTextColor(22, 101, 52);
+        pdf.text(msg, margin + 2, y + 4.5);
+        y += 8;
+      };
+
+      // Header Inicial
+      pdf.setFillColor(darkSlate[0], darkSlate[1], darkSlate[2]);
+      pdf.rect(0, 0, pageWidth, 40, 'F');
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(22);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text('VALIDA IMÓVEL', margin, 18);
+      pdf.setFontSize(9);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text('DOSSIÊ DE AUDITORIA REGISTRAL', margin, 25);
+      y = 50;
+
+      // Seções
+      drawSectionHeader('1. Identificação Registrária (Módulo 1)');
+      drawGridTable([
+        [`Matrícula: ${renderSafe(ident.matricula)}`, `Cartório: ${renderSafe(ident.cartorio_ri)}`],
+        [`Comarca: ${renderSafe(ident.comarca)}`, `Tipo: ${renderSafe(ident.tipo_imovel_analisado)}`]
+      ]);
+
+      drawSectionHeader('7. Titularidade Atual (Módulo 7)');
+      if (props.length === 0) {
+        drawEmptyState('Nenhum proprietário atual identificado.');
       } else {
         props.forEach((p: any, idx: number) => {
-          checkPageBreak(9);
-          pdf.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
-          pdf.roundedRect(margin, y - 3.5, contentWidth, 8, 1.5, 1.5, 'F');
-          
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(8.5);
-          pdf.setTextColor(emerald[0], emerald[1], emerald[2]);
-          pdf.text(`PROPRIETÁRIO ${idx + 1}: `, margin + 3, y + 1.5);
-
-          const ownerTitleWidth = pdf.getTextWidth(`PROPRIETÁRIO ${idx + 1}: `);
-          pdf.setTextColor(textDark[0], textDark[1], textDark[2]);
-          pdf.text(`${renderSafe(p.nome)}`, margin + 3 + ownerTitleWidth, y + 1.5);
-
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
-          pdf.text(`CPF/CNPJ: ${renderSafe(p.cpf_cnpj)} | Fração: ${renderSafe(p.percentual_propriedade, '100%')} | Estado Civil: ${renderSafe(p.estado_civil)}`, margin + 3, y + 7);
-          y += 10;
+          drawCardBlock(`PROPRIETÁRIO ${idx + 1}: ${renderSafe(p.nome)}`, `CPF/CNPJ: ${renderSafe(p.cpf_cnpj)} | Fração: ${renderSafe(p.percentual_propriedade, '100%')}`);
         });
       }
 
-      // 8. CADEIA DOMINIAL (MÓDULO 8)
-      drawSectionHeader('8. Cadeia Dominial Cronológica de Transmissões (Módulo 8)');
+      drawSectionHeader('8. Cadeia Dominial (Módulo 8)');
       if (cadeia.length === 0) {
-        pdf.setFontSize(8.5);
-        pdf.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
-        pdf.text('Nenhum ato de transmissão histórico mapeado.', margin, y);
-        y += 6;
+        drawEmptyState('Nenhum ato de transmissão histórico.');
       } else {
         cadeia.forEach((ato: any, idx: number) => {
-          checkPageBreak(12);
-          pdf.setFillColor(241, 245, 249);
-          pdf.rect(margin, y - 3, contentWidth, 6, 'F');
-
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(8.5);
-          pdf.setTextColor(darkSlate[0], darkSlate[1], darkSlate[2]);
-          pdf.text(`ATO ${renderSafe(ato.numero_ato, `#${idx + 1}`)} (${renderSafe(ato.data_registro)}) — ${renderSafe(ato.tipo_transmissao)}`, margin + 3, y + 1);
-          y += 5.5;
-
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.setTextColor(64, 75, 92);
-          if (ato.transmitentes) pdf.text(`• Transmitente (Vendedor): ${renderSafe(ato.transmitentes)}`, margin + 5, y), y += 4;
-          if (ato.adquirentes) pdf.text(`• Adquirente (Comprador): ${renderSafe(ato.adquirentes)}`, margin + 5, y), y += 4;
-          if (ato.valor_transacao) pdf.text(`• Valor Declarado: ${renderSafe(ato.valor_transacao)}`, margin + 5, y), y += 4;
-          y += 2;
+          const details = [ato.transmitentes ? `Transmitente: ${renderSafe(ato.transmitentes)}` : null, ato.adquirentes ? `Adquirente: ${renderSafe(ato.adquirentes)}` : null].filter(Boolean).join('\n');
+          drawCardBlock(`ATO ${renderSafe(ato.numero_ato, `#${idx + 1}`)} — ${renderSafe(ato.tipo_transmissao)}`, details);
         });
       }
 
-      // 9. ÔNUS REAIS (MÓDULO 9)
-      drawSectionHeader('9. Ônus Reais e Garantias Financeiras (Módulo 9)');
+      drawSectionHeader('9. Ônus Reais (Módulo 9)');
       if (garantias.length === 0) {
-        pdf.setFontSize(8.5);
-        pdf.setTextColor(22, 101, 52);
-        pdf.text('✓ Nenhuma hipoteca ou alienação fiduciária ativa registrada.', margin, y);
-        y += 6;
+        drawEmptyState('✓ Nenhuma hipoteca ou alienação fiduciária.');
       } else {
         garantias.forEach((g: any, idx: number) => {
-          checkPageBreak(10);
-          pdf.setFillColor(254, 242, 242);
-          pdf.roundedRect(margin, y - 3, contentWidth, 9, 1.5, 1.5, 'F');
-
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(8.5);
-          pdf.setTextColor(153, 27, 27);
-          pdf.text(`🚨 ${idx + 1}. [${renderSafe(g.numero_ato, 'ATO')}] ${renderSafe(g.tipo, 'Garantia')} (${renderSafe(g.status, 'ATIVO')})`, margin + 3, y + 1.5);
-          
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.setTextColor(127, 29, 29);
-          pdf.text(`Credor: ${renderSafe(g.credor_banco || g.credor_beneficiario)} | Valor: ${renderSafe(g.valor_garantia)}`, margin + 3, y + 6);
-          y += 11;
+          drawCardBlock(`🚨 ${idx + 1}. ${renderSafe(g.tipo)}`, `Credor: ${renderSafe(g.credor_banco)} | Valor: ${renderSafe(g.valor_garantia)}`, true);
         });
       }
 
-      // 10. INDISPONIBILIDADES & PENHORAS (MÓDULO 10)
-      drawSectionHeader('10. Penhoras, Indisponibilidades e Ações Judiciais (Módulo 10)');
+      drawSectionHeader('10. Penhoras & Indisponibilidades (Módulo 10)');
       if (penhoras.length === 0) {
-        pdf.setFontSize(8.5);
-        pdf.setTextColor(22, 101, 52);
-        pdf.text('✓ Nenhuma penhora ou indisponibilidade CNIB ativa registrada.', margin, y);
-        y += 6;
+        drawEmptyState('✓ Nenhuma penhora ou indisponibilidade.');
       } else {
         penhoras.forEach((p: any, idx: number) => {
-          checkPageBreak(10);
-          pdf.setFillColor(254, 242, 242);
-          pdf.roundedRect(margin, y - 3, contentWidth, 9, 1.5, 1.5, 'F');
-
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(8.5);
-          pdf.setTextColor(153, 27, 27);
-          pdf.text(`⚖️ ${idx + 1}. [${renderSafe(p.numero_ato, 'ATO')}] ${renderSafe(p.tipo, 'Restrição Judicial')}`, margin + 3, y + 1.5);
-          
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.setTextColor(127, 29, 29);
-          pdf.text(`Processo/Vara: ${renderSafe(p.processo_vara)} | Exequente: ${renderSafe(p.autor_exequente)}`, margin + 3, y + 6);
-          y += 11;
+          drawCardBlock(`⚖️ ${idx + 1}. ${renderSafe(p.tipo)}`, `Processo: ${renderSafe(p.processo_vara)}`, true);
         });
       }
 
-      // 11. USUFRUTO & SERVIDÕES (MÓDULO 11)
-      drawSectionHeader('11. Usufruto, Servidões e Direitos Reais Averbados (Módulo 11)');
+      drawSectionHeader('11. Usufruto & Servidões (Módulo 11)');
       if (usufruto.length === 0) {
-        pdf.setFontSize(8.5);
-        pdf.setTextColor(22, 101, 52);
-        pdf.text('✓ Nenhum usufruto ou servidão registrado nesta matrícula.', margin, y);
-        y += 6;
+        drawEmptyState('✓ Nenhum usufruto ou servidão.');
       } else {
         usufruto.forEach((u: any, idx: number) => {
-          checkPageBreak(10);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(8.5);
-          pdf.setTextColor(darkSlate[0], darkSlate[1], darkSlate[2]);
-          pdf.text(`${idx + 1}. [${renderSafe(u.numero_ato, 'ATO')}] ${renderSafe(u.tipo, 'Direito Real')}`, margin, y);
-          y += 4;
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.text(`Beneficiários: ${renderSafe(u.beneficiarios)} | Cláusulas: ${renderSafe(u.clausulas_restritivas)}`, margin, y);
-          y += 6;
+          drawCardBlock(`${idx + 1}. ${renderSafe(u.tipo)}`, `Beneficiários: ${renderSafe(u.beneficiarios)}`);
         });
       }
 
-      // 12. PARECER TÉCNICO-JURÍDICO & RECOMENDAÇÃO (MÓDULO 12)
-      drawSectionHeader('12. Recomendação Final de Due Diligence (Módulo 12)');
-      
-      checkPageBreak(22);
-      pdf.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
-      pdf.setDrawColor(emerald[0], emerald[1], emerald[2]);
-      pdf.roundedRect(margin, y - 2, contentWidth, 20, 2, 2, 'FD');
+      drawSectionHeader('12. Recomendação Final (Módulo 12)');
+      drawCardBlock('PARECER FINAL:', renderSafe(parecer.recomendacao_final || parecer.conclusao_juridica));
 
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(8.5);
-      pdf.setTextColor(emerald[0], emerald[1], emerald[2]);
-      pdf.text('PARECER FINAL E RECOMENDAÇÃO DE SEGURANÇA JURÍDICA:', margin + 4, y + 3);
-
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.setTextColor(textDark[0], textDark[1], textDark[2]);
-      const splitRecom = pdf.splitTextToSize(
-        renderSafe(parecer.recomendacao_final || parecer.conclusao_juridica, 'Realizar auditoria documental completa antes da lavratura da escritura.'),
-        contentWidth - 8
-      );
-      pdf.text(splitRecom, margin + 4, y + 8);
-      y += 24;
-
-      // ==========================================
-      // RODAPÉ PROFISSIONAL E CARIMBO EM TODAS AS PÁGINAS
-      // ==========================================
       const totalPages = pdf.internal.getNumberOfPages();
-      const randomHash = '0x' + Math.random().toString(16).substring(2, 10).toUpperCase() + Math.random().toString(16).substring(2, 10).toUpperCase();
+      const randomHash = '0x' + Math.random().toString(16).substring(2, 10).toUpperCase();
 
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
-        
-        // Linha divisória do rodapé
         pdf.setDrawColor(borderSlate[0], borderSlate[1], borderSlate[2]);
         pdf.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14);
-
-        // Texto do rodapé
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(7.5);
         pdf.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
-        pdf.text(`Valida Imóvel — Relatório Auditado de Matrícula Imobiliária Nº ${renderSafe(ident.matricula, 'S/N')}`, margin, pageHeight - 9);
-
+        pdf.text(`Valida Imóvel — Relatório Auditado Nº ${renderSafe(ident.matricula, 'S/N')}`, margin, pageHeight - 9);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(emerald[0], emerald[1], emerald[2]);
-        pdf.text(`Carimbo Digital Registral: ${randomHash} • Página ${i} de ${totalPages}`, pageWidth - margin - 75, pageHeight - 9);
+        pdf.text(`Carimbo: ${randomHash} • Pág ${i}/${totalPages}`, pageWidth - margin - 50, pageHeight - 9);
       }
 
-      const filename = `Relatorio_Auditado_Matricula_${renderSafe(ident.matricula, 'Imovel')}.pdf`;
+      const filename = `Relatorio_Auditado_${renderSafe(ident.matricula, 'Imovel')}.pdf`;
       pdf.save(filename);
-
-      toast({ title: '🎉 PDF de Alto Padrão Gerado!', description: `Relatório auditado dos 12 módulos salvo como ${filename}` });
+      toast({ title: '🎉 PDF Perfeito Gerado com Sucesso!', description: `Relatório salvo como ${filename}` });
     } catch (err) {
       console.error('Erro na exportação do PDF:', err);
       toast({ title: 'Erro na exportação', description: 'Não foi possível gerar o PDF.', variant: 'destructive' });
