@@ -290,22 +290,25 @@ const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Dropzone Direct Box */}
-                <Link to="/app" className="block pt-1">
-                  <div className="p-4 bg-slate-900/90 border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 rounded-2xl transition-all cursor-pointer group text-center lg:text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <FileUp className="w-5 h-5 stroke-[2.5]" />
-                      </div>
-                      <div className="text-left">
-                        <span className="text-xs font-black text-white block">Envie o PDF da Matrícula do Imóvel Aqui</span>
-                        <span className="text-[11px] text-slate-400 font-medium">Análise automática instantânea com síntese dos 12 módulos registrais</span>
-                      </div>
+                <div className="p-4 bg-slate-900/90 border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 rounded-2xl transition-all cursor-pointer group text-center lg:text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+                  <Link to="/app" className="flex items-center gap-3 flex-1 text-left">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                      <FileUp className="w-5 h-5 stroke-[2.5]" />
                     </div>
-                    <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shrink-0">
-                      Analisar Agora ⚡
-                    </Button>
+                    <div>
+                      <span className="text-xs font-black text-white block">Envie o PDF da Matrícula do Imóvel Aqui</span>
+                      <span className="text-[11px] text-slate-400 font-medium">Análise automática instantânea com síntese dos 12 módulos registrais</span>
+                    </div>
+                  </Link>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link to="/app?sample=safe">
+                      <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl">
+                        Testar Exemplo ⚡
+                      </Button>
+                    </Link>
                   </div>
-                </Link>
+                </div>
 
                 {/* Selos de Confiança Próximos ao CTA */}
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-5 text-xs text-slate-400 font-semibold pt-3">

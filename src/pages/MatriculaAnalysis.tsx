@@ -10,12 +10,23 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const MatriculaAnalysis: React.FC = () => {
   const analysis = useMatriculaAnalysis();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sampleParam = params.get('sample');
+    if (sampleParam === 'safe' || sampleParam === 'risk' || sampleParam === '1' || sampleParam === 'true') {
+      const type = sampleParam === 'risk' ? 'risk' : 'safe';
+      analysis.loadSampleReport(type);
+    }
+  }, [location.search]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) analysis.processFile(acceptedFiles[0]);
@@ -150,6 +161,52 @@ const MatriculaAnalysis: React.FC = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Quick Sample Test Buttons for 0-Friction Testing */}
+          {!analysis.file && !analysis.isProcessing && (
+            <div className="max-w-2xl mx-auto">
+              <div className="p-4 bg-slate-900 text-white border border-slate-800 rounded-2xl shadow-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs font-black text-white uppercase tracking-wider">
+                      Testar Sistema com Certidão de Exemplo Instantânea
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
+                    1 Clique ⚡
+                  </Badge>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-2.5 pt-1">
+                  <Button
+                    onClick={() => analysis.loadSampleReport('safe')}
+                    size="sm"
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-5 rounded-xl justify-start shadow-md gap-2"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-emerald-300 shrink-0" />
+                    <div className="text-left">
+                      <span className="block leading-none text-xs font-bold">Exemplo 1: Imóvel Regular</span>
+                      <span className="text-[10px] text-emerald-200 font-normal">Score 15/100 (Risco Baixo)</span>
+                    </div>
+                  </Button>
+
+                  <Button
+                    onClick={() => analysis.loadSampleReport('risk')}
+                    size="sm"
+                    variant="outline"
+                    className="border-amber-500/50 bg-amber-950/40 text-amber-200 hover:bg-amber-900/60 font-bold text-xs py-5 rounded-xl justify-start shadow-md gap-2"
+                  >
+                    <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="text-left">
+                      <span className="block leading-none text-xs font-bold">Exemplo 2: Imóvel com Penhora</span>
+                      <span className="text-[10px] text-amber-300 font-normal">Score 85/100 (CNIB & Penhora)</span>
+                    </div>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Progress Section */}
           {analysis.isProcessing && (
