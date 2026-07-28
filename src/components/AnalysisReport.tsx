@@ -648,9 +648,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </div>
           </div>
 
-          {/* Quick Share Buttons & Paywall Toggle */}
+          {/* Quick Share Buttons & Actions */}
           <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-            {/* Status da Assinatura & Botão de Teste de Paywall */}
+            {/* Status da Assinatura */}
             {isSubscribed ? (
               <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -666,39 +666,11 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                if (isSubscribed) {
-                  subscriptionService.clearSubscription();
-                  toast({ title: '🔒 Modo Paywall Ativado', description: 'Simulando experiência de usuário não pagante com Blur.' });
-                } else {
-                  subscriptionService.activate6MonthsUnlimited('TEST-TOGGLE');
-                  toast({ title: '🔓 Assinatura Liberada!', description: 'Relatório desbloqueado com sucesso.' });
-                }
-              }}
-              className="text-xs font-bold border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl gap-1.5 px-3 py-1.5"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
-              {isSubscribed ? 'Testar Bloqueio (Blur)' : 'Simular Liberação'}
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
               onClick={handleCopyAllFields}
               className="border-emerald-300 text-emerald-800 hover:bg-emerald-100/70 rounded-xl text-xs font-semibold gap-1.5 flex-1 sm:flex-none"
             >
               <Copy className="w-3.5 h-3.5 text-emerald-600" />
               Copiar Todos os Campos
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyWhatsApp}
-              className="border-emerald-200 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-100 rounded-xl text-xs font-semibold gap-1.5 flex-1 sm:flex-none"
-            >
-              {copiedWhatsApp ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />}
-              {copiedWhatsApp ? 'Copiado!' : 'Enviar WhatsApp'}
             </Button>
 
             <Button
@@ -711,26 +683,8 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </Button>
           </div>
         </div>
-
-        {/* Real-time Filter Search Input */}
-        <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Filtrar dados no relatório (pesquise por nome, CPF/CNPJ, ato R-, hipoteca, penhora, proprietário)..."
-            className="pl-9 pr-9 text-xs border-slate-200 focus-visible:ring-emerald-500 rounded-xl bg-slate-50/50"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
       </div>
+
 
       {/* KPI Cards Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
