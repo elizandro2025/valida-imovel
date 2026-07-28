@@ -764,55 +764,55 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
         <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-            {/* NAVEGAÇÃO DE ABAS SEGMENTADA ESTILO STRIPE / LINEAR */}
-            <div className="bg-slate-900 border border-slate-800 p-2 rounded-2xl shadow-xl overflow-x-auto no-scrollbar">
-              <TabsList className="flex items-center gap-2 bg-transparent h-auto p-0 border-0 w-max min-w-full">
+            {/* NAVEGAÇÃO DE ABAS 100% ENCAIXADA NA TELA (GRID RESPONSIVO) */}
+            <div className="w-full bg-slate-900 border border-slate-800 p-2 rounded-2xl shadow-xl">
+              <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 bg-transparent h-auto p-0 border-0">
                 <TabsTrigger
                   value="parecer"
-                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
                 >
-                  <ShieldCheck className="w-4 h-4 shrink-0" /> Módulo 12 (Parecer & Scores)
+                  <ShieldCheck className="w-3.5 h-3.5 shrink-0 inline" /> 12. Parecer & Scores
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="imovel"
-                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
                 >
-                  <Building2 className="w-4 h-4 shrink-0" /> Módulos 1, 2 e 3 (Imóvel & Geo)
+                  <Building2 className="w-3.5 h-3.5 shrink-0 inline" /> Módulos 1, 2 e 3 (Imóvel/Geo)
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="proprietarios"
-                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
                 >
-                  <Users className="w-4 h-4 shrink-0" /> Módulos 7 e 8 (Donos & Cadeia)
+                  <Users className="w-3.5 h-3.5 shrink-0 inline" /> Módulos 7 e 8 (Donos/Cadeia)
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="onus"
-                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
                 >
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" /> Módulos 9, 10 e 11 (Ônus & CNIB)
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-400 inline" /> Módulos 9, 10 e 11 (Ônus/CNIB)
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="especiais"
-                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
                 >
-                  <Landmark className="w-4 h-4 shrink-0" /> Módulos 4, 5 e 6 (Regimes & SPU)
+                  <Landmark className="w-3.5 h-3.5 shrink-0 inline" /> Módulos 4, 5 e 6 (Regimes/SPU)
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="perfil"
-                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
                 >
-                  <Bot className="w-4 h-4 shrink-0" /> IA Explica por Perfil
+                  <Bot className="w-3.5 h-3.5 shrink-0 inline" /> IA Explica por Perfil
                 </TabsTrigger>
               </TabsList>
             </div>
 
           {/* TAB 1: PARECER & RISCO */}
-          <TabsContent value="parecer" className="mt-5 space-y-6">
+          <TabsContent value="parecer" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
             <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="pb-3 border-b border-slate-100">
                 <div className="flex items-center justify-between">
@@ -1044,7 +1044,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 3: OS 12 MÓDULOS REGISTRAIS ESPECIALISTAS */}
-        <TabsContent value="modulos" className="mt-5 space-y-6">
+        <TabsContent value="imovel" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 1 & 2 */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
@@ -1153,7 +1153,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 3: PROPRIETÁRIOS & CADEIA DOMINIAL */}
-        <TabsContent value="proprietarios" className="mt-5 space-y-6">
+        <TabsContent value="proprietarios" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 7: Proprietários */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
@@ -1286,7 +1286,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 4: ÔNUS & RESTRIÇÕES */}
-        <TabsContent value="onus" className="mt-5 space-y-6">
+        <TabsContent value="onus" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulos 9 & 10: Garantias e Indisponividades */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
@@ -1366,7 +1366,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 5: REGIMES ESPECIAIS & SERVIDÕES */}
-        <TabsContent value="especiais" className="mt-5 space-y-6">
+        <TabsContent value="especiais" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 4: Condomínios / REURB */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
