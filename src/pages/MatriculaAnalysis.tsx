@@ -19,6 +19,7 @@ const MatriculaAnalysis: React.FC = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
+  const isSampleDemo = new URLSearchParams(location.search).get('sample') === 'safe' || new URLSearchParams(location.search).get('sample') === 'true';
 
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -193,7 +194,8 @@ const MatriculaAnalysis: React.FC = () => {
             <section className="animate-fade-in-up">
               <AnalysisReport
                 report={analysis.report}
-                autoStartTour={Boolean(analysis.file?.name.includes('Fazenda'))}
+                autoStartTour={isSampleDemo || Boolean(analysis.file?.name.includes('Fazenda'))}
+                isSampleDemo={isSampleDemo}
               />
             </section>
           )}

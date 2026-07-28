@@ -178,9 +178,10 @@ const CopyableBlock: React.FC<{ label: string; text: string }> = ({ label, text 
 interface AnalysisReportProps {
   report: any;
   autoStartTour?: boolean;
+  isSampleDemo?: boolean;
 }
 
-const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStartTour = false }) => {
+const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStartTour = false, isSampleDemo = false }) => {
   const { toast } = useToast();
   const [isExporting, setIsExporting] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -1723,6 +1724,73 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       onClose={() => setIsTourOpen(false)}
       onSelectTab={(t) => setActiveTab(t)}
     />
+
+    {/* === OFERTA FINAL DA DEMONSTRAÇÃO === */}
+    {isSampleDemo && (
+      <div className="mt-10 max-w-4xl mx-auto px-4 pb-16">
+        <div className="relative overflow-hidden rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-slate-900 via-slate-950 to-teal-950/80 shadow-2xl shadow-emerald-500/10 p-8 sm:p-10 text-center space-y-7">
+          {/* Background glow */}
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Header */}
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black uppercase tracking-wider px-4 py-1.5 rounded-full">
+              <Sparkles className="w-3.5 h-3.5" /> Você acabou de ver o poder do ValidaImóvel
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              Agora Analise Qualquer Matrícula Real<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">por Apenas R$ 16,65/mês</span>
+            </h2>
+            <p className="text-sm text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
+              Plano 6 Meses Ilimitados — audite quantas matrículas precisar, com Score de Risco, Dossiê PDF e os 12 Módulos Registrais completos.
+            </p>
+          </div>
+
+          {/* Benefícios */}
+          <div className="grid sm:grid-cols-3 gap-4 text-left">
+            {[
+              { icon: ShieldCheck, title: '12 Módulos Registrais', desc: 'Proprietários, ônus, penhoras, CAR, SIGEF/INCRA e muito mais.' },
+              { icon: FileCheck, title: 'Dossiê PDF Completo', desc: 'Exportação profissional em PDF com capa, módulos e parecer jurídico.' },
+              { icon: Zap, title: 'Resultado em < 30 seg', desc: 'IA Registrária com temperatura zero — zero invenção, 100% fidelidade ao texto.' },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-white">{title}</p>
+                  <p className="text-[11px] text-slate-400 font-medium leading-relaxed mt-0.5">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Preço e CTA */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              <div className="text-center">
+                <span className="text-slate-500 text-sm line-through">R$ 599,40</span>
+                <div className="text-4xl font-black text-white">R$ 99<span className="text-2xl">,90</span></div>
+                <span className="text-xs text-emerald-400 font-bold">6 meses ilimitados • pagamento único</span>
+              </div>
+            </div>
+
+            <Link to="/auth" className="inline-block w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-base px-10 py-7 rounded-2xl shadow-2xl shadow-emerald-500/40 gap-3 transition-all hover:scale-105">
+                <Zap className="w-5 h-5 fill-slate-950 stroke-[2]" />
+                <span>QUERO ANALISAR MATRÍCULAS REAIS AGORA</span>
+                <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+              </Button>
+            </Link>
+
+            <p className="text-[11px] text-slate-500 font-medium">
+              Pagamento via PIX • Ativação imediata • Sem renovação automática • Cancele quando quiser
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
 
   </div>
 </div>
