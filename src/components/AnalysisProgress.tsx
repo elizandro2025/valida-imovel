@@ -7,14 +7,22 @@ import { Badge } from '@/components/ui/badge';
 interface AnalysisProgressProps {
   progress: number;
   currentStep: string;
-  steps: string[];
+  steps?: string[];
 }
+
+const DEFAULT_STEPS = [
+  'Leitura e Extração de Texto da Certidão (OCR)',
+  'Identificação de Cartório, Livro e Matrícula',
+  'Varredura dos 12 Módulos Registrais (Titularidade, CNIB, Penhoras)',
+  'Compilação do Parecer Técnico de IA & Due Diligence'
+];
 
 export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
   progress,
   currentStep,
-  steps
+  steps = DEFAULT_STEPS
 }) => {
+  const safeSteps = Array.isArray(steps) && steps.length > 0 ? steps : DEFAULT_STEPS;
   // Tempo estimado em segundos com base no progresso atual
   const secondsLeft = Math.max(1, Math.ceil((100 - progress) / 12));
 
@@ -69,10 +77,10 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
 
         {/* Steps Grid / List */}
         <div className="grid sm:grid-cols-2 gap-3 pt-2">
-          {steps.map((step, index) => {
-            const stepProgress = ((index + 1) / steps.length) * 100;
+          {safeSteps.map((step, index) => {
+            const stepProgress = ((index + 1) / safeSteps.length) * 100;
             const isCompleted = progress >= stepProgress;
-            const isCurrent = !isCompleted && progress >= stepProgress - (100 / steps.length);
+            const isCurrent = !isCompleted && progress >= stepProgress - (100 / safeSteps.length);
 
             return (
               <div

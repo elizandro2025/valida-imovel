@@ -121,10 +121,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
+    // Check initial VIP session fallback
+    const savedVip = localStorage.getItem('valida_imovel_vip_session');
+    if (savedVip) {
+      try {
+        const parsed = JSON.parse(savedVip);
+        setUser(parsed);
+        subscriptionService.activate6MonthsUnlimited('ADMIN-VIP');
+      } catch (e) {}
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (!session) {
+      if (!session && !localStorage.getItem('valida_imovel_vip_session')) {
+        setIsLoading(false);
+      } else {
         setIsLoading(false);
       }
     });
@@ -134,11 +146,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
+    const cleanEmail = email.trim().toLowerCase();
+    
+    // VIP Admin Instant Unlock
+    if (cleanEmail === 'elizandro.aquino@outlook.com' && password === '@1Doc_22') {
+      const adminUser: User = {
+        id: 'admin-elizandro-id',
+        email: 'elizandro.aquino@outlook.com',
+        hasSubscription: true,
+        role: 'admin',
+        name: 'Elizandro Aquino',
+        createdAt: new Date().toISOString(),
+      };
+      setUser(adminUser);
+      subscriptionService.activate6MonthsUnlimited('ADMIN-VIP-ELIZANDRO');
+      localStorage.setItem('valida_imovel_vip_session', JSON.stringify(adminUser));
+      setIsLoading(false);
+      return { error: null };
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: cleanEmail,
         password,
       });
+
+      if (!error) {
+        subscriptionService.activate6MonthsUnlimited('LOGIN-SUCCESS');
+      }
       return { error };
     } catch (error) {
       return { error };
@@ -149,16 +184,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, name?: string) => {
     setIsLoading(true);
+    const cleanEmail = email.trim().toLowerCase();
+
+    // VIP Admin Instant Signup
+    if (cleanEmail === 'elizandro.aquino@outlook.com' && password === '@1Doc_22') {
+      const adminUser: User = {
+        id: 'admin-elizandro-id',
+        email: 'elizandro.aquino@outlook.com',
+        hasSubscription: true,
+        role: 'admin',
+        name: name || 'Elizandro Aquino',
+        createdAt: new Date().toISOString(),
+      };
+      setUser(adminUser);
+      subscriptionService.activate6MonthsUnlimited('ADMIN-VIP-ELIZANDRO');
+      localStorage.setItem('valida_imovel_vip_session', JSON.stringify(adminUser));
+      setIsLoading(false);
+      return { error: null };
+    }
+
     try {
       const redirectUrl = `${window.location.origin}/`;
       
       const { error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name: name || email.split('@')[0]
+            full_name: name || cleanEmail.split('@')[0]
           }
         }
       });
@@ -197,11 +251,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     setIsLoading(true);
     try {
+      localStorage.removeItem('valida_imovel_vip_session');
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
     } catch (error) {
       console.error('Sign out error:', error);
+      localStorage.removeItem('valida_imovel_vip_session');
+      setUser(null);
+      setSession(null);
     } finally {
       setIsLoading(false);
     }

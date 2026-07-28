@@ -768,3 +768,15 @@ export const fileUtils = {
     });
   }
 };
+
+export type AnalysisProgressCallback = (step: string, progress: number, details?: any) => void;
+export type MatriculaReport = any;
+
+export async function analyzeMatricula(file: File, onProgress?: AnalysisProgressCallback): Promise<MatriculaReport> {
+  onProgress?.('Extraindo texto do documento...', 20);
+  const hybrid = await ocrService.extractTextHybrid(file);
+  onProgress?.('Auditando os 12 Módulos Notariais com IA...', 60);
+  const report = await analysisService.analyzeDocument(hybrid.text, file);
+  onProgress?.('Análise concluída com sucesso!', 100);
+  return report;
+}

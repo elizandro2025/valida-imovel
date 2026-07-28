@@ -9,16 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import {
   Loader2, Mail, Lock, ShieldCheck, CheckCircle2, ArrowRight,
-  Key, FileCheck, ArrowLeft, FileText, Users, Compass,
+  Key, FileCheck, ArrowLeft, FileText, Users, Compass, LogOut, Sparkles
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export const AuthPage: React.FC = () => {
-  const { user, signIn, signUp, resetPassword, updatePassword, isLoading } = useAuth();
+  const { user, signIn, signUp, resetPassword, updatePassword, signOut, isLoading } = useAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formLoading, setFormLoading] = useState(false);
@@ -30,12 +31,11 @@ export const AuthPage: React.FC = () => {
     if (isReset) setShowNewPasswordForm(true);
   }, [searchParams]);
 
-  if (user && !showNewPasswordForm) return <Navigate to="/app" replace />;
-
+  // Handler para Sign In (Login)
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast({ title: 'Campos obrigatórios', description: 'Preencha email e senha para continuar.', variant: 'destructive' });
+      toast({ title: 'Campos obrigatórios', description: 'Preencha e-mail e senha para continuar.', variant: 'destructive' });
       return;
     }
     setFormLoading(true);
@@ -43,98 +43,95 @@ export const AuthPage: React.FC = () => {
       const { error } = await signIn(email, password);
       if (error) {
         let msg = 'Erro no login. Verifique suas credenciais.';
-        if (error.message?.includes('Invalid login credentials')) msg = 'Email ou senha incorretos.';
-        else if (error.message?.includes('Email not confirmed')) msg = 'Por favor, confirme seu email antes de fazer login.';
-        else if (error.message?.includes('Too many requests')) msg = 'Muitas tentativas. Tente novamente em alguns minutos.';
+        if (error.message?.includes('Invalid login credentials')) msg = 'E-mail ou senha incorretos.';
+        else if (error.message?.includes('Email not confirmed')) msg = 'Por favor, confirme seu e-mail ou utilize o login direto.';
+        else if (error.message?.includes('Too many requests')) msg = 'Muitas tentativas. Tente novamente em instantes.';
         toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
       } else {
         toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso.' });
       }
     } catch {
-      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro inesperado. Tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao conectar. Tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
   };
 
+  // Handler para Sign Up (Cadastro)
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast({ title: 'Campos obrigatórios', description: 'Preencha email e senha para continuar.', variant: 'destructive' });
+      toast({ title: 'Campos obrigatórios', description: 'Preencha e-mail e senha para continuar.', variant: 'destructive' });
       return;
     }
-    if (password.length < 8) {
-      toast({ title: 'Senha inválida', description: 'A senha deve ter pelo menos 8 caracteres.', variant: 'destructive' });
+    if (password.length < 6) {
+      toast({ title: 'Senha muito curta', description: 'A senha deve ter pelo menos 6 caracteres.', variant: 'destructive' });
       return;
     }
     setFormLoading(true);
     try {
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, name);
       if (error) {
         let msg = 'Erro ao criar conta. Tente novamente.';
-        if (error.message?.includes('User already registered')) msg = 'Este email já está cadastrado. Faça login.';
-        else if (error.message?.includes('Invalid email')) msg = 'Email inválido. Verifique e tente novamente.';
+        if (error.message?.includes('User already registered')) msg = 'Este e-mail já está cadastrado. Faça login ao lado.';
+        else if (error.message?.includes('Invalid email')) msg = 'E-mail inválido. Verifique a digitação.';
         toast({ title: 'Erro no cadastro', description: msg, variant: 'destructive' });
       } else {
-        toast({ title: 'Conta criada!', description: 'Verifique seu email para confirmar sua conta.' });
-        setEmail('');
-        setPassword('');
+        toast({ title: 'Conta criada com sucesso!', description: 'Você já pode acessar a plataforma.' });
       }
     } catch {
-      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro inesperado. Tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
   };
 
+  // Reset Password
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
-      toast({ title: 'Email obrigatório', description: 'Digite seu email para recuperar a senha.', variant: 'destructive' });
+      toast({ title: 'E-mail obrigatório', description: 'Digite seu e-mail para receber as instruções.', variant: 'destructive' });
       return;
     }
     setFormLoading(true);
     try {
       const { error } = await resetPassword(email);
       if (error) {
-        toast({ title: 'Erro ao enviar email', description: 'Verifique se o email está correto e tente novamente.', variant: 'destructive' });
+        toast({ title: 'Erro ao enviar e-mail', description: 'Verifique o endereço e tente novamente.', variant: 'destructive' });
       } else {
-        toast({ title: 'Email enviado!', description: 'Verifique seu email para redefinir sua senha.' });
+        toast({ title: 'E-mail enviado!', description: 'Verifique sua caixa de entrada para redefinir a senha.' });
         setShowResetForm(false);
       }
     } catch {
-      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro inesperado. Tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro inesperado', description: 'Tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
   };
 
+  // Update Password
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPassword || !confirmPassword) {
-      toast({ title: 'Campos obrigatórios', description: 'Preencha a nova senha e confirme.', variant: 'destructive' });
+      toast({ title: 'Campos obrigatórios', description: 'Digite a nova senha e confirme.', variant: 'destructive' });
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast({ title: 'Senhas não conferem', description: 'A nova senha e confirmação devem ser iguais.', variant: 'destructive' });
-      return;
-    }
-    if (newPassword.length < 8) {
-      toast({ title: 'Senha inválida', description: 'A senha deve ter pelo menos 8 caracteres.', variant: 'destructive' });
+      toast({ title: 'Senhas não conferem', description: 'A confirmação deve ser idêntica à senha.', variant: 'destructive' });
       return;
     }
     setFormLoading(true);
     try {
       const { error } = await updatePassword(newPassword);
       if (error) {
-        toast({ title: 'Erro ao atualizar senha', description: 'Não foi possível atualizar sua senha. Tente novamente.', variant: 'destructive' });
+        toast({ title: 'Erro ao atualizar', description: 'Não foi possível alterar a senha.', variant: 'destructive' });
       } else {
-        toast({ title: 'Senha atualizada!', description: 'Sua senha foi atualizada com sucesso.' });
+        toast({ title: 'Senha atualizada!', description: 'Sua senha foi redefinida com sucesso.' });
         setShowNewPasswordForm(false);
         window.location.href = '/app';
       }
     } catch {
-      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro inesperado. Tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro inesperado', description: 'Tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
@@ -142,389 +139,342 @@ export const AuthPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-emerald-100 flex items-center justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
           </div>
-          <p className="text-slate-500 text-sm font-medium">Carregando plataforma...</p>
+          <p className="text-slate-400 text-sm font-medium">Carregando autenticação...</p>
         </div>
       </div>
     );
   }
 
+  // Se o usuário já estiver conectado, exibe tela de status em vez de redirecionar sem aviso
+  if (user && !showNewPasswordForm) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
+        <Card className="max-w-md w-full border-slate-800 bg-slate-900/90 rounded-3xl p-6 text-center space-y-6 shadow-2xl">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3 py-1">
+              Conectado
+            </Badge>
+            <h2 className="text-2xl font-black tracking-tight text-white">
+              Você já está autenticado!
+            </h2>
+            <p className="text-xs text-slate-400">
+              Conectado como <strong className="text-white">{user.email}</strong>
+            </p>
+          </div>
+          <div className="space-y-3 pt-2">
+            <Link to="/app" className="block">
+              <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs py-5 rounded-xl shadow-lg gap-2">
+                Ir para o Workspace de Auditoria <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+            <Button
+              onClick={() => signOut()}
+              variant="outline"
+              className="w-full border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 font-bold text-xs py-5 rounded-xl gap-2"
+            >
+              <LogOut className="w-4 h-4" /> Sair da Conta (Desconectar)
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row antialiased">
-      {/* Left Panel — Branding */}
-      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-slate-900">
-        {/* Background gradient accent */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950" />
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col lg:flex-row antialiased selection:bg-emerald-500 selection:text-white">
+      {/* Left Panel — Branding Dark */}
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-slate-900 border-r border-slate-800">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col justify-between h-full p-10 xl:p-14">
-          {/* Logo top */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-600/30 group-hover:bg-emerald-500 transition-colors">
-              <FileCheck className="w-6 h-6 text-white stroke-[2]" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20 font-black">
+              <Sparkles className="w-5 h-5 stroke-[2.5]" />
             </div>
-            <span className="text-xl font-extrabold text-white tracking-tight">
+            <span className="text-xl font-black text-white tracking-tight">
               Valida<span className="text-emerald-400">Imóvel</span>
             </span>
           </Link>
 
-          {/* Hero content */}
           <div className="space-y-8 max-w-sm">
             <div className="space-y-4">
-              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-xs font-semibold">
-                LegalTech & PropTech — IA Jurídica
+              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs font-bold">
+                IA Registrária Notarial 2.0
               </Badge>
-              <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
-                Análise jurídica de matrículas com{' '}
-                <span className="text-emerald-400">inteligência artificial</span>.
+              <h2 className="text-3xl xl:text-4xl font-black text-white leading-tight tracking-tight">
+                Auditoria e Due Diligence com <span className="text-emerald-400">Inteligência Artificial</span>.
               </h2>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Extraia cadeia dominial, identifique gravames, ônus e dados cartográficos automaticamente em segundos.
+                Extraia a cadeia dominial, identifique gravames, penhoras (CNIB) e emita pareceres jurídicos em segundos.
               </p>
             </div>
 
-            {/* Feature bullets */}
             <div className="space-y-3">
               {[
-                { icon: FileText, label: 'Extração automática de averbações e registros' },
-                { icon: ShieldCheck, label: 'Identificação de penhoras, hipotecas e usufrutos' },
-                { icon: Compass, label: 'Dados de georreferenciamento (SIGEF/INCRA)' },
-                { icon: Users, label: 'Rastreio completo da cadeia dominial' },
+                { icon: FileText, label: 'Análise automática dos 12 Módulos Notariais' },
+                { icon: ShieldCheck, label: 'Detecção de penhoras, hipotecas e indisponibilidades' },
+                { icon: Compass, label: 'Auditoria de área, confrontações e usucapião' },
+                { icon: Users, label: 'Cadeia dominial cronológica de proprietários' },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600/20 border border-emerald-600/30 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-3.5 h-3.5 text-emerald-400 stroke-[1.8]" />
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-emerald-400" />
                   </div>
-                  <span className="text-sm text-slate-300">{label}</span>
+                  <span className="text-xs text-slate-300 font-medium">{label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Bottom stat row */}
-          <div className="grid grid-cols-3 gap-4 border-t border-slate-800 pt-6">
-            {[
-              { value: '+50k', label: 'Matrículas Processadas' },
-              { value: '99,8%', label: 'Precisão Extrativa' },
-              { value: '<10s', label: 'Diagnóstico Rápido' },
-            ].map(({ value, label }) => (
-              <div key={label}>
-                <div className="text-xl font-extrabold text-emerald-400">{value}</div>
-                <div className="text-[11px] text-slate-500 font-medium">{label}</div>
-              </div>
-            ))}
+          <div className="text-xs text-slate-500 font-medium">
+            © {new Date().getFullYear()} ValidaImóvel — Todos os direitos reservados.
           </div>
         </div>
       </div>
 
-      {/* Right Panel — Auth Forms */}
-      <div className="flex-1 flex flex-col">
-        {/* Mobile top nav */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 bg-white">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
-              <FileCheck className="w-4 h-4 text-white stroke-[2]" />
+      {/* Right Panel — Auth Form */}
+      <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-14 max-w-md mx-auto w-full lg:max-w-none lg:mx-0">
+        
+        <div className="flex items-center justify-between lg:justify-end">
+          <Link to="/" className="lg:hidden flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
+              <Sparkles className="w-4 h-4" />
             </div>
-            <span className="text-lg font-extrabold text-slate-900">
-              Valida<span className="text-emerald-600">Imóvel</span>
-            </span>
+            <span className="font-extrabold text-white">ValidaImóvel</span>
           </Link>
           <Link to="/">
-            <Button variant="ghost" size="sm" className="text-slate-600 text-xs gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" /> Voltar
+            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-slate-900 text-xs gap-1.5 font-bold rounded-xl">
+              <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao site
             </Button>
           </Link>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12">
-          <div className="w-full max-w-md space-y-6">
+        <div className="my-auto py-8 lg:max-w-md lg:mx-auto w-full">
+          <Card className="border-slate-800 bg-slate-900/90 text-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm">
+            <CardHeader className="space-y-1 pb-4">
+              <CardTitle className="text-2xl font-black text-white tracking-tight">
+                {showResetForm ? 'Recuperar Senha' : showNewPasswordForm ? 'Nova Senha' : 'Acessar Conta'}
+              </CardTitle>
+              <CardDescription className="text-slate-400 text-xs">
+                {showResetForm
+                  ? 'Digite seu e-mail para receber as instruções de recuperação.'
+                  : showNewPasswordForm
+                  ? 'Digite sua nova senha de acesso.'
+                  : 'Entre com suas credenciais ou crie sua conta gratuitamente.'}
+              </CardDescription>
+            </CardHeader>
 
-            {/* Header */}
-            <div className="text-center space-y-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Acesse a Plataforma</h1>
-              <p className="text-sm text-slate-500">Entre ou crie sua conta para começar a analisar</p>
-            </div>
+            <CardContent className="space-y-4">
+              {showResetForm ? (
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-300">E-mail</Label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <Input
+                        type="email"
+                        placeholder="seu.email@exemplo.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={formLoading}
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
+                  >
+                    {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar Instruções'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setShowResetForm(false)}
+                    className="w-full text-slate-400 hover:text-white text-xs font-bold"
+                  >
+                    Voltar ao Login
+                  </Button>
+                </form>
+              ) : showNewPasswordForm ? (
+                <form onSubmit={handleUpdatePassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-300">Nova Senha</Label>
+                    <Input
+                      type="password"
+                      placeholder="Mínimo 6 caracteres"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-emerald-500"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-300">Confirmar Nova Senha</Label>
+                    <Input
+                      type="password"
+                      placeholder="Repita a nova senha"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-emerald-500"
+                      required
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={formLoading}
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
+                  >
+                    {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Atualizar Senha'}
+                  </Button>
+                </form>
+              ) : (
+                <Tabs defaultValue="signin" className="w-full">
+                  <TabsList className="grid grid-cols-2 p-1 bg-slate-950 border border-slate-800 rounded-2xl mb-4">
+                    <TabsTrigger value="signin" className="text-xs font-bold rounded-xl data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
+                      Entrar
+                    </TabsTrigger>
+                    <TabsTrigger value="signup" className="text-xs font-bold rounded-xl data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
+                      Criar Conta
+                    </TabsTrigger>
+                  </TabsList>
 
-            {/* How to access notice */}
-            <Card className="border-emerald-200/80 bg-emerald-50/60 shadow-sm rounded-2xl">
-              <CardContent className="pt-5 pb-5">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <ShieldCheck className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className="font-bold text-slate-900 text-sm pt-1">Como obter acesso completo (6 Meses Ilimitados)</h3>
-                </div>
-                <div className="space-y-2 text-xs text-slate-600 pl-10">
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-emerald-700 flex-shrink-0">1.</span>
-                    <span>
-                      <Link to="/pagamento-pix" className="font-semibold text-emerald-700 hover:underline">Realize o pagamento via PIX (R$ 99,90)</Link> no Mercado Pago
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-emerald-700 flex-shrink-0">2.</span>
-                    <span>O Mercado Pago confirma a transação automaticamente via Webhook</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-emerald-700 flex-shrink-0">3.</span>
-                    <span>Seu acesso ilimitado por 6 meses é liberado instantaneamente na tela <strong>sem necessidade de envio de comprovante!</strong></span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Auth Tabs */}
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-xl bg-slate-100 p-1">
-                <TabsTrigger value="signin" className="rounded-lg text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  Entrar
-                </TabsTrigger>
-                <TabsTrigger value="signup" className="rounded-lg text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                  Criar Conta
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Sign In */}
-              <TabsContent value="signin" className="mt-4">
-                <Card className="border-slate-200 shadow-sm rounded-2xl">
-                  <CardHeader className="pb-4 text-center">
-                    <CardTitle className="text-lg font-bold text-slate-900">Bem-vindo de volta</CardTitle>
-                    <CardDescription className="text-xs text-slate-500">
-                      Entre com suas credenciais para acessar a plataforma
-                    </CardDescription>
-                  </CardHeader>
-                  <form onSubmit={handleSignIn}>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-1.5">
-                        <Label htmlFor="signin-email" className="text-sm font-semibold text-slate-700">Email</Label>
+                  {/* TAB LOGIN */}
+                  <TabsContent value="signin" className="space-y-4 mt-0">
+                    <form onSubmit={handleSignIn} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-slate-300">E-mail</Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                          <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                           <Input
-                            id="signin-email"
                             type="email"
-                            placeholder="seu@email.com"
+                            placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="pl-9 h-11 rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
                             required
                           />
                         </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="signin-password" className="text-sm font-semibold text-slate-700">Senha</Label>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-bold text-slate-300">Senha</Label>
+                          <button
+                            type="button"
+                            onClick={() => setShowResetForm(true)}
+                            className="text-[11px] text-emerald-400 hover:underline font-bold"
+                          >
+                            Esqueceu a senha?
+                          </button>
+                        </div>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                          <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                           <Input
-                            id="signin-password"
                             type="password"
-                            placeholder="••••••••"
+                            placeholder="Sua senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="pl-9 h-11 rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
                             required
                           />
                         </div>
                       </div>
-                    </CardContent>
-                    <CardFooter className="pt-2 flex flex-col gap-3">
+
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 group"
                         disabled={formLoading}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
                       >
-                        {formLoading ? (
-                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Entrando...</>
-                        ) : (
-                          <>Entrar na plataforma <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /></>
-                        )}
+                        {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar na Plataforma'}
+                        {!formLoading && <ArrowRight className="w-4 h-4" />}
                       </Button>
-                      {!showResetForm && !showNewPasswordForm && (
-                        <button
-                          type="button"
-                          onClick={() => setShowResetForm(true)}
-                          className="text-xs text-emerald-700 hover:underline font-medium"
-                        >
-                          Esqueceu sua senha?
-                        </button>
-                      )}
-                    </CardFooter>
-                  </form>
-                </Card>
-              </TabsContent>
+                    </form>
+                  </TabsContent>
 
-              {/* Sign Up */}
-              <TabsContent value="signup" className="mt-4">
-                <Card className="border-slate-200 shadow-sm rounded-2xl">
-                  <CardHeader className="pb-4 text-center">
-                    <CardTitle className="text-lg font-bold text-slate-900">Criar Conta</CardTitle>
-                    <CardDescription className="text-xs text-slate-500">
-                      Crie sua conta gratuita para acessar a plataforma
-                    </CardDescription>
-                  </CardHeader>
-                  <form onSubmit={handleSignUp}>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-1.5">
-                        <Label htmlFor="signup-email" className="text-sm font-semibold text-slate-700">Email</Label>
+                  {/* TAB CADASTRO */}
+                  <TabsContent value="signup" className="space-y-4 mt-0">
+                    <form onSubmit={handleSignUp} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-slate-300">Nome Completo</Label>
+                        <Input
+                          type="text"
+                          placeholder="Seu nome"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-emerald-500"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-slate-300">E-mail</Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                          <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                           <Input
-                            id="signup-email"
                             type="email"
-                            placeholder="seu@email.com"
+                            placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="pl-9 h-11 rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
                             required
                           />
                         </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="signup-password" className="text-sm font-semibold text-slate-700">Senha</Label>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-slate-300">Senha (mínimo 6 caracteres)</Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                          <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                           <Input
-                            id="signup-password"
                             type="password"
-                            placeholder="Mínimo 8 caracteres"
+                            placeholder="Crie uma senha forte"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="pl-9 h-11 rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
                             required
-                            minLength={8}
                           />
                         </div>
-                        <p className="text-[11px] text-slate-400">A senha deve ter pelo menos 8 caracteres</p>
                       </div>
-                    </CardContent>
-                    <CardFooter className="pt-2 flex flex-col gap-3">
+
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 group"
                         disabled={formLoading}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
                       >
-                        {formLoading ? (
-                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Criando conta...</>
-                        ) : (
-                          <>Criar conta <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /></>
-                        )}
+                        {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar Minha Conta'}
+                        {!formLoading && <ArrowRight className="w-4 h-4" />}
                       </Button>
-                      <div className="text-center text-[11px] text-slate-500 bg-slate-50 rounded-xl p-3 border border-slate-200">
-                        Para acesso completo,{' '}
-                        <Link to="/pagamento-pix" className="font-semibold text-emerald-700 hover:underline">
-                          realize o pagamento via PIX (R$ 99,90)
-                        </Link>
-                      </div>
-                    </CardFooter>
-                  </form>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              )}
+            </CardContent>
 
-            {/* Password Reset Form */}
-            {showResetForm && (
-              <Card className="border-slate-200 shadow-sm rounded-2xl mt-2">
-                <CardHeader className="pb-4 text-center">
-                  <CardTitle className="text-lg font-bold text-slate-900">Recuperar Senha</CardTitle>
-                  <CardDescription className="text-xs text-slate-500">
-                    Digite seu email para receber instruções de redefinição
-                  </CardDescription>
-                </CardHeader>
-                <form onSubmit={handleResetPassword}>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="reset-email" className="text-sm font-semibold text-slate-700">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="reset-email"
-                          type="email"
-                          placeholder="seu@email.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="pl-9 h-11 rounded-xl border-slate-200"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-2 flex gap-2">
-                    <Button type="button" variant="outline" onClick={() => setShowResetForm(false)} className="flex-1 rounded-xl">
-                      Cancelar
-                    </Button>
-                    <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl" disabled={formLoading}>
-                      {formLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Enviando...</> : 'Enviar Email'}
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Card>
-            )}
+            <CardFooter className="border-t border-slate-800/80 pt-4 text-center justify-center">
+              <p className="text-[11px] text-slate-500">
+                Ao continuar, você concorda com os Termos de Serviço e Política de Privacidade.
+              </p>
+            </CardFooter>
+          </Card>
+        </div>
 
-            {/* New Password Form */}
-            {showNewPasswordForm && (
-              <Card className="border-slate-200 shadow-sm rounded-2xl mt-2">
-                <CardHeader className="pb-4 text-center">
-                  <CardTitle className="text-lg font-bold text-slate-900">Nova Senha</CardTitle>
-                  <CardDescription className="text-xs text-slate-500">Defina sua nova senha de acesso</CardDescription>
-                </CardHeader>
-                <form onSubmit={handleUpdatePassword}>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="new-password" className="text-sm font-semibold text-slate-700">Nova senha</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="new-password"
-                          type="password"
-                          placeholder="Mínimo 8 caracteres"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className="pl-9 h-11 rounded-xl border-slate-200"
-                          required
-                          minLength={8}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="confirm-password" className="text-sm font-semibold text-slate-700">Confirmar senha</Label>
-                      <div className="relative">
-                        <Key className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="confirm-password"
-                          type="password"
-                          placeholder="Confirme sua nova senha"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="pl-9 h-11 rounded-xl border-slate-200"
-                          required
-                          minLength={8}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-2">
-                    <Button type="submit" className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl" disabled={formLoading}>
-                      {formLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Atualizando...</> : 'Atualizar Senha'}
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Card>
-            )}
-
-            {/* Footer */}
-            <p className="text-center text-[11px] text-slate-400">
-              Ao continuar, você concorda com nossos{' '}
-              <a href="#" className="text-emerald-700 hover:underline font-medium">Termos de Uso</a>{' '}
-              e{' '}
-              <a href="#" className="text-emerald-700 hover:underline font-medium">Política de Privacidade</a>.
-            </p>
-          </div>
+        <div className="text-center lg:hidden text-xs text-slate-600">
+          © {new Date().getFullYear()} ValidaImóvel
         </div>
       </div>
     </div>
   );
 };
+
+export default AuthPage;

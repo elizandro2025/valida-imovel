@@ -854,21 +854,21 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
         <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-slate-100 rounded-xl p-1 h-auto">
-              <TabsTrigger value="parecer" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Diagnóstico Fácil
+            <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth sm:grid sm:grid-cols-5 bg-slate-100/90 rounded-2xl p-1.5 h-auto gap-1.5 sm:gap-1">
+              <TabsTrigger value="parecer" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Diagnóstico Fácil
               </TabsTrigger>
-              <TabsTrigger value="imovel" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Building2 className="w-3.5 h-3.5 text-emerald-600" /> Endereço & Tamanho
+              <TabsTrigger value="imovel" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Endereço & Tamanho
               </TabsTrigger>
-              <TabsTrigger value="proprietarios" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Users className="w-3.5 h-3.5 text-emerald-600" /> Donos do Imóvel
+              <TabsTrigger value="proprietarios" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Donos do Imóvel
               </TabsTrigger>
-              <TabsTrigger value="onus" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <AlertTriangle className="w-3.5 h-3.5 text-emerald-600" /> Dívidas & Bloqueios
+              <TabsTrigger value="onus" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <AlertTriangle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Dívidas & Bloqueios
               </TabsTrigger>
-              <TabsTrigger value="especiais" className="rounded-lg text-xs font-bold gap-1.5 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Landmark className="w-3.5 h-3.5 text-emerald-600" /> Regras & Marinha
+              <TabsTrigger value="especiais" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Landmark className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Regras & Marinha
               </TabsTrigger>
             </TabsList>
 

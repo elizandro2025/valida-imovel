@@ -1,0 +1,17 @@
+{
+  "short_name": "ValidaImóvel",
+  "name": "ValidaImóvel — Auditoria de Matrículas Imobiliárias com IA",
+  "description": "Plataforma de inteligência jurídica para auditoria e emissão de parecer de Due Diligence em matrículas de imóveis.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512 192x192 64x64 32x32 24x24 16x16"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "display": "standalone",
+  "orientation": "portrait"
+}

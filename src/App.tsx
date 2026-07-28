@@ -27,6 +27,7 @@ const App = () => (
             <Route path="/demo" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/pagamento-pix" element={<PixPaymentPage />} />
+            <Route path="/pagamento" element={<PixPaymentPage />} />
             {/* Rotas abertas sem autenticação */}
             <Route path="/app" element={<MatriculaAnalysis />} />
             <Route path="/admin" element={<AdminDashboard />} />

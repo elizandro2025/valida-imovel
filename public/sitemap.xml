@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- Home Landing Page -->
+  <url>
+    <loc>https://validaimovel.com/</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://validaimovel.com/hero_matricula_bg.png</image:loc>
+      <image:title>ValidaImóvel — Auditoria de Matrículas Imobiliárias com IA</image:title>
+    </image:image>
+  </url>
+
+  <!-- Checkout / Pagamento -->
+  <url>
+    <loc>https://validaimovel.com/pagamento</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Autenticação / Login -->
+  <url>
+    <loc>https://validaimovel.com/auth</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Painel de Análise / App -->
+  <url>
+    <loc>https://validaimovel.com/app</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

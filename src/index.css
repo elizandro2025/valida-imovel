@@ -456,6 +456,16 @@ All colors MUST be HSL.
     min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
   }
   
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
   /* Responsive font scaling */
   .text-responsive-xs { font-size: clamp(0.75rem, 2vw, 0.875rem); }
   .text-responsive-sm { font-size: clamp(0.875rem, 2.5vw, 1rem); }

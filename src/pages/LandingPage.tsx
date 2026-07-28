@@ -189,31 +189,34 @@ const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white pb-16 sm:pb-0">
       
-      {/* 🔴 CRO BANNER SUPERIOR DE URGÊNCIA & OFERTA */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white text-xs sm:text-sm font-extrabold py-2.5 px-4 text-center shadow-lg flex items-center justify-center gap-2 flex-wrap">
-        <Flame className="w-4 h-4 text-amber-300 animate-bounce" />
-        <span>OPORTUNIDADE ÚNICA: DE R$ 599,40 POR APENAS R$ 99,90 (6 MESES ILIMITADOS)</span>
-        <div className="bg-slate-950/40 px-2.5 py-0.5 rounded-full text-amber-300 font-mono text-xs flex items-center gap-1 border border-amber-400/30">
-          <Timer className="w-3.5 h-3.5" />
+      {/* 🔴 CRO BANNER SUPERIOR DE URGÊNCIA & OFERTA — HIGH VISIBILITY */}
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 text-white text-xs sm:text-sm font-black py-2.5 px-4 text-center shadow-xl flex items-center justify-center gap-2.5 flex-wrap relative z-50 border-b border-emerald-400/30">
+        <div className="flex items-center gap-1.5 bg-amber-400/20 px-2.5 py-0.5 rounded-full text-amber-300 border border-amber-400/40 animate-pulse">
+          <Flame className="w-4 h-4 text-amber-300 fill-amber-400 shrink-0" />
+          <span>OFERTA IMPERDÍVEL</span>
+        </div>
+        <span className="tracking-wide">DE <span className="line-through opacity-75">R$ 599,40</span> POR APENAS <strong className="text-amber-300 font-mono text-sm underline decoration-amber-300 underline-offset-2">R$ 99,90</strong> (6 MESES ILIMITADOS)</span>
+        <div className="bg-slate-950/60 px-3 py-1 rounded-full text-amber-300 font-mono text-xs font-bold flex items-center gap-1.5 border border-amber-400/40 shadow-inner">
+          <Timer className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '4s' }} />
           <span>{String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
         </div>
       </div>
 
       {/* 🟢 HEADER / NAVBAR SLIM & FIXO ESTILO AI PLATFORM */}
-      <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 text-white">
+      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-2xl border-b border-slate-800/80 text-white shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform font-black">
-              <Sparkles className="w-4 h-4 stroke-[2.5]" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30 group-hover:scale-105 transition-transform font-black">
+              <Sparkles className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <span className="text-lg font-black tracking-tight text-white block leading-tight">
+              <span className="text-xl font-black tracking-tight text-white block leading-tight">
                 Valida<span className="text-emerald-400">Imóvel</span>
               </span>
             </div>
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden sm:inline-flex">
+            <Badge variant="outline" className="border-emerald-400/50 text-emerald-300 bg-emerald-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full hidden sm:inline-flex shadow-sm">
               AI 2.0
             </Badge>
           </Link>
@@ -221,15 +224,15 @@ const LandingPage: React.FC = () => {
           {/* Navigation Actions */}
           <div className="flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-800/60 font-semibold text-xs px-3.5 h-9 rounded-xl">
+              <Button variant="ghost" className="text-slate-200 hover:text-white hover:bg-slate-800/80 font-bold text-xs px-4 h-9 rounded-xl transition-all">
                 Entrar
               </Button>
             </Link>
 
             <Link to="/app">
-              <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs px-4 h-9 shadow-lg shadow-emerald-500/20 rounded-xl transition-all hover:scale-105">
+              <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105">
                 <span>Analisar Matrícula</span>
-                <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+                <ArrowRight className="ml-1.5 w-4 h-4 stroke-[2.5]" />
               </Button>
             </Link>
           </div>
@@ -239,74 +242,71 @@ const LandingPage: React.FC = () => {
       {/* 🚀 HERO SECTION COM IMAGEM DE FUNDO DA MATRÍCULA E DESIGN MINIMALISTA */}
       <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-24 overflow-hidden bg-[#050a0a] text-white border-b border-slate-900">
         
-        {/* Background Image: Matrícula de Imóvel Cartorária — Premium */}
+        {/* Background Image: Matrícula de Imóvel Cartorária — Ampliada & Alta Visibilidade */}
         <div 
-          className="absolute inset-0 bg-cover bg-center pointer-events-none scale-105"
+          className="absolute inset-0 bg-cover bg-center pointer-events-none scale-110 sm:scale-115 md:scale-125 transition-transform duration-1000 ease-out"
           style={{
             backgroundImage: "url('/hero_matricula_bg.png')",
-            opacity: 0.38,
-            mixBlendMode: 'screen',
-            filter: 'contrast(1.1) saturate(1.1) brightness(0.9)',
+            opacity: 0.68,
+            filter: 'contrast(1.15) brightness(0.95) saturate(1.15)',
           }}
         />
 
-        {/* Vignette / Edge Fade */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_30%,_#050a0a_80%)]" />
+        {/* Soft Radial & Linear Gradients to frame text perfectly */}
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#050a0a]/70 via-[#050a0a]/35 to-[#050a0a]/95" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_15%,_#050a0a_90%)]" />
 
-        {/* Bottom Gradient Fade to Section Below */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-[#050a0a] to-transparent" />
-
-        {/* Ambient Emerald Glow */}
-        <div className="absolute inset-0 pointer-events-none opacity-40">
-          <div className="absolute -top-20 left-1/4 w-[500px] h-[500px] bg-emerald-600/20 rounded-full blur-3xl" />
-          <div className="absolute top-16 right-1/4 w-[400px] h-[400px] bg-teal-500/15 rounded-full blur-3xl" />
+        {/* Ambient Tech Glows */}
+        <div className="absolute inset-0 pointer-events-none opacity-60">
+          <div className="absolute -top-20 left-1/4 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl" />
+          <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
           
-          {/* AI Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-emerald-400 text-xs font-semibold shadow-inner">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          {/* AI Badge — Alta Destacabilidade */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/90 border border-emerald-500/50 text-emerald-300 text-xs font-black shadow-lg shadow-emerald-500/10 backdrop-blur-md">
+            <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
             <span>Inteligência Artificial Registrária Especializada</span>
           </div>
 
-          {/* Clean Headline */}
+          {/* Clean Headline — Máxima Legibilidade & Brilho */}
           <div className="space-y-4 max-w-4xl mx-auto">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
-              Analisador Inteligente de Matrículas de Imóveis
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-md">
+              Analisador Inteligente de <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">Matrículas de Imóveis</span>
             </h1>
-            <p className="text-base sm:text-lg text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-slate-200 font-semibold leading-relaxed max-w-2xl mx-auto drop-shadow-sm bg-slate-950/40 p-2 rounded-2xl border border-slate-800/40 backdrop-blur-sm">
               Auditoria notarial automatizada de 12 módulos, diagnósticos em palavras simples, Score de Risco e emissão de Dossiê em PDF em segundos.
             </p>
           </div>
 
           {/* Central AI Upload Box / Prompt Interface (Estilo ChatGPT / Claude) */}
           <div className="max-w-2xl mx-auto pt-2">
-            <div className="p-2 sm:p-3 bg-slate-900/90 border border-slate-800/90 shadow-2xl rounded-3xl backdrop-blur-md space-y-3">
+            <div className="p-2.5 sm:p-4 bg-slate-950/90 border border-emerald-500/40 shadow-2xl shadow-emerald-500/10 rounded-3xl backdrop-blur-xl space-y-3">
               
               <Link to="/app" className="block">
-                <div className="p-6 sm:p-8 border-2 border-dashed border-slate-800 hover:border-emerald-500/60 bg-slate-950/60 hover:bg-slate-950/90 rounded-2xl transition-all cursor-pointer group text-center space-y-4">
-                  <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <FileUp className="w-7 h-7 stroke-[2]" />
+                <div className="p-6 sm:p-8 border-2 border-dashed border-slate-700 hover:border-emerald-400 bg-slate-900/90 hover:bg-slate-900 rounded-2xl transition-all cursor-pointer group text-center space-y-4">
+                  <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
+                    <FileUp className="w-7 h-7 stroke-[2.2]" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-base font-extrabold text-white">Arraste ou envie a certidão em PDF aqui</h3>
-                    <p className="text-xs text-slate-400 font-medium">Suporta matrículas digitais ou escaneadas de qualquer cartório do Brasil</p>
+                    <h3 className="text-base sm:text-lg font-black text-white">Arraste ou envie a certidão em PDF aqui</h3>
+                    <p className="text-xs text-slate-300 font-medium">Suporta matrículas digitais ou escaneadas de qualquer cartório do Brasil</p>
                   </div>
-                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-6 py-5 rounded-xl shadow-lg shadow-emerald-500/20">
+                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-6 py-5 rounded-xl shadow-lg shadow-emerald-500/30">
                     <Upload className="w-4 h-4 mr-2" /> Enviar PDF para Auditoria IA
                   </Button>
                 </div>
               </Link>
 
               {/* 1-Click Instant Sample Test Bar */}
-              <div className="p-3 bg-slate-950/90 border border-slate-800/80 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                <span className="text-slate-400 font-medium text-center sm:text-left flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <span className="text-slate-300 font-semibold text-center sm:text-left flex items-center gap-1.5">
+                  <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
                   Sem arquivo no momento? Teste o sistema em 1 clique:
                 </span>
                 <Link to="/app?sample=safe" className="w-full sm:w-auto">
-                  <Button variant="outline" size="sm" className="w-full sm:w-auto border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 font-bold text-xs rounded-xl h-8">
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto border-emerald-500/50 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 font-bold text-xs rounded-xl h-8">
                     ⚡ Testar Exemplo Instantâneo
                   </Button>
                 </Link>
@@ -316,16 +316,16 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* Selos de Confiança Próximos ao CTA */}
-          <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400 font-semibold pt-2">
-            <span className="flex items-center gap-1.5 text-slate-300">
+          <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-slate-300 font-bold pt-2">
+            <span className="flex items-center gap-1.5 text-slate-200 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
               <div className="flex text-amber-400"><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /><Star className="w-3.5 h-3.5 fill-amber-400" /></div>
               <strong className="text-white">4.9/5</strong> (1.840+ avaliações)
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               Lei nº 6.015/73 & Provimento CNJ 89/19
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
               <Lock className="w-4 h-4 text-emerald-400" />
               Sigilo Registral LGPD
             </span>
@@ -339,6 +339,155 @@ const LandingPage: React.FC = () => {
                 <div className="text-[11px] text-slate-400 font-medium">{m.label}</div>
               </div>
             ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 🤖 NOVA SEÇÃO EXCLUSIVA: AGENTE DE INTELIGÊNCIA REGISTRÁRIA IA */}
+      <section className="py-20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 relative overflow-hidden">
+        {/* Background Ambient Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
+          
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
+              <Brain className="w-4 h-4 text-emerald-400 animate-pulse" />
+              <span>Conheça seu Assistente Notarial 24/7</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+              Tire Qualquer Dúvida com Nosso <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Agente de IA Registrária</span>
+            </h2>
+            <p className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed">
+              Esqueça jargões jurídicos indecifráveis. O nosso Agente de IA absorve centenas de páginas da certidão do imóvel em segundos e responde a qualquer pergunta em linguagem simples e objetiva.
+            </p>
+          </div>
+
+          {/* Grid Interativo do Agente de IA */}
+          <div className="grid lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Esquerda: Recursos e Capacidades do Agente */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="p-6 bg-slate-900/90 border border-slate-800 rounded-3xl space-y-5 shadow-xl">
+                
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 shrink-0">
+                    <Sparkles className="w-6 h-6 stroke-[2.5]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white">IA Especializada Notarial</h3>
+                    <span className="text-xs text-emerald-400 font-bold">Treinada na Lei nº 6.015/73</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3.5 text-xs sm:text-sm text-slate-300 font-medium">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong className="text-white">Respostas em Segundos:</strong> Pergunte sobre proprietários, áreas, doações, usufrutos ou gravames.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong className="text-white">Temperatura 0.0 (Anti-Alucinação):</strong> Extração 100% fiel ao texto e aos fatos gravados pelo cartório.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong className="text-white">Diagnóstico de Segurança:</strong> Identifica riscos de evicção imobiliária e sugere certidões complementares.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong className="text-white">Disponível em Qualquer Dispositivo:</strong> Tire dúvidas direto do celular durante reuniões ou cartório.</span>
+                  </li>
+                </ul>
+
+                <div className="pt-2">
+                  <Link to="/app?sample=safe">
+                    <Button className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs h-11 rounded-xl shadow-lg shadow-emerald-500/20 gap-2">
+                      <MessageCircle className="w-4 h-4" /> Conversar com a IA na Prática
+                    </Button>
+                  </Link>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Direita: Visual Mockup do Chat com o Agente de IA */}
+            <div className="lg:col-span-7">
+              <div className="bg-slate-950 border-2 border-emerald-500/40 rounded-3xl shadow-2xl overflow-hidden text-white backdrop-blur-xl">
+                
+                {/* Header do Mockup do Chat */}
+                <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center font-black">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-slate-900 animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
+                        Agente de IA Registrária
+                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[9px] font-black uppercase">Online 24/7</Badge>
+                      </h4>
+                      <span className="text-[11px] text-slate-400 font-medium">Analisando Matrícula Nº 47.912 (Curitiba/PR)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Corpo do Chat Simulativo */}
+                <div className="p-4 sm:p-6 space-y-4 text-xs sm:text-sm bg-slate-950/80">
+                  
+                  {/* Mensagem da IA */}
+                  <div className="flex gap-3 max-w-[90%]">
+                    <div className="w-7 h-7 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center shrink-0 font-black text-xs">
+                      <Sparkles className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none space-y-1">
+                      <p className="text-slate-200 leading-relaxed font-medium">
+                        Olá! Analisei todos os atos registrados na Matrícula Nº 47.912. Encontrei <strong className="text-emerald-400">1 alienação fiduciária ativa (R-4)</strong> e <strong className="text-amber-300">0 indisponibilidades CNIB</strong>. Em que posso te ajudar?
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Mensagem do Usuário */}
+                  <div className="flex gap-3 max-w-[85%] ml-auto justify-end">
+                    <div className="p-3.5 bg-emerald-600 text-white rounded-2xl rounded-tr-none">
+                      <p className="font-semibold">Quem são os atuais proprietários do imóvel que precisam assinar a escritura?</p>
+                    </div>
+                  </div>
+
+                  {/* Resposta da IA */}
+                  <div className="flex gap-3 max-w-[90%]">
+                    <div className="w-7 h-7 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center shrink-0 font-black text-xs">
+                      <Sparkles className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none space-y-2">
+                      <p className="text-slate-200 leading-relaxed font-medium">
+                        De acordo com o registro <strong className="text-white font-bold">R-3/47.912</strong>, os proprietários atuais são:
+                      </p>
+                      <ul className="space-y-1 text-xs text-slate-300 font-semibold border-l-2 border-emerald-500 pl-3">
+                        <li>• <strong className="text-white">Carlos Eduardo Faria</strong> (CPF 042.***.***-18) — 50% da propriedade</li>
+                        <li>• <strong className="text-white">Mariana Silveira Faria</strong> (CPF 089.***.***-45) — 50% da propriedade</li>
+                      </ul>
+                      <p className="text-[11px] text-emerald-400 font-bold pt-1">
+                        ✓ Ambos devem assinar a promessa de compra e venda.
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Footer do Chat Mockup com Botões de Pergunta Rápida */}
+                <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
+                  <span className="text-[10px] font-bold text-slate-400 shrink-0">Exemplos:</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 shrink-0 font-medium">🚨 Tem penhora ativa?</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 shrink-0 font-medium">📐 Qual a área construída?</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 shrink-0 font-medium">📋 Quais certidões pedir?</span>
+                </div>
+
+              </div>
+            </div>
+
           </div>
 
         </div>
