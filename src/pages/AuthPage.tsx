@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate, useSearchParams, Link } from 'react-router-dom';
+import { Navigate, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 export const AuthPage: React.FC = () => {
   const { user, signIn, signUp, resetPassword, updatePassword, signOut, isLoading } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,8 +52,9 @@ export const AuthPage: React.FC = () => {
         toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso. Redirecionando...' });
         navigate('/app');
       }
-    } catch {
-      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao conectar. Tente novamente.', variant: 'destructive' });
+    } catch (err) {
+      console.error('Erro no handleSignIn:', err);
+      toast({ title: 'Erro no login', description: 'Verifique suas credenciais e tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
