@@ -17,16 +17,34 @@ const MatriculaAnalysis: React.FC = () => {
   const analysis = useMatriculaAnalysis();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-
   const location = useLocation();
-  const isSampleDemo = new URLSearchParams(location.search).get('sample') === 'safe' || new URLSearchParams(location.search).get('sample') === 'true';
+
+  // ──────────────────────────────────────────────────────────────
+  // SEPARAÇÃO DOS AMBIENTES:
+  // - Usuário LOGADO → workspace real, NUNCA carrega demo
+  // - Usuário NÃO LOGADO com ?sample=safe → demonstração pública
+  // ──────────────────────────────────────────────────────────────
+  const params = new URLSearchParams(location.search);
+  const hasSampleParam = params.get('sample') === 'safe' || params.get('sample') === 'true';
+
+  // Modo demo SÓ é válido se o usuário NÃO estiver logado
+  const isSampleDemo = !user && hasSampleParam;
 
   React.useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get('sample') === 'safe' || params.get('sample') === 'true') {
+    if (user) {
+      // Usuário logado: se a URL ainda tem ?sample=safe (veio da demo),
+      // redireciona para o workspace limpo sem o parâmetro
+      if (hasSampleParam) {
+        navigate('/app', { replace: true });
+      }
+      return; // Nunca carrega demonstração para usuários logados
+    }
+
+    // Apenas carrega a demo para visitantes não logados com o param correto
+    if (hasSampleParam) {
       analysis.loadSampleReport('safe');
     }
-  }, [location.search]);
+  }, [user, location.search]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) analysis.processFile(acceptedFiles[0]);
@@ -60,43 +78,55 @@ const MatriculaAnalysis: React.FC = () => {
               </span>
             </div>
             <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden sm:inline-flex">
-              AI Workspace
+              {isSampleDemo ? 'Demonstração' : 'AI Workspace'}
             </Badge>
           </Link>
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
-            {/* Dynamic Subscription Status Badge or Upgrade CTA */}
-            {(() => {
-              const sub = subscriptionService.getStatus();
-              if (sub.active) {
-                return (
-                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-extrabold rounded-full">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Plano 6 Meses Ilimitado (Ativo)
-                  </Badge>
-                );
-              }
-              return (
-                <Link to="/pagamento-pix">
-                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-3.5 h-8 rounded-xl shadow-md gap-1.5">
-                    <Zap className="w-3.5 h-3.5 fill-slate-950" />
-                    <span>Garantir 6 Meses por R$ 99,90</span>
-                  </Button>
-                </Link>
-              );
-            })()}
+            {/* Só mostra controles de assinatura/logout quando usuário está logado */}
             {user && (
-              <span className="text-xs text-slate-400 hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
+              <>
+                {(() => {
+                  const sub = subscriptionService.getStatus();
+                  if (sub.active) {
+                    return (
+                      <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-extrabold rounded-full">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Plano 6 Meses Ilimitado (Ativo)
+                      </Badge>
+                    );
+                  }
+                  return (
+                    <Link to="/pagamento-pix">
+                      <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-3.5 h-8 rounded-xl shadow-md gap-1.5">
+                        <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                        <span>Garantir 6 Meses por R$ 99,90</span>
+                      </Button>
+                    </Link>
+                  );
+                })()}
+                <span className="text-xs text-slate-400 hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold gap-1.5 h-9"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sair
+                </Button>
+              </>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSignOut}
-              className="border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold gap-1.5 h-9"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              Sair
-            </Button>
+
+            {/* Se for demo pública (não logado), mostra CTA de cadastro */}
+            {isSampleDemo && (
+              <Link to="/auth">
+                <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 h-8 rounded-xl shadow-md gap-1.5">
+                  <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                  Criar Conta — R$ 99,90
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -104,79 +134,92 @@ const MatriculaAnalysis: React.FC = () => {
       {/* Main Content Workspace */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
 
-        {/* Hero Title & Subtitle */}
-        <div className="text-center space-y-2 animate-fade-in pt-2">
-          <Badge variant="outline" className="border-slate-800 text-emerald-400 bg-slate-900 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-inner">
-            <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400 inline" /> Plataforma de Auditoria Registrária Automatizada
-          </Badge>
-          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-            Análise de Matrícula Imobiliária em Tempo Real
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed font-medium">
-            Arraste ou selecione a certidão de matrícula em PDF para emissão instantânea do parecer de Due Diligence dos 12 Módulos Registrais.
-          </p>
-        </div>
+        {/* Banner de demo para visitantes não logados */}
+        {isSampleDemo && (
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center gap-2.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl px-4 py-3 text-xs text-amber-300 font-semibold">
+              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Você está visualizando uma <strong>demonstração interativa</strong>. Para analisar matrículas reais, <Link to="/auth" className="underline font-black hover:text-amber-200">crie sua conta</Link>.</span>
+            </div>
+          </div>
+        )}
 
-        {/* Direct Upload & Analysis Flow */}
+        {/* Hero Title & Subtitle — só para workspace real */}
+        {!isSampleDemo && (
+          <div className="text-center space-y-2 animate-fade-in pt-2">
+            <Badge variant="outline" className="border-slate-800 text-emerald-400 bg-slate-900 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-inner">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400 inline" /> Plataforma de Auditoria Registrária Automatizada
+            </Badge>
+            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+              Análise de Matrícula Imobiliária em Tempo Real
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed font-medium">
+              Arraste ou selecione a certidão de matrícula em PDF para emissão instantânea do parecer de Due Diligence dos 12 Módulos Registrais.
+            </p>
+          </div>
+        )}
+
+        {/* Direct Upload & Analysis Flow — só para workspace real (usuário logado) */}
         <div className="space-y-8">
-          {/* Upload Container Minimalista */}
-          <Card className="max-w-2xl mx-auto border-slate-800 shadow-2xl rounded-3xl bg-slate-900 text-white overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-800/80 bg-slate-950/60">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-extrabold text-white flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
-                    <Upload className="w-3.5 h-3.5 stroke-[2]" />
-                  </div>
-                  Upload da Matrícula em PDF
-                </CardTitle>
-                <span className="text-[11px] font-bold text-slate-400">PDF • Máx 10MB</span>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6">
-              {!analysis.file ? (
-                <div
-                  {...getRootProps()}
-                  className={`
-                    border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer
-                    transition-all duration-300 group
-                    ${isDragActive
-                      ? 'border-emerald-500 bg-emerald-500/10 scale-[0.99]'
-                      : 'border-slate-800 hover:border-emerald-500/60 hover:bg-slate-950/60'
-                    }
-                    ${analysis.isProcessing ? 'pointer-events-none opacity-50' : ''}
-                  `}
-                >
-                  <input {...getInputProps()} />
-                  <div className="space-y-3">
-                    <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                      <Upload className="w-7 h-7 stroke-[1.8]" />
+          {!isSampleDemo && (
+            <Card className="max-w-2xl mx-auto border-slate-800 shadow-2xl rounded-3xl bg-slate-900 text-white overflow-hidden">
+              <CardHeader className="pb-3 border-b border-slate-800/80 bg-slate-950/60">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-extrabold text-white flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+                      <Upload className="w-3.5 h-3.5 stroke-[2]" />
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="text-sm sm:text-base font-extrabold text-white">
-                        {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a certidão em PDF'}
-                      </h3>
-                      <p className="text-xs text-slate-400 font-medium">Suporta matrículas digitalizadas, escaneadas ou nativas em PDF</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs h-9 px-5 shadow-lg shadow-emerald-500/20 transition-all"
-                      disabled={analysis.isProcessing}
-                    >
-                      Selecionar Arquivo PDF
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  </div>
+                    Upload da Matrícula em PDF
+                  </CardTitle>
+                  <span className="text-[11px] font-bold text-slate-400">PDF • Máx 10MB</span>
                 </div>
-              ) : (
-                <FileUpload
-                  onFileSelect={analysis.processFile}
-                  selectedFile={analysis.file}
-                  onClearFile={analysis.clearFile}
-                  isProcessing={analysis.isProcessing}
-                />
-              )}
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent className="pt-6">
+                {!analysis.file ? (
+                  <div
+                    {...getRootProps()}
+                    className={`
+                      border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer
+                      transition-all duration-300 group
+                      ${isDragActive
+                        ? 'border-emerald-500 bg-emerald-500/10 scale-[0.99]'
+                        : 'border-slate-800 hover:border-emerald-500/60 hover:bg-slate-950/60'
+                      }
+                      ${analysis.isProcessing ? 'pointer-events-none opacity-50' : ''}
+                    `}
+                  >
+                    <input {...getInputProps()} />
+                    <div className="space-y-3">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                        <Upload className="w-7 h-7 stroke-[1.8]" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-sm sm:text-base font-extrabold text-white">
+                          {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a certidão em PDF'}
+                        </h3>
+                        <p className="text-xs text-slate-400 font-medium">Suporta matrículas digitalizadas, escaneadas ou nativas em PDF</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs h-9 px-5 shadow-lg shadow-emerald-500/20 transition-all"
+                        disabled={analysis.isProcessing}
+                      >
+                        Selecionar Arquivo PDF
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <FileUpload
+                    onFileSelect={analysis.processFile}
+                    selectedFile={analysis.file}
+                    onClearFile={analysis.clearFile}
+                    isProcessing={analysis.isProcessing}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Progress Section */}
           {analysis.isProcessing && (
@@ -194,14 +237,14 @@ const MatriculaAnalysis: React.FC = () => {
             <section className="animate-fade-in-up">
               <AnalysisReport
                 report={analysis.report}
-                autoStartTour={isSampleDemo || Boolean(analysis.file?.name.includes('Fazenda'))}
+                autoStartTour={isSampleDemo}
                 isSampleDemo={isSampleDemo}
               />
             </section>
           )}
 
-          {/* Fluxo de Funcionamento Limpo */}
-          {!analysis.file && !analysis.isProcessing && (
+          {/* Fluxo de Funcionamento Limpo — só para usuários logados sem análise ativa */}
+          {!isSampleDemo && !analysis.file && !analysis.isProcessing && !analysis.report && (
             <div className="max-w-4xl mx-auto pt-4 space-y-4">
               <div className="text-center">
                 <h3 className="text-sm font-extrabold text-slate-300 uppercase tracking-wider">Como Funciona a Auditoria Automatizada</h3>
