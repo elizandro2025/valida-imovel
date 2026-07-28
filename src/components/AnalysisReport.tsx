@@ -767,49 +767,55 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
         <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-            {/* NAVEGAÇÃO DE ABAS 100% ENCAIXADA NA TELA (GRID RESPONSIVO) */}
-            <div className="w-full bg-slate-900 border border-slate-800 p-2 rounded-2xl shadow-xl">
-              <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 bg-transparent h-auto p-0 border-0">
+            {/* NAVEGAÇÃO DE ABAS 100% RESPONSIVA SEM CORTE DE TEXTO */}
+            <div className="w-full bg-slate-900/90 border border-slate-800 p-1.5 rounded-2xl shadow-xl backdrop-blur-md">
+              <TabsList className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 bg-transparent h-auto p-0 border-0">
                 <TabsTrigger
                   value="parecer"
-                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
+                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 shrink-0 inline" /> 12. Parecer & Scores
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span className="whitespace-nowrap">12. Parecer & Risco</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="imovel"
-                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
+                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
                 >
-                  <Building2 className="w-3.5 h-3.5 shrink-0 inline" /> Módulos 1, 2 e 3 (Imóvel/Geo)
+                  <Building2 className="w-4 h-4 shrink-0" />
+                  <span className="whitespace-nowrap">Mód 1-3 • Imóvel</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="proprietarios"
-                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
+                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
                 >
-                  <Users className="w-3.5 h-3.5 shrink-0 inline" /> Módulos 7 e 8 (Donos/Cadeia)
+                  <Users className="w-4 h-4 shrink-0" />
+                  <span className="whitespace-nowrap">Mód 7-8 • Donos</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="onus"
-                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
+                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
                 >
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-400 inline" /> Módulos 9, 10 e 11 (Ônus/CNIB)
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+                  <span className="whitespace-nowrap">Mód 9-11 • Ônus</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="especiais"
-                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
+                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
                 >
-                  <Landmark className="w-3.5 h-3.5 shrink-0 inline" /> Módulos 4, 5 e 6 (Regimes/SPU)
+                  <Landmark className="w-4 h-4 shrink-0" />
+                  <span className="whitespace-nowrap">Mód 4-6 • Regimes</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="perfil"
-                  className="w-full rounded-xl text-[11px] sm:text-xs font-extrabold gap-1.5 py-2.5 px-2 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center truncate"
+                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
                 >
-                  <Bot className="w-3.5 h-3.5 shrink-0 inline" /> IA Explica por Perfil
+                  <Bot className="w-4 h-4 shrink-0" />
+                  <span className="whitespace-nowrap">Copiloto IA</span>
                 </TabsTrigger>
               </TabsList>
             </div>
