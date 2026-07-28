@@ -93,35 +93,88 @@ const MatriculaAnalysis: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      {/* Main Content Workspace */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+
+        {/* Dashboard Quick Metrics Bar (Linear / Stripe Standard) */}
+        {!analysis.file && !analysis.isProcessing && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
+            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dossiês Processados</span>
+                <FileCheck className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="mt-2 flex items-baseline justify-between">
+                <span className="text-2xl font-black text-white">100%</span>
+                <span className="text-xs text-emerald-400 font-bold">Auditado</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">Conformidade Lei 6.015/73</p>
+            </Card>
+
+            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Módulos Auditados</span>
+                <Brain className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="mt-2 flex items-baseline justify-between">
+                <span className="text-2xl font-black text-white">12 Módulos</span>
+                <span className="text-xs text-emerald-400 font-bold">Paralelos</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">IA Registrária em Tempo Real</p>
+            </Card>
+
+            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Velocidade IA</span>
+                <Zap className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="mt-2 flex items-baseline justify-between">
+                <span className="text-2xl font-black text-white">~ 8s</span>
+                <span className="text-xs text-emerald-400 font-bold">Tempo Média</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">Extração OCR High-Speed</p>
+            </Card>
+
+            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status do Plano</span>
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="mt-2 flex items-baseline justify-between">
+                <span className="text-2xl font-black text-white">Ilimitado</span>
+                <span className="text-xs text-emerald-400 font-bold">6 Meses</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">Acesso Total Sem Restrições</p>
+            </Card>
+          </div>
+        )}
 
         {/* Hero Title & Subtitle */}
-        <div className="text-center space-y-3 animate-fade-in">
-          <Badge variant="outline" className="border-slate-800 text-emerald-400 bg-slate-900 text-xs font-extrabold px-3.5 py-1 rounded-full shadow-inner">
-            <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400 inline" /> Auditoria Registrária Automatizada em Tempo Real
+        <div className="text-center space-y-2 animate-fade-in pt-2">
+          <Badge variant="outline" className="border-slate-800 text-emerald-400 bg-slate-900 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-inner">
+            <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400 inline" /> Plataforma de Auditoria Registrária Automatizada
           </Badge>
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-            Análise Inteligente de Matrícula Imobiliária
+          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            Análise de Matrícula Imobiliária em Tempo Real
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
-            Plataforma de inteligência jurídica para auditoria e emissão de parecer de Due Diligence em matrículas de imóveis com Inteligência Artificial Registrária.
+          <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed font-medium">
+            Arraste ou selecione a certidão de matrícula em PDF para emissão instantânea do parecer de Due Diligence dos 12 Módulos Registrais.
           </p>
         </div>
 
         {/* Direct Upload & Analysis Flow */}
         <div className="space-y-8">
-          {/* Upload Card Estilo AI Workspace */}
+          {/* Upload Container Minimalista */}
           <Card className="max-w-2xl mx-auto border-slate-800 shadow-2xl rounded-3xl bg-slate-900 text-white overflow-hidden">
             <CardHeader className="pb-3 border-b border-slate-800/80 bg-slate-950/60">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-extrabold text-white flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
-                    <Upload className="w-4 h-4 stroke-[2]" />
+                <CardTitle className="text-sm font-extrabold text-white flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+                    <Upload className="w-3.5 h-3.5 stroke-[2]" />
                   </div>
                   Upload da Matrícula em PDF
                 </CardTitle>
-                <span className="text-xs font-bold text-slate-400">PDF • até 10MB</span>
+                <span className="text-[11px] font-bold text-slate-400">PDF • Máx 10MB</span>
               </div>
             </CardHeader>
             <CardContent className="pt-6">
@@ -129,7 +182,7 @@ const MatriculaAnalysis: React.FC = () => {
                 <div
                   {...getRootProps()}
                   className={`
-                    border-2 border-dashed rounded-2xl p-10 sm:p-12 text-center cursor-pointer
+                    border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer
                     transition-all duration-300 group
                     ${isDragActive
                       ? 'border-emerald-500 bg-emerald-500/10 scale-[0.99]'
@@ -139,19 +192,19 @@ const MatriculaAnalysis: React.FC = () => {
                   `}
                 >
                   <input {...getInputProps()} />
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                      <Upload className="w-8 h-8 stroke-[1.8]" />
+                  <div className="space-y-3">
+                    <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                      <Upload className="w-7 h-7 stroke-[1.8]" />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-base font-extrabold text-white">
-                        {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a matrícula'}
+                      <h3 className="text-sm sm:text-base font-extrabold text-white">
+                        {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a certidão em PDF'}
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-400 font-medium">Suporta arquivos PDF digitalizados ou pesquisáveis</p>
+                      <p className="text-xs text-slate-400 font-medium">Suporta matrículas digitalizadas, escaneadas ou nativas em PDF</p>
                     </div>
                     <Button
                       size="sm"
-                      className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs h-10 px-5 shadow-lg shadow-emerald-500/20 transition-all"
+                      className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs h-9 px-5 shadow-lg shadow-emerald-500/20 transition-all"
                       disabled={analysis.isProcessing}
                     >
                       Selecionar Arquivo PDF
@@ -188,44 +241,30 @@ const MatriculaAnalysis: React.FC = () => {
             </section>
           )}
 
-          {/* How it works */}
+          {/* Fluxo de Funcionamento Limpo */}
           {!analysis.file && !analysis.isProcessing && (
-            <Card className="max-w-4xl mx-auto border-slate-200/80 shadow-md rounded-3xl bg-white/90 backdrop-blur-sm">
-              <CardHeader className="pb-4 border-b border-slate-100">
-                <CardTitle className="text-base font-extrabold text-slate-900 text-center">Como funciona a auditoria registral</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid sm:grid-cols-3 gap-6">
-                  {[
-                    { num: '01', icon: Upload, title: 'Upload Seguro', desc: 'Envio confidencial do PDF da matrícula imobiliária com criptografia de ponta a ponta.' },
-                    { num: '02', icon: Brain, title: 'Auditoria de 12 Módulos', desc: 'Processamento paralelo via IA Registrária examinando histórico, proprietários, ônus e georreferenciamento.' },
-                    { num: '03', icon: FileCheck, title: 'Parecer Conclusivo', desc: 'Emissão de relatório auditado completo com Score de Risco, Chat Interativo e exportação em PDF.' },
-                  ].map(({ num, icon: Icon, title, desc }) => (
-                    <div key={num} className="text-center space-y-3 group p-4 rounded-2xl hover:bg-slate-50 transition-colors">
-                      <div className="relative mx-auto w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 transition-colors shadow-sm">
-                        <Icon className="w-6 h-6 text-emerald-600 stroke-[1.8] group-hover:text-white transition-colors" />
-                        <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] font-black flex items-center justify-center">
-                          {num.replace('0', '')}
-                        </span>
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="font-extrabold text-slate-900 text-sm">{title}</h4>
-                        <p className="text-xs text-slate-500 leading-relaxed font-medium">{desc}</p>
-                      </div>
+            <div className="max-w-4xl mx-auto pt-4 space-y-4">
+              <div className="text-center">
+                <h3 className="text-sm font-extrabold text-slate-300 uppercase tracking-wider">Como Funciona a Auditoria Automatizada</h3>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { num: '01', icon: Upload, title: 'Upload Confidencial', desc: 'Envio seguro com criptografia bancária e sigilo LGPD.' },
+                  { num: '02', icon: Brain, title: 'Extração dos 12 Módulos', desc: 'Processamento de proprietários, ônus, penhoras e georreferenciamento.' },
+                  { num: '03', icon: FileCheck, title: 'Parecer & Exportação PDF', desc: 'Score de Risco, Semáforo Notarial e Dossiê em PDF completo.' },
+                ].map(({ num, icon: Icon, title, desc }) => (
+                  <div key={num} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-black flex items-center justify-center border border-emerald-500/30">
+                        {num}
+                      </span>
+                      <h4 className="font-extrabold text-white text-xs">{title}</h4>
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 p-4 bg-emerald-50/80 rounded-2xl border border-emerald-100 flex items-center gap-3 shadow-sm">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-emerald-600/20">
-                    <ShieldCheck className="w-5 h-5" />
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium pl-8">{desc}</p>
                   </div>
-                  <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                    <strong className="text-slate-900">Tecnologia Avançada:</strong> Utilizamos inteligência artificial especialidade registrária para análises precisas, confiáveis e seguras de documentos jurídicos imobiliários.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </main>
