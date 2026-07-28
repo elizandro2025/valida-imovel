@@ -128,18 +128,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const parsed = JSON.parse(savedVip);
         setUser(parsed);
         subscriptionService.activate6MonthsUnlimited('ADMIN-VIP');
-      } catch (e) {}
+      } catch (e) {
+        localStorage.removeItem('valida_imovel_vip_session');
+      }
     }
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (!session && !localStorage.getItem('valida_imovel_vip_session')) {
-        setIsLoading(false);
-      } else {
+    // Get initial session with fail-safe timeout & catch
+    const initSession = async () => {
+      try {
+        const { data } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<{ data: { session: null } }>(resolve => 
+            setTimeout(() => resolve({ data: { session: null } }), 1500)
+          )
+        ]);
+        if (data?.session) {
+          setSession(data.session);
+        }
+      } catch (err) {
+        console.warn('Supabase getSession network warning (handled):', err);
+      } finally {
         setIsLoading(false);
       }
-    });
+    };
+
+    initSession();
 
     return () => subscription.unsubscribe();
   }, []);
