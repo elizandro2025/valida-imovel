@@ -96,59 +96,6 @@ const MatriculaAnalysis: React.FC = () => {
       {/* Main Content Workspace */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
 
-        {/* Dashboard Quick Metrics Bar (Linear / Stripe Standard) */}
-        {!analysis.file && !analysis.isProcessing && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
-            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dossiês Processados</span>
-                <FileCheck className="w-4 h-4 text-emerald-400" />
-              </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-2xl font-black text-white">100%</span>
-                <span className="text-xs text-emerald-400 font-bold">Auditado</span>
-              </div>
-              <p className="text-[10px] text-slate-400 mt-1">Conformidade Lei 6.015/73</p>
-            </Card>
-
-            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Módulos Auditados</span>
-                <Brain className="w-4 h-4 text-emerald-400" />
-              </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-2xl font-black text-white">12 Módulos</span>
-                <span className="text-xs text-emerald-400 font-bold">Paralelos</span>
-              </div>
-              <p className="text-[10px] text-slate-400 mt-1">IA Registrária em Tempo Real</p>
-            </Card>
-
-            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Velocidade IA</span>
-                <Zap className="w-4 h-4 text-emerald-400" />
-              </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-2xl font-black text-white">~ 8s</span>
-                <span className="text-xs text-emerald-400 font-bold">Tempo Média</span>
-              </div>
-              <p className="text-[10px] text-slate-400 mt-1">Extração OCR High-Speed</p>
-            </Card>
-
-            <Card className="border-slate-800 bg-slate-900/90 text-white rounded-2xl p-4 shadow-md">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status do Plano</span>
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-2xl font-black text-white">Ilimitado</span>
-                <span className="text-xs text-emerald-400 font-bold">6 Meses</span>
-              </div>
-              <p className="text-[10px] text-slate-400 mt-1">Acesso Total Sem Restrições</p>
-            </Card>
-          </div>
-        )}
-
         {/* Hero Title & Subtitle */}
         <div className="text-center space-y-2 animate-fade-in pt-2">
           <Badge variant="outline" className="border-slate-800 text-emerald-400 bg-slate-900 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-inner">
@@ -161,33 +108,6 @@ const MatriculaAnalysis: React.FC = () => {
             Arraste ou selecione a certidão de matrícula em PDF para emissão instantânea do parecer de Due Diligence dos 12 Módulos Registrais.
           </p>
         </div>
-
-        {/* Card de Chamada para a Demonstração Simulada Interativa (Imóvel Rural Complexo) */}
-        {!analysis.file && !analysis.isProcessing && (
-          <Card className="max-w-2xl mx-auto border border-emerald-500/40 bg-gradient-to-r from-emerald-950/80 via-slate-900 to-teal-950/80 text-white rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden animate-fade-in">
-            <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-              <div className="space-y-1 text-center sm:text-left">
-                <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 bg-emerald-500/20 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
-                  ✨ Tour Guiado & Simulação Interativa
-                </Badge>
-                <h3 className="text-base font-black text-white">
-                  Demonstração de Imóvel Rural Complexo
-                </h3>
-                <p className="text-xs text-slate-300 font-medium max-w-md">
-                  Explore dados reais simulados de 1.450 Hectares (Fazenda Santa Maria), Georreferenciamento SIGEF/INCRA, CAR e os 12 Módulos Registrais.
-                </p>
-              </div>
-              <Button
-                onClick={() => analysis.loadSampleReport('safe')}
-                className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs h-11 px-5 rounded-2xl shadow-xl shadow-emerald-500/20 shrink-0 gap-2 transition-all hover:scale-105"
-              >
-                <Sparkles className="w-4 h-4 stroke-[2.5]" />
-                Iniciar Demonstração
-              </Button>
-            </div>
-          </Card>
-        )}
 
         {/* Direct Upload & Analysis Flow */}
         <div className="space-y-8">
