@@ -20,6 +20,13 @@ const MatriculaAnalysis: React.FC = () => {
 
   const location = useLocation();
 
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('sample') === 'safe' || params.get('sample') === 'true') {
+      analysis.loadSampleReport('safe');
+    }
+  }, [location.search]);
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) analysis.processFile(acceptedFiles[0]);
   }, [analysis.processFile]);
