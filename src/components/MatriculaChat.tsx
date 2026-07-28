@@ -55,7 +55,7 @@ const renderFormattedText = (text: string, isUser: boolean = false) => {
   );
 };
 
-export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
+export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQuery }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -67,6 +67,12 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report }) => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (initialQuery && initialQuery.trim()) {
+      handleSendMessage(initialQuery);
+    }
+  }, [initialQuery]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });

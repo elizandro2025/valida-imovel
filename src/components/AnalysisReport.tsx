@@ -965,24 +965,26 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       </div>
 
 
-      {/* 🤖 SEÇÃO DEDICADA DO AGENTE DE IA REGISTRÁRIA (SEPARADO DOS MÓDULOS DE AUDITORIA) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl text-white space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
-              <Bot className="w-5 h-5 stroke-[2.2]" />
+      {/* 🤖 HERO SPOTLIGHT — AGENTE DE INTELIGÊNCIA REGISTRÁRIA IA & COPILOTO NOTARIAL */}
+      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl text-white space-y-4 relative overflow-hidden">
+        <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/25 shrink-0">
+              <Bot className="w-6 h-6 stroke-[2.2]" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm sm:text-base font-extrabold text-white">
-                  Agente de Inteligência Registrária IA
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
+                  Agente Copiloto IA Registrário
                 </h3>
-                <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-extrabold text-[10px] uppercase">
+                <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold text-[10px] uppercase">
                   100% Conectado à Matrícula
                 </Badge>
               </div>
               <p className="text-xs text-slate-300 font-medium mt-0.5">
-                Tire dúvidas em linguagem natural. Respostas fundamentadas com citação direta dos atos registrais (R-1, AV-2, penhoras, áreas e proprietários).
+                Faça perguntas em linguagem natural ou clique em uma sugestão abaixo para auditoria notarial instantânea:
               </p>
             </div>
           </div>
@@ -990,23 +992,42 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setShowAiChat(!showAiChat)}
-            className="border-slate-700 bg-slate-800 text-emerald-400 hover:text-white hover:bg-slate-700 rounded-xl text-xs font-bold gap-1.5 px-4 py-2 shadow-sm"
+            onClick={() => {
+              setActiveTab('copiloto');
+              setShowAiChat(true);
+            }}
+            className="border-slate-700 bg-slate-800 text-emerald-400 hover:text-white hover:bg-slate-700 rounded-xl text-xs font-extrabold gap-1.5 px-4 py-2.5 shadow-sm shrink-0 self-stretch sm:self-auto"
           >
-            <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-            {showAiChat ? 'Ocultar Assistente IA' : 'Perguntar ao Agente de IA'}
-            {showAiChat ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            <MessageSquare className="w-4 h-4 text-emerald-400" />
+            Abrir Chat Copiloto IA
           </Button>
         </div>
 
-        {showAiChat && (
-          <div className="pt-2 animate-fade-in">
-            <MatriculaChat report={report} />
-          </div>
-        )}
+        {/* Quick Action Prompt Chips */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-1 relative z-10">
+          {[
+            { chip: "🚨 O imóvel tem penhora ou dívida ativa?", query: "Existe alguma penhora, hipoteca ou indisponibilidade CNIB ativa nesta matrícula?" },
+            { chip: "👤 Quem é o dono autorizado a vender?", query: "Quem são os proprietários atuais legalmente autorizados a assinar a venda?" },
+            { chip: "🌿 Como está a Reserva Legal e CAR?", query: "Qual a situação do registro ambiental, CAR e Reserva Legal nesta certidão?" },
+            { chip: "📜 Resumo dos atos da cadeia dominial", query: "Faça um resumo cronológico dos atos de transmissão registrados na matrícula." },
+          ].map((promptItem, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setActiveTab('copiloto');
+                setShowAiChat(true);
+                // Dispatch event or quick question
+              }}
+              className="p-3 bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl text-left text-xs font-semibold text-slate-200 hover:text-emerald-300 transition-all flex items-center justify-between gap-2 group shadow-sm"
+            >
+              <span className="truncate">{promptItem.chip}</span>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Main Navigation Tabs para os 12 Módulos da Matrícula */}
+      {/* Main Product Navigation Tabs (5 Pilares Registrais) */}
       <div className="relative mt-6">
         
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
@@ -1014,19 +1035,19 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth sm:grid sm:grid-cols-5 bg-slate-100/90 rounded-2xl p-1.5 h-auto gap-1.5 sm:gap-1">
               <TabsTrigger value="parecer" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Diagnóstico Fácil
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Diagnóstico 360°
               </TabsTrigger>
-              <TabsTrigger value="imovel" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Endereço & Tamanho
+              <TabsTrigger value="perfil" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Bot className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> IA Explica por Perfil
+              </TabsTrigger>
+              <TabsTrigger value="modulos" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Os 12 Módulos
               </TabsTrigger>
               <TabsTrigger value="proprietarios" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Donos do Imóvel
+                <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Linha do Tempo
               </TabsTrigger>
-              <TabsTrigger value="onus" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <AlertTriangle className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Dívidas & Bloqueios
-              </TabsTrigger>
-              <TabsTrigger value="especiais" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Landmark className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Regras & Marinha
+              <TabsTrigger value="copiloto" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Copiloto IA Chat
               </TabsTrigger>
             </TabsList>
 
@@ -1182,8 +1203,88 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Card>
         </TabsContent>
 
-        {/* TAB 2: IMÓVEL, GEORREF. & AMBIENTAL */}
-        <TabsContent value="imovel" className="mt-5 space-y-6">
+        {/* TAB 2: IA EXPLICA POR PERFIL (5 LINGUAGENS DE NEGÓCIO) */}
+        <TabsContent value="perfil" className="mt-5 space-y-6">
+          <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl border border-slate-800 space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                <Bot className="w-6 h-6 stroke-[2.2]" />
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-white">
+                  IA Explica — Diagnóstico Notarial por Persona
+                </h3>
+                <p className="text-xs text-slate-300 font-medium mt-0.5">
+                  Visualização adaptada para a linguagem exata e prioridades de cada perfil de atuação
+                </p>
+              </div>
+            </div>
+
+            {/* Abas dos Perfis */}
+            <div className="flex overflow-x-auto no-scrollbar gap-2 bg-slate-800/90 p-2 rounded-2xl border border-slate-700/80">
+              {[
+                { id: 'comprador', label: '👤 Comprador / Leigo' },
+                { id: 'corretor', label: '🏡 Corretor de Imóveis' },
+                { id: 'banco', label: '🏦 Banco / Crédito' },
+                { id: 'engenheiro', label: '📐 Engenheiro / Agrônomo' },
+                { id: 'advogado', label: '⚖️ Advogado / Parecerista' },
+              ].map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => setProfileTab(p.id as any)}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
+                    profileTab === p.id
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Conteúdo Adaptado */}
+            <div className="p-5 bg-slate-800/70 border border-slate-700/80 rounded-2xl text-xs sm:text-sm text-slate-200 leading-relaxed space-y-3 font-medium">
+              {profileTab === 'comprador' && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">👤 Parecer Direto para o Comprador / Leigo</span>
+                  <p>{renderSafe(parecer.explicacoes_por_perfil?.comprador_leigo || parecer.explicacao_descomplicada || parecer.resumo_geral)}</p>
+                </div>
+              )}
+
+              {profileTab === 'corretor' && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">🏡 Visão Comercial & Corretagem Imobiliária</span>
+                  <p>{renderSafe(parecer.explicacoes_por_perfil?.corretor_imoveis || `Imóvel com status ${statusJuridico}. Documentação apta para apresentação a clientes e elaboração do contrato de compra e venda.`)}</p>
+                </div>
+              )}
+
+              {profileTab === 'banco' && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">🏦 Análise de Garantia Fiduciária & Risco de Crédito</span>
+                  <p>{renderSafe(parecer.explicacoes_por_perfil?.banco_credito || `Score de garantia: ${Math.max(10, 100 - scoreRisco)}/100. Gravames ativos: ${onus.length}. Avaliação recomendada para constituição de Alienação Fiduciária.`)}</p>
+                </div>
+              )}
+
+              {profileTab === 'engenheiro' && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">📐 Análise Física, Territorial & Engenharia</span>
+                  <p>{renderSafe(parecer.explicacoes_por_perfil?.engenheiro_agronomo || `Área total: ${carac.area_total_m2 || 'Conforme certidão'}. Georreferenciamento: ${geo.possui_georreferenciamento ? 'Homologado SIGEF' : 'Em análise'}. Reserva legal e APP mapeadas.`)}</p>
+                </div>
+              )}
+
+              {profileTab === 'advogado' && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">⚖️ Parecer Registral Notarial & Fundamentação Jurídica</span>
+                  <p>{renderSafe(parecer.explicacoes_por_perfil?.advogado_parecerista || parecer.conclusao_juridica || parecer.resumo_geral)}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* TAB 3: OS 12 MÓDULOS REGISTRAIS ESPECIALISTAS */}
+        <TabsContent value="modulos" className="mt-5 space-y-6">
 
           {/* Módulo 1 & 2 */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
@@ -1588,6 +1689,27 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </Card>
           )}
 
+        </TabsContent>
+
+        {/* TAB 5: COPILOTO IA CHAT INTERATIVO */}
+        <TabsContent value="copiloto" className="mt-5 space-y-6">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl text-white space-y-4">
+            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                <Bot className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-white">
+                  Copiloto Notarial de IA Registrária
+                </h3>
+                <p className="text-xs text-slate-300">
+                  Respostas imediatas com citação direta dos atos da certidão (R-1, AV-2, penhoras, áreas e titularidades)
+                </p>
+              </div>
+            </div>
+
+            <MatriculaChat report={report} />
+          </div>
         </TabsContent>
       </Tabs>
     </div>
