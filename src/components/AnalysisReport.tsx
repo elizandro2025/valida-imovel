@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { subscriptionService } from '@/services/subscriptionService';
 import { MatriculaChat } from './MatriculaChat';
+import { GuidedTour } from './GuidedTour';
 
 // Helper ultra-seguro para impedir erros de React child em objetos/arrays
 const renderSafe = (value: any, fallback: string = 'Não informado'): string => {
@@ -54,29 +55,18 @@ class ReportErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Erro na renderização do relatório:", error, errorInfo);
+    console.error("🔥 Report Error Boundary capturou exceção:", error, errorInfo);
   }
 
   public render() {
     if (this.state.hasError) {
       return (
-        <Card className="max-w-2xl mx-auto border-red-200 bg-red-50/50 p-6 rounded-2xl text-center space-y-4">
-          <div className="w-12 h-12 mx-auto rounded-full bg-red-100 text-red-600 flex items-center justify-center">
-            <AlertCircle className="w-6 h-6" />
+        <Card className="max-w-md mx-auto bg-white border-red-200 p-6 text-center space-y-4 rounded-3xl shadow-xl">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
+            <ShieldAlert className="w-6 h-6" />
           </div>
-          <div className="space-y-1">
-            <h3 className="text-base font-bold text-red-900">Aviso na Exibição do Relatório</h3>
-            <p className="text-xs text-red-700">
-              Ocorreu um problema ao formatar um dos campos do relatório. Os dados foram extraídos com sucesso.
-            </p>
-            {this.state.error && (
-              <pre className="text-[10px] text-left font-mono bg-red-100 p-2.5 rounded-lg text-red-800 overflow-x-auto max-h-40 my-2">
-                {this.state.error.toString()}
-                {'\n'}
-                {this.state.error.stack}
-              </pre>
-            )}
-          </div>
+          <h3 className="text-base font-bold text-slate-900">Falha Temporária no Componente de Relatório</h3>
+          <p className="text-xs text-slate-500">Ocorreu um erro ao formatar um dos campos. Clique abaixo para tentar novamente.</p>
           <Button
             onClick={() => this.setState({ hasError: false, error: null })}
             className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl gap-2"
@@ -121,7 +111,7 @@ const CopyableField: React.FC<{ label: string; value: string; className?: string
           </span>
         )}
       </div>
-      <span className="font-bold text-slate-900 text-xs sm:text-sm block truncate">{value}</span>
+      <span className="font-semibold text-slate-800 block truncate">{value}</span>
     </div>
   );
 };
@@ -132,10 +122,10 @@ const CopyableBlock: React.FC<{ label: string; text: string }> = ({ label, text 
   const { toast } = useToast();
 
   const handleCopy = () => {
-    if (!text || text === 'N/A' || text === 'Não Informado') return;
+    if (!text) return;
     navigator.clipboard.writeText(text);
     setCopied(true);
-    toast({ title: '✓ Texto Copiado!', description: label });
+    toast({ title: '✓ Bloco Copiado!', description: `${label} copiado.` });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -160,9 +150,10 @@ const CopyableBlock: React.FC<{ label: string; text: string }> = ({ label, text 
 
 interface AnalysisReportProps {
   report: any;
+  autoStartTour?: boolean;
 }
 
-const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
+const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStartTour = false }) => {
   const { toast } = useToast();
   const [isExporting, setIsExporting] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -171,6 +162,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
   const [activeTab, setActiveTab] = useState('parecer');
   const [profileTab, setProfileTab] = useState<'comprador' | 'corretor' | 'banco' | 'engenheiro' | 'advogado'>('comprador');
   const [showAiChat, setShowAiChat] = useState(false);
+  const [isTourOpen, setIsTourOpen] = useState(autoStartTour);
 
   const [isSubscribed, setIsSubscribed] = useState<boolean>(() => subscriptionService.getStatus().active);
 
@@ -665,6 +657,16 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           <Button
             variant="outline"
             size="sm"
+            onClick={() => setIsTourOpen(true)}
+            className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl text-xs font-black gap-1.5 shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            Tour Guiado
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleCopyAllFields}
             className="border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold gap-1.5"
           >
@@ -673,6 +675,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Button>
 
           <Button
+            data-tour="step-6"
             onClick={exportToPDF}
             disabled={isExporting}
             className={`${isSubscribed ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-800 hover:bg-slate-700'} text-white font-bold rounded-xl text-xs shadow-md gap-1.5`}
@@ -813,7 +816,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
           {/* TAB 1: PARECER & RISCO */}
           <TabsContent value="parecer" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
+            <Card data-tour="step-1" className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="pb-3 border-b border-slate-100">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -1043,8 +1046,8 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </div>
         </TabsContent>
 
-        {/* TAB 3: OS 12 MÓDULOS REGISTRAIS ESPECIALISTAS */}
-        <TabsContent value="imovel" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
+        {/* TAB 2: DADOS DO IMÓVEL & GEO */}
+        <TabsContent value="imovel" data-tour="step-2" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 1 & 2 */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
@@ -1153,7 +1156,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 3: PROPRIETÁRIOS & CADEIA DOMINIAL */}
-        <TabsContent value="proprietarios" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
+        <TabsContent value="proprietarios" data-tour="step-3" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 7: Proprietários */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
@@ -1286,7 +1289,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 4: ÔNUS & RESTRIÇÕES */}
-        <TabsContent value="onus" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
+        <TabsContent value="onus" data-tour="step-4" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulos 9 & 10: Garantias e Indisponividades */}
           <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
@@ -1459,7 +1462,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 5: COPILOTO IA CHAT INTERATIVO */}
-        <TabsContent value="copiloto" className="mt-5 space-y-6">
+        <TabsContent value="copiloto" data-tour="step-5" className="mt-5 space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl text-white space-y-4">
             <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
@@ -1574,6 +1577,13 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         <MatriculaChat report={report} />
       </div>
     )}
+
+    {/* Guided Product Tour Modal */}
+    <GuidedTour
+      isOpen={isTourOpen}
+      onClose={() => setIsTourOpen(false)}
+      onSelectTab={(t) => setActiveTab(t)}
+    />
 
   </div>
 </div>

@@ -162,6 +162,33 @@ const MatriculaAnalysis: React.FC = () => {
           </p>
         </div>
 
+        {/* Card de Chamada para a Demonstração Simulada Interativa (Imóvel Rural Complexo) */}
+        {!analysis.file && !analysis.isProcessing && (
+          <Card className="max-w-2xl mx-auto border border-emerald-500/40 bg-gradient-to-r from-emerald-950/80 via-slate-900 to-teal-950/80 text-white rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden animate-fade-in">
+            <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+              <div className="space-y-1 text-center sm:text-left">
+                <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 bg-emerald-500/20 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
+                  ✨ Tour Guiado & Simulação Interativa
+                </Badge>
+                <h3 className="text-base font-black text-white">
+                  Demonstração de Imóvel Rural Complexo
+                </h3>
+                <p className="text-xs text-slate-300 font-medium max-w-md">
+                  Explore dados reais simulados de 1.450 Hectares (Fazenda Santa Maria), Georreferenciamento SIGEF/INCRA, CAR e os 12 Módulos Registrais.
+                </p>
+              </div>
+              <Button
+                onClick={() => analysis.loadSampleReport('safe')}
+                className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs h-11 px-5 rounded-2xl shadow-xl shadow-emerald-500/20 shrink-0 gap-2 transition-all hover:scale-105"
+              >
+                <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                Iniciar Demonstração
+              </Button>
+            </div>
+          </Card>
+        )}
+
         {/* Direct Upload & Analysis Flow */}
         <div className="space-y-8">
           {/* Upload Container Minimalista */}
@@ -237,7 +264,10 @@ const MatriculaAnalysis: React.FC = () => {
           {/* Report Section */}
           {analysis.report && !analysis.isProcessing && (
             <section className="animate-fade-in-up">
-              <AnalysisReport report={analysis.report} />
+              <AnalysisReport
+                report={analysis.report}
+                autoStartTour={Boolean(analysis.file?.name.includes('Fazenda'))}
+              />
             </section>
           )}
 
