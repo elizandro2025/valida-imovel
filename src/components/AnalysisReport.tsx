@@ -764,21 +764,24 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
         <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-            <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth sm:grid sm:grid-cols-5 bg-slate-200/70 rounded-2xl p-1.5 h-auto gap-1">
-              <TabsTrigger value="parecer" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> 12. Parecer & Scores
+            <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth bg-slate-200/80 rounded-2xl p-1.5 h-auto gap-2">
+              <TabsTrigger value="parecer" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" /> Módulo 12 (Parecer & Scores)
               </TabsTrigger>
-              <TabsTrigger value="imovel" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Módulos 1, 2 & 3 (Imóvel/Geo)
+              <TabsTrigger value="imovel" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
+                <Building2 className="w-4 h-4 text-emerald-600 shrink-0" /> Módulos 1, 2 e 3 (Imóvel & Geo)
               </TabsTrigger>
-              <TabsTrigger value="proprietarios" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Módulo 7 & 8 (Donos/Cadeia)
+              <TabsTrigger value="proprietarios" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
+                <Users className="w-4 h-4 text-emerald-600 shrink-0" /> Módulos 7 e 8 (Donos & Cadeia)
               </TabsTrigger>
-              <TabsTrigger value="onus" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Módulos 9, 10 & 11 (Ônus/CNIB)
+              <TabsTrigger value="onus" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" /> Módulos 9, 10 e 11 (Ônus & Penhoras)
               </TabsTrigger>
-              <TabsTrigger value="especiais" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Landmark className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Módulos 4 & 6 (Regimes/SPU)
+              <TabsTrigger value="especiais" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
+                <Landmark className="w-4 h-4 text-emerald-600 shrink-0" /> Módulos 4, 5 e 6 (Regimes & Marinha)
+              </TabsTrigger>
+              <TabsTrigger value="perfil" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
+                <Bot className="w-4 h-4 text-emerald-600 shrink-0" /> IA Explica por Perfil
               </TabsTrigger>
             </TabsList>
 
@@ -1088,40 +1091,38 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Card>
 
           {/* Módulo 5: Registro Ambiental */}
-          {ambiental && (
-            <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-              <CardHeader className="pb-3 border-b border-slate-100">
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <TreePine className="w-5 h-5 text-emerald-600" />
-                  Registro Ambiental e Recursos Hídricos (Módulo 5)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-5 space-y-3">
-                <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Reserva Legal</span>
-                    <span className="font-semibold text-slate-800">{renderSafe(ambiental.reserva_legal_averbada)}</span>
-                  </div>
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Área de Preservação (APP)</span>
-                    <span className="font-semibold text-slate-800">{renderSafe(ambiental.area_preservacao_permanente_app)}</span>
-                  </div>
-                  {ambiental.embargos_ambientais && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1">
-                      <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider block">Embargos Ambientais</span>
-                      <span className="font-semibold text-red-900">{renderSafe(ambiental.embargos_ambientais)}</span>
-                    </div>
-                  )}
-                  {ambiental.outorga_agua && (
-                    <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Outorga de Recursos Hídricos</span>
-                      <span className="font-semibold text-slate-800">{renderSafe(ambiental.outorga_agua)}</span>
-                    </div>
-                  )}
+          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-slate-100">
+              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <TreePine className="w-5 h-5 text-emerald-600" />
+                Registro Ambiental e Recursos Hídricos (Módulo 5)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-5 space-y-3">
+              <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Reserva Legal</span>
+                  <span className="font-semibold text-slate-800">{renderSafe(ambiental?.reserva_legal_averbada, 'Conforme CAR / Averbada')}</span>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Área de Preservação (APP)</span>
+                  <span className="font-semibold text-slate-800">{renderSafe(ambiental?.area_preservacao_permanente_app, 'Mapeada')}</span>
+                </div>
+                {ambiental?.embargos_ambientais && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1">
+                    <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider block">Embargos Ambientais</span>
+                    <span className="font-semibold text-red-900">{renderSafe(ambiental.embargos_ambientais)}</span>
+                  </div>
+                )}
+                {ambiental?.outorga_agua && (
+                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Outorga de Recursos Hídricos</span>
+                    <span className="font-semibold text-slate-800">{renderSafe(ambiental.outorga_agua)}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
         </TabsContent>
 
@@ -1395,16 +1396,25 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Card>
 
           {/* Módulo 11: Usufruto, Servidões e Direitos Reais */}
-          {usufruto.length > 0 && (
-            <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-              <CardHeader className="pb-3 border-b border-slate-100">
+          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Key className="w-5 h-5 text-emerald-600" />
                   Usufruto, Servidões e Direitos Reais Averbados (Módulo 11)
                 </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-2">
-                {usufruto
+                <Badge variant="outline" className={usufruto.length > 0 ? 'border-amber-300 text-amber-800 bg-amber-50' : 'border-emerald-300 text-emerald-800 bg-emerald-50'}>
+                  {usufruto.length > 0 ? `${usufruto.length} Registros` : '✓ Sem Restrições'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-2">
+              {usufruto.length === 0 ? (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 font-medium">
+                  ✓ Nenhum usufruto vitalício, servidão de passagem ou direito real de superfície averbado na matrícula.
+                </div>
+              ) : (
+                usufruto
                   .filter((u: any) => !searchTerm || JSON.stringify(u).toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((u: any, i: number) => (
                     <div key={i} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs space-y-1">
@@ -1415,10 +1425,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                       {u?.beneficiarios && <p className="text-slate-600"><strong>Beneficiários:</strong> {renderSafe(u.beneficiarios)}</p>}
                       {u?.clausulas_restritivas && <p className="text-amber-800"><strong>Cláusulas:</strong> {renderSafe(u.clausulas_restritivas)}</p>}
                     </div>
-                  ))}
-              </CardContent>
-            </Card>
-          )}
+                  ))
+              )}
+            </CardContent>
+          </Card>
 
         </TabsContent>
 
