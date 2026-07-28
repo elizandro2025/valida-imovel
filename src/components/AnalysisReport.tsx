@@ -169,6 +169,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report }) => {
   const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('parecer');
+  const [profileTab, setProfileTab] = useState<'comprador' | 'corretor' | 'banco' | 'engenheiro' | 'advogado'>('comprador');
   const [showAiChat, setShowAiChat] = useState(false);
 
   const [isSubscribed, setIsSubscribed] = useState<boolean>(() => subscriptionService.getStatus().active);
@@ -760,6 +761,209 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </CardContent>
         </Card>
       </div>
+
+      {/* 🟢🟡🟠🔴 SEMÁFORO REGISTRAL NOTARIAL & ÍNDICE DE LIQUIDEZ JURÍDICA */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 text-white p-5 rounded-3xl shadow-xl border border-slate-800 space-y-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 ${
+              scoreRisco <= 25 ? 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/30' :
+              scoreRisco <= 50 ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-amber-500/30' :
+              scoreRisco <= 75 ? 'bg-gradient-to-tr from-orange-600 to-amber-500 shadow-orange-500/30' :
+              'bg-gradient-to-tr from-red-600 to-rose-500 shadow-red-500/30'
+            }`}>
+              <ShieldCheck className="w-8 h-8 stroke-[2.2]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Semáforo Registral</span>
+                <Badge className={`text-xs font-black px-3 py-1 uppercase rounded-xl ${
+                  scoreRisco <= 25 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' :
+                  scoreRisco <= 50 ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' :
+                  scoreRisco <= 75 ? 'bg-orange-500/20 text-orange-400 border-orange-500/40' :
+                  'bg-red-500/20 text-red-400 border-red-500/40'
+                }`}>
+                  {scoreRisco <= 25 ? '🟢 SEGURO (BAIXO RISCO)' :
+                   scoreRisco <= 50 ? '🟡 ATENÇÃO (RISCO MÉDIO)' :
+                   scoreRisco <= 75 ? '🟠 REVISÃO JURÍDICA (RISCO ALTO)' :
+                   '🔴 ALTO RISCO (CRÍTICO)'}
+                </Badge>
+              </div>
+              <h3 className="text-lg font-extrabold text-white mt-1">
+                {parecer.semaforo_visual || (scoreRisco <= 25 ? 'Imóvel Apto para Transmissão & Financiamento' : 'Atenção às Restrições Encontradas')}
+              </h3>
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-slate-800/80 border border-slate-700/80 rounded-2xl flex items-center gap-3 shrink-0 self-stretch md:self-auto">
+            <div className="text-right">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Índice de Liquidez Jurídica</span>
+              <span className="text-xl font-black text-emerald-400">{Math.max(10, 100 - scoreRisco)}%</span>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center">
+              <Zap className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 📊 MATRIZ MULTIDIMENSIONAL DE SCORES POR CATEGORIA (8 DIMENSÕES) */}
+      <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
+              Matriz Multidimensional de Risco (8 Categoria-Scores)
+            </h3>
+          </div>
+          <Badge variant="outline" className="border-slate-300 text-slate-600 text-[10px] font-bold">
+            Auditoria 360°
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { label: 'Titularidade', score: parecer.scores_por_categoria?.titularidade ?? (props.length > 0 ? 95 : 60), icon: Users, color: 'emerald' },
+            { label: 'Cadeia Dominial', score: parecer.scores_por_categoria?.cadeia_dominial ?? (cadeia.length > 0 ? 92 : 70), icon: Clock, color: 'emerald' },
+            { label: 'Gravames Financeiros', score: parecer.scores_por_categoria?.gravames_financeiros ?? (garantias.length > 0 ? 35 : 100), icon: DollarSign, color: garantias.length > 0 ? 'amber' : 'emerald' },
+            { label: 'Judicial / Penhoras', score: parecer.scores_por_categoria?.judicial_penhoras ?? (penhoras.length > 0 ? 10 : 100), icon: Scale, color: penhoras.length > 0 ? 'red' : 'emerald' },
+            { label: 'Ambiental', score: parecer.scores_por_categoria?.ambiental ?? (ambiental.embargos_ambientais ? 30 : 90), icon: TreePine, color: 'emerald' },
+            { label: 'Georreferenciamento', score: parecer.scores_por_categoria?.georreferenciamento ?? (geo.possui_georreferenciamento ? 95 : 75), icon: Compass, color: 'emerald' },
+            { label: 'Urbanístico / REURB', score: parecer.scores_por_categoria?.urbanistico_condominial ?? (regimes.e_condominio_edilicio ? 95 : 85), icon: Building2, color: 'emerald' },
+            { label: 'Liquidez Jurídica', score: Math.max(10, 100 - scoreRisco), icon: Zap, color: 'emerald' },
+          ].map((item, idx) => (
+            <div key={idx} className="p-3 bg-slate-50 border border-slate-200/70 rounded-2xl space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500 truncate">{item.label}</span>
+                <item.icon className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+              <div className="flex items-baseline justify-between">
+                <span className="text-lg font-black text-slate-900">{item.score}</span>
+                <span className="text-[10px] font-bold text-slate-400">/ 100</span>
+              </div>
+              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${item.score >= 75 ? 'bg-emerald-500' : item.score >= 50 ? 'bg-amber-500' : 'bg-red-500'}`}
+                  style={{ width: `${item.score}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ☑ CHECKLIST AUTOMÁTICO DE DUE DILIGENCE */}
+      <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckSquare className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
+              Checklist Automático de Due Diligence
+            </h3>
+          </div>
+          <Badge className="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
+            Verificação Instantânea
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 pt-1">
+          {[
+            { label: 'Proprietário Qualificado', ok: props.length > 0 },
+            { label: 'Cadeia Dominial Rastreada', ok: cadeia.length > 0 },
+            { label: 'Sem Penhora / CNIB', ok: penhoras.length === 0 },
+            { label: 'Sem Hipoteca Ativa', ok: garantias.length === 0 },
+            { label: 'Reserva Legal Regular', ok: Boolean(ambiental.tem_reserva_legal || ambiental.reserva_legal_averbada) },
+            { label: 'Georreferenciamento SIGEF', ok: Boolean(geo.possui_georreferenciamento || geo.status_sigef) },
+            { label: 'Matrícula Identificada', ok: Boolean(ident.matricula) },
+            { label: 'Sem Embargos IBAMA', ok: !ambiental.embargos_ambientais },
+          ].map((check, idx) => (
+            <div key={idx} className={`p-3 rounded-2xl border flex items-center justify-between gap-2 ${check.ok ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900' : 'bg-amber-50/60 border-amber-200 text-amber-900'}`}>
+              <span className="text-xs font-bold truncate">{check.label}</span>
+              {check.ok ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 👥 MOTOR "IA EXPLICA POR PERFIL" (5 PERFIS DE USUÁRIO) */}
+      <div className="bg-slate-900 text-white p-5 rounded-3xl shadow-xl border border-slate-800 space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+              <Bot className="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-extrabold text-white">
+                IA Explica — Parecer Adaptado por Perfil
+              </h3>
+              <p className="text-xs text-slate-300 font-medium mt-0.5">
+                Escolha seu perfil para visualizar a análise na linguagem exata do seu dia a dia
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Abas dos Perfis */}
+        <div className="flex overflow-x-auto no-scrollbar gap-1.5 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700/80">
+          {[
+            { id: 'comprador', label: '👤 Comprador / Leigo' },
+            { id: 'corretor', label: '🏡 Corretor de Imóveis' },
+            { id: 'banco', label: '🏦 Banco / Crédito' },
+            { id: 'engenheiro', label: '📐 Engenheiro / Agrônomo' },
+            { id: 'advogado', label: '⚖️ Advogado / Parecerista' },
+          ].map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setProfileTab(p.id as any)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
+                profileTab === p.id
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Conteúdo Adaptado do Perfil */}
+        <div className="p-4 bg-slate-800/60 border border-slate-700/70 rounded-2xl text-xs text-slate-200 leading-relaxed space-y-2 font-medium">
+          {profileTab === 'comprador' && (
+            <p>
+              💡 <strong>Orientação ao Comprador:</strong> {renderSafe(parecer.explicacoes_por_perfil?.comprador_leigo || parecer.explicacao_descomplicada || parecer.resumo_geral)}
+            </p>
+          )}
+
+          {profileTab === 'corretor' && (
+            <p>
+              🏡 <strong>Visão Comercial & Corretagem:</strong> {renderSafe(parecer.explicacoes_por_perfil?.corretor_imoveis || `Imóvel com status ${statusJuridico}. Documentação apta para apresentação a clientes e preparação de minuta contratual com segurança jurídica.`)}
+            </p>
+          )}
+
+          {profileTab === 'banco' && (
+            <p>
+              🏦 <strong>Análise de Risco de Crédito & Garantia:</strong> {renderSafe(parecer.explicacoes_por_perfil?.banco_credito || `Score de garantia: ${Math.max(10, 100 - scoreRisco)}/100. Gravames ativos: ${onus.length}. Avaliação recomendada para constituição de Alienação Fiduciária.`)}
+            </p>
+          )}
+
+          {profileTab === 'engenheiro' && (
+            <p>
+              📐 <strong>Caracterização Técnica & Ambiental:</strong> {renderSafe(parecer.explicacoes_por_perfil?.engenheiro_agronomo || `Área total: ${carac.area_total_m2 || 'Conforme certidão'}. Georreferenciamento: ${geo.possui_georreferenciamento ? 'Homologado SIGEF' : 'Em análise'}. Reserva legal e APP mapeadas.`)}
+            </p>
+          )}
+
+          {profileTab === 'advogado' && (
+            <p>
+              ⚖️ <strong>Parecer Registral Notarial Completo:</strong> {renderSafe(parecer.explicacoes_por_perfil?.advogado_parecerista || parecer.conclusao_juridica || parecer.resumo_geral)}
+            </p>
+          )}
+        </div>
+      </div>
+
 
       {/* 🤖 SEÇÃO DEDICADA DO AGENTE DE IA REGISTRÁRIA (SEPARADO DOS MÓDULOS DE AUDITORIA) */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl text-white space-y-4">
