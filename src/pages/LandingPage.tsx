@@ -280,38 +280,39 @@ const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Central AI Upload Box / Prompt Interface (Estilo ChatGPT / Claude) */}
+          {/* Central AI Demonstration Launchpad (Estilo Product Tour / Live Demo) */}
           <div className="max-w-2xl mx-auto pt-2">
-            <div className="p-2.5 sm:p-4 bg-slate-950/90 border border-emerald-500/40 shadow-2xl shadow-emerald-500/10 rounded-3xl backdrop-blur-xl space-y-3">
+            <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-950 to-teal-950/80 border border-emerald-500/50 shadow-2xl shadow-emerald-500/20 rounded-3xl backdrop-blur-xl text-center space-y-6 relative overflow-hidden">
+              <div className="absolute -top-16 -right-16 w-44 h-44 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
               
-              <Link to="/app" className="block">
-                <div className="p-6 sm:p-8 border-2 border-dashed border-slate-700 hover:border-emerald-400 bg-slate-900/90 hover:bg-slate-900 rounded-2xl transition-all cursor-pointer group text-center space-y-4">
-                  <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
-                    <FileUp className="w-7 h-7 stroke-[2.2]" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-base sm:text-lg font-black text-white">Arraste ou envie a certidão em PDF aqui</h3>
-                    <p className="text-xs text-slate-300 font-medium">Suporta matrículas digitais ou escaneadas de qualquer cartório do Brasil</p>
-                  </div>
-                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-6 py-5 rounded-xl shadow-lg shadow-emerald-500/30">
-                    <Upload className="w-4 h-4 mr-2" /> Enviar PDF para Auditoria IA
-                  </Button>
-                </div>
-              </Link>
+              <div className="space-y-3">
+                <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                  ✨ Demonstração Interativa em Tempo Real
+                </Badge>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Veja a IA Registrária Auditando um Imóvel Rural Complexo
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-lg mx-auto leading-relaxed">
+                  Experimente agora sem necessidade de cadastro. Veja a extração automatizada de <strong className="text-white font-bold">1.450 Hectares, Georreferenciamento SIGEF/INCRA, CAR e os 12 Módulos Registrais</strong>.
+                </p>
+              </div>
 
-              {/* 1-Click Instant Sample Test Bar */}
-              <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                <span className="text-slate-300 font-semibold text-center sm:text-left flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
-                  Sem arquivo no momento? Teste o sistema em 1 clique:
-                </span>
-                <Link to="/app?sample=safe" className="w-full sm:w-auto">
-                  <Button variant="outline" size="sm" className="w-full sm:w-auto border-emerald-500/50 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 font-bold text-xs rounded-xl h-8">
-                    ⚡ Testar Exemplo Instantâneo
+              {/* CTA Principal de Demonstração */}
+              <div className="pt-2">
+                <Link to="/app?sample=safe" className="inline-block w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm px-8 py-6 rounded-2xl shadow-xl shadow-emerald-500/30 gap-2.5 transition-all hover:scale-105">
+                    <Sparkles className="w-5 h-5 fill-slate-950 stroke-[2]" />
+                    <span>VER DEMONSTRAÇÃO PRÁTICA INSTANTÂNEA</span>
+                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                   </Button>
                 </Link>
               </div>
 
+              {/* Subtexto Informativo */}
+              <div className="pt-1 flex items-center justify-center gap-4 text-[11px] text-slate-400 font-medium flex-wrap">
+                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Sem necessidade de cadastro</span>
+                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Tour guiado em 1 clique</span>
+              </div>
             </div>
           </div>
 
