@@ -18,23 +18,50 @@ import { subscriptionService } from '@/services/subscriptionService';
 import { MatriculaChat } from './MatriculaChat';
 import { GuidedTour } from './GuidedTour';
 
-// Helper ultra-seguro para impedir erros de React child em objetos/arrays
+// Helper ultra-seguro para impedir erros de React child e evitar exibição de JSON bruto (como {"nome":null})
 const renderSafe = (value: any, fallback: string = 'Não informado'): string => {
   if (value === null || value === undefined || value === '') return fallback;
-  if (typeof value === 'string') return value.trim() || fallback;
+  
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed === 'null' || trimmed === 'undefined' || trimmed === '{}' || trimmed === '[]') return fallback;
+    
+    // Se a string contiver um JSON bruto (ex: '{"nome":null,"crea_cft":null}'), parse para higienizar
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return renderSafe(parsed, fallback);
+      } catch {
+        // Se falhar o parse, prossegue com o texto limpo
+      }
+    }
+    return trimmed;
+  }
+  
   if (typeof value === 'number') return String(value);
   if (typeof value === 'boolean') return value ? 'SIM' : 'NÃO';
+  
   if (Array.isArray(value)) {
     if (value.length === 0) return fallback;
-    return value.map(v => renderSafe(v, '')).filter(Boolean).join(', ');
+    const items = value.map(v => renderSafe(v, '')).filter(v => v && v !== fallback);
+    return items.length > 0 ? items.join(', ') : fallback;
   }
+  
   if (typeof value === 'object') {
-    try {
-      return JSON.stringify(value);
-    } catch {
-      return fallback;
+    const validParts: string[] = [];
+    for (const key of Object.keys(value)) {
+      const val = value[key];
+      if (val !== null && val !== undefined && val !== '' && val !== 'null' && val !== 'undefined') {
+        const strVal = typeof val === 'object' ? renderSafe(val, '') : String(val).trim();
+        if (strVal && strVal !== fallback && strVal !== 'null' && strVal !== 'undefined') {
+          validParts.push(strVal);
+        }
+      }
     }
+    if (validParts.length === 0) return fallback;
+    return validParts.join(' — ');
   }
+  
   return fallback;
 };
 
