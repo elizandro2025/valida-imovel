@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import { MatriculaAnalysis } from "./pages/MatriculaAnalysis";
 import { AuthPage } from "./pages/AuthPage";
@@ -64,6 +64,33 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
   }
 }
 
+/**
+ * Rota Protegida — redireciona para /auth se o usuário não estiver logado.
+ * Permite passagem livre quando há ?sample=safe (demonstração pública da Landing Page).
+ */
+const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user, isLoading } = useAuth();
+  const location = useLocation();
+
+  // Permite a demonstração pública via ?sample=safe sem precisar de login
+  const params = new URLSearchParams(location.search);
+  const isSampleDemo = params.get('sample') === 'safe' || params.get('sample') === 'true';
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user && !isSampleDemo) {
+    return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -80,9 +107,9 @@ const App = () => (
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/pagamento-pix" element={<PixPaymentPage />} />
               <Route path="/pagamento" element={<PixPaymentPage />} />
-              {/* Rotas abertas sem autenticação */}
-              <Route path="/app" element={<MatriculaAnalysis />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              {/* Rota protegida — exige login, exceto demonstração pública (?sample=safe) */}
+              <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

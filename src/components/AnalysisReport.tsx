@@ -375,6 +375,16 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       const textDark = [30, 41, 59];       // #1e293b
       const textMuted = [100, 116, 139];   // #64748b
 
+      const cleanTextForPDF = (text: string): string => {
+        if (!text) return '';
+        return String(text)
+          .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '') // remove surrogate pairs (emojis like 🚨, ⚖️)
+          .replace(/[\u2600-\u27BF]/g, '')              // remove misc symbols (like ✓, 📌)
+          .replace(/[^\x00-\xFF\u00C0-\u00FF]/g, '')    // remove non-latin-1 characters, keep Portuguese accents
+          .replace(/\s+/g, ' ')                         // normalize whitespace
+          .trim();
+      };
+
       const checkPageBreak = (neededHeight: number) => {
         if (y + neededHeight > pageHeight - 20) {
           pdf.addPage();
@@ -389,9 +399,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8);
         pdf.setTextColor(255, 255, 255);
-        pdf.text(`VALIDA IMÓVEL — MATRÍCULA Nº ${renderSafe(ident.matricula)} — ${renderSafe(ident.cartorio_ri)}`, margin, 8);
+        pdf.text(cleanTextForPDF(`VALIDA IMÓVEL — MATRÍCULA Nº ${renderSafe(ident.matricula)} — ${renderSafe(ident.cartorio_ri)}`), margin, 8);
         pdf.setTextColor(52, 211, 153);
-        pdf.text(`SCORE: ${scoreRisco}/100 (${nivelRisco})`, pageWidth - margin - 42, 8);
+        pdf.text(cleanTextForPDF(`SCORE: ${scoreRisco}/100 (${nivelRisco})`), pageWidth - margin - 42, 8);
       };
 
       const drawSectionHeader = (title: string) => {
@@ -404,20 +414,22 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8.5);
         pdf.setTextColor(255, 255, 255);
-        pdf.text(title.toUpperCase(), margin + 6, y + 5.5);
+        pdf.text(cleanTextForPDF(title.toUpperCase()), margin + 6, y + 5.5);
         y += 11;
       };
 
       const drawKeyValuePair = (label: string, val: string) => {
-        if (!val || val === 'Não informado' || val === 'N/A') return;
+        const cleanVal = cleanTextForPDF(val);
+        if (!cleanVal || cleanVal === 'Não informado' || cleanVal === 'N/A') return;
+        
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8);
-        const wrappedLabel = `${label}: `;
+        const wrappedLabel = cleanTextForPDF(`${label}: `);
         const labelWidth = pdf.getTextWidth(wrappedLabel);
 
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(8);
-        const lines = pdf.splitTextToSize(val, contentWidth - labelWidth - 4);
+        const lines = pdf.splitTextToSize(cleanVal, contentWidth - labelWidth - 4);
         const blockHeight = lines.length * 4.2 + 2;
 
         checkPageBreak(blockHeight);
@@ -444,13 +456,16 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       };
 
       const drawCardBlock = (title: string, subtitle?: string, isAlert: boolean = false) => {
+        const cleanTitle = cleanTextForPDF(title);
+        const cleanSub = subtitle ? cleanTextForPDF(subtitle) : '';
+
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8);
-        const titleLines = pdf.splitTextToSize(title, contentWidth - 8);
+        const titleLines = pdf.splitTextToSize(cleanTitle, contentWidth - 8);
 
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(7.5);
-        const subLines = subtitle ? pdf.splitTextToSize(subtitle, contentWidth - 8) : [];
+        const subLines = cleanSub ? pdf.splitTextToSize(cleanSub, contentWidth - 8) : [];
 
         const titleHeight = titleLines.length * 4;
         const subHeight = subLines.length > 0 ? (subLines.length * 3.8) + 1 : 0;
@@ -500,7 +515,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(8);
         pdf.setTextColor(22, 101, 52);
-        pdf.text(msg, margin + 2, y + 4.5);
+        pdf.text(cleanTextForPDF(msg), margin + 2, y + 4.5);
         y += 8;
       };
 
@@ -530,7 +545,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       pdf.text(`${scoreRisco}/100`, pageWidth - margin - 40, 24);
       pdf.setFontSize(7.5);
       pdf.setTextColor(255, 255, 255);
-      pdf.text(`STATUS: ${nivelRisco}`, pageWidth - margin - 40, 30);
+      pdf.text(`STATUS: ${cleanTextForPDF(nivelRisco)}`, pageWidth - margin - 40, 30);
 
       y = 50;
 
@@ -637,27 +652,27 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       // MÓDULO 9: ÔNUS REAIS E GARANTIAS FINANCEIRAS
       drawSectionHeader('9. Ônus Reais e Garantias Financeiras (Módulo 9)');
       if (garantias.length === 0) {
-        drawEmptyState('✓ Nenhuma hipoteca ou alienação fiduciária ativa registrada.');
+        drawEmptyState('Nenhuma hipoteca ou alienação fiduciária ativa registrada.');
       } else {
         garantias.forEach((g: any, idx: number) => {
-          drawCardBlock(`🚨 ${idx + 1}. [${renderSafe(g.numero_ato, 'ATO')}] ${renderSafe(g.tipo, 'Garantia')}`, `Credor: ${renderSafe(g.credor_banco || g.credor_beneficiario)} | Valor: ${renderSafe(g.valor_garantia)} | Status: ${renderSafe(g.status, 'ATIVO')}`, true);
+          drawCardBlock(`${idx + 1}. [${renderSafe(g.numero_ato, 'ATO')}] ${renderSafe(g.tipo, 'Garantia')}`, `Credor: ${renderSafe(g.credor_banco || g.credor_beneficiario)} | Valor: ${renderSafe(g.valor_garantia)} | Status: ${renderSafe(g.status, 'ATIVO')}`, true);
         });
       }
 
       // MÓDULO 10: INDISPONIBILIDADES, PENHORAS E RESTRIÇÕES CNIB
-      drawSectionHeader('10. Penhoras, Indisponividades e Ações (Módulo 10)');
+      drawSectionHeader('10. Penhoras, Indisponibilidades e Ações (Módulo 10)');
       if (penhoras.length === 0) {
-        drawEmptyState('✓ Nenhuma penhora ou indisponibilidade CNIB ativa registrada.');
+        drawEmptyState('Nenhuma penhora ou indisponibilidade CNIB ativa registrada.');
       } else {
         penhoras.forEach((p: any, idx: number) => {
-          drawCardBlock(`⚖️ ${idx + 1}. [${renderSafe(p.numero_ato, 'ATO')}] ${renderSafe(p.tipo, 'Restrição Judicial')}`, `Processo/Vara: ${renderSafe(p.processo_vara)} | Exequente: ${renderSafe(p.autor_exequente)} | Status: ${renderSafe(p.status, 'ATIVO')}`, true);
+          drawCardBlock(`${idx + 1}. [${renderSafe(p.numero_ato, 'ATO')}] ${renderSafe(p.tipo, 'Restrição Judicial')}`, `Processo/Vara: ${renderSafe(p.processo_vara)} | Exequente: ${renderSafe(p.autor_exequente)} | Status: ${renderSafe(p.status, 'ATIVO')}`, true);
         });
       }
 
       // MÓDULO 11: USUFRUTO, SERVIDÕES E DIREITOS REAIS
       drawSectionHeader('11. Usufruto, Servidões e Direitos Reais (Módulo 11)');
       if (usufruto.length === 0) {
-        drawEmptyState('✓ Nenhum usufruto vitalício ou servidão de passagem registrado.');
+        drawEmptyState('Nenhum usufruto vitalício ou servidão de passagem registrado.');
       } else {
         usufruto.forEach((u: any, idx: number) => {
           drawCardBlock(`${idx + 1}. [${renderSafe(u.numero_ato, 'ATO')}] ${renderSafe(u.tipo, 'Direito Real')}`, `Beneficiários: ${renderSafe(u.beneficiarios)} | Cláusulas: ${renderSafe(u.clausulas_restritivas, 'N/A')}`);
