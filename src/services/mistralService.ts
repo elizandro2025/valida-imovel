@@ -760,7 +760,44 @@ ${textChunk}`
   },
 
   normalizeReport(rawReport: any): any {
-    const report = { ...rawReport };
+    // 🧹 SANITIZADOR E HIGIENIZADOR DE ESTRUTURAS NULAS/LEAKAGES
+    const sanitizeExtractDeep = (obj: any): any => {
+      if (obj === null || obj === undefined) return null;
+      if (typeof obj === 'string') {
+        const trimmed = obj.trim();
+        if (!trimmed || trimmed === 'null' || trimmed === 'undefined' || trimmed === '{}' || trimmed === '[]') return null;
+        if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            return sanitizeExtractDeep(parsed);
+          } catch {
+            return trimmed;
+          }
+        }
+        return trimmed;
+      }
+      if (typeof obj === 'number' || typeof obj === 'boolean') return obj;
+      if (Array.isArray(obj)) {
+        const cleanedArr = obj.map(sanitizeExtractDeep).filter(item => item !== null && item !== undefined && item !== '');
+        return cleanedArr;
+      }
+      if (typeof obj === 'object') {
+        const cleanedObj: any = {};
+        let hasValidKey = false;
+        for (const k of Object.keys(obj)) {
+          const val = sanitizeExtractDeep(obj[k]);
+          if (val !== null && val !== undefined && val !== '' && val !== 'null' && val !== 'undefined') {
+            cleanedObj[k] = val;
+            hasValidKey = true;
+          }
+        }
+        return hasValidKey ? cleanedObj : null;
+      }
+      return obj;
+    };
+
+    const sanitizedRaw = sanitizeExtractDeep(rawReport) || {};
+    const report = { ...sanitizedRaw };
 
     if (!report.identificacao_geral) report.identificacao_geral = {};
     report.identificacao_geral.matricula = report.identificacao_geral.matricula || "Não identificada";
@@ -768,6 +805,7 @@ ${textChunk}`
     report.identificacao_geral.tipo_imovel_analisado = report.identificacao_geral.tipo_imovel_analisado || "Urbano / Rural";
 
     if (!report.caracteristicas_fisicas) report.caracteristicas_fisicas = {};
+    if (!report.memorial_descritivo_georreferenciamento) report.memorial_descritivo_georreferenciamento = {};
     if (!report.regimes_especiais) report.regimes_especiais = {};
     if (!report.registro_ambiental) report.registro_ambiental = {};
     if (!report.imoveis_especiais) report.imoveis_especiais = {};
@@ -777,6 +815,17 @@ ${textChunk}`
     if (!Array.isArray(report.onus_garantias_financeiras)) report.onus_garantias_financeiras = [];
     if (!Array.isArray(report.indisponividades_e_penhoras)) report.indisponividades_e_penhoras = [];
     if (!Array.isArray(report.usufruto_servidoes_e_direitos)) report.usufruto_servidoes_e_direitos = [];
+
+    // AUTO-CORREÇÃO CRUZADA DE STATUS DE ÔNUS E PENHORAS (ATIVO VS CANCELADO)
+    const fixLienStatus = (item: any) => {
+      const textSearch = JSON.stringify(item).toUpperCase();
+      if (textSearch.includes('CANCELAMEN') || textSearch.includes('BAIXA') || textSearch.includes('QUITAD') || textSearch.includes('EXTINT') || textSearch.includes('LIBERAD')) {
+        item.status = 'CANCELADO';
+      }
+    };
+    report.onus_garantias_financeiras.forEach(fixLienStatus);
+    report.indisponividades_e_penhoras.forEach(fixLienStatus);
+    report.usufruto_servidoes_e_direitos.forEach(fixLienStatus);
 
     if (!Array.isArray(report.onus_gravames_ativos)) {
       const garantias = report.onus_garantias_financeiras || [];
