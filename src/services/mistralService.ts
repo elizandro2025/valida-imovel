@@ -35,6 +35,32 @@ export interface ChatResponse {
   }>;
 }
 
+// Helper de higienização e auto-reparo de JSON truncado
+export const safeParseJSON = (str: string): any => {
+  let cleaned = str.replace(/```json|```/g, "").trim();
+  if (!cleaned.startsWith("{") && !cleaned.startsWith("[")) {
+    cleaned = "{" + cleaned;
+  }
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    let repaired = cleaned;
+    const openBraces = (repaired.match(/\{/g) || []).length;
+    const closeBraces = (repaired.match(/\}/g) || []).length;
+    const openBrackets = (repaired.match(/\[/g) || []).length;
+    const closeBrackets = (repaired.match(/\]/g) || []).length;
+
+    for (let i = 0; i < openBrackets - closeBrackets; i++) repaired += "]";
+    for (let i = 0; i < openBraces - closeBraces; i++) repaired += "}";
+
+    try {
+      return JSON.parse(repaired);
+    } catch {
+      return {};
+    }
+  }
+};
+
 // Helper otimizado para chamadas JSON com temperatura 0.0 (Zero Aleatoriedade)
 export const chatJSON = async (
   messages: any[], 
@@ -82,15 +108,10 @@ export const chatJSON = async (
           { role: "user", content: "Continue o JSON de onde parou, completando a estrutura estritamente em JSON válido baseando-se APENAS no texto." }
         ];
         const continuation = await chatJSON(continuationMessages, maxTokens, 0, model);
-        return { ...JSON.parse(content), ...continuation };
+        return { ...safeParseJSON(content), ...continuation };
       }
 
-      // Algoritmo de higienização e auto-reparo de JSON
-      let cleaned = content.replace(/```json|```/g, "").trim();
-      if (!cleaned.startsWith("{")) cleaned = "{" + cleaned;
-      if (!cleaned.endsWith("}")) cleaned = cleaned + "}";
-
-      return JSON.parse(cleaned);
+      return safeParseJSON(content);
     } catch (error: any) {
       clearTimeout(timeoutId);
       if (attempt === retries) {
