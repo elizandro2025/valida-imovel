@@ -764,26 +764,52 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
         <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-            <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth bg-slate-200/80 rounded-2xl p-1.5 h-auto gap-2">
-              <TabsTrigger value="parecer" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" /> Módulo 12 (Parecer & Scores)
-              </TabsTrigger>
-              <TabsTrigger value="imovel" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
-                <Building2 className="w-4 h-4 text-emerald-600 shrink-0" /> Módulos 1, 2 e 3 (Imóvel & Geo)
-              </TabsTrigger>
-              <TabsTrigger value="proprietarios" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
-                <Users className="w-4 h-4 text-emerald-600 shrink-0" /> Módulos 7 e 8 (Donos & Cadeia)
-              </TabsTrigger>
-              <TabsTrigger value="onus" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
-                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" /> Módulos 9, 10 e 11 (Ônus & Penhoras)
-              </TabsTrigger>
-              <TabsTrigger value="especiais" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
-                <Landmark className="w-4 h-4 text-emerald-600 shrink-0" /> Módulos 4, 5 e 6 (Regimes & Marinha)
-              </TabsTrigger>
-              <TabsTrigger value="perfil" className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-3 px-4.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md transition-all">
-                <Bot className="w-4 h-4 text-emerald-600 shrink-0" /> IA Explica por Perfil
-              </TabsTrigger>
-            </TabsList>
+            {/* NAVEGAÇÃO DE ABAS SEGMENTADA ESTILO STRIPE / LINEAR */}
+            <div className="bg-slate-900 border border-slate-800 p-2 rounded-2xl shadow-xl overflow-x-auto no-scrollbar">
+              <TabsList className="flex items-center gap-2 bg-transparent h-auto p-0 border-0 w-max min-w-full">
+                <TabsTrigger
+                  value="parecer"
+                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                >
+                  <ShieldCheck className="w-4 h-4 shrink-0" /> Módulo 12 (Parecer & Scores)
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="imovel"
+                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                >
+                  <Building2 className="w-4 h-4 shrink-0" /> Módulos 1, 2 e 3 (Imóvel & Geo)
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="proprietarios"
+                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                >
+                  <Users className="w-4 h-4 shrink-0" /> Módulos 7 e 8 (Donos & Cadeia)
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="onus"
+                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                >
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" /> Módulos 9, 10 e 11 (Ônus & CNIB)
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="especiais"
+                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                >
+                  <Landmark className="w-4 h-4 shrink-0" /> Módulos 4, 5 e 6 (Regimes & SPU)
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="perfil"
+                  className="shrink-0 rounded-xl text-xs font-extrabold gap-2 py-2.5 px-4 text-slate-400 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent data-[state=active]:border-emerald-500/40"
+                >
+                  <Bot className="w-4 h-4 shrink-0" /> IA Explica por Perfil
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
           {/* TAB 1: PARECER & RISCO */}
           <TabsContent value="parecer" className="mt-5 space-y-6">
