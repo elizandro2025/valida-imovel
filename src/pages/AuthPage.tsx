@@ -48,7 +48,8 @@ export const AuthPage: React.FC = () => {
         else if (error.message?.includes('Too many requests')) msg = 'Muitas tentativas. Tente novamente em instantes.';
         toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
       } else {
-        toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso.' });
+        toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso. Redirecionando...' });
+        navigate('/app');
       }
     } catch {
       toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao conectar. Tente novamente.', variant: 'destructive' });
@@ -77,7 +78,8 @@ export const AuthPage: React.FC = () => {
         else if (error.message?.includes('Invalid email')) msg = 'E-mail inválido. Verifique a digitação.';
         toast({ title: 'Erro no cadastro', description: msg, variant: 'destructive' });
       } else {
-        toast({ title: 'Conta criada com sucesso!', description: 'Você já pode acessar a plataforma.' });
+        toast({ title: 'Conta criada com sucesso!', description: 'Acesso liberado com sucesso. Redirecionando...' });
+        navigate('/app');
       }
     } catch {
       toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
