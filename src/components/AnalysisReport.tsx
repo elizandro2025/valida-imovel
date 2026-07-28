@@ -627,83 +627,79 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </div>
       </div>
 
-      {/* Action Toolbar com Busca e Botões de Rápido Compartilhamento */}
-      <div className="flex flex-col gap-4 bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20">
-              <FileCheck className="w-5 h-5 stroke-[2]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-extrabold text-slate-900 leading-tight">
-                  Relatório de Análise (12 Módulos Especialistas)
-                </h2>
-                <Badge variant="outline" className="border-emerald-300 text-emerald-700 bg-emerald-50 text-[10px] font-bold">
-                  100% Abrangente
-                </Badge>
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Matrícula Nº <strong className="text-slate-700">{renderSafe(ident.matricula)}</strong> • {renderSafe(ident.cartorio_ri, 'CRI')}
-              </p>
-            </div>
+      {/* Header Limpo & Barra de Ações */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0">
+            <FileCheck className="w-6 h-6 stroke-[2]" />
           </div>
-
-          {/* Quick Share Buttons & Actions */}
-          <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-            {/* Status da Assinatura */}
-            {isSubscribed ? (
-              <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Assinatura 6 Meses Ativa</span>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-black text-slate-900 leading-tight">
+                Relatório Auditado (12 Módulos Registrais)
+              </h2>
+              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-extrabold text-[10px] uppercase">
+                100% Abrangente
               </Badge>
-            ) : (
-              <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
-                <Lock className="w-3.5 h-3.5 text-amber-600" />
-                <span>Visualização Gratuita (Com Blur)</span>
-              </Badge>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyAllFields}
-              className="border-emerald-300 text-emerald-800 hover:bg-emerald-100/70 rounded-xl text-xs font-semibold gap-1.5 flex-1 sm:flex-none"
-            >
-              <Copy className="w-3.5 h-3.5 text-emerald-600" />
-              Copiar Todos os Campos
-            </Button>
-
-            <Button
-              onClick={exportToPDF}
-              disabled={isExporting}
-              className={`${isSubscribed ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-800 hover:bg-slate-700'} text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-600/20 gap-1.5 flex-1 sm:flex-none`}
-            >
-              {isSubscribed ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5 text-amber-400" />}
-              {isExporting ? 'Exportando PDF...' : 'Exportar PDF Completo'}
-            </Button>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
+              Matrícula Nº <strong className="text-slate-800 font-bold">{renderSafe(ident.matricula)}</strong> • {renderSafe(ident.cartorio_ri, 'CRI')} ({renderSafe(ident.comarca, 'Comarca N/I')})
+            </p>
           </div>
+        </div>
+
+        {/* Botões de Ação */}
+        <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+          {isSubscribed ? (
+            <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Assinatura Ativa</span>
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
+              <Lock className="w-3.5 h-3.5 text-amber-600" />
+              <span>Visualização Com Blur</span>
+            </Badge>
+          )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyAllFields}
+            className="border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold gap-1.5"
+          >
+            <Copy className="w-3.5 h-3.5 text-slate-500" />
+            Copiar Dados
+          </Button>
+
+          <Button
+            onClick={exportToPDF}
+            disabled={isExporting}
+            className={`${isSubscribed ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-800 hover:bg-slate-700'} text-white font-bold rounded-xl text-xs shadow-md gap-1.5`}
+          >
+            {isSubscribed ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5 text-amber-400" />}
+            {isExporting ? 'Exportando PDF...' : 'Exportar PDF'}
+          </Button>
         </div>
       </div>
 
-
-      {/* KPI Cards Bar */}
+      {/* KPI Cards Limpos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Risk Card */}
         <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Score de Risco</span>
-              <Badge variant="outline" className={`${riskBadge.bg} text-[11px] font-bold gap-1 px-2 py-0.5`}>
+              <Badge variant="outline" className={`${riskBadge.bg} text-[11px] font-bold gap-1 px-2.5 py-0.5`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${riskBadge.dot}`} />
                 {nivelRisco}
               </Badge>
             </div>
-            <div className="mt-3 flex items-baseline gap-2">
+            <div className="mt-2.5 flex items-baseline gap-2">
               <span className="text-3xl font-black text-slate-900">{scoreRisco}</span>
               <span className="text-xs text-slate-400 font-semibold">/ 100</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1 font-medium truncate">
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
               Status: <strong className="text-slate-700">{statusJuridico}</strong>
             </p>
           </CardContent>
@@ -711,17 +707,17 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* Cartório & Matrícula */}
         <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Matrícula / CRI</span>
               <Building2 className="w-4 h-4 text-emerald-600" />
             </div>
-            <div className="mt-3">
+            <div className="mt-2.5">
               <span className="text-2xl font-black text-slate-900 truncate block">
                 Nº {renderSafe(ident.matricula)}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1 font-medium truncate">
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
               {renderSafe(ident.cartorio_ri, 'CRI')} ({renderSafe(ident.comarca, 'Comarca N/I')})
             </p>
           </CardContent>
@@ -729,15 +725,15 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* Proprietários */}
         <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Proprietários Atuais</span>
               <Users className="w-4 h-4 text-emerald-600" />
             </div>
-            <div className="mt-3">
+            <div className="mt-2.5">
               <span className="text-3xl font-black text-slate-900">{props.length}</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1 font-medium truncate">
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
               {props.length > 0 ? renderSafe(props[0]?.nome, 'Titular Registrado') : 'Sem registros ativos'}
             </p>
           </CardContent>
@@ -745,309 +741,44 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* Restrições */}
         <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-          <CardContent className="p-5">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ônus / Indisponidades</span>
               <AlertTriangle className={`w-4 h-4 ${onus.length > 0 ? 'text-amber-500' : 'text-emerald-600'}`} />
             </div>
-            <div className="mt-3">
+            <div className="mt-2.5">
               <span className={`text-3xl font-black ${onus.length > 0 ? 'text-amber-600' : 'text-slate-900'}`}>
                 {onus.length}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1 font-medium truncate">
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
               {onus.length > 0 ? `${onus.length} gravame(s) ativo(s)` : 'Matrícula livre de ônus'}
             </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* 🟢🟡🟠🔴 SEMÁFORO REGISTRAL NOTARIAL & ÍNDICE DE LIQUIDEZ JURÍDICA */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 text-white p-5 rounded-3xl shadow-xl border border-slate-800 space-y-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 ${
-              scoreRisco <= 25 ? 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/30' :
-              scoreRisco <= 50 ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-amber-500/30' :
-              scoreRisco <= 75 ? 'bg-gradient-to-tr from-orange-600 to-amber-500 shadow-orange-500/30' :
-              'bg-gradient-to-tr from-red-600 to-rose-500 shadow-red-500/30'
-            }`}>
-              <ShieldCheck className="w-8 h-8 stroke-[2.2]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Semáforo Registral</span>
-                <Badge className={`text-xs font-black px-3 py-1 uppercase rounded-xl ${
-                  scoreRisco <= 25 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' :
-                  scoreRisco <= 50 ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' :
-                  scoreRisco <= 75 ? 'bg-orange-500/20 text-orange-400 border-orange-500/40' :
-                  'bg-red-500/20 text-red-400 border-red-500/40'
-                }`}>
-                  {scoreRisco <= 25 ? '🟢 SEGURO (BAIXO RISCO)' :
-                   scoreRisco <= 50 ? '🟡 ATENÇÃO (RISCO MÉDIO)' :
-                   scoreRisco <= 75 ? '🟠 REVISÃO JURÍDICA (RISCO ALTO)' :
-                   '🔴 ALTO RISCO (CRÍTICO)'}
-                </Badge>
-              </div>
-              <h3 className="text-lg font-extrabold text-white mt-1">
-                {parecer.semaforo_visual || (scoreRisco <= 25 ? 'Imóvel Apto para Transmissão & Financiamento' : 'Atenção às Restrições Encontradas')}
-              </h3>
-            </div>
-          </div>
-
-          <div className="p-3.5 bg-slate-800/80 border border-slate-700/80 rounded-2xl flex items-center gap-3 shrink-0 self-stretch md:self-auto">
-            <div className="text-right">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Índice de Liquidez Jurídica</span>
-              <span className="text-xl font-black text-emerald-400">{Math.max(10, 100 - scoreRisco)}%</span>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center">
-              <Zap className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 📊 MATRIZ MULTIDIMENSIONAL DE SCORES POR CATEGORIA (8 DIMENSÕES) */}
-      <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-600" />
-            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
-              Matriz Multidimensional de Risco (8 Categoria-Scores)
-            </h3>
-          </div>
-          <Badge variant="outline" className="border-slate-300 text-slate-600 text-[10px] font-bold">
-            Auditoria 360°
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: 'Titularidade', score: parecer.scores_por_categoria?.titularidade ?? (props.length > 0 ? 95 : 60), icon: Users, color: 'emerald' },
-            { label: 'Cadeia Dominial', score: parecer.scores_por_categoria?.cadeia_dominial ?? (cadeia.length > 0 ? 92 : 70), icon: Clock, color: 'emerald' },
-            { label: 'Gravames Financeiros', score: parecer.scores_por_categoria?.gravames_financeiros ?? (garantias.length > 0 ? 35 : 100), icon: DollarSign, color: garantias.length > 0 ? 'amber' : 'emerald' },
-            { label: 'Judicial / Penhoras', score: parecer.scores_por_categoria?.judicial_penhoras ?? (penhoras.length > 0 ? 10 : 100), icon: Scale, color: penhoras.length > 0 ? 'red' : 'emerald' },
-            { label: 'Ambiental', score: parecer.scores_por_categoria?.ambiental ?? (ambiental.embargos_ambientais ? 30 : 90), icon: TreePine, color: 'emerald' },
-            { label: 'Georreferenciamento', score: parecer.scores_por_categoria?.georreferenciamento ?? (geo.possui_georreferenciamento ? 95 : 75), icon: Compass, color: 'emerald' },
-            { label: 'Urbanístico / REURB', score: parecer.scores_por_categoria?.urbanistico_condominial ?? (regimes.e_condominio_edilicio ? 95 : 85), icon: Building2, color: 'emerald' },
-            { label: 'Liquidez Jurídica', score: Math.max(10, 100 - scoreRisco), icon: Zap, color: 'emerald' },
-          ].map((item, idx) => (
-            <div key={idx} className="p-3 bg-slate-50 border border-slate-200/70 rounded-2xl space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-500 truncate">{item.label}</span>
-                <item.icon className="w-3.5 h-3.5 text-slate-400" />
-              </div>
-              <div className="flex items-baseline justify-between">
-                <span className="text-lg font-black text-slate-900">{item.score}</span>
-                <span className="text-[10px] font-bold text-slate-400">/ 100</span>
-              </div>
-              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${item.score >= 75 ? 'bg-emerald-500' : item.score >= 50 ? 'bg-amber-500' : 'bg-red-500'}`}
-                  style={{ width: `${item.score}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ☑ CHECKLIST AUTOMÁTICO DE DUE DILIGENCE */}
-      <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckSquare className="w-5 h-5 text-emerald-600" />
-            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
-              Checklist Automático de Due Diligence
-            </h3>
-          </div>
-          <Badge className="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
-            Verificação Instantânea
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 pt-1">
-          {[
-            { label: 'Proprietário Qualificado', ok: props.length > 0 },
-            { label: 'Cadeia Dominial Rastreada', ok: cadeia.length > 0 },
-            { label: 'Sem Penhora / CNIB', ok: penhoras.length === 0 },
-            { label: 'Sem Hipoteca Ativa', ok: garantias.length === 0 },
-            { label: 'Reserva Legal Regular', ok: Boolean(ambiental.tem_reserva_legal || ambiental.reserva_legal_averbada) },
-            { label: 'Georreferenciamento SIGEF', ok: Boolean(geo.possui_georreferenciamento || geo.status_sigef) },
-            { label: 'Matrícula Identificada', ok: Boolean(ident.matricula) },
-            { label: 'Sem Embargos IBAMA', ok: !ambiental.embargos_ambientais },
-          ].map((check, idx) => (
-            <div key={idx} className={`p-3 rounded-2xl border flex items-center justify-between gap-2 ${check.ok ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900' : 'bg-amber-50/60 border-amber-200 text-amber-900'}`}>
-              <span className="text-xs font-bold truncate">{check.label}</span>
-              {check.ok ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              ) : (
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 👥 MOTOR "IA EXPLICA POR PERFIL" (5 PERFIS DE USUÁRIO) */}
-      <div className="bg-slate-900 text-white p-5 rounded-3xl shadow-xl border border-slate-800 space-y-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
-              <Bot className="w-5 h-5 stroke-[2.2]" />
-            </div>
-            <div>
-              <h3 className="text-sm sm:text-base font-extrabold text-white">
-                IA Explica — Parecer Adaptado por Perfil
-              </h3>
-              <p className="text-xs text-slate-300 font-medium mt-0.5">
-                Escolha seu perfil para visualizar a análise na linguagem exata do seu dia a dia
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Abas dos Perfis */}
-        <div className="flex overflow-x-auto no-scrollbar gap-1.5 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700/80">
-          {[
-            { id: 'comprador', label: '👤 Comprador / Leigo' },
-            { id: 'corretor', label: '🏡 Corretor de Imóveis' },
-            { id: 'banco', label: '🏦 Banco / Crédito' },
-            { id: 'engenheiro', label: '📐 Engenheiro / Agrônomo' },
-            { id: 'advogado', label: '⚖️ Advogado / Parecerista' },
-          ].map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setProfileTab(p.id as any)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
-                profileTab === p.id
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Conteúdo Adaptado do Perfil */}
-        <div className="p-4 bg-slate-800/60 border border-slate-700/70 rounded-2xl text-xs text-slate-200 leading-relaxed space-y-2 font-medium">
-          {profileTab === 'comprador' && (
-            <p>
-              💡 <strong>Orientação ao Comprador:</strong> {renderSafe(parecer.explicacoes_por_perfil?.comprador_leigo || parecer.explicacao_descomplicada || parecer.resumo_geral)}
-            </p>
-          )}
-
-          {profileTab === 'corretor' && (
-            <p>
-              🏡 <strong>Visão Comercial & Corretagem:</strong> {renderSafe(parecer.explicacoes_por_perfil?.corretor_imoveis || `Imóvel com status ${statusJuridico}. Documentação apta para apresentação a clientes e preparação de minuta contratual com segurança jurídica.`)}
-            </p>
-          )}
-
-          {profileTab === 'banco' && (
-            <p>
-              🏦 <strong>Análise de Risco de Crédito & Garantia:</strong> {renderSafe(parecer.explicacoes_por_perfil?.banco_credito || `Score de garantia: ${Math.max(10, 100 - scoreRisco)}/100. Gravames ativos: ${onus.length}. Avaliação recomendada para constituição de Alienação Fiduciária.`)}
-            </p>
-          )}
-
-          {profileTab === 'engenheiro' && (
-            <p>
-              📐 <strong>Caracterização Técnica & Ambiental:</strong> {renderSafe(parecer.explicacoes_por_perfil?.engenheiro_agronomo || `Área total: ${carac.area_total_m2 || 'Conforme certidão'}. Georreferenciamento: ${geo.possui_georreferenciamento ? 'Homologado SIGEF' : 'Em análise'}. Reserva legal e APP mapeadas.`)}
-            </p>
-          )}
-
-          {profileTab === 'advogado' && (
-            <p>
-              ⚖️ <strong>Parecer Registral Notarial Completo:</strong> {renderSafe(parecer.explicacoes_por_perfil?.advogado_parecerista || parecer.conclusao_juridica || parecer.resumo_geral)}
-            </p>
-          )}
-        </div>
-      </div>
-
-
-      {/* 🤖 HERO SPOTLIGHT — AGENTE DE INTELIGÊNCIA REGISTRÁRIA IA & COPILOTO NOTARIAL */}
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl text-white space-y-4 relative overflow-hidden">
-        <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/25 shrink-0">
-              <Bot className="w-6 h-6 stroke-[2.2]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                  Agente Copiloto IA Registrário
-                </h3>
-                <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold text-[10px] uppercase">
-                  100% Conectado à Matrícula
-                </Badge>
-              </div>
-              <p className="text-xs text-slate-300 font-medium mt-0.5">
-                Faça perguntas em linguagem natural ou clique em uma sugestão abaixo para auditoria notarial instantânea:
-              </p>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setActiveTab('copiloto');
-              setShowAiChat(true);
-            }}
-            className="border-slate-700 bg-slate-800 text-emerald-400 hover:text-white hover:bg-slate-700 rounded-xl text-xs font-extrabold gap-1.5 px-4 py-2.5 shadow-sm shrink-0 self-stretch sm:self-auto"
-          >
-            <MessageSquare className="w-4 h-4 text-emerald-400" />
-            Abrir Chat Copiloto IA
-          </Button>
-        </div>
-
-        {/* Quick Action Prompt Chips */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-1 relative z-10">
-          {[
-            { chip: "🚨 O imóvel tem penhora ou dívida ativa?", query: "Existe alguma penhora, hipoteca ou indisponibilidade CNIB ativa nesta matrícula?" },
-            { chip: "👤 Quem é o dono autorizado a vender?", query: "Quem são os proprietários atuais legalmente autorizados a assinar a venda?" },
-            { chip: "🌿 Como está a Reserva Legal e CAR?", query: "Qual a situação do registro ambiental, CAR e Reserva Legal nesta certidão?" },
-            { chip: "📜 Resumo dos atos da cadeia dominial", query: "Faça um resumo cronológico dos atos de transmissão registrados na matrícula." },
-          ].map((promptItem, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                setActiveTab('copiloto');
-                setShowAiChat(true);
-                // Dispatch event or quick question
-              }}
-              className="p-3 bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl text-left text-xs font-semibold text-slate-200 hover:text-emerald-300 transition-all flex items-center justify-between gap-2 group shadow-sm"
-            >
-              <span className="truncate">{promptItem.chip}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Product Navigation Tabs (5 Pilares Registrais) */}
-      <div className="relative mt-6">
+      {/* Foco Principal: NAVEGAÇÃO DOS 12 MÓDULOS REGISTRAIS COMPLETOS */}
+      <div className="relative mt-4">
         
         {/* Conteúdo de Abas com Blur se !isSubscribed */}
         <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth sm:grid sm:grid-cols-5 bg-slate-100/90 rounded-2xl p-1.5 h-auto gap-1.5 sm:gap-1">
-              <TabsTrigger value="parecer" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Diagnóstico 360°
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+            <TabsList className="flex w-full overflow-x-auto no-scrollbar scroll-smooth sm:grid sm:grid-cols-5 bg-slate-200/70 rounded-2xl p-1.5 h-auto gap-1">
+              <TabsTrigger value="parecer" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> 12. Parecer & Scores
               </TabsTrigger>
-              <TabsTrigger value="perfil" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Bot className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> IA Explica por Perfil
+              <TabsTrigger value="imovel" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Módulos 1, 2 & 3 (Imóvel/Geo)
               </TabsTrigger>
-              <TabsTrigger value="modulos" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Os 12 Módulos
+              <TabsTrigger value="proprietarios" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Módulo 7 & 8 (Donos/Cadeia)
               </TabsTrigger>
-              <TabsTrigger value="proprietarios" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Linha do Tempo
+              <TabsTrigger value="onus" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Módulos 9, 10 & 11 (Ônus/CNIB)
               </TabsTrigger>
-              <TabsTrigger value="copiloto" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3.5 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Copiloto IA Chat
+              <TabsTrigger value="especiais" className="shrink-0 sm:shrink rounded-xl text-xs font-extrabold gap-1.5 py-2.5 px-3 data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-md whitespace-nowrap transition-all">
+                <Landmark className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Módulos 4 & 6 (Regimes/SPU)
               </TabsTrigger>
             </TabsList>
 
@@ -1775,6 +1506,36 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </div>
 
         </Card>
+      </div>
+    )}
+
+    {/* Floating Secondary Copilot IA Button (Assistente em Segundo Plano) */}
+    <div className="fixed bottom-6 right-6 z-50">
+      <Button
+        onClick={() => setShowAiChat(!showAiChat)}
+        className="bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 rounded-full px-5 py-6 shadow-2xl font-extrabold text-xs flex items-center gap-2.5 transition-all hover:scale-105"
+      >
+        <Bot className="w-5 h-5 text-emerald-400" />
+        <span>{showAiChat ? 'Fechar Assistente IA' : '💬 Assistente Copiloto IA'}</span>
+      </Button>
+    </div>
+
+    {/* Copilot Assistant Floating Panel */}
+    {showAiChat && (
+      <div className="fixed bottom-20 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[480px] bg-slate-950 border border-slate-800 rounded-3xl shadow-2xl p-4 text-white animate-fade-in max-h-[75vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+          <div className="flex items-center gap-2">
+            <Bot className="w-4 h-4 text-emerald-400" />
+            <h4 className="text-xs font-bold text-white">Copiloto Notarial de IA Registrária</h4>
+          </div>
+          <button
+            onClick={() => setShowAiChat(false)}
+            className="text-slate-400 hover:text-white text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-800"
+          >
+            ✕
+          </button>
+        </div>
+        <MatriculaChat report={report} />
       </div>
     )}
 
