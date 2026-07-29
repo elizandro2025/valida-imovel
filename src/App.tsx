@@ -64,6 +64,8 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
   }
 }
 
+import { subscriptionService } from "@/services/subscriptionService";
+
 /**
  * Rota Protegida — Exige autenticação E assinatura ativa para acessar o workspace.
  * Permite passagem livre exclusivamente quando há ?sample=safe (demonstração pública).
@@ -84,13 +86,14 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
     );
   }
 
-  // 1. Usuário não autenticado -> Redireciona para login
+  // 1. Usuário não autenticado -> Redireciona para login/cadastro
   if (!user && !isSampleDemo) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+    return <Navigate to="/auth?tab=register" state={{ from: location }} replace />;
   }
 
   // 2. Usuário autenticado MAS sem assinatura ativa -> Redireciona para pagamento
-  if (user && !user.hasSubscription && !isSampleDemo) {
+  const isSubActive = Boolean(user?.hasSubscription || subscriptionService.getStatus().active);
+  if (user && !isSubActive && !isSampleDemo) {
     return <Navigate to="/pagamento-pix" state={{ from: location }} replace />;
   }
 

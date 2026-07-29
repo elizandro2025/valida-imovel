@@ -20,14 +20,28 @@ export const PixPaymentPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
 
-  // 🛡️ Regra Estrita: Visitante não logado NUNCA acessa a tela de pagamento sem cadastro prévio
+  // 🛡️ Regra Estrita:
+  // 1. Visitante não logado -> Redireciona para cadastro
+  // 2. Usuário com assinatura ativa -> NUNCA pede PIX novamente, entra direto no sistema!
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (isLoading) return;
+
+    if (!user) {
       toast({
         title: '🔒 Cadastro Obrigatório',
         description: 'Por favor, crie sua conta primeiro para poder contratar o plano.',
       });
       navigate('/auth?tab=register', { replace: true });
+      return;
+    }
+
+    const subStatus = subscriptionService.getStatus();
+    if (user.hasSubscription || subStatus.active) {
+      toast({
+        title: '✅ Acesso Liberado',
+        description: 'Você já possui uma assinatura ativa! Entrando no sistema...',
+      });
+      navigate('/app', { replace: true });
     }
   }, [user, isLoading, navigate, toast]);
 
@@ -70,15 +84,31 @@ export const PixPaymentPage: React.FC = () => {
   }, []);
 
   // Callback de ativação — chamado pelo Supabase Realtime ou status check
-  const handlePaymentActivated = useCallback((txId: string) => {
+  const handlePaymentActivated = useCallback(async (txId: string) => {
     setPaymentConfirmed(true);
     setConfirmedTxId(txId);
+
+    // Ativa local e salva sessão atualizada
+    await subscriptionService.activate6MonthsUnlimited(txId);
+
+    const savedSession = localStorage.getItem('valida_imovel_vip_session');
+    if (savedSession) {
+      try {
+        const parsed = JSON.parse(savedSession);
+        parsed.hasSubscription = true;
+        localStorage.setItem('valida_imovel_vip_session', JSON.stringify(parsed));
+      } catch (e) { /* ok */ }
+    }
+
     toast({
       title: '🎉 Pagamento Confirmado!',
-      description: 'Seu acesso ilimitado por 6 meses foi liberado instantaneamente.',
+      description: 'Seu acesso ilimitado por 6 meses foi liberado instantaneamente!',
     });
-    setTimeout(() => navigate('/app'), 2500);
-  }, [toast, navigate]);
+
+    setTimeout(() => {
+      window.location.href = '/app';
+    }, 1200);
+  }, [toast]);
 
   // Inscreve no Supabase Realtime para confirmação em tempo real
   useEffect(() => {
