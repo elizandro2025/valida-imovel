@@ -12,6 +12,8 @@ import {
   Timer, Flame, CheckSquare, ArrowDown, TrendingUp, ThumbsUp, Shield, RefreshCw, Play
 } from 'lucide-react';
 
+import { WhatsAppSupport, WHATSAPP_DISPLAY, getWhatsAppLink } from '@/components/WhatsAppSupport';
+
 const LandingPage: React.FC = () => {
   const { user } = useAuth();
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
@@ -225,6 +227,7 @@ const LandingPage: React.FC = () => {
 
           {/* Navigation Actions — Destaque Máximo & Alto Impacto Visual */}
           <div className="flex items-center gap-2.5 sm:gap-3">
+            <WhatsAppSupport variant="banner" className="hidden md:inline-flex" />
             {user ? (
               // 🟢 Usuário Conectado
               <>
@@ -885,6 +888,11 @@ const LandingPage: React.FC = () => {
             ))}
           </div>
 
+          {/* Card de Suporte via WhatsApp */}
+          <div className="pt-6">
+            <WhatsAppSupport variant="card" />
+          </div>
+
         </div>
       </section>
 
@@ -919,7 +927,7 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* FOOTER */}
-      <footer className="bg-slate-950 text-slate-400 py-10 border-t border-slate-900">
+      <footer className="bg-slate-950 text-slate-400 py-10 border-t border-slate-900 pb-20 sm:pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
@@ -930,9 +938,12 @@ const LandingPage: React.FC = () => {
             </span>
           </div>
 
-          <p className="text-xs text-slate-500 text-center font-medium">
-            © {new Date().getFullYear()} Valida Imóvel. Análise Automatizada de Matrículas Imobiliárias. Todos os direitos reservados.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-xs">
+            <p className="text-slate-500 text-center font-medium">
+              © {new Date().getFullYear()} Valida Imóvel. Todos os direitos reservados.
+            </p>
+            <WhatsAppSupport variant="inline" />
+          </div>
 
           <div className="flex items-center gap-6 text-xs font-semibold">
             <Link to="/auth?tab=login" className="hover:text-white transition-colors">Já sou usuário</Link>
@@ -940,6 +951,9 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Botão Flutuante de Suporte no WhatsApp */}
+      <WhatsAppSupport variant="floating" />
 
     </div>
   );

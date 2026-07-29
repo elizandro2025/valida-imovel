@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { subscriptionService } from '@/services/subscriptionService';
+import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 
 const MatriculaAnalysis: React.FC = () => {
   const analysis = useMatriculaAnalysis();
@@ -254,6 +255,9 @@ const MatriculaAnalysis: React.FC = () => {
         onClose={analysis.closeError}
         message={analysis.error || ''}
       />
+
+      {/* Botão Flutuante de Suporte via WhatsApp */}
+      <WhatsAppSupport variant="floating" />
     </div>
   );
 };

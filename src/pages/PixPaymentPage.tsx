@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscriptionService } from '@/services/subscriptionService';
 import { mercadoPagoService, PixPaymentResult } from '@/services/mercadoPagoService';
+import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
@@ -527,7 +528,13 @@ export const PixPaymentPage: React.FC = () => {
           </div>
         )}
 
+        {/* Card de Suporte ao Cliente no Checkout */}
+        <WhatsAppSupport variant="card" />
+
       </main>
+
+      {/* Botão Flutuante WhatsApp */}
+      <WhatsAppSupport variant="floating" />
     </div>
   );
 };
