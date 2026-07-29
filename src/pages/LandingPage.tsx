@@ -406,7 +406,7 @@ const LandingPage: React.FC = () => {
             
             <div className="relative aspect-video w-full rounded-3xl overflow-hidden border-2 border-blue-500/50 shadow-2xl shadow-blue-500/30 bg-slate-900">
               <iframe
-                src="https://www.youtube-nocookie.com/embed/QRCzsDTiRd0?rel=0"
+                src="https://www.youtube-nocookie.com/embed/QRCzsDTiRd0?rel=0&cc_load_policy=0&iv_load_policy=3"
                 title="Demonstração do Sistema Valida Imóvel — Análise de Matrículas com IA"
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
