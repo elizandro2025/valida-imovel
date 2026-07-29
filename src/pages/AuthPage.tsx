@@ -43,18 +43,23 @@ export const AuthPage: React.FC = () => {
     try {
       const { error } = await signIn(email, password);
       if (error) {
-        let msg = 'Erro no login. Verifique suas credenciais.';
-        if (error.message?.includes('Invalid login credentials')) msg = 'E-mail ou senha incorretos.';
-        else if (error.message?.includes('Email not confirmed')) msg = 'Por favor, confirme seu e-mail ou utilize o login direto.';
-        else if (error.message?.includes('Too many requests')) msg = 'Muitas tentativas. Tente novamente em instantes.';
+        let msg = error.message || 'Erro no login. Verifique suas credenciais.';
+        const lower = (error.message || '').toLowerCase();
+        if (lower.includes('invalid login credentials') || lower.includes('invalid_credentials')) {
+          msg = 'E-mail ou senha incorretos.';
+        } else if (lower.includes('email not confirmed')) {
+          msg = 'Por favor, confirme seu e-mail para acessar.';
+        } else if (lower.includes('too many requests')) {
+          msg = 'Muitas tentativas. Tente novamente em alguns minutos.';
+        }
         toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
       } else {
-        toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso. Redirecionando...' });
+        toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso.' });
         navigate('/app');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro no handleSignIn:', err);
-      toast({ title: 'Erro no login', description: 'Verifique suas credenciais e tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro no login', description: err?.message || 'Verifique suas credenciais e tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
@@ -75,16 +80,20 @@ export const AuthPage: React.FC = () => {
     try {
       const { error } = await signUp(email, password, name);
       if (error) {
-        let msg = 'Erro ao criar conta. Tente novamente.';
-        if (error.message?.includes('User already registered')) msg = 'Este e-mail já está cadastrado. Faça login ao lado.';
-        else if (error.message?.includes('Invalid email')) msg = 'E-mail inválido. Verifique a digitação.';
+        let msg = error.message || 'Erro ao criar conta. Tente novamente.';
+        const lower = (error.message || '').toLowerCase();
+        if (lower.includes('already registered') || lower.includes('already exists') || lower.includes('user_already_exists') || lower.includes('registered')) {
+          msg = 'Este e-mail já está cadastrado. Clique no botão "Entrar" acima para acessar sua conta.';
+        } else if (lower.includes('invalid email')) {
+          msg = 'E-mail inválido. Verifique o endereço digitado.';
+        }
         toast({ title: 'Erro no cadastro', description: msg, variant: 'destructive' });
       } else {
         toast({ title: 'Conta criada com sucesso!', description: 'Selecione a forma de pagamento para liberar o seu acesso.' });
         navigate('/pagamento-pix');
       }
-    } catch {
-      toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
+    } catch (err: any) {
+      toast({ title: 'Erro inesperado', description: err?.message || 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
