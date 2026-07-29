@@ -164,6 +164,7 @@ export const PixPaymentPage: React.FC = () => {
     const result = await mercadoPagoService.createPixPayment({
       transaction_amount: 99.90,
       description: 'ValidaImóvel — Plano 6 Meses Ilimitado',
+      userId: user?.id,
       payer: {
         email: targetEmail,
         first_name: payerName.split(' ')[0] || 'Cliente',

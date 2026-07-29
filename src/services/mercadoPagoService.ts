@@ -19,6 +19,10 @@ const WORKER_FALLBACK_URL = 'https://validaimovel-payment-api.validaimovel.worke
 export interface MercadoPagoPaymentRequest {
   transaction_amount: number;
   description: string;
+  userId?: string;
+  cpf?: string;
+  itemId?: string;
+  itemTitle?: string;
   payer: {
     email: string;
     first_name?: string;
@@ -67,8 +71,10 @@ export const mercadoPagoService = {
     const description = data.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado';
     const itemId = data.itemId || 'VALIVM-6M';
     const itemTitle = data.itemTitle || 'ValidaImóvel — Plano 6 Meses Ilimitado';
+    const userId = data.userId;
+    const cpf = data.cpf;
 
-    console.log('💳 Criando Pagamento PIX via Worker...', { amount, email, description });
+    console.log('💳 Criando Pagamento PIX via Worker...', { amount, email, description, userId });
 
     try {
       let response: Response;
@@ -79,6 +85,8 @@ export const mercadoPagoService = {
         description,
         itemId,
         itemTitle,
+        userId,
+        cpf,
       });
 
       try {

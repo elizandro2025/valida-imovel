@@ -112,6 +112,8 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
   let body: {
     email?: string;
     name?: string;
+    cpf?: string;
+    userId?: string;
     amount?: number;
     description?: string;
     itemId?: string;
@@ -131,9 +133,11 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
   const description = body.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado';
   const itemId = body.itemId || 'VALIVM-6M';
   const itemTitle = body.itemTitle || 'ValidaImóvel — Plano 6 Meses Ilimitado';
+  const cpfClean = (body.cpf || '').replace(/\D/g, '');
+  const cpfNumber = cpfClean.length === 11 ? cpfClean : '00000000000';
   const idempotencyKey = `VALIVM-${Date.now()}-${Math.random().toString(36).substr(2, 8)}`;
 
-  const mpBody = {
+  const mpBody: Record<string, any> = {
     transaction_amount: amount,
     description,
     payment_method_id: 'pix',
@@ -141,7 +145,7 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
       email,
       first_name: firstName,
       last_name: lastName,
-      identification: { type: 'CPF', number: '00000000000' },
+      identification: { type: 'CPF', number: cpfNumber },
     },
     notification_url: 'https://api.validaimovel.com/api/webhook/mercado-pago',
     additional_info: {
@@ -156,6 +160,10 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
       ],
     },
   };
+
+  if (body.userId) {
+    mpBody.external_reference = body.userId;
+  }
 
   const mpRes = await mpRequest(env, '/v1/payments', 'POST', mpBody, idempotencyKey);
 
@@ -309,23 +317,23 @@ async function handleWebhook(request: Request, env: Env): Promise<Response> {
 
       if (payment.status === 'approved') {
         const payerEmail = payment.payer?.email;
+        let userId = payment.external_reference || null;
 
-        // Busca o userId no Supabase pelo email do pagador
-        if (payerEmail) {
-          const userId = await supabaseFindUserByEmail(env, payerEmail);
-          if (userId) {
-            const updated = await supabaseUpdateSubscription(
-              env,
-              userId,
-              String(payment.id),
-              payment.transaction_amount
-            );
-            console.log(`✅ Supabase subscription updated for user ${userId}: ${updated}`);
-          } else {
-            // Usuário ainda não cadastrado — armazena para ativar no login
-            console.log(`⚠️ User not found for email ${payerEmail} — storing pending activation`);
-            // TODO: inserir em tabela pending_activations se necessário
-          }
+        // Se external_reference não for um userId, busca no Supabase pelo email do pagador
+        if (!userId && payerEmail) {
+          userId = await supabaseFindUserByEmail(env, payerEmail);
+        }
+
+        if (userId) {
+          const updated = await supabaseUpdateSubscription(
+            env,
+            userId,
+            String(payment.id),
+            payment.transaction_amount
+          );
+          console.log(`✅ Supabase subscription updated for user ${userId}: ${updated}`);
+        } else {
+          console.log(`⚠️ User not found for payment ${paymentId} (email: ${payerEmail})`);
         }
       }
     }
