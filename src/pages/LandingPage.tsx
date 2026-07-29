@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   FileCheck, ShieldCheck, Upload, ArrowRight, Sparkles, Brain, ShieldAlert,
   FileText, CheckCircle2, Zap, Clock, Compass, Users, Lock,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
+  const { user } = useAuth();
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
   // Contador regressivo de gatilho de oferta especial
@@ -221,20 +223,46 @@ const LandingPage: React.FC = () => {
             </Badge>
           </Link>
 
-          {/* Navigation Actions */}
+          {/* Navigation Actions — Dinâmico & Intuitivo */}
           <div className="flex items-center gap-3">
-            <Link to="/auth">
-              <Button variant="ghost" className="text-slate-200 hover:text-white hover:bg-slate-800/80 font-bold text-xs px-4 h-9 rounded-xl transition-all">
-                Entrar
-              </Button>
-            </Link>
-
-            <Link to="/app">
-              <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105">
-                <span>Analisar Matrícula</span>
-                <ArrowRight className="ml-1.5 w-4 h-4 stroke-[2.5]" />
-              </Button>
-            </Link>
+            {user ? (
+              // 🟢 Usuário Conectado
+              <>
+                <span className="text-xs text-slate-400 font-medium hidden md:inline-block truncate max-w-[160px]">
+                  {user.email}
+                </span>
+                {user.hasSubscription ? (
+                  <Link to="/app">
+                    <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105 gap-1.5">
+                      <span>Ir para o Workspace</span>
+                      <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/pagamento-pix">
+                    <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105 gap-1.5">
+                      <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                      <span>Garantir Acesso R$ 99,90</span>
+                    </Button>
+                  </Link>
+                )}
+              </>
+            ) : (
+              // ⚪ Visitante (Não Logado)
+              <>
+                <Link to="/auth">
+                  <Button variant="ghost" className="text-slate-200 hover:text-white hover:bg-slate-800/80 font-bold text-xs px-4 h-9 rounded-xl transition-all">
+                    Entrar
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105">
+                    <span>Criar Conta</span>
+                    <ArrowRight className="ml-1.5 w-4 h-4 stroke-[2.5]" />
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
