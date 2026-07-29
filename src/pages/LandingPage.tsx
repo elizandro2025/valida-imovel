@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   FileCheck, ShieldCheck, Upload, ArrowRight, Sparkles, Brain, ShieldAlert,
-  FileText, CheckCircle2, Zap, Clock, Compass, Users, Lock,
+  FileText, CheckCircle2, Zap, Clock, Compass, Users, Lock, User,
   ChevronRight, Star, Award, CreditCard, Check, FileUp, AlertTriangle,
   Building2, Scale, HelpCircle, DollarSign, MessageCircle, AlertCircle,
   Timer, Flame, CheckSquare, ArrowDown, TrendingUp, ThumbsUp, Shield, RefreshCw
@@ -223,42 +223,48 @@ const LandingPage: React.FC = () => {
             </Badge>
           </Link>
 
-          {/* Navigation Actions — Dinâmico & Intuitivo */}
-          <div className="flex items-center gap-3">
+          {/* Navigation Actions — Destaque Máximo & Alto Impacto Visual */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
             {user ? (
               // 🟢 Usuário Conectado
               <>
-                <span className="text-xs text-slate-400 font-medium hidden md:inline-block truncate max-w-[160px]">
-                  {user.email}
-                </span>
+                <div className="hidden lg:flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl shadow-inner">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">
+                    {user.email}
+                  </span>
+                </div>
                 {user.hasSubscription ? (
                   <Link to="/app">
-                    <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105 gap-1.5">
+                    <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
+                      <Sparkles className="w-4 h-4 fill-slate-950 stroke-[2]" />
                       <span>Ir para o Workspace</span>
                       <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                     </Button>
                   </Link>
                 ) : (
                   <Link to="/pagamento-pix">
-                    <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105 gap-1.5">
-                      <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                    <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
+                      <Zap className="w-4 h-4 fill-slate-950" />
                       <span>Garantir Acesso R$ 99,90</span>
                     </Button>
                   </Link>
                 )}
               </>
             ) : (
-              // ⚪ Visitante (Não Logado)
+              // ⚪ Visitante (Não Logado) — Destaque Total de CTA
               <>
                 <Link to="/auth">
-                  <Button variant="ghost" className="text-slate-200 hover:text-white hover:bg-slate-800/80 font-bold text-xs px-4 h-9 rounded-xl transition-all">
-                    Entrar
+                  <Button className="bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-bold text-xs px-4 sm:px-5 h-10 rounded-xl border border-slate-700/80 hover:border-emerald-500/50 shadow-md transition-all flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Entrar</span>
                   </Button>
                 </Link>
                 <Link to="/auth">
-                  <Button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 sm:px-5 h-9 shadow-xl shadow-emerald-500/30 rounded-xl transition-all hover:scale-105">
-                    <span>Criar Conta</span>
-                    <ArrowRight className="ml-1.5 w-4 h-4 stroke-[2.5]" />
+                  <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-xl shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
+                    <Sparkles className="w-4 h-4 fill-slate-950 stroke-[2]" />
+                    <span>Analisar Matrícula</span>
+                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                   </Button>
                 </Link>
               </>
