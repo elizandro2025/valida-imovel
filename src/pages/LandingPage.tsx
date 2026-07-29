@@ -9,7 +9,7 @@ import {
   FileText, CheckCircle2, Zap, Clock, Compass, Users, Lock, User,
   ChevronRight, Star, Award, CreditCard, Check, FileUp, AlertTriangle,
   Building2, Scale, HelpCircle, DollarSign, MessageCircle, AlertCircle,
-  Timer, Flame, CheckSquare, ArrowDown, TrendingUp, ThumbsUp, Shield, RefreshCw
+  Timer, Flame, CheckSquare, ArrowDown, TrendingUp, ThumbsUp, Shield, RefreshCw, Play
 } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
@@ -379,7 +379,61 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 🤖 NOVA SEÇÃO EXCLUSIVA: AGENTE DE INTELIGÊNCIA REGISTRÁRIA IA */}
+      {/* 🎬 VÍDEO DEMONSTRATIVO: COMO FUNCIONA O VALIDA IMÓVEL */}
+      <section className="py-16 sm:py-20 bg-slate-950 border-b border-slate-900 relative overflow-hidden text-white">
+        {/* Background Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8 text-center">
+          
+          <div className="space-y-3 max-w-3xl mx-auto">
+            <Badge className="bg-blue-500/20 text-cyan-300 border border-blue-500/40 text-xs font-black uppercase px-4 py-1.5 rounded-full tracking-wider inline-flex items-center gap-2">
+              <Play className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
+              <span>Vídeo Demonstrativo do Sistema</span>
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+              Veja em Vídeo Como a <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-white bg-clip-text text-transparent">IA Registrária Funciona</span>
+            </h2>
+            <p className="text-sm sm:text-base text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
+              Assista à demonstração em vídeo e veja como a inteligência artificial analisa certidões cartorárias, extrai os 12 Módulos Registrais e gera o parecer notarial em segundos.
+            </p>
+          </div>
+
+          {/* YouTube Responsive Video Container */}
+          <div className="relative max-w-4xl mx-auto group">
+            {/* Ambient Aura Glow behind Video */}
+            <div className="absolute -inset-3 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 rounded-3xl opacity-30 blur-2xl group-hover:opacity-50 transition-opacity pointer-events-none" />
+            
+            <div className="relative aspect-video w-full rounded-3xl overflow-hidden border-2 border-blue-500/50 shadow-2xl shadow-blue-500/30 bg-slate-900">
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/QRCzsDTiRd0?rel=0"
+                title="Demonstração do Sistema Valida Imóvel — Análise de Matrículas com IA"
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+
+          {/* CTAs Próximos ao Vídeo */}
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/app?sample=safe" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-sm px-8 py-5.5 rounded-2xl shadow-xl shadow-blue-500/30 gap-2.5 transition-all hover:scale-105">
+                <Sparkles className="w-5 h-5 fill-white stroke-[2]" />
+                <span>Testar Demonstração no Sistema</span>
+                <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+              </Button>
+            </Link>
+            <Link to="/auth?tab=register" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto border-slate-700 bg-slate-900 text-slate-200 hover:text-white hover:bg-slate-800 font-extrabold text-sm px-7 py-5.5 rounded-2xl gap-2">
+                <Zap className="w-4 h-4 text-cyan-400" />
+                <span>Criar Conta por R$ 99,90</span>
+              </Button>
+            </Link>
+          </div>
+
+        </div>
+      </section>
       <section className="py-20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 relative overflow-hidden">
         {/* Background Ambient Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
