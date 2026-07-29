@@ -33,10 +33,8 @@ export interface MercadoPagoWebhookNotification {
   date_created: string;
   user_id: number;
   api_version: string;
-  action: 'payment.created' | 'payment.updated';
-  data: {
-    id: string;
-  };
+  action: string;
+  data: { id: string };
 }
 
 export interface PixPaymentResult {
@@ -66,33 +64,35 @@ export const mercadoPagoService = {
     const amount = data.transaction_amount || 99.90;
     const email = data.payer?.email || 'cliente@validaimovel.com.br';
     const name = [data.payer?.first_name, data.payer?.last_name].filter(Boolean).join(' ') || 'Cliente';
+    const description = data.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado';
+    const itemId = data.itemId || 'VALIVM-6M';
+    const itemTitle = data.itemTitle || 'ValidaImóvel — Plano 6 Meses Ilimitado';
 
-    console.log('💳 Criando Pagamento PIX via Worker...', { amount, email });
+    console.log('💳 Criando Pagamento PIX via Worker...', { amount, email, description });
 
     try {
       let response: Response;
+      const payload = JSON.stringify({
+        amount,
+        email,
+        name,
+        description,
+        itemId,
+        itemTitle,
+      });
+
       try {
         response = await fetch(`${WORKER_BASE_URL}/api/create-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount,
-            email,
-            name,
-            description: data.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado',
-          }),
+          body: payload,
         });
       } catch (e) {
         console.warn('⚡ Primário falhou, usando fallback workers.dev...', e);
         response = await fetch(`${WORKER_FALLBACK_URL}/api/create-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount,
-            email,
-            name,
-            description: data.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado',
-          }),
+          body: payload,
         });
       }
 

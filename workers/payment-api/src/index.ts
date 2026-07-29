@@ -114,6 +114,8 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
     name?: string;
     amount?: number;
     description?: string;
+    itemId?: string;
+    itemTitle?: string;
   };
 
   try {
@@ -127,6 +129,8 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
   const firstName = (body.name || 'Cliente').split(' ')[0];
   const lastName = (body.name || 'ValidaImóvel').split(' ').slice(1).join(' ') || 'ValidaImóvel';
   const description = body.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado';
+  const itemId = body.itemId || 'VALIVM-6M';
+  const itemTitle = body.itemTitle || 'ValidaImóvel — Plano 6 Meses Ilimitado';
   const idempotencyKey = `VALIVM-${Date.now()}-${Math.random().toString(36).substr(2, 8)}`;
 
   const mpBody = {
@@ -143,9 +147,9 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
     additional_info: {
       items: [
         {
-          id: 'VALIVM-6M',
-          title: 'ValidaImóvel — Plano 6 Meses Ilimitado',
-          description: 'Acesso ilimitado por 180 dias com IA Registrária',
+          id: itemId,
+          title: itemTitle,
+          description,
           quantity: 1,
           unit_price: amount,
         },
