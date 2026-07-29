@@ -252,18 +252,18 @@ const LandingPage: React.FC = () => {
                 )}
               </>
             ) : (
-              // ⚪ Visitante (Não Logado) — Destaque Total de CTA
+              // ⚪ Visitante (Não Logado) — Destaque Total de CTA & Separação Clara
               <>
-                <Link to="/auth">
+                <Link to="/auth?tab=login">
                   <Button className="bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-bold text-xs px-4 sm:px-5 h-10 rounded-xl border border-slate-700/80 hover:border-emerald-500/50 shadow-md transition-all flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Entrar</span>
+                    <span>Já sou usuário</span>
                   </Button>
                 </Link>
-                <Link to="/auth">
+                <Link to="/auth?tab=register">
                   <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-xl shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
                     <Sparkles className="w-4 h-4 fill-slate-950 stroke-[2]" />
-                    <span>Analisar Matrícula</span>
+                    <span>Criar Conta</span>
                     <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                   </Button>
                 </Link>
@@ -780,10 +780,10 @@ const LandingPage: React.FC = () => {
             </div>
 
             <div className="space-y-3 pt-2">
-              <Link to="/pagamento-pix" className="block w-full max-w-md mx-auto">
+              <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="block w-full max-w-md mx-auto">
                 <Button size="lg" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg py-7 rounded-2xl shadow-xl shadow-emerald-500/30 transition-all hover:scale-105">
                   <CreditCard className="mr-2.5 h-6 w-6" />
-                  Garantir Acesso Ilimitado Agora
+                  {user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso Ilimitado Agora") : "Criar Conta para Garantir Acesso"}
                 </Button>
               </Link>
 
@@ -843,9 +843,9 @@ const LandingPage: React.FC = () => {
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-medium">
             Junte-se a mais de 1.800 profissionais que economizam tempo e eliminam riscos imobiliários todos os dias.
           </p>
-          <Link to="/app" className="inline-block">
+          <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="inline-block">
             <Button size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base px-8 py-6 rounded-2xl shadow-xl shadow-emerald-600/30 transition-all hover:scale-105 gap-2">
-              <Upload className="w-5 h-5" /> Experimentar Matrícula Agora
+              <Upload className="w-5 h-5" /> {user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso") : "Criar Conta para Analisar Matrícula"}
             </Button>
           </Link>
         </div>
@@ -857,9 +857,9 @@ const LandingPage: React.FC = () => {
           <span className="text-xs font-black text-white block">Valida Imóvel (6 Meses)</span>
           <span className="text-[11px] font-extrabold text-emerald-400 block">Apenas R$ 99,90</span>
         </div>
-        <Link to="/pagamento-pix">
+        <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"}>
           <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shadow-md">
-            Garantir Agora <ArrowRight className="ml-1 w-3.5 h-3.5" />
+            {user ? (user.hasSubscription ? "Workspace" : "Garantir Agora") : "Criar Conta e Garantir"} <ArrowRight className="ml-1 w-3.5 h-3.5" />
           </Button>
         </Link>
       </div>
@@ -881,8 +881,8 @@ const LandingPage: React.FC = () => {
           </p>
 
           <div className="flex items-center gap-6 text-xs font-semibold">
-            <Link to="/auth" className="hover:text-white transition-colors">Entrar</Link>
-            <Link to="/pagamento-pix" className="hover:text-white transition-colors">Planos & Pix</Link>
+            <Link to="/auth?tab=login" className="hover:text-white transition-colors">Já sou usuário</Link>
+            <Link to="/auth?tab=register" className="hover:text-white transition-colors">Criar Conta</Link>
           </div>
         </div>
       </footer>

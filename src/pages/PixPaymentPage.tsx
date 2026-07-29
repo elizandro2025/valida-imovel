@@ -18,7 +18,18 @@ import { mercadoPagoService, PixPaymentResult } from '@/services/mercadoPagoServ
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  // 🛡️ Regra Estrita: Visitante não logado NUNCA acessa a tela de pagamento sem cadastro prévio
+  useEffect(() => {
+    if (!isLoading && !user) {
+      toast({
+        title: '🔒 Cadastro Obrigatório',
+        description: 'Por favor, crie sua conta primeiro para poder contratar o plano.',
+      });
+      navigate('/auth?tab=register', { replace: true });
+    }
+  }, [user, isLoading, navigate, toast]);
 
   const [payerName, setPayerName] = useState(user?.name || '');
   const [payerEmail, setPayerEmail] = useState(user?.email || '');

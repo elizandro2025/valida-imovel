@@ -18,6 +18,20 @@ export const AuthPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>(
+    tabParam === 'register' || tabParam === 'signup' ? 'signup' : 'signin'
+  );
+
+  useEffect(() => {
+    if (tabParam === 'register' || tabParam === 'signup') {
+      setActiveTab('signup');
+    } else if (tabParam === 'login' || tabParam === 'signin') {
+      setActiveTab('signin');
+    }
+  }, [tabParam]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -353,7 +367,7 @@ export const AuthPage: React.FC = () => {
                   </Button>
                 </form>
               ) : (
-                <Tabs defaultValue="signin" className="w-full">
+                <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'signin' | 'signup')} className="w-full">
                   <TabsList className="grid grid-cols-2 p-1 bg-slate-950 border border-slate-800 rounded-2xl mb-4">
                     <TabsTrigger value="signin" className="text-xs font-bold rounded-xl data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
                       Entrar
