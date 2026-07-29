@@ -85,10 +85,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
               if (profile) {
                 const finalRole = resolveRole(userEmail, profile.role);
+                const hasSub = subscriptionService.isSubscriptionActive(profile) || finalRole === 'admin';
                 const userObj: User = {
                   id: currentSession.user.id,
                   email: userEmail,
-                  hasSubscription: profile.has_subscription || finalRole === 'admin',
+                  hasSubscription: hasSub,
                   role: finalRole,
                   name: profile.full_name || userEmail.split('@')[0],
                   createdAt: profile.created_at || new Date().toISOString(),
@@ -96,10 +97,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setUser(userObj);
                 localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
               } else {
+                const hasSub = subscriptionService.getStatus().active || resolvedRole === 'admin';
                 const userObj: User = {
                   id: currentSession.user.id,
                   email: userEmail,
-                  hasSubscription: true,
+                  hasSubscription: hasSub,
                   role: resolvedRole,
                   name: userEmail.split('@')[0],
                   createdAt: new Date().toISOString(),
@@ -108,10 +110,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
               }
             } catch {
+              const hasSub = subscriptionService.getStatus().active || resolvedRole === 'admin';
               const userObj: User = {
                 id: currentSession.user.id,
                 email: userEmail,
-                hasSubscription: true,
+                hasSubscription: hasSub,
                 role: resolvedRole,
                 name: userEmail.split('@')[0],
                 createdAt: new Date().toISOString(),

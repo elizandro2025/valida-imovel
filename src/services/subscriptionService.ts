@@ -17,9 +17,32 @@ export interface SubscriptionStatus {
   txId?: string;
 }
 
+export interface ProfileSubscriptionData {
+  has_subscription?: boolean | null;
+  subscription_status?: string | null;
+  subscription_expires_at?: string | null;
+}
+
+/**
+ * Regra Única de Liberação:
+ * Verifica se a assinatura no perfil é válida e não expirada.
+ */
+export const isSubscriptionActive = (profile?: ProfileSubscriptionData | null): boolean => {
+  if (!profile) return false;
+  const hasSub = profile.has_subscription === true;
+  const isStatusActive = profile.subscription_status === 'active';
+  const notExpired = Boolean(
+    profile.subscription_expires_at &&
+    new Date(profile.subscription_expires_at).getTime() > Date.now()
+  );
+  return hasSub && isStatusActive && notExpired;
+};
+
 const SUB_STORAGE_KEY = 'valida_imovel_subscription';
 
 export const subscriptionService = {
+  isSubscriptionActive,
+
   // Retorna o status atual da assinatura (LocalStorage + Supabase)
   getStatus: (): SubscriptionStatus => {
     try {
@@ -35,15 +58,19 @@ export const subscriptionService = {
       }
 
       const data = JSON.parse(stored);
-      const expiresAtMs = new Date(data.expiresAt).getTime();
-      const nowMs = Date.now();
-      const diffMs = expiresAtMs - nowMs;
-      const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+      const active = isSubscriptionActive({
+        has_subscription: data.active,
+        subscription_status: data.active ? 'active' : 'inactive',
+        subscription_expires_at: data.expiresAt,
+      });
+
+      const expiresAtMs = data.expiresAt ? new Date(data.expiresAt).getTime() : 0;
+      const daysRemaining = Math.max(0, Math.ceil((expiresAtMs - Date.now()) / (1000 * 60 * 60 * 24)));
 
       return {
-        active: diffMs > 0 && data.active === true,
+        active,
         planName: data.planName || 'Plano 6 Meses Ilimitado',
-        expiresAt: data.expiresAt,
+        expiresAt: data.expiresAt || null,
         daysRemaining,
         unlimited: true,
         txId: data.txId,
@@ -119,10 +146,6 @@ export const subscriptionService = {
    * Inicia monitoramento via Supabase Realtime.
    * Quando o Worker atualiza `profiles.has_subscription = true`,
    * o frontend recebe a notificação em tempo real e ativa o acesso automaticamente.
-   *
-   * @param userId - ID do usuário autenticado
-   * @param onActivated - Callback chamado quando o pagamento for confirmado
-   * @returns função para cancelar a inscrição
    */
   subscribeToRealtimeActivation: (
     userId: string,
@@ -141,16 +164,10 @@ export const subscriptionService = {
           filter: `user_id=eq.${userId}`,
         },
         async (payload) => {
-          const newData = payload.new as {
-            has_subscription?: boolean;
-            payment_id?: string;
-            subscription_expires_at?: string;
-          };
+          const newData = payload.new as ProfileSubscriptionData & { payment_id?: string };
 
-          if (newData.has_subscription === true) {
+          if (isSubscriptionActive(newData)) {
             console.log('✅ Realtime: Assinatura ativada via Mercado Pago!', newData);
-
-            // Ativa localmente
             const txId = newData.payment_id || 'MP-REALTIME-' + Date.now();
             await subscriptionService.activate6MonthsUnlimited(txId);
             onActivated(txId);
@@ -161,9 +178,9 @@ export const subscriptionService = {
         console.log('📡 Supabase Realtime status:', status);
       });
 
-    // Retorna função de cleanup
     return () => {
       supabase.removeChannel(channel);
     };
   },
 };
+

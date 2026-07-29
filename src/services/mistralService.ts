@@ -6,13 +6,21 @@ import { ocrCacheService } from './ocrCacheService';
 const OCR_ENDPOINT = "https://api.mistral.ai/v1/ocr";
 const CHAT_ENDPOINT = "https://api.mistral.ai/v1/chat/completions";
 
-const STRICT_ANTI_HALLUCINATION_SYSTEM = 
-  "SISTEMA ANTI-ALUCINAÇÃO REGISTRÁRIA ABSOLUTO:\n" +
-  "Você é um Auditor Registrário Infalível. REGRA MANDATÓRIA E INVIOLÁVEL:\n" +
+const STRICT_ANTI_HALLUCINATION_SYSTEM =
+  "SISTEMA ANTI-ALUCINAÇÃO REGISTRÁRIA ABSOLUTO — LEI 6.015/73 & PROVIMENTO CNJ 89/19:\n" +
+  "Você é um Auditor Registrário Notarial Infalível com 30 anos de experiência em cartórios de todo o Brasil.\n" +
+  "REGRAS MANDATÓRIAS E INVIOLÁVEIS:\n" +
   "1. Extraia APENAS e EXCLUSIVAMENTE dados que estejam literalmente gravados no texto da matrícula imobiliária fornecida.\n" +
-  "2. NUNCA invente, presuma, deduza, suponha ou fabrique nomes, CPFs, CNPJs, valores, áreas, datas, livros, folhas, serventias ou ônus.\n" +
+  "2. NUNCA invente, presuma, deduza, suponha ou fabrique: nomes, CPFs, CNPJs, valores, áreas, datas, livros, folhas, serventias, ônus ou coordenadas.\n" +
   "3. Se uma informação não constar explicitamente no documento, você DEVE retornar obrigatoriamente \"\" (string vazia) ou null.\n" +
-  "4. NUNCA utilize dados genéricos, exemplos ou placeholders.";
+  "4. NUNCA utilize dados genéricos, exemplos ou placeholders.\n" +
+  "5. Transcreva literalmente os dados alfanuméricos críticos: CPF, CNPJ, matrícula, NIRF, CCIR, coordenadas UTM.\n" +
+  "6. Preste atenção em TODOS os registros (R-1, R-2...) e averbações (AV-1, AV-2...) mencionados no texto.\n" +
+  "7. Quando houver cancelamento de ato anterior, leia o status corretamente como CANCELADO.\n" +
+  "8. Extraia o máximo de atos e informações possível — omitir dados relevantes é tão grave quanto inventá-los.\n" +
+  "9. Priorize dados do texto principal. Se o mesmo dado aparece mais de uma vez, use a versão mais recente.\n" +
+  "10. Retorne SEMPRE um JSON válido e bem formado, sem comentários, sem texto fora do JSON.";
+
 
 const getApiKey = (): string => {
   const envKey = import.meta.env.VITE_MISTRAL_API_KEY;
@@ -321,7 +329,8 @@ export const analysisService = {
 
   // 🏛️ PROMPTS DEDICADOS COM DIRETIVAS RÍGIDAS ANTI-ALUCINAÇÃO & PARÂMETROS ENRIQUECIDOS DE ALTO VALOR
   async analyzeWith12DedicatedPrompts(extractedText: string): Promise<any> {
-    const textChunk = extractedText.substring(0, 22000);
+    // Usando os primeiros 30.000 caracteres para maximizar cobertura de documentos extensos
+    const textChunk = extractedText.substring(0, 30000);
     
     const dedicatedPrompts = [
 
@@ -330,12 +339,13 @@ export const analysisService = {
         name: "identificacao_geral",
         model: "mistral-small-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Oficial Registrador de Imóveis sênior.",
-        prompt: `EXAMINADOR CARTORÁRIO: Extraia a IDENTIFICAÇÃO DA MATRÍCULA E CARTÓRIO presentes no texto.
+        prompt: `EXAMINADOR CARTORÁRIO SÊNIOR: Extraia TODA a IDENTIFICAÇÃO DA MATRÍCULA E CARTÓRIO presentes no texto.
+Varredura obrigatória: leia o cabeçalho, rodapé e todas as averbações (AV-) e registros (R-) em busca desses dados.
 
-Retorne este JSON:
+Retorne este JSON (null nos campos não encontrados):
 {
   "identificacao_geral": {
-    "matricula": "Número exato da matrícula",
+    "matricula": "Número exato da matrícula (ex: 12.345)",
     "cartorio_ri": "Nome oficial do Cartório de Registro de Imóveis (CRI)",
     "comarca": "Município e UF da comarca",
     "livro": "Livro de registro (ex: Livro 2 - Registro Geral)",
@@ -344,14 +354,18 @@ Retorne este JSON:
     "tipo_imovel_analisado": "Urbano ou Rural",
     "codigo_imovel": "Inscrição imobiliária (IPTU/SQL) ou Código INCRA/CCIR",
     "serventia": "Código CNS ou serventia registral",
-    "historico_renumeracao": "Histórico de renumeração ou fusão da matrícula",
-    "origem_transcricao_anterior": "Origem registraria anterior (Transcrição anterior nº, Livro 3, etc.)",
-    "codigo_nacional_imovel": "Código Nacional de Imóvel CNI se houver",
+    "historico_renumeracao": "Histórico de renumeração, fusão ou desmembramento desta matrícula",
+    "origem_transcricao_anterior": "Origem registrária anterior (ex: Transcrição anterior nº X, Livro 3, etc.)",
+    "codigo_nacional_imovel": "Código Nacional de Imóvel (CNI) se houver",
     "natureza_serventia": "Oficial ou Privatizado/Privado",
     "tipo_documental": "Matrícula, Transcrição ou Livro Auxiliar",
-    "data_ultima_atualizacao": "Data da certidão/última averbação"
+    "data_ultima_atualizacao": "Data da certidão ou da última averbação constante no texto",
+    "total_registros": "Número total de atos R- encontrados",
+    "total_averbacoes": "Número total de atos AV- encontrados"
   }
 }
+
+NOTA FINAL: Se algum campo não constar no texto, retorne null. Não omita campos presentes — prefira incluir a omitir.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -362,31 +376,36 @@ ${textChunk}`
         name: "caracteristicas_fisicas",
         model: "mistral-small-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Perito Engenheiro Imobiliário.",
-        prompt: `PERITO ENGENHEIRO: Extraia as CARACTERÍSTICAS FÍSICAS, BENFEITORIAS E ESTRUTURA CONSTRUTIVA no texto.
+        prompt: `PERITO ENGENHEIRO IMOBILIÁRIO SÊNIOR: Extraia TODAS as CARACTERÍSTICAS FÍSICAS, BENFEITORIAS E ESTRUTURA CONSTRUTIVA presentes no texto.
+Varredura obrigatória: examine todas as averbações (AV-) de construção, habite-se, demolição e reformas.
 
-Retorne este JSON:
+Retorne este JSON (null nos campos não encontrados):
 {
   "caracteristicas_fisicas": {
-    "descricao_legal": "Transcrição literal da descrição legal do imóvel",
-    "area_total_m2": "Área total em m²",
-    "area_construida_m2": "Área construída total averbada",
-    "area_privativa_m2": "Área privativa / útil",
-    "area_comum_m2": "Área comum de divisão proporcional",
+    "descricao_legal": "Transcrição LITERAL da descrição legal completa do imóvel, sem resumir",
+    "area_total_m2": "Área total em m² conforme consta no texto",
+    "area_construida_m2": "Área construída total averbada (soma de todos os habite-se)",
+    "area_privativa_m2": "Área privativa / útil (condomínios)",
+    "area_comum_m2": "Área comum de divisão proporcional (condomínios)",
     "area_total_hectares": "Área em hectares (ha) se for rural",
-    "area_outras_unidades": "Alqueires ou fração ideal",
-    "endereco_completo": "Logradouro, número, bairro, CEP, cidade e UF",
-    "denominacao_imovel": "Nome da fazenda/sítio ou edifício/condomínio",
-    "perimetros_confrontacoes": "Descrição literal das divisas e confrontantes",
-    "benfeitorias": "Construções, Habite-se e benfeitorias averbadas",
-    "loteamento_quadra_lote": "Lote, Quadra e Bairro/Loteamento",
+    "area_outras_unidades": "Alqueires, módulos fiscais ou fração ideal se mencionados",
+    "endereco_completo": "Logradouro completo, número, bairro, CEP, cidade e UF",
+    "denominacao_imovel": "Nome da fazenda, sítio, chácara ou edifício/condomínio",
+    "perimetros_confrontacoes": "Descrição LITERAL das divisas e confrontantes (N, S, L, O / frente, fundo, lados)",
+    "benfeitorias": "Lista de todas as construções, habite-se e benfeitorias averbadas com datas",
+    "loteamento_quadra_lote": "Número do Lote, Quadra e nome do Bairro/Loteamento",
     "numero_pavimentos": "Número de pavimentos ou andares",
-    "tipo_construtivo": "Alvenaria, concreto armado, metálica, mista",
-    "uso_predominante": "Residencial, Comercial, Industrial ou Misto",
-    "zoneamento_mencionado": "Zoneamento urbano ou diretriz citada",
-    "coordenadas_memorial": "Coordenadas descritas no memorial físico",
-    "observacoes_tecnicas": "Observações relevantes gravadas no texto"
+    "tipo_construtivo": "Material construtivo: alvenaria, concreto armado, metálica, mista",
+    "uso_predominante": "Residencial, Comercial, Industrial, Agrícola ou Misto",
+    "zoneamento_mencionado": "Zoneamento urbano ou diretriz urbanística citada",
+    "coordenadas_memorial": "Coordenadas descritas no memorial descritivo físico",
+    "matriculas_desmembradas": "Matrículas originadas por desmembramento desta",
+    "matricula_origem_remembramento": "Matrículas unificadas nesta por remembramento",
+    "observacoes_tecnicas": "Todas as observações técnicas relevantes gravadas no texto"
   }
 }
+
+NOTA FINAL: Transcreva perimetros_confrontacoes e descricao_legal de forma COMPLETA e LITERAL. Não resuma.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -397,32 +416,39 @@ ${textChunk}`
         name: "memorial_descritivo_georreferenciamento",
         model: "mistral-small-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Especialista em Georreferenciamento Rural.",
-        prompt: `ESPECIALISTA AGRÁRIO: Extraia dados de GEORREFERENCIAMENTO, SIGEF, CAR E CCIR no texto.
+        prompt: `ESPECIALISTA EM GEORREFERENCIAMENTO RURAL & REGISTRO AGRÁRIO: Extraia TODOS os dados de GEORREFERENCIAMENTO, SIGEF, CAR, CCIR E CADASTROS FEDERAIS presentes no texto.
+Varredura obrigatória: examine cabeçalho, averbações (AV-) e quaisquer notas técnicas ou memoriais.
 
-Retorne este JSON:
+Retorne este JSON (null nos campos não encontrados):
 {
   "memorial_descritivo_georreferenciamento": {
-    "ato_averbacao": "Identificador da averbação (ex: AV-3, AV-5)",
-    "data_ato": "Data do registro do georreferenciamento",
-    "situacao_certificacao": "CERTIFICADO NO SIGEF, PENDENTE ou NÃO CONSTA",
-    "codigo_certificacao_sigef": "Código de certificação do INCRA/SIGEF",
-    "area_certificada": "Área geo-certificada",
-    "coordenadas_geograficas": "Latitude e Longitude dos vértices principais",
+    "possui_georreferenciamento": true,
+    "ato_averbacao": "Identificador da averbação do geo (ex: AV-3, AV-5)",
+    "data_ato": "Data do registro do georreferenciamento (DD/MM/AAAA)",
+    "situacao_certificacao": "CERTIFICADO NO SIGEF / PENDENTE DE CERTIFICAÇÃO / NÃO CONSTA",
+    "codigo_certificacao_sigef": "Código alfanumérico de certificação INCRA/SIGEF",
+    "area_certificada": "Área geo-certificada em ha ou m²",
+    "coordenadas_geograficas": "Coordenadas UTM/GEO dos vértices — transcrição LITERAL do memorial",
     "sistema_geodesico": "SIRGAS 2000, SAD-69 ou WGS-84",
-    "sistema_projecao_cartografica": "Projeção UTM e fuso cartográfico",
-    "precisao_posicional": "Precisão posicional declarada (ex: +/- 0,10m)",
-    "numero_vertices": "Quantidade de vértices do perímetro",
-    "memorial_georreferenciamento_completo": "Síntese dos azimutes e distâncias",
-    "confrontantes_georreferenciados": "Proprietários e matrículas confrontantes no geo",
-    "data_certificacao_sigef": "Data de homologação no SIGEF",
-    "responsavel_tecnico": "Nome do Engenheiro/Agrimensor e registro CREA",
-    "codigo_car": "Número de Inscrição no Cadastro Ambiental Rural (CAR)",
-    "situacao_car": "ATIVO, PENDENTE, DEFERIDO ou CANCELADO",
-    "sobreposicao_declarada": "Sobreposição com terras indígenas, quilombolas ou UCs",
-    "codigo_ccir": "Código CCIR/SNCR do INCRA",
-    "codigo_itr_nirf": "Número NIRF/ITR na Receita Federal"
+    "sistema_projecao_cartografica": "Projeção UTM e número do fuso cartográfico",
+    "precisao_posicional": "Precisão posicional declarada (ex: ±0,10m)",
+    "numero_vertices": "Quantidade exata de vértices do perímetro",
+    "memorial_georreferenciamento_completo": "Síntese ou transcrição dos azimutes, ângulos e distâncias",
+    "confrontantes_georreferenciados": "Proprietários e matrículas dos confrontantes georeferenciados",
+    "data_certificacao_sigef": "Data de homologação/aprovação no SIGEF",
+    "responsavel_tecnico": "Nome completo do Engenheiro/Agrimensor e registro CREA/CFT",
+    "codigo_car": "Número de inscrição no Cadastro Ambiental Rural (CAR) — ex: PA-1500602-...",
+    "situacao_car": "ATIVO / PENDENTE / DEFERIDO / CANCELADO / AGUARDANDO ANÁLISE",
+    "sobreposicao_declarada": "Declaração de sobreposição com terras indígenas, quilombolas ou UCs",
+    "codigo_ccir": "Número do CCIR (Certificado de Cadastro de Imóvel Rural) no INCRA",
+    "codigo_itr_nirf": "Número NIRF/ITR na Receita Federal",
+    "modulo_fiscal": "Quantidade de módulos fiscais do imóvel",
+    "classificacao_fundiaria": "Minifúndio, Pequena, Média ou Grande Propriedade",
+    "municipio_localizacao": "Município(s) onde o imóvel rural está localizado"
   }
 }
+
+NOTA FINAL: Transcreva coordenadas_geograficas de forma COMPLETA e LITERAL. Não resuma pontos do memorial.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -561,23 +587,29 @@ ${textChunk}`
         name: "cadeia_dominial",
         model: "mistral-small-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Historiador Registrário.",
-        prompt: `HISTORIADOR REGISTRÁRIO: Extraia a CADEIA DOMINIAL COMPLETA presente no texto (todos os atos R- e AV- de transferência em ordem cronológica).
+        prompt: `HISTORIADOR REGISTRÁRIO NOTARIAL: Extraia a CADEIA DOMINIAL COMPLETA presente no texto (TODOS os atos R- de transmissão de domínio em ORDEM CRONOLÓGICA, sem omitir nenhum).
+Varredura obrigatória: leia cada R- (R-1, R-2, R-3...) do início ao fim — não pule registros.
 
-Retorne este JSON:
+Retorne este JSON (liste TODOS os atos encontrados):
 {
   "cadeia_dominial": [
     {
-      "numero_ato": "Ex: R-1, R-2, R-3",
-      "data_registro": "Data oficial do registro",
-      "tipo_transmissao": "Compra e Venda, Doação, Formal de Partilha, Permuta, Usucapião",
-      "transmitentes": "Nome de quem vendeu/doou",
-      "adquirentes": "Nome de quem comprou/recebeu",
-      "valor_transacao": "Valor declarado da transação em R$",
-      "evolucao_area": "Variação de área descrita no ato",
-      "observacoes": "Título de aquisição (Escritura, Formal, etc.)"
+      "numero_ato": "Ex: R-1, R-2, R-3 (OBRIGATÓRIO)",
+      "data_registro": "Data oficial do registro (DD/MM/AAAA)",
+      "data_ato": "Data do título/instrumento (escritura, formal) se diferente do registro",
+      "tipo_transmissao": "Compra e Venda / Doação / Formal de Partilha / Permuta / Usucapião / Adjudicação / Dação em Pagamento / Herança / Desapropriação",
+      "transmitentes": "Nome(s) completo(s) de quem vendeu/doou/transferiu",
+      "adquirentes": "Nome(s) completo(s) de quem comprou/recebeu",
+      "valor_transacao": "Valor declarado da transação em R$ conforme o ato",
+      "titulo_aquisicao": "Tipo do título: Escritura Pública, Instrumento Particular, Formal de Partilha, etc.",
+      "tabeliao_lavrador": "Nome do Tabelião e Cartório onde foi lavrado o título",
+      "evolucao_area": "Variação de área descrita no ato (desmembramento, remembramento, excesso)",
+      "observacoes": "Observações adicionais do ato registrado"
     }
   ]
 }
+
+NOTA FINAL: Liste TODOS os atos R- encontrados, do primeiro ao último. Não omita nenhum ato.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -588,26 +620,33 @@ ${textChunk}`
         name: "onus_garantias_financeiras",
         model: "mistral-small-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Auditor de Garantias Financeiras.",
-        prompt: `AUDITOR FINANCEIRO: Identifique GARANTIAS, HIPOTECAS E ALIENÇÕES FIDUCIÁRIAS registradas no texto.
+        prompt: `AUDITOR FINANCEIRO DE GARANTIAS IMOBILIÁRIAS: Identifique TODAS as GARANTIAS REAIS, HIPOTECAS E ALIENAÇÕES FIDUCIÁRIAS registradas no texto, inclusive as já canceladas/baixadas.
+Varredura obrigatória: leia TODOS os atos R- (registros) e AV- (averbações) em busca de hipotecas, alienações fiduciárias, cessões, cédulas e penhores.
 
-Retorne este JSON:
+Retorne este JSON (liste TODAS as garantias encontradas, incluindo canceladas):
 {
   "onus_garantias_financeiras": [
     {
-      "tipo": "Hipoteca, Alienação Fiduciária em Garantia, Cessão Fiduciária, Cédula Rural/CPR, Penhor",
-      "numero_ato": "Ex: R-3, R-5",
-      "data": "Data do registro",
-      "credor_banco": "Nome da instituição financeira ou credor",
-      "credores_multiplos": "Outros co-credores vinculados",
-      "valor_garantia": "Valor da dívida ou contrato",
+      "tipo": "Hipoteca / Alienação Fiduciária em Garantia / Cessão Fiduciária / Cédula Rural/CPR / Penhor / CCI / CRA / LCI",
+      "numero_ato": "Ex: R-3, R-5 (OBRIGATÓRIO)",
+      "data": "Data do registro do ônus (DD/MM/AAAA)",
+      "credor_banco": "Nome COMPLETO da instituição financeira ou credor particular",
+      "devedor": "Nome do devedor/fiduciante (se diferente do proprietário atual)",
+      "credores_multiplos": "Outros co-credores ou intervenientes vinculados",
+      "valor_garantia": "Valor EXATO da dívida, contrato ou garantia em R$",
       "limite_garantia": "Teto máximo da garantia declarada",
-      "atualizacao_monetaria": "Índice de correção (CDI, IPCA, TR)",
+      "atualizacao_monetaria": "Índice de correção monetária (CDI, IPCA, TR, INPC)",
+      "vencimento": "Data de vencimento da obrigação garantida",
       "garantias_cruzadas": "Menção a garantias prestadas em outras matrículas",
-      "ranking_garantias": "Grau da garantia (ex: 1º Grau, 2º Grau)",
-      "status": "ATIVO, PARCIALMENTE BAIXADO ou CANCELADO"
+      "ranking_garantias": "Grau de preferência da garantia (1º Grau, 2º Grau)",
+      "ato_cancelamento": "Número do AV- de cancelamento/baixa se houver",
+      "data_cancelamento": "Data do cancelamento/baixa da garantia",
+      "status": "ATIVO / PARCIALMENTE BAIXADO / CANCELADO (use CANCELADO se houver AV- de baixa/quitação)"
     }
   ]
 }
+
+NOTA FINAL: Inclua TODOS os ônus reais, inclusive cancelados. Nunca omita. Determine o status correto lendo se há AV- posterior de baixa.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -618,26 +657,32 @@ ${textChunk}`
         name: "indisponividades_e_penhoras",
         model: "mistral-small-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Auditor de Penhoras e Indisponibilidades.",
-        prompt: `AUDITOR PROCESSUAL: Identifique PENHORAS, INDISPONIBILIDADES (CNIB), ARRESTOS E AÇÕES REGISTRADAS no texto.
+        prompt: `AUDITOR PROCESSUAL IMOBILIÁRIO SÊNIOR: Identifique TODAS as PENHORAS, INDISPONIBILIDADES (CNIB), ARRESTOS, BLOQUEIOS JUDICIAIS E AÇÕES REGISTRADAS no texto.
+Varredura obrigatória: leia TODOS os AV- (averbações) e R- (registros) em busca de qualquer restrição judicial, administrativa ou extrajudicial.
 
-Retorne este JSON:
+Retorne este JSON (liste TODOS os atos restritivos encontrados, incluindo cancelados):
 {
   "indisponividades_e_penhoras": [
     {
-      "tipo": "Penhora Judicial, Indisponibilidade CNIB, Arresto, Sequestro, Ação Execução Art. 828",
-      "numero_ato": "Ex: AV-4, R-7",
-      "data": "Data do ato",
-      "autor_exequente": "Autor da ação judicial ou credor exequente",
-      "processo_vara": "Número do processo, Vara Cível/Trabalhista/Fiscal e Comarca",
-      "origem_acao": "Justiça do Trabalho, Justiça Federal, Estadual, Execução Fiscal",
-      "classe_processual": "Execução de Título, Reclamação Trabalhista, Ação Civil Pública",
-      "tribunal_vara_especializada": "Tribunal e Vara de origem",
-      "prioridade_registral": "Ordem de preferência de penhora",
-      "valor_execucao": "Valor da causa/execução se houver",
-      "status": "ATIVO ou CANCELADO"
+      "tipo": "Penhora Judicial / Indisponibilidade CNIB / Arresto / Sequestro / Averbação de Ação Execução (Art. 828 CPC) / Restrição Administrativa / Bloqueio Judicial",
+      "numero_ato": "Ex: AV-4, AV-7 (OBRIGATÓRIO)",
+      "data": "Data da averbação/registro da restrição (DD/MM/AAAA)",
+      "autor_exequente": "Nome COMPLETO do autor, exequente ou credor da ação judicial",
+      "executado": "Nome do executado/réu (geralmente o proprietário)",
+      "processo_vara": "Número completo do processo (CNJ), Vara, Comarca e Tribunal",
+      "origem_acao": "Justiça do Trabalho / Justiça Federal / Justiça Estadual / Execução Fiscal / PGFN",
+      "classe_processual": "Execução de Título Extrajudicial / Reclamação Trabalhista / Execução Fiscal / Ação Civil Pública",
+      "tribunal_vara_especializada": "Tribunal e Vara específica de origem",
+      "prioridade_registral": "Ordem de preferência de penhora (se declarada)",
+      "valor_execucao": "Valor da causa ou execução em R$ (se mencionado)",
+      "ato_cancelamento": "Número do AV- de cancelamento/extinção se houver",
+      "data_cancelamento": "Data do cancelamento da restrição",
+      "status": "ATIVO / CANCELADO (use CANCELADO se houver AV- posterior de levantamento/extinção)"
     }
   ]
 }
+
+NOTA FINAL: Inclua TODOS os atos judiciais e administrativos, mesmo os cancelados. Indique sempre o número do AV-.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -676,13 +721,14 @@ ${textChunk}`
         name: "parecer_analise",
         model: "mistral-large-latest",
         system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Advogado Sênior parecerista e Perito em Due Diligence Notarial.",
-        prompt: `PARECERISTA JURÍDICO SÊNIOR: Elabore o PARECER TÉCNICO-JURÍDICO E MULTI-PERFIL baseado EXCLUSIVAMENTE nos fatos da matrícula.
+        prompt: `ADVOGADO SÊNIOR PARECERISTA & PERITO EM DUE DILIGENCE NOTARIAL: Elabore o PARECER TÉCNICO-JURÍDICO COMPLETO E MULTI-PERFIL baseado EXCLUSIVAMENTE nos fatos da matrícula fornecida.
+Análise obrigatória: leia o documento inteiro — registros (R-), averbações (AV-), histórico de transmissões, ônus e situação ambiental.
 
-Retorne este JSON com todas as seções:
+Retorne este JSON completo com TODAS as seções preenchidas:
 {
   "parecer_analise": {
     "score_risco": 15,
-    "nivel_risco": "BAIXO / MÉDIO / ALTO / CRÍTICO",
+    "nivel_risco": "BAIXO (score 0-24) / MÉDIO (25-49) / ALTO (50-74) / CRÍTICO (75-100)",
     "semaforo_visual": "SEGURO / ATENÇÃO / REVISÃO JURÍDICA / ALTO RISCO",
     "status_juridico": "REGULAR / RESTRIÇÃO ATIVA / RESTRIÇÃO GRAVE / EM ANÁLISE",
     "scores_por_categoria": {
@@ -703,31 +749,46 @@ Retorne este JSON com todas as seções:
       "sem_indisponibilidade_cnib": true,
       "reserva_legal_regular": true,
       "georreferenciamento_valido": true,
-      "matricula_atualizada": true
+      "matricula_atualizada": true,
+      "area_confrontacao_consistente": true,
+      "sem_restricao_ambiental_ativa": true,
+      "sem_usufruto_ativo": true
     },
     "explicacoes_por_perfil": {
-      "comprador_leigo": "Explicação extremamente clara, simples e amigável sobre a segurança de comprar o imóvel e cuidados práticos",
-      "corretor_imoveis": "Orientação comercial focada na segurança do negócio, garantias da comissão e agilidade na documentação",
-      "banco_credito": "Análise técnica para concessão de financiamento habitacional/agrícola, avaliação de garantia fiduciária e LTV",
-      "engenheiro_agronomo": "Análise física, de área, zoneamento urbano, habite-se, SIGEF, CAR e Reserva Legal",
-      "advogado_parecerista": "Parecer jurídico formal fundamentado na Lei 6.015/73, Código Civil, jurisprudência notarial e mitigações"
+      "comprador_leigo": "Explicação CLARA, DETALHADA e AMIGÁVEL (mínimo 3 parágrafos) sobre a segurança de comprar este imóvel, o que verificar antes de assinar e os cuidados práticos recomendados",
+      "corretor_imoveis": "Orientação comercial COMPLETA (mínimo 2 parágrafos) focada na segurança do negócio, documentação necessária, garantias da comissão e agilidade no processo de venda",
+      "banco_credito": "Análise técnica DETALHADA (mínimo 2 parágrafos) para concessão de financiamento habitacional ou agrícola, avaliação da garantia fiduciária, LTV estimado e riscos ao crédito",
+      "engenheiro_agronomo": "Análise TÉCNICA COMPLETA (mínimo 2 parágrafos) da área, zoneamento, habite-se, situação SIGEF/INCRA, CAR, Reserva Legal e APP",
+      "advogado_parecerista": "Parecer jurídico FORMAL E FUNDAMENTADO (mínimo 3 parágrafos) na Lei 6.015/73, Código Civil Arts. 1.245-1.368, NBR ABNT, Provimento CNJ 89/19, jurisprudência notarial relevante e estratégias de mitigação dos riscos identificados"
     },
-    "resumo_geral": "Síntese executiva diagnóstica baseada unicamente no texto",
-    "explicacao_descomplicada": "Resumo simples do imóvel",
+    "resumo_geral": "Síntese executiva COMPLETA (mínimo 2 parágrafos) com diagnóstico da matrícula — situação do proprietário, ônus ativos, saúde ambiental, validade do georreferenciamento e recomendação final",
+    "explicacao_descomplicada": "Resumo SIMPLES E DIRETO (máximo 100 palavras) explicando o imóvel e sua situação para um leigo absoluto",
+    "pontos_criticos": ["Lista de TODOS os pontos críticos identificados que impactam a negociação ou garantia"],
     "riscos_identificados": [
       {
         "tipo_risco": "ALTO / MÉDIO / BAIXO",
-        "descricao": "Vulnerabilidade jurídica extraída da matrícula",
-        "impacto": "Impacto financeiro ou jurídico na compra/garantia",
-        "acao_recomendada": "Como mitigar ou sanar a pendência"
+        "modulo_origem": "Identificação do módulo (ex: Módulo 9 - Ônus)",
+        "descricao": "Descrição DETALHADA da vulnerabilidade jurídica ou irregularidade extraída da matrícula",
+        "base_legal": "Fundamento legal (ex: Art. 1.419 CC, Art. 167 Lei 6.015/73)",
+        "impacto": "Impacto financeiro, jurídico e no processo de compra/garantia",
+        "acao_recomendada": "Ação concreta para mitigar ou sanar a pendência"
       }
     ],
-    "pendencias_formais": ["Pendências documentais ou cadastrais constatadas no texto"],
-    "regularidades_e_conformidade": ["Pontos de conformidade identificados"],
-    "recomendacao_final": "Orientação objetiva baseada nos dados",
-    "conclusao_juridica": "Parecer conclusivo formal"
+    "certidoes_complementares_recomendadas": [
+      {
+        "certidao": "Nome da certidão (ex: Certidão Negativa de Débitos PGFN, Certidão de Distribuição Cível)",
+        "orgao": "Órgão emissor",
+        "motivo": "Por que deve ser obtida para esta transação"
+      }
+    ],
+    "pendencias_formais": ["Pendências documentais ou cadastrais constatadas no texto — liste todas"],
+    "regularidades_e_conformidade": ["Pontos de conformidade e regularidade identificados — liste todos"],
+    "recomendacao_final": "Orientação OBJETIVA E COMPLETA (mínimo 2 parágrafos) para o comprador/financiador/advogado baseada nos dados extraídos",
+    "conclusao_juridica": "Parecer conclusivo FORMAL E FUNDAMENTADO com embasamento legal e grau de segurança da transação"
   }
 }
+
+NOTA FINAL: Todas as seções são OBRIGATÓRIAS. Preencha score_risco com base nos ônus e penhoras ATIVOS encontrados. Não deixe nenhuma seção vazia.
 
 DOCUMENTO DE ORIGEM:
 ${textChunk}`
@@ -742,7 +803,9 @@ ${textChunk}`
           { role: "system", content: sec.system },
           { role: "user", content: sec.prompt }
         ];
-        return await chatJSON(messages, 4000, 1, sec.model);
+        // Módulo 12 (parecer) recebe mais tokens para garantir parecer completo
+      const maxTok = sec.name === 'parecer_analise' ? 6000 : 5000;
+      return await chatJSON(messages, maxTok, 1, sec.model);
       } catch (err) {
         console.error(`Aviso no módulo ${sec.name}:`, err);
         return {};
