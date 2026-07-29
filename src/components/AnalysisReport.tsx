@@ -192,6 +192,12 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
   const [showAiChat, setShowAiChat] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(autoStartTour);
 
+  useEffect(() => {
+    if (autoStartTour) {
+      setIsTourOpen(true);
+    }
+  }, [autoStartTour]);
+
   const [isSubscribed, setIsSubscribed] = useState<boolean>(() => subscriptionService.getStatus().active);
 
   useEffect(() => {
@@ -728,15 +734,15 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       {/* Carimbo Digital de Autenticidade Registral & Selo de Confiança */}
       <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
-            <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-slate-950 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0 font-black">
+            <ShieldCheck className="w-6 h-6 stroke-[2.5]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm sm:text-base font-extrabold text-white tracking-wide">
                 CARIMBO DIGITAL DE AUDITORIA REGISTRAL & FIDELIDADE
               </h3>
-              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[10px] font-bold uppercase">
+              <Badge className="bg-blue-500/20 text-cyan-400 border-blue-500/40 text-[10px] font-bold uppercase">
                 100% Auditado
               </Badge>
             </div>
@@ -776,17 +782,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* Botões de Ação */}
         <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-          {isSubscribed ? (
-            <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Assinatura Ativa</span>
-            </Badge>
-          ) : (
-            <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
-              <Lock className="w-3.5 h-3.5 text-amber-600" />
-              <span>Visualização Com Blur</span>
-            </Badge>
-          )}
+          <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Relatório Desbloqueado</span>
+          </Badge>
 
           <Button
             variant="outline"
@@ -898,57 +897,57 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       {/* Foco Principal: NAVEGAÇÃO DOS 12 MÓDULOS REGISTRAIS COMPLETOS */}
       <div className="relative mt-4">
         
-        {/* Conteúdo de Abas com Blur se !isSubscribed */}
-        <div className={!isSubscribed ? "filter blur-md opacity-35 select-none pointer-events-none transition-all duration-500 min-h-[600px] overflow-hidden" : ""}>
+        {/* Conteúdo de Abas — 100% Visível e Interativo Sem Blur */}
+        <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-            {/* NAVEGAÇÃO DE ABAS 100% RESPONSIVA SEM CORTE DE TEXTO */}
-            <div className="w-full bg-slate-900/90 border border-slate-800 p-1.5 rounded-2xl shadow-xl backdrop-blur-md">
-              <TabsList className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 bg-transparent h-auto p-0 border-0">
+            {/* NAVEGAÇÃO DE ABAS 100% RESPONSIVA PARA IOS & ANDROID COM SWIPE E TOUCH SWIPE */}
+            <div className="w-full bg-slate-950 border border-slate-800/90 p-1.5 rounded-2xl shadow-2xl backdrop-blur-xl overflow-x-auto no-scrollbar ios-scroll">
+              <TabsList className="w-full min-w-max lg:min-w-0 flex lg:grid lg:grid-cols-6 gap-1.5 bg-transparent h-auto p-0 border-0">
                 <TabsTrigger
                   value="parecer"
-                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
+                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span className="whitespace-nowrap">12. Parecer & Risco</span>
+                  <ShieldCheck className="w-4 h-4 shrink-0 text-cyan-400" />
+                  <span className="whitespace-nowrap">Mód 12 • Parecer & Risco</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="imovel"
-                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
+                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Building2 className="w-4 h-4 shrink-0" />
-                  <span className="whitespace-nowrap">Mód 1-3 • Imóvel</span>
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="proprietarios"
-                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
-                >
-                  <Users className="w-4 h-4 shrink-0" />
-                  <span className="whitespace-nowrap">Mód 7-8 • Donos</span>
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="onus"
-                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
-                >
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
-                  <span className="whitespace-nowrap">Mód 9-11 • Ônus</span>
+                  <Building2 className="w-4 h-4 shrink-0 text-sky-400" />
+                  <span className="whitespace-nowrap">Mód 1-3 • Imóvel & Geo</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="especiais"
-                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
+                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Landmark className="w-4 h-4 shrink-0" />
+                  <Landmark className="w-4 h-4 shrink-0 text-indigo-400" />
                   <span className="whitespace-nowrap">Mód 4-6 • Regimes</span>
                 </TabsTrigger>
 
                 <TabsTrigger
-                  value="perfil"
-                  className="w-full rounded-xl text-xs font-black gap-2 py-2.5 px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-emerald-500/40 text-center justify-center"
+                  value="proprietarios"
+                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Bot className="w-4 h-4 shrink-0" />
+                  <Users className="w-4 h-4 shrink-0 text-teal-400" />
+                  <span className="whitespace-nowrap">Mód 7-8 • Donos & Cadeia</span>
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="onus"
+                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                >
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+                  <span className="whitespace-nowrap">Mód 9-11 • Ônus & Penhoras</span>
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="perfil"
+                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                >
+                  <Bot className="w-4 h-4 shrink-0 text-cyan-400" />
                   <span className="whitespace-nowrap">Copiloto IA</span>
                 </TabsTrigger>
               </TabsList>
@@ -1107,7 +1106,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         </TabsContent>
 
         {/* TAB 2: IA EXPLICA POR PERFIL (5 LINGUAGENS DE NEGÓCIO) */}
-        <TabsContent value="perfil" className="mt-5 space-y-6">
+        <TabsContent value="perfil" data-tour="step-5" className="mt-5 space-y-6">
           <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl border border-slate-800 space-y-5">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
@@ -1624,56 +1623,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       </Tabs>
     </div>
 
-    {/* Paywall Lock Overlay Card (Sobremesa de Alta Conversão) */}
-    {!isSubscribed && (
-      <div className="absolute inset-0 z-40 flex items-start justify-center pt-8 sm:pt-16 p-4 sm:p-6 bg-slate-950/45 backdrop-blur-xs rounded-3xl">
-        <Card className="max-w-xl w-full bg-slate-950/95 border-2 border-emerald-500/80 shadow-2xl p-6 sm:p-8 rounded-3xl text-center space-y-6 text-white relative overflow-hidden animate-fade-in">
-          
-          {/* Aura Glow Background */}
-          <div className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="mx-auto w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/40 shadow-lg shadow-emerald-500/20">
-            <Lock className="w-7 h-7 stroke-[2.5]" />
-          </div>
-
-          <div className="space-y-2">
-            <Badge className="bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3.5 py-1 rounded-full mx-auto">
-              🔒 Relatório Completo dos 12 Módulos Bloqueado
-            </Badge>
-            <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
-              Desbloqueie o Diagnóstico Notarial & Dossiê PDF
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-md mx-auto">
-              A IA Registrária concluiu a auditoria dos proprietários, ônus, penhoras CNIB, georreferenciamento e histórico dominial desta certidão. Assine agora para visualizar todos os dados sem restrições.
-            </p>
-          </div>
-
-          <div className="p-4 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-center justify-between gap-4 text-left">
-            <div>
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Plano 6 Meses Ilimitado</span>
-              <span className="text-2xl font-black text-white">R$ 99,90 <span className="text-xs font-normal text-emerald-400">/ 180 dias</span></span>
-            </div>
-            <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 font-bold text-xs">
-              Liberação em 5 seg
-            </Badge>
-          </div>
-
-          <div className="space-y-3 pt-1">
-            <Link to="/pagamento-pix" className="block w-full">
-              <Button size="lg" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base py-6 rounded-2xl shadow-xl shadow-emerald-500/30 transition-all hover:scale-[1.02]">
-                <Zap className="mr-2 h-5 w-5 fill-slate-950" />
-                Desbloquear Relatório por R$ 99,90
-              </Button>
-            </Link>
-
-            <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 font-medium">
-              <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Garantia Mercado Pago</span>
-              <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Liberação via Webhook</span>
-            </div>
-          </div>
-        </Card>
-      </div>
-    )}
 
     {/* Floating Secondary Copilot IA Button (Assistente em Segundo Plano) */}
     <div className="fixed bottom-6 right-6 z-50">
@@ -1715,19 +1665,19 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     {/* === OFERTA FINAL DA DEMONSTRAÇÃO === */}
     {isSampleDemo && (
       <div className="mt-10 max-w-4xl mx-auto px-4 pb-16">
-        <div className="relative overflow-hidden rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-slate-900 via-slate-950 to-teal-950/80 shadow-2xl shadow-emerald-500/10 p-8 sm:p-10 text-center space-y-7">
+        <div className="relative overflow-hidden rounded-3xl border border-blue-500/40 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/80 shadow-2xl shadow-blue-500/10 p-8 sm:p-10 text-center space-y-7">
           {/* Background glow */}
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Header */}
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black uppercase tracking-wider px-4 py-1.5 rounded-full">
-              <Sparkles className="w-3.5 h-3.5" /> Você acabou de ver o poder do ValidaImóvel
+            <span className="inline-flex items-center gap-2 bg-blue-500/20 text-cyan-300 border border-blue-500/30 text-xs font-black uppercase tracking-wider px-4 py-1.5 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> Você acabou de ver o poder do ValidaImóvel
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
               Agora Analise Qualquer Matrícula Real<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">por Apenas R$ 16,65/mês</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">por Apenas R$ 16,65/mês</span>
             </h2>
             <p className="text-sm text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
               Plano 6 Meses Ilimitados — audite quantas matrículas precisar, com Score de Risco, Dossiê PDF e os 12 Módulos Registrais completos.
@@ -1742,7 +1692,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               { icon: Zap, title: 'Resultado em < 30 seg', desc: 'IA Registrária com temperatura zero — zero invenção, 100% fidelidade ao texto.' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3 p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-cyan-400 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5 font-bold">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
@@ -1759,13 +1709,13 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               <div className="text-center">
                 <span className="text-slate-500 text-sm line-through">R$ 599,40</span>
                 <div className="text-4xl font-black text-white">R$ 99<span className="text-2xl">,90</span></div>
-                <span className="text-xs text-emerald-400 font-bold">6 meses ilimitados • pagamento único</span>
+                <span className="text-xs text-cyan-400 font-bold">6 meses ilimitados • pagamento único</span>
               </div>
             </div>
 
             <Link to="/auth" className="inline-block w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-base px-10 py-7 rounded-2xl shadow-2xl shadow-emerald-500/40 gap-3 transition-all hover:scale-105">
-                <Zap className="w-5 h-5 fill-slate-950 stroke-[2]" />
+              <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-base px-10 py-7 rounded-2xl shadow-2xl shadow-blue-500/40 gap-3 transition-all hover:scale-105">
+                <Zap className="w-5 h-5 fill-white stroke-[2]" />
                 <span>QUERO ANALISAR MATRÍCULAS REAIS AGORA</span>
                 <ArrowRight className="w-5 h-5 stroke-[2.5]" />
               </Button>

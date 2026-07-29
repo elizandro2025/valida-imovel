@@ -34,7 +34,7 @@ const renderFormattedText = (text: string, isUser: boolean = false) => {
             {parts.map((part, partIdx) => {
               if (part.startsWith('**') && part.endsWith('**')) {
                 return (
-                  <strong key={partIdx} className={`font-bold ${isUser ? 'text-emerald-300' : 'text-slate-900 font-extrabold'}`}>
+                  <strong key={partIdx} className={`font-bold ${isUser ? 'text-cyan-300' : 'text-slate-900 font-extrabold'}`}>
                     {part.slice(2, -2)}
                   </strong>
                 );
@@ -153,17 +153,17 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
   };
 
   return (
-    <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden flex flex-col h-[580px]">
+    <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden flex flex-col h-[480px] sm:h-[580px] max-h-[70vh]">
       <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/20">
               <Bot className="w-5 h-5" />
             </div>
             <div>
               <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
                 Agente de Inteligência Registrária
-                <Badge variant="outline" className="border-emerald-300 text-emerald-700 bg-emerald-50 text-[10px]">
+                <Badge variant="outline" className="border-blue-300 text-blue-700 bg-blue-50 text-[10px]">
                   IA Conectada à Matrícula
                 </Badge>
               </CardTitle>
@@ -183,7 +183,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
             className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
           >
             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-white text-xs font-bold ${
-              msg.sender === 'user' ? 'bg-slate-800' : 'bg-emerald-600 shadow-sm'
+              msg.sender === 'user' ? 'bg-slate-800' : 'bg-blue-600 shadow-sm'
             }`}>
               {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
             </div>
@@ -204,13 +204,13 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
 
         {isTyping && (
           <div className="flex gap-3 max-w-[85%]">
-            <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0">
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">
               <Bot className="w-4 h-4 animate-spin" />
             </div>
             <div className="p-3.5 bg-white border border-slate-200/80 rounded-2xl rounded-tl-none text-xs text-slate-400 flex items-center gap-1.5 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce" />
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.2s]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.4s]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce [animation-delay:0.2s]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce [animation-delay:0.4s]" />
               <span className="ml-1 text-[11px] font-medium text-slate-500">Consultando atos registrais...</span>
             </div>
           </div>
@@ -221,14 +221,14 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
       {/* Quick Questions Buttons */}
       <div className="px-4 py-2 border-t border-slate-100 bg-white flex items-center gap-2 overflow-x-auto no-scrollbar">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-          <HelpCircle className="w-3 h-3 text-emerald-600" /> Sugestões:
+          <HelpCircle className="w-3 h-3 text-blue-600" /> Sugestões:
         </span>
         {quickQuestions.map((q, i) => (
           <button
             key={i}
             onClick={() => handleSendMessage(q)}
             disabled={isTyping}
-            className="text-[11px] bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg shrink-0 transition-colors font-medium border border-slate-200/60"
+            className="text-[11px] bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-600 px-2.5 py-1 rounded-lg shrink-0 transition-colors font-medium border border-slate-200/60"
           >
             {q}
           </button>
@@ -249,12 +249,12 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
             onChange={(e) => setInput(e.target.value)}
             placeholder="Pergunte sobre os proprietários, valores, penhoras, áreas..."
             disabled={isTyping}
-            className="text-xs border-slate-200 focus-visible:ring-emerald-500 rounded-xl"
+            className="text-xs border-slate-200 focus-visible:ring-blue-500 rounded-xl"
           />
           <Button
             type="submit"
             disabled={!input.trim() || isTyping}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-9 px-4 shrink-0 shadow-md shadow-emerald-600/20"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-9 px-4 shrink-0 shadow-md shadow-blue-600/20"
           >
             <Send className="w-3.5 h-3.5" />
           </Button>

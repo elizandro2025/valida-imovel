@@ -121,44 +121,44 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
   const StepIcon = step.icon;
 
   return (
-    <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 pointer-events-none animate-fade-in-up">
-      <Card className="max-w-2xl w-full bg-slate-950/95 border-2 border-emerald-500/80 text-white p-5 sm:p-6 rounded-3xl shadow-2xl backdrop-blur-xl pointer-events-auto relative space-y-4">
+    <div className="fixed inset-x-0 bottom-4 sm:bottom-6 z-50 flex justify-center px-3 sm:px-4 pointer-events-none animate-fade-in-up safe-area-bottom">
+      <Card className="max-w-2xl w-full bg-slate-950/95 border-2 border-blue-500/80 text-white p-4 sm:p-6 rounded-3xl shadow-2xl backdrop-blur-xl pointer-events-auto relative space-y-4">
         
         {/* Glow Background Indicator */}
-        <div className="absolute -top-12 -left-12 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-12 -left-12 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
 
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-xs font-black px-3 py-1 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 mr-1 inline" /> {step.badge}
+            <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 text-xs font-black px-3 py-1 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 mr-1 inline text-cyan-400" /> {step.badge}
             </Badge>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="text-slate-400 hover:text-white hover:bg-slate-800 h-8 w-8 p-0 rounded-xl"
+            className="text-slate-400 hover:text-white hover:bg-slate-800 h-9 w-9 p-0 rounded-xl"
             title="Pular Tour Guiado"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4.5 h-4.5" />
           </Button>
         </div>
 
         {/* Step Body */}
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 shrink-0">
-            <StepIcon className="w-6 h-6 stroke-[2]" />
+        <div className="flex items-start gap-3.5">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-slate-950 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 font-black">
+            <StepIcon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
           </div>
-          <div className="space-y-1.5 flex-1">
-            <h3 className="text-base sm:text-lg font-black text-white leading-snug">
+          <div className="space-y-1 flex-1 min-w-0">
+            <h3 className="text-sm sm:text-lg font-black text-white leading-snug">
               {step.title}
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
               {step.description}
             </p>
             <div className="pt-1">
-              <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg inline-block">
+              <span className="text-[10px] sm:text-[11px] font-bold text-cyan-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg inline-block">
                 {step.tip}
               </span>
             </div>
@@ -167,10 +167,10 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
 
         {/* Progress Bar & Navigation Controls */}
         <div className="pt-2 flex items-center justify-between border-t border-slate-800/80 gap-3">
-          <div className="flex items-center gap-2 flex-1 max-w-[140px]">
+          <div className="flex items-center gap-2 flex-1 max-w-[120px] sm:max-w-[140px]">
             <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
               <div
-                className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-300"
+                className="bg-gradient-to-r from-blue-600 to-cyan-400 h-full transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -183,7 +183,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
                 variant="outline"
                 size="sm"
                 onClick={handlePrev}
-                className="border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold h-9 px-3"
+                className="border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold h-10 px-3.5 touch-target"
               >
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Anterior
               </Button>
@@ -191,7 +191,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
             <Button
               size="sm"
               onClick={handleNext}
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs h-9 px-4 rounded-xl shadow-lg shadow-emerald-500/20 gap-1.5"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-10 px-4 sm:px-5 rounded-xl shadow-lg shadow-blue-500/20 gap-1.5 touch-target"
             >
               {currentStepIndex === TOUR_STEPS.length - 1 ? (
                 <>Concluir Tour <CheckCircle2 className="w-4 h-4" /></>

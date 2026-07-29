@@ -59,23 +59,23 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-blue-600 selection:text-white">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform font-black">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform font-black">
                 <FileCheck className="w-4 h-4 stroke-[2.5]" />
               </div>
               <span className="text-lg font-black tracking-tight text-white">
-                Valida<span className="text-emerald-400">Imóvel</span>
+                Valida<span className="text-cyan-400">Imóvel</span>
               </span>
             </Link>
             <div className="hidden sm:block w-px h-5 bg-slate-800" />
-            <Badge variant="outline" className="hidden sm:flex border-emerald-500/30 text-emerald-400 bg-emerald-500/10 gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Painel Administrativo
+            <Badge variant="outline" className="hidden sm:flex border-blue-500/30 text-cyan-400 bg-blue-500/10 gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full">
+              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Painel Administrativo
             </Badge>
           </div>
 
@@ -101,22 +101,22 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Page Title */}
         <div className="space-y-1">
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Painel Administrativo</h1>
-          <p className="text-sm text-slate-500">Gerencie usuários, acesso e status da plataforma Valida Imóvel.</p>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">Painel Administrativo</h1>
+          <p className="text-sm text-slate-400">Gerencie usuários, acesso e status da plataforma Valida Imóvel.</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {stats.map(({ title, value, icon: Icon, trend }) => (
-            <Card key={title} className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+            <Card key={title} className="border-slate-800 bg-slate-900 shadow-sm rounded-2xl text-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</CardTitle>
-                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-slate-500" />
+                <CardTitle className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</CardTitle>
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-cyan-400" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-extrabold text-slate-900">{value}</div>
+                <div className="text-2xl font-extrabold text-white">{value}</div>
                 <p className="text-xs text-slate-400 mt-1">{trend} desde o último mês</p>
               </CardContent>
             </Card>
@@ -124,16 +124,16 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* PIX Access Management */}
-        <Card className="border-emerald-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 h-1" />
+        <Card className="border-blue-500/30 bg-slate-900 shadow-sm rounded-2xl overflow-hidden text-white">
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 h-1" />
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-emerald-700" />
+              <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-cyan-400" />
               </div>
               <div>
-                <CardTitle className="text-base font-bold text-slate-900">Liberação de Acesso via PIX</CardTitle>
-                <CardDescription className="text-xs text-slate-500 mt-0.5">
+                <CardTitle className="text-base font-bold text-white">Liberação de Acesso via PIX</CardTitle>
+                <CardDescription className="text-xs text-slate-400 mt-0.5">
                   Libere o acesso para usuários que realizaram o pagamento via PIX
                 </CardDescription>
               </div>

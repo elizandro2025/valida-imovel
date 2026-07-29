@@ -189,10 +189,10 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white pb-16 sm:pb-0">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 sm:pb-0">
       
       {/* 🔴 CRO BANNER SUPERIOR DE URGÊNCIA & OFERTA — HIGH VISIBILITY */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 text-white text-xs sm:text-sm font-black py-2.5 px-4 text-center shadow-xl flex items-center justify-center gap-2.5 flex-wrap relative z-50 border-b border-emerald-400/30">
+      <div className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 text-white text-xs sm:text-sm font-black py-2.5 px-4 text-center shadow-xl flex items-center justify-center gap-2.5 flex-wrap relative z-50 border-b border-cyan-400/30">
         <div className="flex items-center gap-1.5 bg-amber-400/20 px-2.5 py-0.5 rounded-full text-amber-300 border border-amber-400/40 animate-pulse">
           <Flame className="w-4 h-4 text-amber-300 fill-amber-400 shrink-0" />
           <span>OFERTA IMPERDÍVEL</span>
@@ -210,15 +210,15 @@ const LandingPage: React.FC = () => {
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30 group-hover:scale-105 transition-transform font-black">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform font-black">
               <Sparkles className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
               <span className="text-xl font-black tracking-tight text-white block leading-tight">
-                Valida<span className="text-emerald-400">Imóvel</span>
+                Valida<span className="text-cyan-400">Imóvel</span>
               </span>
             </div>
-            <Badge variant="outline" className="border-emerald-400/50 text-emerald-300 bg-emerald-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full hidden sm:inline-flex shadow-sm">
+            <Badge variant="outline" className="border-cyan-400/50 text-cyan-300 bg-blue-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full hidden sm:inline-flex shadow-sm">
               AI 2.0
             </Badge>
           </Link>
@@ -229,23 +229,23 @@ const LandingPage: React.FC = () => {
               // 🟢 Usuário Conectado
               <>
                 <div className="hidden lg:flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl shadow-inner">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
                   <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">
                     {user.email}
                   </span>
                 </div>
                 {user.hasSubscription ? (
                   <Link to="/app">
-                    <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
-                      <Sparkles className="w-4 h-4 fill-slate-950 stroke-[2]" />
+                    <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-blue-500/40 hover:shadow-cyan-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-cyan-300/40">
+                      <Sparkles className="w-4 h-4 fill-white stroke-[2]" />
                       <span>Ir para o Workspace</span>
                       <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                     </Button>
                   </Link>
                 ) : (
                   <Link to="/pagamento-pix">
-                    <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
-                      <Zap className="w-4 h-4 fill-slate-950" />
+                    <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-blue-500/40 hover:shadow-cyan-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-cyan-300/40">
+                      <Zap className="w-4 h-4 fill-white" />
                       <span>Garantir Acesso R$ 99,90</span>
                     </Button>
                   </Link>
@@ -255,14 +255,14 @@ const LandingPage: React.FC = () => {
               // ⚪ Visitante (Não Logado) — Destaque Total de CTA & Separação Clara
               <>
                 <Link to="/auth?tab=login">
-                  <Button className="bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-bold text-xs px-4 sm:px-5 h-10 rounded-xl border border-slate-700/80 hover:border-emerald-500/50 shadow-md transition-all flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-emerald-400" />
+                  <Button className="bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-bold text-xs px-4 sm:px-5 h-10 rounded-xl border border-slate-700/80 hover:border-blue-500/50 shadow-md transition-all flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-cyan-400" />
                     <span>Já sou usuário</span>
                   </Button>
                 </Link>
                 <Link to="/auth?tab=register">
-                  <Button className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-xl shadow-emerald-500/40 hover:shadow-emerald-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-emerald-300/40">
-                    <Sparkles className="w-4 h-4 fill-slate-950 stroke-[2]" />
+                  <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-xl shadow-blue-500/40 hover:shadow-cyan-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-cyan-300/40">
+                    <Sparkles className="w-4 h-4 fill-white stroke-[2]" />
                     <span>Criar Conta</span>
                     <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                   </Button>
@@ -292,22 +292,22 @@ const LandingPage: React.FC = () => {
 
         {/* Ambient Tech Glows */}
         <div className="absolute inset-0 pointer-events-none opacity-60">
-          <div className="absolute -top-20 left-1/4 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl" />
+          <div className="absolute -top-20 left-1/4 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-3xl" />
           <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
           
           {/* AI Badge — Alta Destacabilidade */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/90 border border-emerald-500/50 text-emerald-300 text-xs font-black shadow-lg shadow-emerald-500/10 backdrop-blur-md">
-            <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/90 border border-blue-500/50 text-cyan-300 text-xs font-black shadow-lg shadow-blue-500/10 backdrop-blur-md">
+            <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
             <span>Inteligência Artificial Registrária Especializada</span>
           </div>
 
           {/* Clean Headline — Máxima Legibilidade & Brilho */}
           <div className="space-y-4 max-w-4xl mx-auto">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-md">
-              Analisador Inteligente de <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">Matrículas de Imóveis</span>
+              Analisador Inteligente de <span className="bg-gradient-to-r from-white via-sky-100 to-cyan-400 bg-clip-text text-transparent">Matrículas de Imóveis</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-200 font-semibold leading-relaxed max-w-2xl mx-auto drop-shadow-sm bg-slate-950/40 p-2 rounded-2xl border border-slate-800/40 backdrop-blur-sm">
               Auditoria notarial automatizada de 12 módulos, diagnósticos em palavras simples, Score de Risco e emissão de Dossiê em PDF em segundos.
@@ -316,11 +316,11 @@ const LandingPage: React.FC = () => {
 
           {/* Central AI Demonstration Launchpad (Estilo Product Tour / Live Demo) */}
           <div className="max-w-2xl mx-auto pt-2">
-            <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-950 to-teal-950/80 border border-emerald-500/50 shadow-2xl shadow-emerald-500/20 rounded-3xl backdrop-blur-xl text-center space-y-6 relative overflow-hidden">
-              <div className="absolute -top-16 -right-16 w-44 h-44 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/80 border border-blue-500/50 shadow-2xl shadow-blue-500/20 rounded-3xl backdrop-blur-xl text-center space-y-6 relative overflow-hidden">
+              <div className="absolute -top-16 -right-16 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
               
               <div className="space-y-3">
-                <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                <Badge className="bg-blue-500/20 text-cyan-300 border border-blue-500/40 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
                   ✨ Demonstração Interativa em Tempo Real
                 </Badge>
                 <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -334,8 +334,8 @@ const LandingPage: React.FC = () => {
               {/* CTA Principal de Demonstração */}
               <div className="pt-2">
                 <Link to="/app?sample=safe" className="inline-block w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm px-8 py-6 rounded-2xl shadow-xl shadow-emerald-500/30 gap-2.5 transition-all hover:scale-105">
-                    <Sparkles className="w-5 h-5 fill-slate-950 stroke-[2]" />
+                  <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-sm px-8 py-6 rounded-2xl shadow-xl shadow-blue-500/30 gap-2.5 transition-all hover:scale-105">
+                    <Sparkles className="w-5 h-5 fill-white stroke-[2]" />
                     <span>VER DEMONSTRAÇÃO PRÁTICA INSTANTÂNEA</span>
                     <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                   </Button>
@@ -344,8 +344,8 @@ const LandingPage: React.FC = () => {
 
               {/* Subtexto Informativo */}
               <div className="pt-1 flex items-center justify-center gap-4 text-[11px] text-slate-400 font-medium flex-wrap">
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Sem necessidade de cadastro</span>
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Tour guiado em 1 clique</span>
+                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" /> Sem necessidade de cadastro</span>
+                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" /> Tour guiado em 1 clique</span>
               </div>
             </div>
           </div>
@@ -357,11 +357,11 @@ const LandingPage: React.FC = () => {
               <strong className="text-white">4.9/5</strong> (1.840+ avaliações)
             </span>
             <span className="flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-cyan-400" />
               Lei nº 6.015/73 & Provimento CNJ 89/19
             </span>
             <span className="flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
-              <Lock className="w-4 h-4 text-emerald-400" />
+              <Lock className="w-4 h-4 text-cyan-400" />
               Sigilo Registral LGPD
             </span>
           </div>
@@ -370,7 +370,7 @@ const LandingPage: React.FC = () => {
           <div className="pt-6 border-t border-slate-900 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto text-center">
             {metrics.map((m, i) => (
               <div key={i} className="p-3 bg-slate-900/60 border border-slate-800/80 rounded-2xl">
-                <div className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight">{m.value}</div>
+                <div className="text-xl sm:text-2xl font-black text-cyan-400 tracking-tight">{m.value}</div>
                 <div className="text-[11px] text-slate-400 font-medium">{m.label}</div>
               </div>
             ))}
@@ -382,17 +382,17 @@ const LandingPage: React.FC = () => {
       {/* 🤖 NOVA SEÇÃO EXCLUSIVA: AGENTE DE INTELIGÊNCIA REGISTRÁRIA IA */}
       <section className="py-20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 relative overflow-hidden">
         {/* Background Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
           
           <div className="text-center space-y-4 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
-              <Brain className="w-4 h-4 text-emerald-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-cyan-400 text-xs font-black uppercase tracking-wider">
+              <Brain className="w-4 h-4 text-cyan-400 animate-pulse" />
               <span>Conheça seu Assistente Notarial 24/7</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              Tire Qualquer Dúvida com Nosso <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Agente de IA Registrária</span>
+              Tire Qualquer Dúvida com Nosso <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Agente de IA Registrária</span>
             </h2>
             <p className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed">
               Esqueça jargões jurídicos indecifráveis. O nosso Agente de IA absorve centenas de páginas da certidão do imóvel em segundos e responde a qualquer pergunta em linguagem simples e objetiva.
@@ -407,37 +407,37 @@ const LandingPage: React.FC = () => {
               <div className="p-6 bg-slate-900/90 border border-slate-800 rounded-3xl space-y-5 shadow-xl">
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-blue-500/20 shrink-0">
                     <Sparkles className="w-6 h-6 stroke-[2.5]" />
                   </div>
                   <div>
                     <h3 className="text-lg font-black text-white">IA Especializada Notarial</h3>
-                    <span className="text-xs text-emerald-400 font-bold">Treinada na Lei nº 6.015/73</span>
+                    <span className="text-xs text-cyan-400 font-bold">Treinada na Lei nº 6.015/73</span>
                   </div>
                 </div>
 
                 <ul className="space-y-3.5 text-xs sm:text-sm text-slate-300 font-medium">
                   <li className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
                     <span><strong className="text-white">Respostas em Segundos:</strong> Pergunte sobre proprietários, áreas, doações, usufrutos ou gravames.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
                     <span><strong className="text-white">Temperatura 0.0 (Anti-Alucinação):</strong> Extração 100% fiel ao texto e aos fatos gravados pelo cartório.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
                     <span><strong className="text-white">Diagnóstico de Segurança:</strong> Identifica riscos de evicção imobiliária e sugere certidões complementares.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
                     <span><strong className="text-white">Disponível em Qualquer Dispositivo:</strong> Tire dúvidas direto do celular durante reuniões ou cartório.</span>
                   </li>
                 </ul>
 
                 <div className="pt-2">
                   <Link to="/app?sample=safe">
-                    <Button className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs h-11 rounded-xl shadow-lg shadow-emerald-500/20 gap-2">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg shadow-blue-500/20 gap-2">
                       <MessageCircle className="w-4 h-4" /> Conversar com a IA na Prática
                     </Button>
                   </Link>
@@ -448,21 +448,21 @@ const LandingPage: React.FC = () => {
 
             {/* Direita: Visual Mockup do Chat com o Agente de IA */}
             <div className="lg:col-span-7">
-              <div className="bg-slate-950 border-2 border-emerald-500/40 rounded-3xl shadow-2xl overflow-hidden text-white backdrop-blur-xl">
+              <div className="bg-slate-950 border-2 border-blue-500/40 rounded-3xl shadow-2xl overflow-hidden text-white backdrop-blur-xl">
                 
                 {/* Header do Mockup do Chat */}
                 <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center font-black">
-                        <Sparkles className="w-5 h-5" />
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-slate-950 flex items-center justify-center font-black">
+                        <Sparkles className="w-5 h-5 fill-slate-950" />
                       </div>
-                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-slate-900 animate-pulse" />
+                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-cyan-400 rounded-full ring-2 ring-slate-900 animate-pulse" />
                     </div>
                     <div>
                       <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
                         Agente de IA Registrária
-                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[9px] font-black uppercase">Online 24/7</Badge>
+                        <Badge className="bg-blue-500/20 text-cyan-400 border-blue-500/40 text-[9px] font-black uppercase">Online 24/7</Badge>
                       </h4>
                       <span className="text-[11px] text-slate-400 font-medium">Analisando Matrícula Nº 47.912 (Curitiba/PR)</span>
                     </div>
@@ -474,37 +474,37 @@ const LandingPage: React.FC = () => {
                   
                   {/* Mensagem da IA */}
                   <div className="flex gap-3 max-w-[90%]">
-                    <div className="w-7 h-7 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center shrink-0 font-black text-xs">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 font-black text-xs">
+                      <Sparkles className="w-3.5 h-3.5 fill-white" />
                     </div>
                     <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none space-y-1">
                       <p className="text-slate-200 leading-relaxed font-medium">
-                        Olá! Analisei todos os atos registrados na Matrícula Nº 47.912. Encontrei <strong className="text-emerald-400">1 alienação fiduciária ativa (R-4)</strong> e <strong className="text-amber-300">0 indisponibilidades CNIB</strong>. Em que posso te ajudar?
+                        Olá! Analisei todos os atos registrados na Matrícula Nº 47.912. Encontrei <strong className="text-cyan-400">1 alienação fiduciária ativa (R-4)</strong> e <strong className="text-amber-300">0 indisponibilidades CNIB</strong>. Em que posso te ajudar?
                       </p>
                     </div>
                   </div>
 
                   {/* Mensagem do Usuário */}
                   <div className="flex gap-3 max-w-[85%] ml-auto justify-end">
-                    <div className="p-3.5 bg-emerald-600 text-white rounded-2xl rounded-tr-none">
+                    <div className="p-3.5 bg-blue-600 text-white rounded-2xl rounded-tr-none">
                       <p className="font-semibold">Quem são os atuais proprietários do imóvel que precisam assinar a escritura?</p>
                     </div>
                   </div>
 
                   {/* Resposta da IA */}
                   <div className="flex gap-3 max-w-[90%]">
-                    <div className="w-7 h-7 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center shrink-0 font-black text-xs">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 font-black text-xs">
+                      <Sparkles className="w-3.5 h-3.5 fill-white" />
                     </div>
                     <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none space-y-2">
                       <p className="text-slate-200 leading-relaxed font-medium">
                         De acordo com o registro <strong className="text-white font-bold">R-3/47.912</strong>, os proprietários atuais são:
                       </p>
-                      <ul className="space-y-1 text-xs text-slate-300 font-semibold border-l-2 border-emerald-500 pl-3">
+                      <ul className="space-y-1 text-xs text-slate-300 font-semibold border-l-2 border-cyan-400 pl-3">
                         <li>• <strong className="text-white">Carlos Eduardo Faria</strong> (CPF 042.***.***-18) — 50% da propriedade</li>
                         <li>• <strong className="text-white">Mariana Silveira Faria</strong> (CPF 089.***.***-45) — 50% da propriedade</li>
                       </ul>
-                      <p className="text-[11px] text-emerald-400 font-bold pt-1">
+                      <p className="text-[11px] text-cyan-400 font-bold pt-1">
                         ✓ Ambos devem assinar a promessa de compra e venda.
                       </p>
                     </div>
@@ -533,7 +533,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
+            <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
               Por Que Mudar Hoje?
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -576,35 +576,35 @@ const LandingPage: React.FC = () => {
             </Card>
 
             {/* Lado Valida Imóvel */}
-            <Card className="bg-gradient-to-br from-emerald-950/60 via-slate-900 to-slate-950 border-2 border-emerald-500/60 p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl relative">
+            <Card className="bg-gradient-to-br from-blue-950/60 via-slate-900 to-slate-950 border-2 border-blue-500/60 p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl relative">
               <div className="absolute top-4 right-4">
-                <Badge className="bg-emerald-500 text-slate-950 font-black text-[10px] uppercase">
+                <Badge className="bg-blue-600 text-white font-black text-[10px] uppercase">
                   Recomendado ⚡
                 </Badge>
               </div>
 
-              <div className="flex items-center justify-between border-b border-emerald-500/20 pb-4">
+              <div className="flex items-center justify-between border-b border-blue-500/20 pb-4">
                 <div>
                   <h3 className="text-lg font-black text-white flex items-center gap-2">
-                    Valida Imóvel <Sparkles className="w-4 h-4 text-emerald-400" />
+                    Valida Imóvel <Sparkles className="w-4 h-4 text-cyan-400" />
                   </h3>
-                  <span className="text-xs text-emerald-300 font-semibold">Tecnologia Notarial com IA Registrária</span>
+                  <span className="text-xs text-cyan-300 font-semibold">Tecnologia Notarial com IA Registrária</span>
                 </div>
               </div>
 
               <div className="space-y-4 text-xs sm:text-sm">
-                <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl space-y-1">
-                  <span className="text-[11px] font-extrabold text-emerald-400 uppercase tracking-wider block">Tempo Necessário</span>
+                <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-2xl space-y-1">
+                  <span className="text-[11px] font-extrabold text-cyan-400 uppercase tracking-wider block">Tempo Necessário</span>
                   <span className="font-bold text-white text-base">Menos de 30 segundos</span>
                 </div>
 
-                <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl space-y-1">
-                  <span className="text-[11px] font-extrabold text-emerald-400 uppercase tracking-wider block">Custo por Matrícula</span>
-                  <span className="font-bold text-emerald-300 text-base">Apenas R$ 99,90 (6 Meses Ilimitados)</span>
+                <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-2xl space-y-1">
+                  <span className="text-[11px] font-extrabold text-cyan-400 uppercase tracking-wider block">Custo por Matrícula</span>
+                  <span className="font-bold text-cyan-300 text-base">Apenas R$ 99,90 (6 Meses Ilimitados)</span>
                 </div>
 
-                <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl space-y-1">
-                  <span className="text-[11px] font-extrabold text-emerald-400 uppercase tracking-wider block">Segurança Jurídica</span>
+                <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-2xl space-y-1">
+                  <span className="text-[11px] font-extrabold text-cyan-400 uppercase tracking-wider block">Segurança Jurídica</span>
                   <span className="font-bold text-white text-base">100% de varredura nos 12 módulos especialistas</span>
                 </div>
               </div>
@@ -619,7 +619,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
+            <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
               12 Módulos Especialistas
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -634,8 +634,8 @@ const LandingPage: React.FC = () => {
             {coreBenefits.map((b, i) => {
               const Icon = b.icon;
               return (
-                <Card key={i} className="bg-slate-900/90 border-slate-800 p-6 rounded-3xl space-y-4 hover:border-emerald-500/50 hover:bg-slate-900 transition-all duration-300 group">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                <Card key={i} className="bg-slate-900/90 border-slate-800 p-6 rounded-3xl space-y-4 hover:border-blue-500/50 hover:bg-slate-900 transition-all duration-300 group">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
                     <Icon className="w-6 h-6 stroke-[2]" />
                   </div>
                   <h3 className="text-base font-extrabold text-white">{b.title}</h3>
@@ -653,7 +653,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
+            <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
               Fluxo Sem Fricção
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -668,12 +668,12 @@ const LandingPage: React.FC = () => {
             {steps.map((s, idx) => {
               const Icon = s.icon;
               return (
-                <Card key={idx} className="bg-slate-950 border-slate-800 p-6 rounded-3xl space-y-4 relative group hover:border-emerald-500/40 transition-all">
+                <Card key={idx} className="bg-slate-950 border-slate-800 p-6 rounded-3xl space-y-4 relative group hover:border-blue-500/40 transition-all">
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-2xl font-black text-slate-700 group-hover:text-emerald-400 transition-colors">
+                    <span className="text-2xl font-black text-slate-700 group-hover:text-cyan-400 transition-colors">
                       {s.step}
                     </span>
                   </div>
@@ -692,7 +692,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
+            <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
               Prova Social Reais
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -705,7 +705,7 @@ const LandingPage: React.FC = () => {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((t, i) => (
-              <Card key={i} className="bg-slate-900 border-slate-800 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-emerald-500/40 transition-all group">
+              <Card key={i} className="bg-slate-900 border-slate-800 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-blue-500/40 transition-all group">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex gap-1 text-amber-400">
@@ -714,7 +714,7 @@ const LandingPage: React.FC = () => {
                       ))}
                     </div>
                     {t.location && (
-                      <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <span className="text-[10px] text-cyan-400 font-bold bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">
                         {t.location}
                       </span>
                     )}
@@ -728,7 +728,7 @@ const LandingPage: React.FC = () => {
                   <img
                     src={t.avatar}
                     alt={t.name}
-                    className="w-11 h-11 rounded-full object-cover border-2 border-emerald-500/40 shadow-md group-hover:scale-105 transition-transform"
+                    className="w-11 h-11 rounded-full object-cover border-2 border-blue-500/40 shadow-md group-hover:scale-105 transition-transform"
                   />
                   <div>
                     <h4 className="text-xs font-black text-white">{t.name}</h4>
@@ -746,11 +746,11 @@ const LandingPage: React.FC = () => {
       <section id="oferta" className="py-20 bg-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-emerald-500/60 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-8 relative overflow-hidden text-center">
+          <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/60 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-8 relative overflow-hidden text-center">
             
-            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
-            <Badge className="bg-emerald-500 text-slate-950 font-black text-xs uppercase px-4 py-1.5 rounded-full mx-auto">
+            <Badge className="bg-blue-600 text-white font-black text-xs uppercase px-4 py-1.5 rounded-full mx-auto">
               ⚡ OPORTUNIDADE IMPERDÍVEL — 83% DE DESCONTO
             </Badge>
 
@@ -769,27 +769,27 @@ const LandingPage: React.FC = () => {
                 <span className="text-5xl sm:text-6xl font-black text-white">R$ 99</span>
                 <span className="text-2xl font-extrabold text-white">,90</span>
               </div>
-              <span className="text-xs text-emerald-400 font-extrabold block">Economia de R$ 499,50 • Pagamento Único (Pix ou Cartão)</span>
+              <span className="text-xs text-cyan-400 font-extrabold block">Economia de R$ 499,50 • Pagamento Único (Pix ou Cartão)</span>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3 text-left text-xs text-slate-300 font-semibold max-w-lg mx-auto">
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-400 stroke-[3]" /> Uploads e análises 100% ilimitados</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-400 stroke-[3]" /> Relatório executivo completo dos 12 módulos</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-400 stroke-[3]" /> Exportação de Dossiê PDF com Carimbo Digital</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-400 stroke-[3]" /> 1-Clique para copiar qualquer campo</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 stroke-[3]" /> Uploads e análises 100% ilimitados</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 stroke-[3]" /> Relatório executivo completo dos 12 módulos</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 stroke-[3]" /> Exportação de Dossiê PDF com Carimbo Digital</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 stroke-[3]" /> 1-Clique para copiar qualquer campo</div>
             </div>
 
             <div className="space-y-3 pt-2">
               <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="block w-full max-w-md mx-auto">
-                <Button size="lg" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg py-7 rounded-2xl shadow-xl shadow-emerald-500/30 transition-all hover:scale-105">
+                <Button size="lg" className="w-full bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-lg py-7 rounded-2xl shadow-xl shadow-blue-500/30 transition-all hover:scale-105">
                   <CreditCard className="mr-2.5 h-6 w-6" />
                   {user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso Ilimitado Agora") : "Criar Conta para Garantir Acesso"}
                 </Button>
               </Link>
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 font-medium">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> 7 Dias de Garantia Incondicional</span>
-                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-emerald-400" /> Liberação Imediata via Webhook</span>
+                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> 7 Dias de Garantia Incondicional</span>
+                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-cyan-400" /> Liberação Imediata via Webhook</span>
               </div>
             </div>
 
@@ -803,7 +803,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3">
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
+            <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3.5 py-1 font-extrabold text-xs uppercase">
               Tire Suas Dúvidas
             </Badge>
             <h2 className="text-3xl font-black text-white tracking-tight">
@@ -816,11 +816,11 @@ const LandingPage: React.FC = () => {
               <div
                 key={index}
                 onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                className="p-5 bg-slate-900 border border-slate-800 rounded-2xl cursor-pointer hover:border-emerald-500/40 transition-colors space-y-2"
+                className="p-5 bg-slate-900 border border-slate-800 rounded-2xl cursor-pointer hover:border-blue-500/40 transition-colors space-y-2"
               >
                 <div className="flex items-center justify-between font-bold text-white text-sm">
                   <span>{faq.q}</span>
-                  <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform ${activeFaq === index ? 'rotate-90 text-emerald-400' : ''}`} />
+                  <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform ${activeFaq === index ? 'rotate-90 text-cyan-400' : ''}`} />
                 </div>
                 {activeFaq === index && (
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pt-2 border-t border-slate-800 font-medium">
@@ -844,7 +844,7 @@ const LandingPage: React.FC = () => {
             Junte-se a mais de 1.800 profissionais que economizam tempo e eliminam riscos imobiliários todos os dias.
           </p>
           <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="inline-block">
-            <Button size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base px-8 py-6 rounded-2xl shadow-xl shadow-emerald-600/30 transition-all hover:scale-105 gap-2">
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-base px-8 py-6 rounded-2xl shadow-xl shadow-blue-600/30 transition-all hover:scale-105 gap-2">
               <Upload className="w-5 h-5" /> {user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso") : "Criar Conta para Analisar Matrícula"}
             </Button>
           </Link>
@@ -855,10 +855,10 @@ const LandingPage: React.FC = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 p-3 sm:hidden shadow-2xl backdrop-blur-md flex items-center justify-between gap-3">
         <div>
           <span className="text-xs font-black text-white block">Valida Imóvel (6 Meses)</span>
-          <span className="text-[11px] font-extrabold text-emerald-400 block">Apenas R$ 99,90</span>
+          <span className="text-[11px] font-extrabold text-cyan-400 block">Apenas R$ 99,90</span>
         </div>
         <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"}>
-          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shadow-md">
+          <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md">
             {user ? (user.hasSubscription ? "Workspace" : "Garantir Agora") : "Criar Conta e Garantir"} <ArrowRight className="ml-1 w-3.5 h-3.5" />
           </Button>
         </Link>
@@ -868,11 +868,11 @@ const LandingPage: React.FC = () => {
       <footer className="bg-slate-950 text-slate-400 py-10 border-t border-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
               <FileCheck className="w-4 h-4 stroke-[2]" />
             </div>
             <span className="text-base font-black text-white">
-              Valida<span className="text-emerald-400">Imóvel</span>
+              Valida<span className="text-cyan-400">Imóvel</span>
             </span>
           </div>
 

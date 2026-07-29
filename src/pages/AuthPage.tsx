@@ -198,7 +198,7 @@ export const AuthPage: React.FC = () => {
           </div>
           <div className="space-y-3 pt-2">
             <Link to="/app" className="block">
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs py-5 rounded-xl shadow-lg gap-2">
+              <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs py-5 rounded-xl shadow-lg gap-2">
                 Ir para o Workspace de Auditoria <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -216,30 +216,30 @@ export const AuthPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col lg:flex-row antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col lg:flex-row antialiased selection:bg-blue-600 selection:text-white">
       {/* Left Panel — Branding Dark */}
       <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-slate-900 border-r border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col justify-between h-full p-10 xl:p-14">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20 font-black">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-blue-500/20 font-black">
               <Sparkles className="w-5 h-5 stroke-[2.5]" />
             </div>
             <span className="text-xl font-black text-white tracking-tight">
-              Valida<span className="text-emerald-400">Imóvel</span>
+              Valida<span className="text-cyan-400">Imóvel</span>
             </span>
           </Link>
 
           <div className="space-y-8 max-w-sm">
             <div className="space-y-4">
-              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs font-bold">
+              <Badge className="bg-blue-500/20 text-cyan-400 border-blue-500/30 text-xs font-bold">
                 IA Registrária Notarial 2.0
               </Badge>
               <h2 className="text-3xl xl:text-4xl font-black text-white leading-tight tracking-tight">
-                Auditoria e Due Diligence com <span className="text-emerald-400">Inteligência Artificial</span>.
+                Auditoria e Due Diligence com <span className="text-cyan-400">Inteligência Artificial</span>.
               </h2>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Extraia a cadeia dominial, identifique gravames, penhoras (CNIB) e emita pareceres jurídicos em segundos.
@@ -249,13 +249,13 @@ export const AuthPage: React.FC = () => {
             <div className="space-y-3">
               {[
                 { icon: FileText, label: 'Análise automática dos 12 Módulos Notariais' },
-                { icon: ShieldCheck, label: 'Detecção de penhoras, hipotecas e indisponibilidades' },
+                { icon: ShieldCheck, label: 'Detecção de penhoras, hipotecas e indisponividades' },
                 { icon: Compass, label: 'Auditoria de área, confrontações e usucapião' },
                 { icon: Users, label: 'Cadeia dominial cronológica de proprietários' },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-emerald-400" />
+                  <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-cyan-400" />
                   </div>
                   <span className="text-xs text-slate-300 font-medium">{label}</span>
                 </div>
@@ -274,7 +274,7 @@ export const AuthPage: React.FC = () => {
         
         <div className="flex items-center justify-between lg:justify-end">
           <Link to="/" className="lg:hidden flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
               <Sparkles className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-white">ValidaImóvel</span>
@@ -313,7 +313,7 @@ export const AuthPage: React.FC = () => {
                         placeholder="seu.email@exemplo.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                        className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
                         required
                       />
                     </div>
@@ -321,7 +321,7 @@ export const AuthPage: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar Instruções'}
                   </Button>
@@ -343,7 +343,7 @@ export const AuthPage: React.FC = () => {
                       placeholder="Mínimo 6 caracteres"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-emerald-500"
+                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-blue-500"
                       required
                     />
                   </div>
@@ -354,14 +354,14 @@ export const AuthPage: React.FC = () => {
                       placeholder="Repita a nova senha"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-emerald-500"
+                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-blue-500"
                       required
                     />
                   </div>
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Atualizar Senha'}
                   </Button>
@@ -369,10 +369,10 @@ export const AuthPage: React.FC = () => {
               ) : (
                 <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'signin' | 'signup')} className="w-full">
                   <TabsList className="grid grid-cols-2 p-1 bg-slate-950 border border-slate-800 rounded-2xl mb-4">
-                    <TabsTrigger value="signin" className="text-xs font-bold rounded-xl data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
+                    <TabsTrigger value="signin" className="text-xs font-bold rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                       Entrar
                     </TabsTrigger>
-                    <TabsTrigger value="signup" className="text-xs font-bold rounded-xl data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
+                    <TabsTrigger value="signup" className="text-xs font-bold rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                       Criar Conta
                     </TabsTrigger>
                   </TabsList>
@@ -389,7 +389,7 @@ export const AuthPage: React.FC = () => {
                             placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
                             required
                           />
                         </div>
@@ -401,7 +401,7 @@ export const AuthPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setShowResetForm(true)}
-                            className="text-[11px] text-emerald-400 hover:underline font-bold"
+                            className="text-[11px] text-cyan-400 hover:underline font-bold"
                           >
                             Esqueceu a senha?
                           </button>
@@ -413,7 +413,7 @@ export const AuthPage: React.FC = () => {
                             placeholder="Sua senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
                             required
                           />
                         </div>
@@ -422,7 +422,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar na Plataforma'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
@@ -440,7 +440,7 @@ export const AuthPage: React.FC = () => {
                           placeholder="Seu nome"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-emerald-500"
+                          className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-blue-500"
                         />
                       </div>
 
@@ -453,7 +453,7 @@ export const AuthPage: React.FC = () => {
                             placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
                             required
                           />
                         </div>
@@ -468,7 +468,7 @@ export const AuthPage: React.FC = () => {
                             placeholder="Crie uma senha forte"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
                             required
                           />
                         </div>
@@ -477,7 +477,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar Minha Conta'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}

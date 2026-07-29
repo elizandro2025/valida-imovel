@@ -199,26 +199,26 @@ export const PixPaymentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-blue-600 selection:text-white">
       {/* Background Glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl" />
       </div>
 
       {/* Header Slim & Seguro */}
       <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 shadow-lg">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform font-black">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform font-black">
               <Sparkles className="w-5 h-5 stroke-[2.5]" />
             </div>
             <span className="text-lg font-extrabold tracking-tight text-white">
-              Valida<span className="text-emerald-400">Imóvel</span>
+              Valida<span className="text-cyan-400">Imóvel</span>
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-xs font-bold px-3 py-1 gap-1.5 hidden sm:flex rounded-full">
+            <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 text-xs font-bold px-3 py-1 gap-1.5 hidden sm:flex rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" /> Pagamento Criptografado & Seguro
             </Badge>
             <Link to="/">
@@ -234,25 +234,25 @@ export const PixPaymentPage: React.FC = () => {
 
         {/* Estado: Pagamento Confirmado (Comemoração) */}
         {paymentConfirmed ? (
-          <Card className="border-emerald-500/40 bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-2xl text-white">
-            <div className="w-20 h-20 mx-auto rounded-3xl bg-emerald-600 text-white flex items-center justify-center shadow-xl shadow-emerald-600/30 animate-bounce">
+          <Card className="border-blue-500/40 bg-gradient-to-br from-blue-950 via-slate-900 to-cyan-950 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-2xl text-white">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-xl shadow-blue-600/30 animate-bounce">
               <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
             </div>
             <div className="space-y-2">
-              <Badge className="bg-emerald-600 text-white text-xs font-black uppercase px-4 py-1.5 rounded-full">
+              <Badge className="bg-blue-600 text-white text-xs font-black uppercase px-4 py-1.5 rounded-full">
                 ✓ Assinatura Ativada
               </Badge>
               <h2 className="text-3xl font-black tracking-tight pt-2 text-white">
                 Bem-vindo ao ValidaImóvel!
               </h2>
               <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-                Seu plano <strong className="text-emerald-400">6 Meses Ilimitado</strong> foi liberado.<br />
+                Seu plano <strong className="text-cyan-400">6 Meses Ilimitado</strong> foi liberado.<br />
                 Redirecionando você para a plataforma de auditoria em instantes...
               </p>
             </div>
             <div className="pt-4">
               <Link to="/app">
-                <Button size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base px-10 py-7 rounded-2xl shadow-xl shadow-emerald-600/30 gap-2">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-base px-10 py-7 rounded-2xl shadow-xl shadow-blue-600/30 gap-2">
                   Acessar Plataforma Agora <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
@@ -267,7 +267,7 @@ export const PixPaymentPage: React.FC = () => {
               {/* Card de Oferta */}
               <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-extrabold text-xs px-3 py-1">
+                  <Badge className="bg-blue-500/20 text-cyan-400 border border-blue-500/30 font-extrabold text-xs px-3 py-1">
                     ⚡ Acesso Ilimitado • 180 Dias
                   </Badge>
                   <div className="flex items-center gap-1.5 text-xs text-amber-400 font-extrabold">
@@ -290,7 +290,7 @@ export const PixPaymentPage: React.FC = () => {
                     <span className="text-xs text-slate-500 line-through font-bold block">De R$ 599,40</span>
                     <span className="text-3xl sm:text-4xl font-black text-white">R$ 99,<span className="text-xl">90</span></span>
                   </div>
-                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 font-bold text-xs">
+                  <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 font-bold text-xs">
                     Economia de 83% OFF
                   </Badge>
                 </div>
@@ -308,15 +308,15 @@ export const PixPaymentPage: React.FC = () => {
                   'Ativação instantânea pós-pagamento sem burocracia',
                 ].map((b) => (
                   <div key={b} className="flex items-start gap-2.5 text-xs text-slate-300 font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0 mt-0.5" />
                     <span>{b}</span>
                   </div>
                 ))}
               </div>
 
               {/* Garantia */}
-              <div className="p-4 bg-emerald-950/40 border border-emerald-800/50 rounded-2xl flex items-center gap-3">
-                <Shield className="w-8 h-8 text-emerald-400 flex-shrink-0" />
+              <div className="p-4 bg-blue-950/40 border border-blue-800/50 rounded-2xl flex items-center gap-3">
+                <Shield className="w-8 h-8 text-cyan-400 flex-shrink-0" />
                 <div className="text-xs">
                   <p className="font-bold text-white">Garantia Incondicional de 7 Dias</p>
                   <p className="text-slate-400">Teste a plataforma sem riscos. Se não gostar, devolvemos 100% do seu investimento.</p>
@@ -334,9 +334,9 @@ export const PixPaymentPage: React.FC = () => {
                 <div className="grid grid-cols-2 p-1.5 bg-slate-950 border-b border-slate-800">
                   <button
                     onClick={() => setActiveTab('pix')}
-                    className={`py-3 text-xs font-black rounded-2xl flex items-center justify-center gap-2 transition-all ${
+                    className={`py-3 min-h-[44px] text-xs sm:text-sm font-black rounded-2xl flex items-center justify-center gap-2 transition-all touch-target ${
                       activeTab === 'pix'
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -344,9 +344,9 @@ export const PixPaymentPage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setActiveTab('card')}
-                    className={`py-3 text-xs font-black rounded-2xl flex items-center justify-center gap-2 transition-all ${
+                    className={`py-3 min-h-[44px] text-xs sm:text-sm font-black rounded-2xl flex items-center justify-center gap-2 transition-all touch-target ${
                       activeTab === 'card'
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -354,39 +354,39 @@ export const PixPaymentPage: React.FC = () => {
                   </button>
                 </div>
 
-                <CardContent className="p-6 sm:p-8 space-y-6">
+                <CardContent className="p-5 sm:p-8 space-y-6">
 
                   {/* Dados de Identificação */}
                   <div className="space-y-3 pb-6 border-b border-slate-800">
                     <div className="flex items-center justify-between">
                       <Label className="text-xs font-extrabold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-emerald-400" /> Titular do Acesso
+                        <User className="w-3.5 h-3.5 text-cyan-400" /> Titular do Acesso
                       </Label>
                       {user && (
-                        <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-[10px]">
+                        <Badge variant="outline" className="border-blue-500/30 text-cyan-400 text-[10px]">
                           Conta Conectada
                         </Badge>
                       )}
                     </div>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="relative">
-                        <User className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                        <User className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
                         <Input
                           type="text"
                           placeholder="Seu Nome Completo"
                           value={payerName}
                           onChange={(e) => setPayerName(e.target.value)}
-                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
                         />
                       </div>
                       <div className="relative">
-                        <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                        <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
                         <Input
                           type="email"
                           placeholder="seu.email@exemplo.com"
                           value={payerEmail}
                           onChange={(e) => setPayerEmail(e.target.value)}
-                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-emerald-500"
+                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -400,14 +400,14 @@ export const PixPaymentPage: React.FC = () => {
                       <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2.5">
                           <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400"></span>
                           </span>
                           <span className="font-bold text-slate-300">
                             {pixPayment ? 'Aguardando confirmação do Pix...' : 'Digite seu e-mail acima para gerar o Pix'}
                           </span>
                         </div>
-                        <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                        <Badge className="bg-blue-500/20 text-cyan-400 border border-blue-500/30 text-[10px] font-bold">
                           Ativação em ~5s
                         </Badge>
                       </div>
@@ -415,7 +415,7 @@ export const PixPaymentPage: React.FC = () => {
                       {/* Estado: Carregando QR Code */}
                       {isGenerating && (
                         <div className="flex flex-col items-center gap-3 py-8 text-slate-400">
-                          <Loader2 className="w-10 h-10 text-emerald-400 animate-spin" />
+                          <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
                           <span className="text-xs font-semibold">Gerando Chave Pix com confirmação automática...</span>
                         </div>
                       )}
@@ -423,14 +423,14 @@ export const PixPaymentPage: React.FC = () => {
                       {/* Estado: QR Code Gerado */}
                       {!isGenerating && pixPayment?.qr_code_base64 && (
                         <div className="flex flex-col items-center gap-4 py-2">
-                          <div className="p-4 bg-white rounded-3xl shadow-2xl border-4 border-emerald-500/30 relative group">
+                          <div className="p-4 bg-white rounded-3xl shadow-2xl border-4 border-blue-500/30 relative group">
                             <img
                               src={pixPayment.qr_code_base64}
                               alt="QR Code PIX"
                               className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
                             />
                             <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
-                              <Badge className="bg-emerald-600 text-white text-xs font-bold">Escaneie com o app do seu Banco</Badge>
+                              <Badge className="bg-blue-600 text-white text-xs font-bold">Escaneie com o app do seu Banco</Badge>
                             </div>
                           </div>
                           <p className="text-xs text-slate-400 font-semibold text-center">
@@ -451,7 +451,7 @@ export const PixPaymentPage: React.FC = () => {
                             />
                             <Button
                               onClick={() => copyToClipboard(pixPayment.qr_code!, 'Chave PIX')}
-                              className={`${copied ? 'bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-500'} text-white font-bold text-xs px-5 h-11 rounded-xl flex-shrink-0 gap-1.5 shadow-md`}
+                              className={`${copied ? 'bg-blue-700' : 'bg-blue-600 hover:bg-blue-500'} text-white font-bold text-xs px-5 h-11 rounded-xl flex-shrink-0 gap-1.5 shadow-md`}
                             >
                               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                               {copied ? 'Copiado!' : 'Copiar Pix'}
@@ -472,7 +472,7 @@ export const PixPaymentPage: React.FC = () => {
                       {!isGenerating && (!pixPayment || generateError) && (
                         <Button
                           onClick={handleGeneratePixPayment}
-                          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm h-13 rounded-2xl shadow-lg shadow-emerald-600/20 gap-2 transition-all"
+                          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-sm h-13 rounded-2xl shadow-lg shadow-blue-600/20 gap-2 transition-all"
                         >
                           <QrCode className="w-4 h-4" /> Gerar Chave Pix — R$ 99,90
                         </Button>
@@ -486,7 +486,7 @@ export const PixPaymentPage: React.FC = () => {
                   ) : (
                     /* TAB CARTÃO DE CRÉDITO */
                     <div className="py-6 text-center space-y-5">
-                      <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-emerald-400">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-cyan-400">
                         <CreditCard className="w-7 h-7" />
                       </div>
                       <div className="space-y-1">
@@ -498,7 +498,7 @@ export const PixPaymentPage: React.FC = () => {
 
                       {cardInitPoint ? (
                         <a href={cardInitPoint} target="_blank" rel="noopener noreferrer">
-                          <Button className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-8 py-5 rounded-xl shadow-lg gap-2">
+                          <Button className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-8 py-5 rounded-xl shadow-lg gap-2">
                             Pagar no Cartão de Crédito <ExternalLink className="w-4 h-4" />
                           </Button>
                         </a>
@@ -506,7 +506,7 @@ export const PixPaymentPage: React.FC = () => {
                         <Button
                           onClick={handleGenerateCardPayment}
                           disabled={isGeneratingCard}
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-8 py-5 rounded-xl shadow-lg gap-2"
+                          className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-8 py-5 rounded-xl shadow-lg gap-2"
                         >
                           {isGeneratingCard ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> Conectando ao checkout...</>
