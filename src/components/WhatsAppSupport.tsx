@@ -42,7 +42,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
         <MessageCircle className="w-4 h-4 fill-emerald-400 text-emerald-950 group-hover:rotate-12 transition-transform" />
-        <span>Suporte WhatsApp: <strong className="font-mono text-emerald-300">{displayNumber}</strong></span>
+        <span>Suporte via WhatsApp</span>
       </a>
     );
   }
@@ -62,7 +62,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-300 font-medium mt-0.5">
-              Atendimento direto via WhatsApp: <strong className="font-mono text-emerald-400">{displayNumber}</strong>
+              Atendimento rápido e direto em tempo real pelo WhatsApp.
             </p>
           </div>
         </div>
@@ -89,7 +89,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
         className={`inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-extrabold text-xs transition-colors ${className}`}
       >
         <MessageCircle className="w-4 h-4 fill-emerald-400 text-slate-950" />
-        <span>WhatsApp: {displayNumber}</span>
+        <span>Suporte via WhatsApp</span>
       </a>
     );
   }
@@ -108,7 +108,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
         </span>
-        <span>Suporte WhatsApp: <span className="font-mono text-white">{displayNumber}</span></span>
+        <span>Suporte via WhatsApp</span>
       </a>
 
       {/* Circle Icon Button */}
