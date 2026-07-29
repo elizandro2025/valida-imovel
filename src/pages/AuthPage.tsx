@@ -80,8 +80,8 @@ export const AuthPage: React.FC = () => {
         else if (error.message?.includes('Invalid email')) msg = 'E-mail inválido. Verifique a digitação.';
         toast({ title: 'Erro no cadastro', description: msg, variant: 'destructive' });
       } else {
-        toast({ title: 'Conta criada com sucesso!', description: 'Acesso liberado com sucesso. Redirecionando...' });
-        navigate('/app');
+        toast({ title: 'Conta criada com sucesso!', description: 'Selecione a forma de pagamento para liberar o seu acesso.' });
+        navigate('/pagamento-pix');
       }
     } catch {
       toast({ title: 'Erro inesperado', description: 'Ocorreu um erro ao criar conta.', variant: 'destructive' });

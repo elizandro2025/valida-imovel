@@ -65,8 +65,8 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
 }
 
 /**
- * Rota Protegida — redireciona para /auth se o usuário não estiver logado.
- * Permite passagem livre quando há ?sample=safe (demonstração pública da Landing Page).
+ * Rota Protegida — Exige autenticação E assinatura ativa para acessar o workspace.
+ * Permite passagem livre exclusivamente quando há ?sample=safe (demonstração pública).
  */
 const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -84,8 +84,14 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
     );
   }
 
+  // 1. Usuário não autenticado -> Redireciona para login
   if (!user && !isSampleDemo) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // 2. Usuário autenticado MAS sem assinatura ativa -> Redireciona para pagamento
+  if (user && !user.hasSubscription && !isSampleDemo) {
+    return <Navigate to="/pagamento-pix" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

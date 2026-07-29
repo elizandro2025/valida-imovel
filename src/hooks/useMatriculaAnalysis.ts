@@ -36,13 +36,19 @@ export function useMatriculaAnalysis() {
   }, []);
 
   const processFile = useCallback(async (file: File) => {
-    // 🛡️ Paywall Check
+    // 🛡️ Strict Paywall Check
     const subStatus = subscriptionService.getStatus();
     if (!subStatus.active) {
-      const stored = localStorage.getItem('valida_imovel_subscription');
-      if (!stored) {
-        console.log('🔒 Usuário sem assinatura ativa — permitindo auditoria mas ativando travamento paywall no relatório.');
-      }
+      setState(prev => ({
+        ...prev,
+        file: null,
+        isProcessing: false,
+        error: '🔒 Acesso Restrito: É necessário assinar o plano para auditar matrículas no sistema. Redirecionando para pagamento...',
+      }));
+      setTimeout(() => {
+        window.location.href = '/pagamento-pix';
+      }, 2000);
+      return;
     }
 
     setState({

@@ -59,8 +59,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedVip) {
       try {
         const parsed = JSON.parse(savedVip);
-        setUser(parsed);
-        subscriptionService.activate6MonthsUnlimited('ADMIN-VIP');
+        const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || '')
+          .split(',')
+          .map((e: string) => e.trim().toLowerCase())
+          .filter(Boolean);
+        const isAdminUser = adminEmails.includes(parsed.email?.toLowerCase()) || parsed.email?.toLowerCase() === 'elizandro.aquino@outlook.com';
+
+        // Garante que o status da assinatura do usuário seja lido do subscriptionService ou role admin
+        const activeSub = subscriptionService.getStatus().active || isAdminUser;
+        setUser({
+          ...parsed,
+          hasSubscription: activeSub,
+        });
         setIsLoading(false);
       } catch (e) {
         localStorage.removeItem('valida_imovel_vip_session');
@@ -97,12 +107,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setUser(userObj);
                 localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
               } else {
-                const hasSub = subscriptionService.getStatus().active || resolvedRole === 'admin';
+                // Perfil ainda não existe no Supabase — cria sem assinatura ativa
+                const finalRole = resolvedRole;
+                const hasSub = finalRole === 'admin';
+
+                await supabase.from('profiles').upsert(
+                  {
+                    user_id: currentSession.user.id,
+                    email: userEmail,
+                    full_name: userEmail.split('@')[0],
+                    has_subscription: false,
+                    subscription_status: 'inactive',
+                    subscription_plan: 'Nenhum',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                  },
+                  { onConflict: 'user_id' }
+                );
+
                 const userObj: User = {
                   id: currentSession.user.id,
                   email: userEmail,
                   hasSubscription: hasSub,
-                  role: resolvedRole,
+                  role: finalRole,
                   name: userEmail.split('@')[0],
                   createdAt: new Date().toISOString(),
                 };
@@ -110,12 +137,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
               }
             } catch {
-              const hasSub = subscriptionService.getStatus().active || resolvedRole === 'admin';
+              const finalRole = resolvedRole;
+              const hasSub = finalRole === 'admin';
               const userObj: User = {
                 id: currentSession.user.id,
                 email: userEmail,
                 hasSubscription: hasSub,
-                role: resolvedRole,
+                role: finalRole,
                 name: userEmail.split('@')[0],
                 createdAt: new Date().toISOString(),
               };
@@ -146,7 +174,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     const cleanEmail = (email || '').trim().toLowerCase();
     
-    // VIP Admin Instant Unlock for elizandro.aquino@outlook.com
+    // VIP Admin Instant Unlock exclusivo para o Admin Mestre
     if (cleanEmail === 'elizandro.aquino@outlook.com') {
       const adminUser: User = {
         id: 'admin-elizandro-id',
@@ -169,14 +197,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password,
       });
 
-      if (!error && data?.user) {
-        subscriptionService.activate6MonthsUnlimited('LOGIN-SUCCESS');
+      if (error) {
+        return { error };
+      }
+
+      if (data?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+
+        const role = (cleanEmail.includes('admin') || profile?.role === 'admin') ? 'admin' : 'user';
+        const hasSub = subscriptionService.isSubscriptionActive(profile) || role === 'admin';
+
         const userObj: User = {
           id: data.user.id,
           email: cleanEmail,
-          hasSubscription: true,
-          role: cleanEmail.includes('admin') ? 'admin' : 'user',
-          name: cleanEmail.split('@')[0],
+          hasSubscription: hasSub,
+          role,
+          name: profile?.full_name || cleanEmail.split('@')[0],
           createdAt: data.user.created_at || new Date().toISOString(),
         };
         setUser(userObj);
@@ -184,32 +224,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: null };
       }
 
-      // Local Fallback for Seamless User Login
-      const fallbackUser: User = {
-        id: `user-${Date.now()}`,
-        email: cleanEmail,
-        hasSubscription: true,
-        role: cleanEmail.includes('admin') ? 'admin' : 'user',
-        name: cleanEmail.split('@')[0],
-        createdAt: new Date().toISOString(),
-      };
-      setUser(fallbackUser);
-      subscriptionService.activate6MonthsUnlimited('LOCAL-AUTH-SUCCESS');
-      localStorage.setItem('valida_imovel_vip_session', JSON.stringify(fallbackUser));
-      return { error: null };
-    } catch {
-      const fallbackUser: User = {
-        id: `user-${Date.now()}`,
-        email: cleanEmail,
-        hasSubscription: true,
-        role: cleanEmail.includes('admin') ? 'admin' : 'user',
-        name: cleanEmail.split('@')[0],
-        createdAt: new Date().toISOString(),
-      };
-      setUser(fallbackUser);
-      subscriptionService.activate6MonthsUnlimited('LOCAL-AUTH-SUCCESS');
-      localStorage.setItem('valida_imovel_vip_session', JSON.stringify(fallbackUser));
-      return { error: null };
+      return { error: new Error('Usuário não encontrado.') };
+    } catch (err: any) {
+      return { error: err || new Error('Falha na autenticação.') };
     } finally {
       setIsLoading(false);
     }
@@ -219,7 +236,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     const cleanEmail = (email || '').trim().toLowerCase();
 
-    // VIP Admin Instant Signup
+    // VIP Admin Instant Signup exclusivo para Admin Mestre
     if (cleanEmail === 'elizandro.aquino@outlook.com') {
       const adminUser: User = {
         id: 'admin-elizandro-id',
@@ -250,47 +267,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
-      if (!error) {
+      if (error) {
+        return { error };
+      }
+
+      if (data?.user) {
+        const role = cleanEmail.includes('admin') ? 'admin' : 'user';
+        const hasSub = role === 'admin';
+
+        // Registra perfil inicial no Supabase com assinatura inativa
+        try {
+          await supabase.from('profiles').upsert(
+            {
+              user_id: data.user.id,
+              email: cleanEmail,
+              full_name: name || cleanEmail.split('@')[0],
+              has_subscription: false,
+              subscription_status: 'inactive',
+              subscription_plan: 'Nenhum',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'user_id' }
+          );
+        } catch (profileErr) {
+          console.warn('Aviso ao criar perfil inicial:', profileErr);
+        }
+
         const newUserObj: User = {
-          id: data.user?.id || `user-${Date.now()}`,
+          id: data.user.id,
           email: cleanEmail,
-          hasSubscription: true,
-          role: cleanEmail.includes('admin') ? 'admin' : 'user',
+          hasSubscription: hasSub,
+          role,
           name: name || cleanEmail.split('@')[0],
           createdAt: new Date().toISOString(),
         };
         setUser(newUserObj);
-        subscriptionService.activate6MonthsUnlimited('SIGNUP-SUCCESS');
         localStorage.setItem('valida_imovel_vip_session', JSON.stringify(newUserObj));
         return { error: null };
       }
 
-      // Local Fallback on network/Supabase error
-      const fallbackUser: User = {
-        id: `user-${Date.now()}`,
-        email: cleanEmail,
-        hasSubscription: true,
-        role: 'user',
-        name: name || cleanEmail.split('@')[0],
-        createdAt: new Date().toISOString(),
-      };
-      setUser(fallbackUser);
-      subscriptionService.activate6MonthsUnlimited('LOCAL-SIGNUP-SUCCESS');
-      localStorage.setItem('valida_imovel_vip_session', JSON.stringify(fallbackUser));
-      return { error: null };
-    } catch {
-      const fallbackUser: User = {
-        id: `user-${Date.now()}`,
-        email: cleanEmail,
-        hasSubscription: true,
-        role: 'user',
-        name: name || cleanEmail.split('@')[0],
-        createdAt: new Date().toISOString(),
-      };
-      setUser(fallbackUser);
-      subscriptionService.activate6MonthsUnlimited('LOCAL-SIGNUP-SUCCESS');
-      localStorage.setItem('valida_imovel_vip_session', JSON.stringify(fallbackUser));
-      return { error: null };
+      return { error: new Error('Não foi possível registrar o usuário.') };
+    } catch (err: any) {
+      return { error: err || new Error('Falha no cadastro.') };
     } finally {
       setIsLoading(false);
     }
@@ -319,12 +338,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       localStorage.removeItem('valida_imovel_vip_session');
+      localStorage.removeItem('valida_imovel_subscription');
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
     } catch (error) {
       console.error('Sign out error:', error);
       localStorage.removeItem('valida_imovel_vip_session');
+      localStorage.removeItem('valida_imovel_subscription');
       setUser(null);
       setSession(null);
     } finally {

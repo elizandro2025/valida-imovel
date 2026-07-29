@@ -1671,19 +1671,6 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Liberação via Webhook</span>
             </div>
           </div>
-
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-center gap-3">
-            <button
-              onClick={() => {
-                subscriptionService.activate6MonthsUnlimited('SIM-DEV');
-                toast({ title: '🔓 Assinatura Simulada!', description: 'Modo ilimitado ativado com sucesso.' });
-              }}
-              className="text-[11px] text-slate-400 hover:text-emerald-400 underline font-mono cursor-pointer"
-            >
-              [Simular Liberação de Assinatura para Testes]
-            </button>
-          </div>
-
         </Card>
       </div>
     )}
