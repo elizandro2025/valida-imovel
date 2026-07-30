@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   FileCheck, ShieldCheck, Upload, ArrowRight, Sparkles, Brain, ShieldAlert,
-  FileText, CheckCircle2, Zap, Clock, Compass, Users, Lock, User,
+  FileText, CheckCircle2, Zap, Clock, Compass, Users, Lock, User, LogOut,
   ChevronRight, Star, Award, CreditCard, Check, FileUp, AlertTriangle,
   Building2, Scale, HelpCircle, DollarSign, MessageCircle, AlertCircle,
   Timer, Flame, CheckSquare, ArrowDown, TrendingUp, ThumbsUp, Shield, RefreshCw, Play
@@ -15,8 +15,14 @@ import {
 import { WhatsAppSupport, WHATSAPP_DISPLAY, getWhatsAppLink } from '@/components/WhatsAppSupport';
 
 const LandingPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth?tab=register');
+  };
 
   // Contador regressivo de gatilho de oferta especial
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 42, seconds: 18 });
@@ -230,12 +236,20 @@ const LandingPage: React.FC = () => {
             <WhatsAppSupport variant="banner" className="hidden lg:inline-flex" />
             {user ? (
               // 🟢 Usuário Conectado
-              <>
-                <div className="hidden lg:flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl shadow-inner">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                  <span className="text-xs font-semibold text-slate-300 truncate max-w-[150px]">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 px-2.5 py-1.5 rounded-xl shadow-inner max-w-[170px] sm:max-w-[240px]">
+                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-300 truncate" title={user.email}>
                     {user.email}
                   </span>
+                  <button
+                    onClick={handleSignOut}
+                    title="Sair / Entrar com outra conta"
+                    className="text-slate-400 hover:text-red-400 transition-colors p-1 rounded-md hover:bg-slate-800 shrink-0 flex items-center gap-1 ml-0.5"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span className="text-[10px] hidden md:inline font-extrabold text-slate-400 hover:text-red-400">Sair</span>
+                  </button>
                 </div>
                 {user.hasSubscription ? (
                   <Link to="/app" className="shrink-0">
@@ -253,7 +267,7 @@ const LandingPage: React.FC = () => {
                     </Button>
                   </Link>
                 )}
-              </>
+              </div>
             ) : (
               // ⚪ Visitante (Não Logado) — Destaque Total de CTA & Separação Clara
               <>

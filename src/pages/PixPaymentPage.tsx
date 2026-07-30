@@ -19,7 +19,12 @@ import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth?tab=register');
+  };
 
   // 🛡️ Regra Estrita:
   // 1. Visitante não logado -> Redireciona para cadastro
@@ -219,12 +224,25 @@ export const PixPaymentPage: React.FC = () => {
               Valida<span className="text-cyan-400">Imóvel</span>
             </span>
           </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 text-xs font-bold px-3 py-1 gap-1.5 hidden sm:flex rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5" /> Pagamento Criptografado & Seguro
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 text-xs font-bold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
+              <ShieldCheck className="w-3.5 h-3.5" /> Pagamento Criptografado
             </Badge>
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="text-slate-300 hover:text-red-400 hover:bg-slate-800 text-xs gap-1.5 font-bold rounded-xl h-9"
+                title="Sair ou entrar com outra conta"
+              >
+                <LogOut className="w-3.5 h-3.5 text-slate-400 hover:text-red-400" />
+                <span className="hidden xs:inline">Trocar conta</span>
+                <span className="xs:hidden">Sair</span>
+              </Button>
+            )}
             <Link to="/">
-              <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800 text-xs gap-1.5 font-bold rounded-xl">
+              <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800 text-xs gap-1.5 font-bold rounded-xl h-9">
                 <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao site
               </Button>
             </Link>
