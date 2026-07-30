@@ -505,3 +505,19 @@ textarea {
   appearance: none;
   font-size: 16px; /* Prevents auto-zoom on iOS Safari when focusing input */
 }
+
+/* Global Mobile Button & Container Safety Rules */
+button, [role="button"], a.button {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 639px) {
+  /* Prevent horizontal text clipping and overflow on mobile devices */
+  button {
+    white-space: normal !important;
+    height: auto !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
+  }
+}

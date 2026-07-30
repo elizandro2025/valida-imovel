@@ -33,8 +33,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
+				sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'system-ui', 'sans-serif'],
+				display: ['Sora', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'system-ui', 'sans-serif'],
 				inter: ['Inter', 'system-ui', 'sans-serif'],
-				playfair: ['Playfair Display', 'serif'],
 				mono: ['JetBrains Mono', 'Monaco', 'monospace'],
 			},
 			colors: {

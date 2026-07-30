@@ -207,49 +207,49 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* 🟢 HEADER / NAVBAR SLIM & FIXO ESTILO AI PLATFORM */}
-      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-2xl border-b border-slate-800/80 text-white shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-2xl border-b border-slate-800/80 text-white shadow-2xl overflow-hidden">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform font-black">
-              <Sparkles className="w-5 h-5 stroke-[2.5]" />
+          <Link to="/" className="flex items-center gap-2 group shrink-0 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform font-black shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
             </div>
-            <div>
-              <span className="text-xl font-black tracking-tight text-white block leading-tight">
+            <div className="min-w-0">
+              <span className="text-base sm:text-xl font-black tracking-tight text-white block leading-tight truncate">
                 Valida<span className="text-cyan-400">Imóvel</span>
               </span>
             </div>
-            <Badge variant="outline" className="border-cyan-400/50 text-cyan-300 bg-blue-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full hidden sm:inline-flex shadow-sm">
+            <Badge variant="outline" className="border-cyan-400/50 text-cyan-300 bg-blue-500/20 text-[10px] font-black px-2 py-0.5 rounded-full hidden md:inline-flex shadow-sm shrink-0">
               AI 2.0
             </Badge>
           </Link>
 
           {/* Navigation Actions — Destaque Máximo & Alto Impacto Visual */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <WhatsAppSupport variant="banner" className="hidden md:inline-flex" />
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 max-w-full">
+            <WhatsAppSupport variant="banner" className="hidden lg:inline-flex" />
             {user ? (
               // 🟢 Usuário Conectado
               <>
                 <div className="hidden lg:flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl shadow-inner">
                   <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                  <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">
+                  <span className="text-xs font-semibold text-slate-300 truncate max-w-[150px]">
                     {user.email}
                   </span>
                 </div>
                 {user.hasSubscription ? (
-                  <Link to="/app">
-                    <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-blue-500/40 hover:shadow-cyan-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-cyan-300/40">
-                      <Sparkles className="w-4 h-4 fill-white stroke-[2]" />
-                      <span>Ir para o Workspace</span>
-                      <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                  <Link to="/app" className="shrink-0">
+                    <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-3 sm:px-6 h-9 sm:h-10 shadow-lg shadow-blue-500/40 rounded-xl transition-all gap-1.5 border border-cyan-300/40 shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white stroke-[2] shrink-0" />
+                      <span>Workspace</span>
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] shrink-0 hidden xs:inline-block" />
                     </Button>
                   </Link>
                 ) : (
-                  <Link to="/pagamento-pix">
-                    <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-lg shadow-blue-500/40 hover:shadow-cyan-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-cyan-300/40">
-                      <Zap className="w-4 h-4 fill-white" />
-                      <span>Garantir Acesso R$ 99,90</span>
+                  <Link to="/pagamento-pix" className="shrink-0">
+                    <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-3 sm:px-6 h-9 sm:h-10 shadow-lg shadow-blue-500/40 rounded-xl transition-all gap-1.5 border border-cyan-300/40 shrink-0">
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white shrink-0" />
+                      <span>Garantir R$ 99,90</span>
                     </Button>
                   </Link>
                 )}
@@ -257,17 +257,17 @@ const LandingPage: React.FC = () => {
             ) : (
               // ⚪ Visitante (Não Logado) — Destaque Total de CTA & Separação Clara
               <>
-                <Link to="/auth?tab=login">
-                  <Button className="bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-bold text-xs px-4 sm:px-5 h-10 rounded-xl border border-slate-700/80 hover:border-blue-500/50 shadow-md transition-all flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-cyan-400" />
+                <Link to="/auth?tab=login" className="shrink-0">
+                  <Button className="bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white font-bold text-[11px] sm:text-xs px-2.5 sm:px-4 h-9 sm:h-10 rounded-xl border border-slate-700/80 hover:border-blue-500/50 shadow-md transition-all flex items-center gap-1 shrink-0">
+                    <User className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                     <span>Já sou usuário</span>
                   </Button>
                 </Link>
-                <Link to="/auth?tab=register">
-                  <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-4.5 sm:px-6 h-10 shadow-xl shadow-blue-500/40 hover:shadow-cyan-400/60 rounded-xl transition-all hover:scale-105 gap-2 border border-cyan-300/40">
-                    <Sparkles className="w-4 h-4 fill-white stroke-[2]" />
+                <Link to="/auth?tab=register" className="shrink-0">
+                  <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-[11px] sm:text-sm px-3 sm:px-5 h-9 sm:h-10 shadow-xl shadow-blue-500/40 rounded-xl transition-all gap-1.5 border border-cyan-300/40 shrink-0">
+                    <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white stroke-[2] shrink-0" />
                     <span>Criar Conta</span>
-                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] shrink-0 hidden xs:inline-block" />
                   </Button>
                 </Link>
               </>
@@ -302,9 +302,9 @@ const LandingPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
           
           {/* AI Badge — Alta Destacabilidade */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/90 border border-blue-500/50 text-cyan-300 text-xs font-black shadow-lg shadow-blue-500/10 backdrop-blur-md">
-            <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-            <span>Inteligência Artificial Registrária Especializada</span>
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-950/90 border border-blue-500/50 text-cyan-300 text-[11px] sm:text-xs font-black shadow-lg shadow-blue-500/10 backdrop-blur-md max-w-full">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 animate-pulse shrink-0" />
+            <span className="truncate">Inteligência Artificial Registrária Especializada</span>
           </div>
 
           {/* Clean Headline — Máxima Legibilidade & Brilho */}
@@ -319,14 +319,14 @@ const LandingPage: React.FC = () => {
 
           {/* Central AI Demonstration Launchpad (Estilo Product Tour / Live Demo) */}
           <div className="max-w-2xl mx-auto pt-2">
-            <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/80 border border-blue-500/50 shadow-2xl shadow-blue-500/20 rounded-3xl backdrop-blur-xl text-center space-y-6 relative overflow-hidden">
+            <div className="p-5 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/80 border border-blue-500/50 shadow-2xl shadow-blue-500/20 rounded-3xl backdrop-blur-xl text-center space-y-6 relative overflow-hidden">
               <div className="absolute -top-16 -right-16 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
               
               <div className="space-y-3">
-                <Badge className="bg-blue-500/20 text-cyan-300 border border-blue-500/40 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                <Badge className="bg-blue-500/20 text-cyan-300 border border-blue-500/40 text-[10px] sm:text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
                   ✨ Demonstração Interativa em Tempo Real
                 </Badge>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h3 className="text-lg sm:text-2xl font-black text-white tracking-tight">
                   Veja a IA Registrária Auditando um Imóvel Rural Complexo
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-lg mx-auto leading-relaxed">
@@ -335,12 +335,12 @@ const LandingPage: React.FC = () => {
               </div>
 
               {/* CTA Principal de Demonstração */}
-              <div className="pt-2">
-                <Link to="/app?sample=safe" className="inline-block w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-sm px-8 py-6 rounded-2xl shadow-xl shadow-blue-500/30 gap-2.5 transition-all hover:scale-105">
-                    <Sparkles className="w-5 h-5 fill-white stroke-[2]" />
-                    <span>VER DEMONSTRAÇÃO PRÁTICA INSTANTÂNEA</span>
-                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+              <div className="pt-2 w-full max-w-full">
+                <Link to="/app?sample=safe" className="inline-block w-full max-w-full">
+                  <Button className="w-full bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-3 sm:px-8 py-3.5 sm:py-5.5 h-auto rounded-2xl shadow-xl shadow-blue-500/30 gap-2 transition-all hover:scale-102 leading-tight max-w-full flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 fill-white stroke-[2] shrink-0" />
+                    <span className="break-words text-center">VER DEMONSTRAÇÃO PRÁTICA INSTANTÂNEA</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5] shrink-0 hidden xs:inline-block" />
                   </Button>
                 </Link>
               </div>
@@ -836,17 +836,17 @@ const LandingPage: React.FC = () => {
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 stroke-[3]" /> 1-Clique para copiar qualquer campo</div>
             </div>
 
-            <div className="space-y-3 pt-2">
-              <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="block w-full max-w-md mx-auto">
-                <Button size="lg" className="w-full bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-lg py-7 rounded-2xl shadow-xl shadow-blue-500/30 transition-all hover:scale-105">
-                  <CreditCard className="mr-2.5 h-6 w-6" />
-                  {user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso Ilimitado Agora") : "Criar Conta para Garantir Acesso"}
+            <div className="space-y-3 pt-2 w-full max-w-md mx-auto">
+              <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="block w-full">
+                <Button size="lg" className="w-full bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-base md:text-lg px-3 sm:px-8 py-4 sm:py-6 h-auto min-h-[52px] rounded-2xl shadow-xl shadow-blue-500/30 transition-all hover:scale-[1.02] active:scale-95 leading-tight max-w-full flex items-center justify-center gap-2">
+                  <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
+                  <span className="break-words leading-tight">{user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso Ilimitado Agora") : "Criar Conta para Garantir Acesso"}</span>
                 </Button>
               </Link>
 
-              <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 font-medium">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> 7 Dias de Garantia Incondicional</span>
-                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-cyan-400" /> Liberação Imediata via Webhook</span>
+              <div className="flex items-center justify-center gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-400 font-medium flex-wrap">
+                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> 7 Dias de Garantia Incondicional</span>
+                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Liberação Imediata via Webhook</span>
               </div>
             </div>
 
@@ -905,9 +905,9 @@ const LandingPage: React.FC = () => {
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-medium">
             Junte-se a mais de 1.800 profissionais que economizam tempo e eliminam riscos imobiliários todos os dias.
           </p>
-          <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="inline-block">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-base px-8 py-6 rounded-2xl shadow-xl shadow-blue-600/30 transition-all hover:scale-105 gap-2">
-              <Upload className="w-5 h-5" /> {user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso") : "Criar Conta para Analisar Matrícula"}
+          <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="inline-block w-full sm:w-auto max-w-full">
+            <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-base px-4 sm:px-8 py-4 sm:py-6 h-auto min-h-[48px] rounded-2xl shadow-xl shadow-blue-600/30 transition-all hover:scale-[1.02] active:scale-95 gap-2 leading-tight max-w-full flex items-center justify-center">
+              <Upload className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" /> <span className="break-words">{user ? (user.hasSubscription ? "Ir para o Workspace" : "Garantir Acesso") : "Criar Conta para Analisar Matrícula"}</span>
             </Button>
           </Link>
         </div>
