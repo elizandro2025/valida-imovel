@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Algo Mudou na Análise de Matrículas...</title>
+  <title>Algo Mudou na Análise de Matrículas... [Vídeo Demonstrativo]</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -62,6 +62,60 @@
       border-radius: 12px;
       margin: 22px 0;
     }
+    .video-card {
+      position: relative;
+      margin: 25px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #0284c7;
+      box-shadow: 0 10px 30px rgba(2, 132, 199, 0.3);
+      text-align: center;
+      background-color: #000000;
+    }
+    .video-card a {
+      display: block;
+      text-decoration: none;
+      position: relative;
+    }
+    .video-thumbnail {
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0.85;
+      transition: opacity 0.3s ease;
+    }
+    .play-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(220, 38, 38, 0.95);
+      color: #ffffff;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-center: center;
+      font-size: 28px;
+      box-shadow: 0 0 25px rgba(220, 38, 38, 0.8);
+      border: 3px solid #ffffff;
+    }
+    .video-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.9);
+      color: #38bdf8;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid #0284c7;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
     .cta-btn {
       display: block;
       width: 90%;
@@ -118,13 +172,22 @@
         </p>
       </div>
 
-      <p>Nós desenvolvemos uma tecnologia de Inteligência Artificial desenhada exclusivamente para resolver esse problema e auditar certidões em <strong>menos de 10 segundos</strong>.</p>
+      <p>Nós gravamos uma demonstração completa em vídeo mostrando a nossa Inteligência Artificial auditando uma certidão complexa em <strong>menos de 10 segundos</strong>.</p>
 
-      <p>Ela varre os 12 módulos registrais, classifica o risco e entrega o diagnóstico pronto. Mas em vez de apenas te contar, <strong>nós montamos uma demonstração prática em tempo real para você ver como funciona com os próprios olhos</strong>.</p>
+      <!-- CARD DO VÍDEO DO YOUTUBE (COMPATÍVEL COM TODOS OS LEITORES DE E-MAIL) -->
+      <div className="video-card">
+        <a href="https://www.youtube.com/watch?v=QRCzsDTiRd0" target="_blank" title="Clique para assistir ao vídeo no YouTube">
+          <img src="https://img.youtube.com/vi/QRCzsDTiRd0/hqdefault.jpg" alt="Demonstração do Sistema ValidaImóvel em Vídeo" class="video-thumbnail">
+          <div className="play-overlay">▶</div>
+          <div className="video-badge">🎬 CLIQUE PARA ASSISTIR À DEMONSTRAÇÃO (VÍDEO)</div>
+        </a>
+      </div>
+
+      <p>Ela varre os 12 módulos registrais, classifica o risco e entrega o diagnóstico pronto. Assista ao vídeo e veja como funciona em tempo real.</p>
 
       <!-- CTA DE ALTA TAXA DE CLIQUE (CTR) DIRETO PARA A LANDING PAGE -->
-      <a href="https://validaimovel.com?utm_source=email&utm_medium=curiosidade&utm_campaign=cadeia_dominial" class="cta-btn" target="_blank">
-        VER COMO FUNCIONA NA PRÁTICA →
+      <a href="https://validaimovel.com?utm_source=email&utm_medium=curiosidade&utm_campaign=video_youtube" class="cta-btn" target="_blank">
+        TESTAR DEMONSTRAÇÃO NA LANDING PAGE →
       </a>
 
       <p style="text-align: center; font-size: 13px; color: #94a3b8; margin-top: 15px;">
@@ -135,7 +198,7 @@
 
     <div className="footer">
       <p>© 2026 ValidaImóvel AI 2.0 — Auditoria Notarial Automatizada.</p>
-      <p><a href="https://validaimovel.com" target="_blank">Visitar Landing Page Oficial</a></p>
+      <p><a href="https://validaimovel.com" target="_blank">Visitar Landing Page Oficial</a> | <a href="https://www.youtube.com/watch?v=QRCzsDTiRd0" target="_blank">Ver no YouTube</a></p>
     </div>
   </div>
 
