@@ -94,9 +94,20 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
     );
   }
 
-  // Variant: 'floating' (Botão flutuante no canto inferior direito)
+  // Variant: 'floating' (Botão flutuante no canto inferior esquerdo)
   return (
-    <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-2.5 group ${className}`}>
+    <div className={`fixed bottom-5 left-5 z-50 flex items-center gap-2.5 group ${className}`}>
+      {/* Circle Icon Button */}
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Suporte no WhatsApp"
+        className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/50 transition-all hover:scale-110 active:scale-95 border-2 border-emerald-300/50"
+      >
+        <MessageCircle className="w-7 h-7 fill-white text-emerald-950" />
+      </a>
+
       {/* Tooltip Hover Label */}
       <a
         href={link}
@@ -109,17 +120,6 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
         </span>
         <span>Suporte via WhatsApp</span>
-      </a>
-
-      {/* Circle Icon Button */}
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Suporte no WhatsApp"
-        className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/50 transition-all hover:scale-110 active:scale-95 border-2 border-emerald-300/50"
-      >
-        <MessageCircle className="w-7 h-7 fill-white text-emerald-950" />
       </a>
     </div>
   );
