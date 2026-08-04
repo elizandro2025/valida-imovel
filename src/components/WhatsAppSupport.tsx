@@ -1,5 +1,14 @@
 import React from 'react';
 import { MessageCircle, Headphones, ExternalLink } from 'lucide-react';
+import {
+  WHATSAPP_NUMBER,
+  WHATSAPP_DISPLAY,
+  WHATSAPP_MESSAGE,
+  getWhatsAppLink,
+} from '@/utils/whatsappUtils';
+
+// Re-exporta para compatibilidade com imports existentes
+export { WHATSAPP_NUMBER, WHATSAPP_DISPLAY, WHATSAPP_MESSAGE, getWhatsAppLink };
 
 interface WhatsAppSupportProps {
   phoneNumber?: string;
@@ -8,17 +17,6 @@ interface WhatsAppSupportProps {
   variant?: 'floating' | 'banner' | 'card' | 'inline';
   className?: string;
 }
-
-export const WHATSAPP_NUMBER = '5548991444916';
-export const WHATSAPP_DISPLAY = '(48) 99144-4916';
-export const WHATSAPP_MESSAGE = 'Olá! Preciso de suporte no sistema Valida Imóvel.';
-
-export const getWhatsAppLink = (
-  number = WHATSAPP_NUMBER,
-  msg = WHATSAPP_MESSAGE
-) => {
-  return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
-};
 
 export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
   phoneNumber = WHATSAPP_NUMBER,
