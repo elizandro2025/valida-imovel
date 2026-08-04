@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import {
   ArrowLeft, CheckCircle2, ShieldCheck, Copy, QrCode, CreditCard,
   AlertCircle, FileCheck, Zap, Lock, RefreshCw, Check, ArrowRight,
-  Shield, User, Mail, Loader2, ExternalLink, Sparkles
+  Shield, User, Mail, Loader2, ExternalLink, Sparkles, LogOut
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
