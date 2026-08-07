@@ -65,7 +65,7 @@ async function supabaseUpdateSubscription(
   paymentId: string,
   amount: number
 ) {
-  const expiresAt = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString();
+  const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
 
   const response = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles`, {
     method: 'POST',
@@ -79,7 +79,7 @@ async function supabaseUpdateSubscription(
       user_id: userId,
       has_subscription: true,
       subscription_status: 'active',
-      subscription_plan: 'Plano 6 Meses Ilimitado',
+      subscription_plan: 'Plano 3 Meses Ilimitado',
       subscription_expires_at: expiresAt,
       payment_id: paymentId,
       payment_amount: amount,
@@ -126,13 +126,13 @@ async function handleCreatePayment(request: Request, env: Env): Promise<Response
     return corsResponse({ error: 'JSON inválido no corpo da requisição' }, 400);
   }
 
-  const amount = body.amount || 99.90;
+  const amount = body.amount || 49.90;
   const email = body.email || 'cliente@validaimovel.com.br';
   const firstName = (body.name || 'Cliente').split(' ')[0];
   const lastName = (body.name || 'ValidaImóvel').split(' ').slice(1).join(' ') || 'ValidaImóvel';
-  const description = body.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado';
-  const itemId = body.itemId || 'VALIVM-6M';
-  const itemTitle = body.itemTitle || 'ValidaImóvel — Plano 6 Meses Ilimitado';
+  const description = body.description || 'ValidaImóvel — 3 Meses de Acesso Ilimitado';
+  const itemId = body.itemId || 'VALIVM-3M';
+  const itemTitle = body.itemTitle || 'ValidaImóvel — Plano 3 Meses Ilimitado';
   const cpfClean = (body.cpf || '').replace(/\D/g, '');
   const cpfNumber = cpfClean.length === 11 ? cpfClean : '00000000000';
   const idempotencyKey = `VALIVM-${Date.now()}-${Math.random().toString(36).substr(2, 8)}`;
@@ -215,12 +215,12 @@ async function handleCreatePreference(request: Request, env: Env): Promise<Respo
   const prefBody = {
     items: [
       {
-        id: 'VALIVM-6M',
-        title: 'ValidaImóvel — Plano 6 Meses Ilimitado',
-        description: 'Acesso ilimitado por 180 dias com IA Registrária',
+        id: 'VALIVM-3M',
+        title: 'ValidaImóvel — Plano 3 Meses Ilimitado',
+        description: 'Acesso ilimitado por 90 dias com IA Registrária',
         quantity: 1,
         currency_id: 'BRL',
-        unit_price: 99.90,
+        unit_price: 49.90,
       },
     ],
     payer: { name, email },

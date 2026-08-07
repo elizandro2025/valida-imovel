@@ -78,7 +78,7 @@ const MatriculaAnalysis: React.FC = () => {
                   if (sub.active) {
                     return (
                       <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-extrabold rounded-full">
-                        <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Plano 6 Meses Ilimitado (Ativo)
+                        <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Plano 3 Meses Ilimitado (Ativo)
                       </Badge>
                     );
                   }
@@ -86,7 +86,7 @@ const MatriculaAnalysis: React.FC = () => {
                     <Link to="/pagamento-pix">
                       <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs px-3.5 h-8 rounded-xl shadow-md gap-1.5">
                         <Zap className="w-3.5 h-3.5 fill-white" />
-                        <span>Garantir 6 Meses por R$ 99,90</span>
+                        <span>Garantir 3 Meses por R$ 49,90</span>
                       </Button>
                     </Link>
                   );
@@ -109,7 +109,7 @@ const MatriculaAnalysis: React.FC = () => {
               <Link to="/auth">
                 <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs px-4 h-8 rounded-xl shadow-md gap-1.5">
                   <Zap className="w-3.5 h-3.5 fill-white" />
-                  Criar Conta — R$ 99,90
+                  Criar Conta — R$ 49,90
                 </Button>
               </Link>
             )}

@@ -184,11 +184,11 @@ const LandingPage: React.FC = () => {
     },
     {
       q: 'Como funciona a liberação após o pagamento via Pix?',
-      a: 'A liberação é 100% automática em menos de 5 segundos através do nosso Webhook integrado com o Mercado Pago. O seu acesso de 6 Meses Ilimitados fica disponível imediatamente.'
+      a: 'A liberação é 100% automática em menos de 5 segundos através do nosso Webhook integrado com o Mercado Pago. O seu acesso de 3 Meses Ilimitados fica disponível imediatamente.'
     },
     {
-      q: 'Existe algum limite de uploads durante o período de 6 meses?',
-      a: 'Não! Durante os 6 meses de acesso você pode analisar quantas matrículas imobiliárias desejar sem nenhum custo adicional.'
+      q: 'Existe algum limite de uploads durante o período de 3 meses?',
+      a: 'Não! Durante os 3 meses de acesso você pode analisar quantas matrículas imobiliárias desejar sem nenhum custo adicional.'
     },
     {
       q: 'Seus dados e documentos estão seguros?',
@@ -205,7 +205,7 @@ const LandingPage: React.FC = () => {
           <Flame className="w-4 h-4 text-amber-300 fill-amber-400 shrink-0" />
           <span>OFERTA IMPERDÍVEL</span>
         </div>
-        <span className="tracking-wide">DE <span className="line-through opacity-75">R$ 599,40</span> POR APENAS <strong className="text-amber-300 font-mono text-sm underline decoration-amber-300 underline-offset-2">R$ 99,90</strong> (6 MESES ILIMITADOS)</span>
+        <span className="tracking-wide">DE <span className="line-through opacity-75">R$ 299,70</span> POR APENAS <strong className="text-amber-300 font-mono text-sm underline decoration-amber-300 underline-offset-2">R$ 49,90</strong> (3 MESES ILIMITADOS)</span>
         <div className="bg-slate-950/60 px-3 py-1 rounded-full text-amber-300 font-mono text-xs font-bold flex items-center gap-1.5 border border-amber-400/40 shadow-inner">
           <Timer className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '4s' }} />
           <span>{String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
@@ -263,7 +263,7 @@ const LandingPage: React.FC = () => {
                   <Link to="/pagamento-pix" className="shrink-0">
                     <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs sm:text-sm px-3 sm:px-6 h-9 sm:h-10 shadow-lg shadow-blue-500/40 rounded-xl transition-all gap-1.5 border border-cyan-300/40 shrink-0">
                       <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white shrink-0" />
-                      <span>Garantir R$ 99,90</span>
+                      <span>Garantir R$ 49,90</span>
                     </Button>
                   </Link>
                 )}
@@ -444,7 +444,7 @@ const LandingPage: React.FC = () => {
             <Link to="/auth?tab=register" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto border-slate-700 bg-slate-900 text-slate-200 hover:text-white hover:bg-slate-800 font-extrabold text-sm px-7 py-5.5 rounded-2xl gap-2">
                 <Zap className="w-4 h-4 text-cyan-400" />
-                <span>Criar Conta por R$ 99,90</span>
+                <span>Criar Conta por R$ 49,90</span>
               </Button>
             </Link>
           </div>
@@ -671,7 +671,7 @@ const LandingPage: React.FC = () => {
 
                 <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-2xl space-y-1">
                   <span className="text-[11px] font-extrabold text-cyan-400 uppercase tracking-wider block">Custo por Matrícula</span>
-                  <span className="font-bold text-cyan-300 text-base">Apenas R$ 99,90 (6 Meses Ilimitados)</span>
+                  <span className="font-bold text-cyan-300 text-base">Apenas R$ 49,90 (3 Meses Ilimitados)</span>
                 </div>
 
                 <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-2xl space-y-1">
@@ -827,20 +827,20 @@ const LandingPage: React.FC = () => {
 
             <div className="space-y-3">
               <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-                Acesso Ilimitado por 6 Meses
+                Acesso Ilimitado por 3 Meses
               </h2>
               <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-medium">
-                Analise quantas matrículas quiser por 180 dias. Sem mensalidades adicionais e com transparência total.
+                Analise quantas matrículas quiser por 90 dias. Sem mensalidades adicionais e com transparência total.
               </p>
             </div>
 
             <div className="p-6 bg-slate-900/90 border border-slate-800 rounded-3xl max-w-md mx-auto space-y-4 shadow-inner">
-              <div className="text-xs text-slate-400 line-through font-bold">De R$ 599,40</div>
+              <div className="text-xs text-slate-400 line-through font-bold">De R$ 299,70</div>
               <div className="flex items-baseline justify-center gap-1">
-                <span className="text-5xl sm:text-6xl font-black text-white">R$ 99</span>
+                <span className="text-5xl sm:text-6xl font-black text-white">R$ 49</span>
                 <span className="text-2xl font-extrabold text-white">,90</span>
               </div>
-              <span className="text-xs text-cyan-400 font-extrabold block">Economia de R$ 499,50 • Pagamento Único (Pix ou Cartão)</span>
+              <span className="text-xs text-cyan-400 font-extrabold block">Economia de R$ 249,80 • Pagamento Único (Pix ou Cartão)</span>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3 text-left text-xs text-slate-300 font-semibold max-w-lg mx-auto">
@@ -930,8 +930,8 @@ const LandingPage: React.FC = () => {
       {/* 📌 BARRA FIXA DE CONVERSÃO NO RODAPÉ MOBILE (STICKY BOTTOM CTA) */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 p-3 sm:hidden shadow-2xl backdrop-blur-md flex items-center justify-between gap-3">
         <div>
-          <span className="text-xs font-black text-white block">Valida Imóvel (6 Meses)</span>
-          <span className="text-[11px] font-extrabold text-cyan-400 block">Apenas R$ 99,90</span>
+          <span className="text-xs font-black text-white block">Valida Imóvel (3 Meses)</span>
+          <span className="text-[11px] font-extrabold text-cyan-400 block">Apenas R$ 49,90</span>
         </div>
         <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"}>
           <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md">

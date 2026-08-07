@@ -108,7 +108,7 @@ export const PixPaymentPage: React.FC = () => {
 
     toast({
       title: '🎉 Pagamento Confirmado!',
-      description: 'Seu acesso ilimitado por 6 meses foi liberado instantaneamente!',
+      description: 'Seu acesso ilimitado por 3 meses foi liberado instantaneamente!',
     });
 
     setTimeout(() => {
@@ -168,8 +168,8 @@ export const PixPaymentPage: React.FC = () => {
     setGenerateError(null);
 
     const result = await mercadoPagoService.createPixPayment({
-      transaction_amount: 99.90,
-      description: 'ValidaImóvel — Plano 6 Meses Ilimitado',
+      transaction_amount: 49.90,
+      description: 'ValidaImóvel — Plano 3 Meses Ilimitado',
       userId: user?.id,
       payer: {
         email: targetEmail,
@@ -266,7 +266,7 @@ export const PixPaymentPage: React.FC = () => {
                 Bem-vindo ao ValidaImóvel!
               </h2>
               <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-                Seu plano <strong className="text-cyan-400">6 Meses Ilimitado</strong> foi liberado.<br />
+                Seu plano <strong className="text-cyan-400">3 Meses Ilimitado</strong> foi liberado.<br />
                 Redirecionando você para a plataforma de auditoria em instantes...
               </p>
             </div>
@@ -288,7 +288,7 @@ export const PixPaymentPage: React.FC = () => {
               <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <Badge className="bg-blue-500/20 text-cyan-400 border border-blue-500/30 font-extrabold text-xs px-3 py-1">
-                    ⚡ Acesso Ilimitado • 180 Dias
+                    ⚡ Acesso Ilimitado • 90 Dias
                   </Badge>
                   <div className="flex items-center gap-1.5 text-xs text-amber-400 font-extrabold">
                     <Zap className="w-4 h-4 fill-amber-400" />
@@ -298,7 +298,7 @@ export const PixPaymentPage: React.FC = () => {
 
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                    Plano 6 Meses Ilimitado
+                    Plano 3 Meses Ilimitado
                   </h1>
                   <p className="text-xs text-slate-400 mt-1 font-medium leading-relaxed">
                     Auditoria completa em matrículas e certidões imobiliárias com IA Registrária Ativa.
@@ -307,8 +307,8 @@ export const PixPaymentPage: React.FC = () => {
 
                 <div className="pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
                   <div>
-                    <span className="text-xs text-slate-500 line-through font-bold block">De R$ 599,40</span>
-                    <span className="text-3xl sm:text-4xl font-black text-white">R$ 99,<span className="text-xl">90</span></span>
+                    <span className="text-xs text-slate-500 line-through font-bold block">De R$ 299,70</span>
+                    <span className="text-3xl sm:text-4xl font-black text-white">R$ 49,<span className="text-xl">90</span></span>
                   </div>
                   <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 font-bold text-xs">
                     Economia de 83% OFF
@@ -320,7 +320,7 @@ export const PixPaymentPage: React.FC = () => {
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 space-y-3.5">
                 <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">O que você recebe imediatamente:</h3>
                 {[
-                  'Uploads ilimitados de certidões PDF por 180 dias',
+                  'Uploads ilimitados de certidões PDF por 90 dias',
                   'Auditoria completa nos 12 Módulos Notariais',
                   'Investigação de Cadeia Dominial Cronológica',
                   'Filtro de ônus, penhoras (CNIB) e indisponibilidades',
@@ -494,7 +494,7 @@ export const PixPaymentPage: React.FC = () => {
                           onClick={handleGeneratePixPayment}
                           className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-sm h-13 rounded-2xl shadow-lg shadow-blue-600/20 gap-2 transition-all"
                         >
-                          <QrCode className="w-4 h-4" /> Gerar Chave Pix — R$ 99,90
+                          <QrCode className="w-4 h-4" /> Gerar Chave Pix — R$ 49,90
                         </Button>
                       )}
 
@@ -512,7 +512,7 @@ export const PixPaymentPage: React.FC = () => {
                       <div className="space-y-1">
                         <h3 className="text-base font-bold text-white">Pagamento no Cartão de Crédito</h3>
                         <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                          Parcele a sua licença de 6 meses em até 12x no cartão de crédito com liberação instantânea.
+                          Parcele a sua licença de 3 meses em até 12x no cartão de crédito com liberação instantânea.
                         </p>
                       </div>
 

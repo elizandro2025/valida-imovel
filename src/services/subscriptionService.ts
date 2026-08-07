@@ -69,7 +69,7 @@ export const subscriptionService = {
 
       return {
         active,
-        planName: data.planName || 'Plano 6 Meses Ilimitado',
+        planName: data.planName || 'Plano 3 Meses Ilimitado',
         expiresAt: data.expiresAt || null,
         daysRemaining,
         unlimited: true,
@@ -93,14 +93,14 @@ export const subscriptionService = {
     window.dispatchEvent(new CustomEvent('valida_subscription_updated', { detail: { active: false } }));
   },
 
-  // Ativa 6 meses de acesso ilimitado (chamado após confirmação de pagamento)
+  // Ativa 3 meses de acesso ilimitado (chamado após confirmação de pagamento)
   activate6MonthsUnlimited: async (txId: string = 'PIX-' + Date.now()): Promise<SubscriptionStatus> => {
-    const expiresAt = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
 
     const subData = {
       active: true,
-      planName: 'Plano 6 Meses Ilimitado',
-      price: 99.90,
+      planName: 'Plano 3 Meses Ilimitado',
+      price: 49.90,
       expiresAt,
       unlimited: true,
       txId,
@@ -118,7 +118,7 @@ export const subscriptionService = {
             user_id: user.id,
             has_subscription: true,
             subscription_status: 'active',
-            subscription_plan: 'Plano 6 Meses Ilimitado',
+            subscription_plan: 'Plano 3 Meses Ilimitado',
             subscription_expires_at: expiresAt,
             payment_id: txId,
             updated_at: new Date().toISOString(),
@@ -134,9 +134,9 @@ export const subscriptionService = {
 
     return {
       active: true,
-      planName: 'Plano 6 Meses Ilimitado',
+      planName: 'Plano 3 Meses Ilimitado',
       expiresAt,
-      daysRemaining: 180,
+      daysRemaining: 90,
       unlimited: true,
       txId,
     };

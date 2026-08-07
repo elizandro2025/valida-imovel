@@ -65,12 +65,12 @@ export const mercadoPagoService = {
    * O Access Token fica no Worker — nunca exposto no frontend.
    */
   createPixPayment: async (data: Partial<MercadoPagoPaymentRequest> = {}): Promise<PixPaymentResult> => {
-    const amount = data.transaction_amount || 99.90;
+    const amount = data.transaction_amount || 49.90;
     const email = data.payer?.email || 'cliente@validaimovel.com.br';
     const name = [data.payer?.first_name, data.payer?.last_name].filter(Boolean).join(' ') || 'Cliente';
-    const description = data.description || 'ValidaImóvel — 6 Meses de Acesso Ilimitado';
-    const itemId = data.itemId || 'VALIVM-6M';
-    const itemTitle = data.itemTitle || 'ValidaImóvel — Plano 6 Meses Ilimitado';
+    const description = data.description || 'ValidaImóvel — 3 Meses de Acesso Ilimitado';
+    const itemId = data.itemId || 'VALIVM-3M';
+    const itemTitle = data.itemTitle || 'ValidaImóvel — Plano 3 Meses Ilimitado';
     const userId = data.userId;
     const cpf = data.cpf;
 
@@ -202,7 +202,7 @@ export const mercadoPagoService = {
       pixWebhookService.processWebhookPayload({
         event: 'PIX_CONFIRMED',
         transactionId: txId,
-        amount: 99.90,
+        amount: 49.90,
         currency: 'BRL',
         timestamp: new Date().toISOString(),
       });

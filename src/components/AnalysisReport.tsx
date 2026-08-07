@@ -255,8 +255,8 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
   const handleCopyAllFields = () => {
     if (!isSubscribed) {
       toast({
-        title: "🔒 Recurso Bloqueado — Plano R$ 99,90",
-        description: "Assine o Plano 6 Meses Ilimitados por R$ 99,90 para liberar a cópia rápida de todos os campos.",
+        title: "🔒 Recurso Bloqueado — Plano R$ 49,90",
+        description: "Assine o Plano 3 Meses Ilimitados por R$ 49,90 para liberar a cópia rápida de todos os campos.",
         variant: "destructive"
       });
       return;
@@ -358,8 +358,8 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
   const exportToPDF = async () => {
     if (!isSubscribed) {
       toast({
-        title: "🔒 Dossiê PDF Bloqueado — Plano R$ 99,90",
-        description: "Assine o Plano 6 Meses Ilimitados por R$ 99,90 para exportar o relatório notarial completo em PDF.",
+        title: "🔒 Dossiê PDF Bloqueado — Plano R$ 49,90",
+        description: "Assine o Plano 3 Meses Ilimitados por R$ 49,90 para exportar o relatório notarial completo em PDF.",
         variant: "destructive"
       });
       return;
@@ -1677,10 +1677,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
               Agora Analise Qualquer Matrícula Real<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">por Apenas R$ 16,65/mês</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">por Apenas R$ 16,63/mês</span>
             </h2>
             <p className="text-sm text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
-              Plano 6 Meses Ilimitados — audite quantas matrículas precisar, com Score de Risco, Dossiê PDF e os 12 Módulos Registrais completos.
+              Plano 3 Meses Ilimitados — audite quantas matrículas precisar, com Score de Risco, Dossiê PDF e os 12 Módulos Registrais completos.
             </p>
           </div>
 
@@ -1707,9 +1707,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <div className="text-center">
-                <span className="text-slate-500 text-sm line-through">R$ 599,40</span>
-                <div className="text-4xl font-black text-white">R$ 99<span className="text-2xl">,90</span></div>
-                <span className="text-xs text-cyan-400 font-bold">6 meses ilimitados • pagamento único</span>
+                <span className="text-slate-500 text-sm line-through">R$ 299,70</span>
+                <div className="text-4xl font-black text-white">R$ 49<span className="text-2xl">,90</span></div>
+                <span className="text-xs text-cyan-400 font-bold">3 meses ilimitados • pagamento único</span>
               </div>
             </div>
 
