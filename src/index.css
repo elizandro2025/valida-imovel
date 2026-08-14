@@ -512,12 +512,3 @@ button, [role="button"], a.button {
   box-sizing: border-box;
 }
 
-@media (max-width: 639px) {
-  /* Prevent horizontal text clipping and overflow on mobile devices */
-  button {
-    white-space: normal !important;
-    height: auto !important;
-    word-break: break-word !important;
-    max-width: 100% !important;
-  }
-}

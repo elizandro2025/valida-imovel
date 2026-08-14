@@ -1107,14 +1107,14 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* TAB 2: IA EXPLICA POR PERFIL (5 LINGUAGENS DE NEGÓCIO) */}
         <TabsContent value="perfil" data-tour="step-5" className="mt-5 space-y-6">
-          <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl border border-slate-800 space-y-5">
+          <div className="bg-slate-900 text-white p-4 sm:p-6 rounded-3xl shadow-xl border border-slate-800 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
-                <Bot className="w-6 h-6 stroke-[2.2]" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                <Bot className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-extrabold text-white">
-                  IA Explica — Diagnóstico Notarial por Persona
+                  IA Explica — Diagnóstico Registral por Persona
                 </h3>
                 <p className="text-xs text-slate-300 font-medium mt-0.5">
                   Visualização adaptada para a linguagem exata e prioridades de cada perfil de atuação
@@ -1122,27 +1122,29 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               </div>
             </div>
 
-            {/* Abas dos Perfis */}
-            <div className="flex overflow-x-auto no-scrollbar gap-2 bg-slate-800/90 p-2 rounded-2xl border border-slate-700/80">
-              {[
-                { id: 'comprador', label: '👤 Comprador / Leigo' },
-                { id: 'corretor', label: '🏡 Corretor de Imóveis' },
-                { id: 'banco', label: '🏦 Banco / Crédito' },
-                { id: 'engenheiro', label: '📐 Engenheiro / Agrônomo' },
-                { id: 'advogado', label: '⚖️ Advogado / Parecerista' },
-              ].map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setProfileTab(p.id as any)}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
-                    profileTab === p.id
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
+            {/* Abas dos Perfis — Horizontal Touch Scroll no Mobile */}
+            <div className="w-full overflow-x-auto no-scrollbar ios-scroll p-1.5 bg-slate-950 border border-slate-800 rounded-2xl">
+              <div className="flex items-center gap-2 min-w-max">
+                {[
+                  { id: 'comprador', label: '👤 Comprador / Leigo' },
+                  { id: 'corretor', label: '🏡 Corretor de Imóveis' },
+                  { id: 'banco', label: '🏦 Banco / Crédito' },
+                  { id: 'engenheiro', label: '📐 Engenheiro / Agrônomo' },
+                  { id: 'advogado', label: '⚖️ Advogado / Parecerista' },
+                ].map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setProfileTab(p.id as any)}
+                    className={`px-3.5 py-2.5 rounded-xl text-xs font-black whitespace-nowrap shrink-0 transition-all min-h-[44px] flex items-center gap-1.5 border ${
+                      profileTab === p.id
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
+                        : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>{p.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Conteúdo Adaptado */}
