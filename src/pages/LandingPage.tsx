@@ -215,13 +215,13 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white pb-20 sm:pb-0 overflow-x-hidden w-full">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white pb-20 sm:pb-0 overflow-x-hidden max-w-[100vw] w-full">
       
       {/* Script JSON-LD de SEO */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }} />
 
-      {/* 1. BARRA PROMOCIONAL (PROMO BAR RESPONSIVA) */}
-      <div className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 text-white text-[10px] min-[380px]:text-xs sm:text-sm font-black py-2 px-2.5 sm:px-4 text-center shadow-xl flex items-center justify-center gap-1.5 sm:gap-2.5 flex-wrap relative z-50 border-b border-cyan-400/30">
+      {/* 1. BARRA PROMOCIONAL (PROMO BAR ultra-responsiva) */}
+      <div className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 text-white text-[10px] min-[360px]:text-xs sm:text-sm font-black py-2 px-3 text-center shadow-xl flex items-center justify-center gap-1.5 sm:gap-2.5 flex-wrap relative z-50 border-b border-cyan-400/30 w-full max-w-full leading-snug">
         <div className="flex items-center gap-1 bg-amber-400/20 px-2 py-0.5 rounded-full text-amber-300 border border-amber-400/40 shrink-0">
           <Flame className="w-3 h-3 text-amber-300 fill-amber-400 shrink-0" />
           <span>ACESSO COMPLETO</span>
@@ -229,14 +229,14 @@ export const LandingPage: React.FC = () => {
         <span className="tracking-wide">
           DE <span className="line-through opacity-75">{COMPANY_CONFIG.offer.originalPriceFormatted}</span> POR APENAS <strong className="text-amber-300 font-mono text-xs sm:text-sm underline decoration-amber-300 underline-offset-2">{COMPANY_CONFIG.offer.priceFormatted}</strong> ({COMPANY_CONFIG.offer.period.toUpperCase()} ILIMITADOS)
         </span>
-        <div className="bg-slate-950/60 px-2.5 py-0.5 rounded-full text-amber-300 font-sans text-[10px] sm:text-xs font-bold border border-amber-400/40 shadow-inner hidden min-[480px]:inline-flex">
+        <div className="bg-slate-950/60 px-2.5 py-0.5 rounded-full text-amber-300 font-sans text-[10px] sm:text-xs font-bold border border-amber-400/40 shadow-inner hidden min-[540px]:inline-flex">
           <span>Condição especial de lançamento por tempo limitado</span>
         </div>
       </div>
 
       {/* 2. CABEÇALHO (NAVBAR RESPONSIVA) */}
-      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-2xl border-b border-slate-800/80 text-white shadow-2xl">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
+      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-2xl border-b border-slate-800/80 text-white shadow-2xl w-full">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 w-full">
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0">
@@ -256,7 +256,7 @@ export const LandingPage: React.FC = () => {
             <WhatsAppSupport variant="banner" className="hidden lg:inline-flex" />
             {user ? (
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg sm:rounded-xl max-w-[130px] min-[380px]:max-w-[170px] sm:max-w-[240px]">
+                <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg sm:rounded-xl max-w-[100px] min-[360px]:max-w-[150px] sm:max-w-[240px]">
                   <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0" />
                   <span className="text-[10px] sm:text-xs font-semibold text-slate-300 truncate" title={user.email}>
                     {user.email}
@@ -297,9 +297,9 @@ export const LandingPage: React.FC = () => {
         </div>
       </header>
 
-      <main>
+      <main className="w-full max-w-full overflow-x-hidden">
         {/* 3. HERO SECTION RESPONSIVA */}
-        <section className="relative pt-6 min-[400px]:pt-10 sm:pt-14 lg:pt-16 pb-14 sm:pb-20 overflow-hidden bg-[#040809] text-white border-b border-slate-900 px-3 sm:px-6">
+        <section className="relative pt-6 min-[400px]:pt-10 sm:pt-14 lg:pt-16 pb-14 sm:pb-20 overflow-hidden bg-[#040809] text-white border-b border-slate-900 px-3 sm:px-6 w-full">
           
           {/* Background Ambient Effects */}
           <div 
@@ -309,26 +309,26 @@ export const LandingPage: React.FC = () => {
           <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#040809]/80 via-[#040809]/60 to-[#040809]" />
           <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[700px] h-[300px] sm:h-[400px] bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-6xl mx-auto relative z-10 space-y-6 sm:space-y-8 text-center">
+          <div className="max-w-6xl mx-auto relative z-10 space-y-6 sm:space-y-8 text-center w-full">
             
             {/* Selo Superior */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 sm:py-1.5 rounded-full bg-slate-900/90 border border-blue-500/40 text-cyan-300 text-[10px] sm:text-xs font-black shadow-md backdrop-blur-md max-w-[95vw] leading-tight">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 sm:py-1.5 rounded-full bg-slate-900/90 border border-blue-500/40 text-cyan-300 text-[10px] sm:text-xs font-black shadow-md backdrop-blur-md max-w-[92vw] leading-tight">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
               <span className="truncate">Inteligência registral aplicada à análise imobiliária</span>
             </div>
 
             {/* Título Principal & Subtítulo */}
-            <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto px-1">
-              <h1 className="text-2xl min-[380px]:text-3xl min-[500px]:text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+            <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto px-1 w-full">
+              <h1 className="text-2xl min-[360px]:text-3xl min-[500px]:text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight break-words">
                 Entenda uma matrícula de imóvel em segundos
               </h1>
-              <p className="text-xs min-[380px]:text-sm sm:text-lg text-slate-300 font-medium leading-relaxed max-w-3xl mx-auto">
+              <p className="text-xs min-[360px]:text-sm sm:text-lg text-slate-300 font-medium leading-relaxed max-w-3xl mx-auto">
                 Identifique proprietários, ônus, penhoras, cadeia dominial, dados do imóvel e pontos de atenção com uma análise estruturada por inteligência artificial.
               </p>
             </div>
 
             {/* Botões Principais & Sub-informações */}
-            <div className="space-y-3 sm:space-y-4 max-w-xl mx-auto pt-1 sm:pt-2">
+            <div className="space-y-3 sm:space-y-4 max-w-xl mx-auto pt-1 sm:pt-2 w-full">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 w-full">
                 <Link to="/app?sample=safe" className="w-full sm:w-auto">
                   <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs min-[400px]:text-sm py-3.5 sm:py-5 px-4 sm:px-7 rounded-xl sm:rounded-2xl shadow-xl shadow-blue-500/30 gap-2 h-auto">
@@ -354,48 +354,48 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Aviso Discreto */}
-            <div className="max-w-2xl mx-auto pt-1">
+            <div className="max-w-2xl mx-auto pt-1 w-full">
               <p className="text-[10px] min-[380px]:text-[11px] text-slate-400 bg-slate-900/60 p-2.5 sm:p-3 rounded-xl border border-slate-800/80 leading-relaxed font-medium">
                 ⚠️ <strong className="text-slate-300 font-semibold">Nota responsável:</strong> A análise automatizada auxilia a triagem documental e não substitui matrícula atualizada, certidões oficiais ou orientação profissional.
               </p>
             </div>
 
             {/* Visual Realista do Relatório no Hero (SCORE 8/100 + ÔNUS LIMPO) */}
-            <div className="max-w-4xl mx-auto pt-2 sm:pt-4">
-              <div className="p-3.5 sm:p-6 bg-slate-900/95 border-2 border-blue-500/40 shadow-2xl shadow-blue-500/20 rounded-2xl sm:rounded-3xl backdrop-blur-xl text-left space-y-3.5">
+            <div className="max-w-4xl mx-auto pt-2 sm:pt-4 w-full">
+              <div className="p-3 sm:p-6 bg-slate-900/95 border-2 border-blue-500/40 shadow-2xl shadow-blue-500/20 rounded-2xl sm:rounded-3xl backdrop-blur-xl text-left space-y-3.5 w-full">
                 
-                {/* Header da Prévia */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-wider">Dossiê Registral • Matrícula Nº 47.912</span>
+                {/* Header da Prévia ultra-responsivo */}
+                <div className="flex flex-col min-[480px]:flex-row items-start min-[480px]:items-center justify-between gap-2 border-b border-slate-800 pb-2.5 w-full">
+                  <div className="flex items-center gap-2 min-w-0 max-w-full">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-wider truncate">Dossiê Registral • Matrícula Nº 47.912</span>
                   </div>
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[10px] sm:text-[11px] font-black px-2 py-0.5">
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[9px] sm:text-[11px] font-black px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
                     Score de Risco: 8/100 — Baixo Risco
                   </Badge>
                 </div>
 
                 {/* Grid Visual de Atos Extraídos */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs w-full">
                   
                   {/* Card Proprietários */}
                   <div className="p-2.5 sm:p-3 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl space-y-1">
                     <span className="text-[9px] sm:text-[10px] font-black text-cyan-400 uppercase tracking-wider block">Proprietários (R-3)</span>
-                    <p className="font-bold text-white text-[11px] sm:text-xs">Carlos Eduardo Faria (50%)</p>
-                    <p className="font-bold text-white text-[11px] sm:text-xs">Mariana Silveira Faria (50%)</p>
+                    <p className="font-bold text-white text-[11px] sm:text-xs break-words">Carlos Eduardo Faria (50%)</p>
+                    <p className="font-bold text-white text-[11px] sm:text-xs break-words">Mariana Silveira Faria (50%)</p>
                   </div>
 
                   {/* Card Ônus */}
                   <div className="p-2.5 sm:p-3 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl space-y-1">
                     <span className="text-[9px] sm:text-[10px] font-black text-emerald-400 uppercase tracking-wider block">Ônus & Restrições</span>
-                    <p className="font-bold text-emerald-300 text-[11px] sm:text-xs">Ônus ativos: nenhum identificado no documento analisado</p>
+                    <p className="font-bold text-emerald-300 text-[11px] sm:text-xs break-words">Ônus ativos: nenhum identificado no documento analisado</p>
                   </div>
 
                   {/* Card Cadeia Dominial & CTA */}
                   <div className="p-2.5 sm:p-3 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl space-y-1.5 flex flex-col justify-between">
                     <div>
                       <span className="text-[9px] sm:text-[10px] font-black text-cyan-400 uppercase tracking-wider block">Cadeia Dominial</span>
-                      <p className="font-semibold text-slate-300 text-[11px] sm:text-xs">Reconstrução dos atos do R-1 ao R-3</p>
+                      <p className="font-semibold text-slate-300 text-[11px] sm:text-xs break-words">Reconstrução dos atos do R-1 ao R-3</p>
                     </div>
                     <div className="pt-1">
                       <Link to="/app?sample=safe" className="block w-full">
@@ -415,7 +415,7 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 4. FAIXA CURTA DE CONFIANÇA */}
-        <section className="py-4 sm:py-6 bg-slate-900 border-b border-slate-800 px-3">
+        <section className="py-4 sm:py-6 bg-slate-900 border-b border-slate-800 px-3 w-full">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-[11px] sm:text-xs font-bold text-slate-300 text-center">
             <span className="flex items-center justify-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
@@ -429,8 +429,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 5. DEMONSTRAÇÃO INTERATIVA */}
-        <section id="demonstracao" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
+        <section id="demonstracao" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -445,10 +445,10 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Três opções visuais de demonstração */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full">
               
               {/* Opção 1 — Imóvel Regular (Disponível) */}
-              <Card className="bg-slate-900 border-2 border-cyan-500/60 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between shadow-xl relative">
+              <Card className="bg-slate-900 border-2 border-cyan-500/60 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between shadow-xl relative w-full">
                 <Badge className="bg-cyan-500 text-slate-950 font-black text-[9px] sm:text-[10px] uppercase absolute top-4 right-4">
                   Disponível Agora ⚡
                 </Badge>
@@ -471,7 +471,7 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Opção 2 — Imóvel com Pontos de Atenção */}
-              <Card className="bg-slate-900/50 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80">
+              <Card className="bg-slate-900/50 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
                 <Badge variant="outline" className="border-amber-500/40 text-amber-300 bg-amber-500/10 font-bold text-[9px] sm:text-[10px] uppercase absolute top-4 right-4">
                   Em breve
                 </Badge>
@@ -492,7 +492,7 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Opção 3 — Imóvel com Risco Elevado */}
-              <Card className="bg-slate-900/50 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80">
+              <Card className="bg-slate-900/50 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
                 <Badge variant="outline" className="border-red-500/40 text-red-300 bg-red-500/10 font-bold text-[9px] sm:text-[10px] uppercase absolute top-4 right-4">
                   Em breve
                 </Badge>
@@ -523,8 +523,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 6. PRINCIPAIS RESULTADOS ENTREGUES */}
-        <section className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
+        <section className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -538,8 +538,8 @@ export const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -549,7 +549,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <UserCheck className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -559,7 +559,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -569,17 +569,17 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <h3 className="text-sm sm:text-base font-extrabold text-white">Ônus & Restrições</h3>
                 <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                  Detecção de alienações, hipotecas, penhoras e indisponibilidades anotadas no texto.
+                  Detecção de alienações, hipotecas, penhoras e indisponividades anotadas no texto.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <Compass className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -589,7 +589,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -599,7 +599,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <FileText className="w-4 h-4" />
                 </div>
@@ -609,7 +609,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                   <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -624,8 +624,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 7. PRÉVIA DOS 12 MÓDULOS REGISTRAIS (ABAS DESLIZÁVEIS MOBILE) */}
-        <section id="modulos" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10">
+        <section id="modulos" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -640,38 +640,40 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Categorias das Abas - Touch Momentum Scroll com Suporte a Gestos Mobile */}
-            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar ios-scroll py-2 px-1 max-w-full text-xs snap-x">
-              {moduleCategories.map((cat, idx) => {
-                const Icon = cat.icon;
-                const isActive = activeModuleCategory === idx;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveModuleCategory(idx)}
-                    className={`px-3.5 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 border snap-start ${
-                      isActive
-                        ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30'
-                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
+            <div className="w-full min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar ios-scroll py-2 px-1 max-w-full text-xs snap-x">
+                {moduleCategories.map((cat, idx) => {
+                  const Icon = cat.icon;
+                  const isActive = activeModuleCategory === idx;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveModuleCategory(idx)}
+                      className={`px-3.5 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 border snap-start ${
+                        isActive
+                          ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5 shrink-0" />
+                      <span>{cat.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Conteúdo da Aba Ativa */}
-            <Card className="bg-slate-900 border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4">
+            <Card className="bg-slate-900 border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 w-full">
               <h3 className="text-base sm:text-xl font-black text-white flex items-center gap-2 leading-tight">
                 <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 shrink-0" />
                 <span>{moduleCategories[activeModuleCategory].title}</span>
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1 w-full">
                 {moduleCategories[activeModuleCategory].items.map((item, i) => (
-                  <div key={i} className="p-3 sm:p-3.5 bg-slate-950 border border-slate-800/80 rounded-xl sm:rounded-2xl flex items-start gap-2 text-xs sm:text-sm text-slate-300 font-medium">
+                  <div key={i} className="p-3 sm:p-3.5 bg-slate-950 border border-slate-800/80 rounded-xl sm:rounded-2xl flex items-start gap-2 text-xs sm:text-sm text-slate-300 font-medium w-full">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <span>{item}</span>
+                    <span className="break-words">{item}</span>
                   </div>
                 ))}
               </div>
@@ -684,8 +686,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 8. COPILOTO REGISTRAL DE IA */}
-        <section className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
+        <section className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -699,8 +701,8 @@ export const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-              <div className="lg:col-span-5 space-y-3.5 sm:space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center w-full">
+              <div className="lg:col-span-5 space-y-3.5 sm:space-y-4 w-full">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white">Copiloto Registral de IA</h3>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
                   Pergunte em português simples e receba respostas vinculadas aos atos registrais encontrados no documento enviado.
@@ -720,22 +722,22 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Chat Simulation Card */}
-              <div className="lg:col-span-7">
-                <Card className="bg-slate-950 border-2 border-blue-500/40 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 shadow-xl">
-                  <div className="flex items-center gap-2.5 border-b border-slate-800 pb-2.5">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-600 flex items-center justify-center text-white font-black">
+              <div className="lg:col-span-7 w-full">
+                <Card className="bg-slate-950 border-2 border-blue-500/40 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 shadow-xl w-full">
+                  <div className="flex items-center gap-2.5 border-b border-slate-800 pb-2.5 w-full min-w-0">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-600 flex items-center justify-center text-white font-black shrink-0">
                       <Brain className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
-                    <div>
-                      <h4 className="text-xs font-black text-white">Copiloto Registral de IA</h4>
-                      <span className="text-[10px] text-cyan-400 font-medium block">Consultando Matrícula Rural Nº 47.912</span>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-black text-white truncate">Copiloto Registral de IA</h4>
+                      <span className="text-[10px] text-cyan-400 font-medium block truncate">Consultando Matrícula Rural Nº 47.912</span>
                     </div>
                   </div>
-                  <div className="space-y-2.5 text-xs">
-                    <div className="p-2.5 sm:p-3 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 text-slate-200">
+                  <div className="space-y-2.5 text-xs w-full">
+                    <div className="p-2.5 sm:p-3 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 text-slate-200 break-words">
                       💬 <strong className="text-white">Pergunta:</strong> Quais são os proprietários atuais e existe algum ônus gravado no texto?
                     </div>
-                    <div className="p-2.5 sm:p-3 bg-blue-950/60 border border-blue-500/30 rounded-xl sm:rounded-2xl text-slate-200 space-y-1">
+                    <div className="p-2.5 sm:p-3 bg-blue-950/60 border border-blue-500/30 rounded-xl sm:rounded-2xl text-slate-200 space-y-1 break-words">
                       🤖 <strong className="text-cyan-400">Resposta:</strong> De acordo com as informações presentes no documento analisado, os proprietários atuais são Carlos Eduardo Faria (50%) e Mariana Silveira Faria (50%), conforme R-3. Não foram identificados ônus ativos gravados no documento.
                     </div>
                   </div>
@@ -747,8 +749,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 9. COMO FUNCIONA */}
-        <section id="como-funciona" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
+        <section id="como-funciona" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -762,8 +764,8 @@ export const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
+              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 01</span>
                 <h3 className="text-sm sm:text-base font-extrabold text-white">Envie o PDF</h3>
                 <p className="text-xs text-slate-400 leading-relaxed font-medium">
@@ -771,7 +773,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 02</span>
                 <h3 className="text-sm sm:text-base font-extrabold text-white">Processamento</h3>
                 <p className="text-xs text-slate-400 leading-relaxed font-medium">
@@ -779,7 +781,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 03</span>
                 <h3 className="text-sm sm:text-base font-extrabold text-white">Diagnóstico</h3>
                 <p className="text-xs text-slate-400 leading-relaxed font-medium">
@@ -787,7 +789,7 @@ export const LandingPage: React.FC = () => {
                 </p>
               </Card>
 
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5">
+              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
                 <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 04</span>
                 <h3 className="text-sm sm:text-base font-extrabold text-white">Dossiê PDF</h3>
                 <p className="text-xs text-slate-400 leading-relaxed font-medium">
@@ -800,8 +802,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 10. PARA QUEM É O SISTEMA (PÚBLICOS ATENDIDOS) */}
-        <section id="publicos" className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
+        <section id="publicos" className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -815,11 +817,11 @@ export const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
               {targetAudiences.map((aud, i) => {
                 const Icon = aud.icon;
                 return (
-                  <Card key={i} className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 hover:border-blue-500/40 transition-colors">
+                  <Card key={i} className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 hover:border-blue-500/40 transition-colors w-full">
                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
@@ -831,7 +833,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Mensagem substitutiva */}
-            <div className="p-4 sm:p-6 bg-slate-950/80 border border-slate-800 rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto space-y-2">
+            <div className="p-4 sm:p-6 bg-slate-950/80 border border-slate-800 rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto space-y-2 w-full">
               <ThumbsUp className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400 mx-auto" />
               <h4 className="text-sm sm:text-base font-extrabold text-white">Feito para quem precisa entender uma matrícula com mais rapidez e organização.</h4>
               <p className="text-xs text-slate-400 font-medium">
@@ -843,8 +845,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 11. COMPARATIVO */}
-        <section className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto space-y-8 sm:space-y-12">
+        <section className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-5xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -855,9 +857,9 @@ export const LandingPage: React.FC = () => {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full">
               {/* Lado Tradicional */}
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4">
+              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 w-full">
                 <h3 className="text-base sm:text-lg font-black text-slate-300 pb-2 border-b border-slate-800">Processo Manual Tradicional</h3>
                 <div className="space-y-2.5 text-xs text-slate-400 font-medium">
                   <div className="p-2.5 sm:p-3 bg-slate-950 rounded-xl space-y-0.5">
@@ -876,7 +878,7 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Lado ValidaImóvel */}
-              <Card className="bg-slate-900 border-2 border-blue-500/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 shadow-xl">
+              <Card className="bg-slate-900 border-2 border-blue-500/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 shadow-xl w-full">
                 <h3 className="text-base sm:text-lg font-black text-white pb-2 border-b border-blue-500/30 flex items-center justify-between">
                   <span>ValidaImóvel com IA</span>
                   <Badge className="bg-blue-600 text-white text-[9px] sm:text-[10px]">Recomendado</Badge>
@@ -902,8 +904,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 12. VÍDEO DEMONSTRATIVO */}
-        <section id="video" className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 text-center">
+        <section id="video" className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 text-center w-full">
             
             <div className="space-y-2 sm:space-y-3 max-w-2xl mx-auto">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -917,7 +919,7 @@ export const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-blue-500/40 shadow-2xl bg-slate-950">
+            <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-blue-500/40 shadow-2xl bg-slate-950 max-w-full">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/QRCzsDTiRd0?rel=0"
                 title="Demonstração do Sistema ValidaImóvel"
@@ -932,10 +934,10 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 13. OFERTA */}
-        <section id="oferta" className="py-12 sm:py-20 bg-slate-950 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+        <section id="oferta" className="py-12 sm:py-20 bg-slate-950 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-4xl mx-auto w-full">
             
-            <Card className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border-2 border-blue-500/60 p-5 sm:p-12 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 sm:space-y-8 text-center relative overflow-hidden">
+            <Card className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border-2 border-blue-500/60 p-4 sm:p-12 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 sm:space-y-8 text-center relative overflow-hidden w-full">
               
               <div className="space-y-2 sm:space-y-3">
                 <Badge className="bg-blue-600 text-white font-black text-[10px] sm:text-xs uppercase px-3 py-1 rounded-full mx-auto">
@@ -950,27 +952,27 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Bloco de Preço Responsivo */}
-              <div className="p-4 sm:p-6 bg-slate-950 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-md mx-auto space-y-1.5 shadow-inner">
+              <div className="p-4 sm:p-6 bg-slate-950 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-md mx-auto space-y-1.5 shadow-inner w-full">
                 <div className="text-xs text-slate-400 line-through font-bold">De {COMPANY_CONFIG.offer.originalPriceFormatted}</div>
-                <div className="flex items-baseline justify-center gap-0.5">
-                  <span className="text-4xl min-[380px]:text-5xl sm:text-6xl font-black text-white">R$ 49</span>
-                  <span className="text-xl sm:text-2xl font-extrabold text-white">,90</span>
+                <div className="flex items-baseline justify-center gap-0.5 flex-wrap">
+                  <span className="text-3xl min-[360px]:text-4xl sm:text-6xl font-black text-white">R$ 49</span>
+                  <span className="text-lg sm:text-2xl font-extrabold text-white">,90</span>
                 </div>
                 <span className="text-[11px] sm:text-xs text-cyan-400 font-extrabold block pt-1">
                   Economia de {COMPANY_CONFIG.offer.savingsFormatted} • Pagamento Único ({COMPANY_CONFIG.offer.paymentMethods})
                 </span>
               </div>
 
-              {/* Inclusões da Oferta Responsivas */}
-              <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-3 text-left text-[11px] sm:text-xs text-slate-300 font-medium max-w-xl mx-auto">
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> 12 módulos registrais</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Score de risco registral</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Reconstrução da cadeia dominial</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Identificação de proprietários</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Detecção de ônus e restrições</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Copiloto Registral de IA</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Exportação do relatório em PDF</div>
-                <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Suporte pelo WhatsApp</div>
+              {/* Inclusões da Oferta Responsivas (Grid de 1 coluna em celular para evitar estouro) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-left text-xs sm:text-sm text-slate-300 font-medium max-w-xl mx-auto w-full">
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>12 módulos registrais</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Score de risco registral</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Reconstrução da cadeia dominial</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Identificação de proprietários</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Detecção de ônus e restrições</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Copiloto Registral de IA</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Exportação do relatório em PDF</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Suporte pelo WhatsApp</span></div>
               </div>
 
               {/* Botão de Criação de Conta */}
@@ -994,8 +996,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 14. PERGUNTAS FREQUENTES (FAQ) */}
-        <section id="faq" className="py-12 sm:py-20 bg-slate-900 border-t border-slate-800 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto space-y-8 sm:space-y-10">
+        <section id="faq" className="py-12 sm:py-20 bg-slate-900 border-t border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-4xl mx-auto space-y-8 sm:space-y-10 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3">
               <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
@@ -1006,12 +1008,12 @@ export const LandingPage: React.FC = () => {
               </h2>
             </div>
 
-            <div className="space-y-2.5 sm:space-y-3">
+            <div className="space-y-2.5 sm:space-y-3 w-full">
               {faqs.map((faq, index) => (
                 <div
                   key={index}
                   onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                  className="p-4 sm:p-5 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl cursor-pointer hover:border-blue-500/40 transition-colors space-y-2"
+                  className="p-4 sm:p-5 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl cursor-pointer hover:border-blue-500/40 transition-colors space-y-2 w-full"
                 >
                   <div className="flex items-center justify-between font-bold text-white text-xs sm:text-sm">
                     <span className="pr-2">{faq.q}</span>
@@ -1026,7 +1028,7 @@ export const LandingPage: React.FC = () => {
               ))}
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 w-full">
               <WhatsAppSupport variant="card" />
             </div>
 
@@ -1034,9 +1036,9 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 15. AVISO DE USO RESPONSÁVEL */}
-        <section className="py-8 sm:py-10 bg-slate-950 border-t border-slate-900 px-3 sm:px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <Card className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-1.5 text-[11px] sm:text-xs text-slate-400 font-medium leading-relaxed">
+        <section className="py-8 sm:py-10 bg-slate-950 border-t border-slate-900 px-3 sm:px-6 w-full">
+          <div className="max-w-4xl mx-auto text-center w-full">
+            <Card className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-1.5 text-[11px] sm:text-xs text-slate-400 font-medium leading-relaxed w-full">
               <span className="font-bold text-slate-300 block">⚖️ Uso Responsável e Limites do Sistema</span>
               <p>
                 O ValidaImóvel atua como uma ferramenta tecnológica de apoio à due diligence imobiliária. O relatório gerado pela inteligência artificial é estruturado com base estrita no documento em PDF disponibilizado pelo usuário. A plataforma não realiza consultas em tempo real em cartórios de registro ou órgãos públicos e não emite certidões oficiais.
@@ -1046,11 +1048,11 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 16. RODAPÉ RESPONSIVO */}
-        <footer className="bg-slate-950 text-slate-400 py-10 sm:py-12 border-t border-slate-900 px-3 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+        <footer className="bg-slate-950 text-slate-400 py-10 sm:py-12 border-t border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full">
             
             {/* Bloco de Proteção de Dados */}
-            <div className="p-4 sm:p-6 bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-xs font-medium text-slate-300">
+            <div className="p-4 sm:p-6 bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-xs font-medium text-slate-300 w-full">
               <div className="space-y-1">
                 <span className="font-bold text-cyan-400 block">🔒 Proteção de Conexão</span>
                 <p className="text-slate-400 text-[11px] sm:text-xs">Conexão protegida por HTTPS/TLS e tratamento dos documentos conforme as práticas descritas na Política de Privacidade.</p>
@@ -1062,7 +1064,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Links e Direitos Autorais */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 pt-4 border-t border-slate-900 text-xs">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 pt-4 border-t border-slate-900 text-xs w-full">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
                   <FileCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
