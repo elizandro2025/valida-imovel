@@ -12,6 +12,8 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import LandingPage from "./pages/LandingPage";
 import PixPaymentPage from "./pages/PixPaymentPage";
 import NotFound from "./pages/NotFound";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, RefreshCcw } from "lucide-react";
@@ -116,6 +118,8 @@ const App = () => (
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/pagamento-pix" element={<PixPaymentPage />} />
               <Route path="/pagamento" element={<PixPaymentPage />} />
+              <Route path="/termos" element={<TermsPage />} />
+              <Route path="/privacidade" element={<PrivacyPage />} />
               {/* Rota protegida — exige login, exceto demonstração pública (?sample=safe) */}
               <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
