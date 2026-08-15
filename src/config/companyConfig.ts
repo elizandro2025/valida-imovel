@@ -11,6 +11,8 @@ export const COMPANY_CONFIG = {
   supportEmail: "suporte@validaimovel.com",
   domain: "validaimovel.com",
   canonicalUrl: "https://validaimovel.com/",
+  instagramUrl: "https://www.instagram.com/valida.imovel/",
+  instagramHandle: "@valida.imovel",
   
   // Detalhes da oferta (fixos e protegidos)
   offer: {

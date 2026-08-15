@@ -10,7 +10,7 @@ import {
   FileText, CheckCircle2, Zap, Clock, Compass, Lock, User, LogOut,
   ChevronRight, CreditCard, Check, FileUp, Building2, Scale, HelpCircle,
   MessageCircle, AlertCircle, Flame, TrendingUp, ThumbsUp, Shield, Play,
-  MapPin, Search, Layers, UserCheck, AlertTriangle, FileCode
+  MapPin, Search, Layers, UserCheck, AlertTriangle, FileCode, Instagram
 } from 'lucide-react';
 
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
@@ -253,6 +253,16 @@ export const LandingPage: React.FC = () => {
 
           {/* Navigation Actions */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <a
+              href={COMPANY_CONFIG.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden min-[900px]:inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-amber-500/10 hover:from-purple-500/20 hover:to-amber-500/20 text-pink-400 border border-pink-500/30 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all hover:scale-105"
+              title="Siga o ValidaImóvel no Instagram"
+            >
+              <Instagram className="w-3.5 h-3.5 text-pink-400" />
+              <span>{COMPANY_CONFIG.instagramHandle}</span>
+            </a>
             <WhatsAppSupport variant="banner" className="hidden lg:inline-flex" />
             {user ? (
               <div className="flex items-center gap-1.5 sm:gap-2">
@@ -1075,6 +1085,15 @@ export const LandingPage: React.FC = () => {
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-semibold text-[11px] sm:text-xs">
+                <a
+                  href={COMPANY_CONFIG.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-pink-400 hover:text-pink-300 font-extrabold transition-colors bg-pink-500/10 px-2.5 py-1 rounded-full border border-pink-500/20"
+                >
+                  <Instagram className="w-3.5 h-3.5" />
+                  <span>{COMPANY_CONFIG.instagramHandle}</span>
+                </a>
                 <Link to="/termos" className="hover:text-white transition-colors">Termos de Serviço</Link>
                 <Link to="/privacidade" className="hover:text-white transition-colors">Política de Privacidade</Link>
                 <Link to="/auth?tab=login" className="hover:text-white transition-colors">Já sou usuário</Link>
