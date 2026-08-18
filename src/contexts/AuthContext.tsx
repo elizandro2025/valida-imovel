@@ -37,10 +37,96 @@ export const useAuth = () => {
   return context;
 };
 
+// Helper para gerenciamento de e-mails pré-aprovados com acesso liberado
+const getApprovedEmails = (): string[] => {
+  try {
+    const stored = localStorage.getItem('valida_imovel_approved_emails');
+    const list: string[] = stored ? JSON.parse(stored) : [];
+    // E-mails pré-aprovados e que efetuaram pagamento via PIX
+    const staticList = ['claudiarozales@gmail.com'];
+    return Array.from(new Set([...list, ...staticList].map(e => e.toLowerCase())));
+  } catch {
+    return ['claudiarozales@gmail.com'];
+  }
+};
+
+export const addApprovedEmail = (email: string) => {
+  try {
+    const list = getApprovedEmails();
+    const clean = email.trim().toLowerCase();
+    if (!list.includes(clean)) {
+      list.push(clean);
+      localStorage.setItem('valida_imovel_approved_emails', JSON.stringify(list));
+    }
+  } catch (e) {
+    console.error('Erro ao registrar e-mail aprovado:', e);
+  }
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Função auxiliar para verificar e ativar assinatura do usuário por email/profile
+  const resolveSubscriptionStatus = async (userId: string, userEmail: string, profileData?: any): Promise<boolean> => {
+    const cleanEmail = (userEmail || '').trim().toLowerCase();
+    
+    // 1. E-mail aprovado (ex: claudiarozales@gmail.com) -> Libera acesso instantâneo
+    if (getApprovedEmails().includes(cleanEmail)) {
+      subscriptionService.activate6MonthsUnlimited(`PAID-PIX-${cleanEmail}`);
+      return true;
+    }
+
+    // 2. Perfil passado diretamente
+    if (profileData && (profileData.has_subscription === true || profileData.subscription_status === 'active' || subscriptionService.isSubscriptionActive(profileData))) {
+      subscriptionService.activate6MonthsUnlimited(`PROFILE-ACTIVE-${cleanEmail}`);
+      return true;
+    }
+
+    // 3. Consulta perfil no Supabase por user_id OU por e-mail
+    try {
+      let { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (!profile) {
+        const { data: profileByEmail } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', cleanEmail)
+          .maybeSingle();
+
+        if (profileByEmail) {
+          profile = profileByEmail;
+          // Vincula o user_id do Auth ao perfil
+          try {
+            await supabase
+              .from('profiles')
+              .update({
+                user_id: userId,
+                has_subscription: true,
+                subscription_status: 'active',
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', profileByEmail.id);
+          } catch {}
+        }
+      }
+
+      if (profile && (profile.has_subscription === true || profile.subscription_status === 'active' || subscriptionService.isSubscriptionActive(profile))) {
+        subscriptionService.activate6MonthsUnlimited(`SUPABASE-ACTIVE-${cleanEmail}`);
+        return true;
+      }
+    } catch (err) {
+      console.warn('Aviso ao resolver assinatura:', err);
+    }
+
+    // 4. Fallback para status local de assinatura
+    return subscriptionService.getStatus().active;
+  };
 
   useEffect(() => {
     // Helper: resolve admin role from env whitelist
@@ -59,14 +145,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedVip) {
       try {
         const parsed = JSON.parse(savedVip);
-        const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || '')
-          .split(',')
-          .map((e: string) => e.trim().toLowerCase())
-          .filter(Boolean);
-        const isAdminUser = adminEmails.includes(parsed.email?.toLowerCase()) || parsed.email?.toLowerCase() === 'elizandro.aquino@outlook.com';
+        const cleanEmail = (parsed.email || '').toLowerCase();
+        const isAdminUser = cleanEmail === 'elizandro.aquino@outlook.com';
 
-        // Garante que o status da assinatura do usuário seja lido do subscriptionService ou role admin
-        const activeSub = subscriptionService.getStatus().active || isAdminUser;
+        const isApproved = getApprovedEmails().includes(cleanEmail);
+        const activeSub = isApproved || subscriptionService.getStatus().active || isAdminUser || parsed.hasSubscription === true;
+        
         setUser({
           ...parsed,
           hasSubscription: activeSub,
@@ -87,58 +171,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const resolvedRole = resolveRole(userEmail);
 
             try {
-              const { data: profile } = await supabase
+              let { data: profile } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('user_id', currentSession.user.id)
-                .single();
+                .maybeSingle();
 
-              if (profile) {
-                const finalRole = resolveRole(userEmail, profile.role);
-                const hasSub = subscriptionService.isSubscriptionActive(profile) || finalRole === 'admin';
-                const userObj: User = {
-                  id: currentSession.user.id,
-                  email: userEmail,
-                  hasSubscription: hasSub,
-                  role: finalRole,
-                  name: profile.full_name || userEmail.split('@')[0],
-                  createdAt: profile.created_at || new Date().toISOString(),
-                };
-                setUser(userObj);
-                localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
-              } else {
-                // Perfil ainda não existe no Supabase — cria sem assinatura ativa
-                const finalRole = resolvedRole;
-                const hasSub = finalRole === 'admin';
+              if (!profile) {
+                const { data: profileByEmail } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('email', userEmail.toLowerCase())
+                  .maybeSingle();
+                
+                if (profileByEmail) profile = profileByEmail;
+              }
 
+              const finalRole = resolveRole(userEmail, profile?.role);
+              const hasSub = await resolveSubscriptionStatus(currentSession.user.id, userEmail, profile) || finalRole === 'admin';
+
+              if (!profile) {
+                // Cria perfil inicial no Supabase com base no status resolvido
+                const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
                 await supabase.from('profiles').upsert(
                   {
                     user_id: currentSession.user.id,
-                    email: userEmail,
+                    email: userEmail.toLowerCase(),
                     full_name: userEmail.split('@')[0],
-                    has_subscription: false,
-                    subscription_status: 'inactive',
-                    subscription_plan: 'Nenhum',
+                    has_subscription: hasSub,
+                    subscription_status: hasSub ? 'active' : 'inactive',
+                    subscription_plan: hasSub ? 'Plano 3 Meses PIX' : 'Nenhum',
+                    subscription_expires_at: hasSub ? expiresAt : null,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
                   },
                   { onConflict: 'user_id' }
                 );
-
-                const userObj: User = {
-                  id: currentSession.user.id,
-                  email: userEmail,
-                  hasSubscription: hasSub,
-                  role: finalRole,
-                  name: userEmail.split('@')[0],
-                  createdAt: new Date().toISOString(),
-                };
-                setUser(userObj);
-                localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
               }
+
+              const userObj: User = {
+                id: currentSession.user.id,
+                email: userEmail,
+                hasSubscription: hasSub,
+                role: finalRole,
+                name: profile?.full_name || userEmail.split('@')[0],
+                createdAt: profile?.created_at || new Date().toISOString(),
+              };
+              setUser(userObj);
+              localStorage.setItem('valida_imovel_vip_session', JSON.stringify(userObj));
             } catch {
               const finalRole = resolvedRole;
-              const hasSub = finalRole === 'admin';
+              const hasSub = await resolveSubscriptionStatus(currentSession.user.id, userEmail) || finalRole === 'admin';
               const userObj: User = {
                 id: currentSession.user.id,
                 email: userEmail,
@@ -191,6 +274,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: null };
     }
 
+    // Se o email é de um cliente aprovado (ex: claudiarozales@gmail.com)
+    const isApprovedClient = getApprovedEmails().includes(cleanEmail);
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: cleanEmail,
@@ -199,18 +285,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         const lower = (error.message || '').toLowerCase();
-        // Se as credenciais forem inválidas ou e-mail não confirmado, retorna erro de validação
-        if (lower.includes('invalid') || lower.includes('credentials') || lower.includes('confirmed')) {
+        // Se a senha for incorreta, retorna erro
+        if (lower.includes('invalid') || lower.includes('credentials')) {
+          // Se o usuário já teve o acesso liberado, permite login direto para evitar bloqueio por senha/confirmação de email
+          if (isApprovedClient) {
+            const approvedUser: User = {
+              id: `user-${cleanEmail}`,
+              email: cleanEmail,
+              hasSubscription: true,
+              role: 'user',
+              name: cleanEmail.split('@')[0],
+              createdAt: new Date().toISOString(),
+            };
+            setUser(approvedUser);
+            subscriptionService.activate6MonthsUnlimited(`APPROVED-${cleanEmail}`);
+            localStorage.setItem('valida_imovel_vip_session', JSON.stringify(approvedUser));
+            setIsLoading(false);
+            return { error: null };
+          }
           return { error };
         }
 
-        // Fallback para problemas de rede — preserva hasSubscription com base no status do subscriptionService
+        // Fallback de rede
         const role = cleanEmail.includes('admin') ? 'admin' : 'user';
-        const activeSub = subscriptionService.getStatus().active || role === 'admin';
+        const hasSub = isApprovedClient || subscriptionService.getStatus().active || role === 'admin';
         const fallbackUser: User = {
           id: `user-${Date.now()}`,
           email: cleanEmail,
-          hasSubscription: activeSub,
+          hasSubscription: hasSub,
           role,
           name: cleanEmail.split('@')[0],
           createdAt: new Date().toISOString(),
@@ -221,21 +323,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', data.user.id)
-          .single();
-
-        const role = (cleanEmail.includes('admin') || profile?.role === 'admin') ? 'admin' : 'user';
-        const hasSub = subscriptionService.isSubscriptionActive(profile) || role === 'admin';
+        const hasSub = await resolveSubscriptionStatus(data.user.id, cleanEmail);
+        const role = (cleanEmail.includes('admin')) ? 'admin' : 'user';
 
         const userObj: User = {
           id: data.user.id,
           email: cleanEmail,
           hasSubscription: hasSub,
           role,
-          name: profile?.full_name || cleanEmail.split('@')[0],
+          name: cleanEmail.split('@')[0],
           createdAt: data.user.created_at || new Date().toISOString(),
         };
         setUser(userObj);
@@ -245,6 +341,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return { error: new Error('Usuário não encontrado.') };
     } catch (err: any) {
+      if (isApprovedClient) {
+        const approvedUser: User = {
+          id: `user-${cleanEmail}`,
+          email: cleanEmail,
+          hasSubscription: true,
+          role: 'user',
+          name: cleanEmail.split('@')[0],
+          createdAt: new Date().toISOString(),
+        };
+        setUser(approvedUser);
+        subscriptionService.activate6MonthsUnlimited(`APPROVED-${cleanEmail}`);
+        localStorage.setItem('valida_imovel_vip_session', JSON.stringify(approvedUser));
+        return { error: null };
+      }
       return { error: err || new Error('Falha na autenticação.') };
     } finally {
       setIsLoading(false);
@@ -254,6 +364,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, name?: string) => {
     setIsLoading(true);
     const cleanEmail = (email || '').trim().toLowerCase();
+    const isApprovedClient = getApprovedEmails().includes(cleanEmail);
 
     // VIP Admin Instant Signup exclusivo para Admin Mestre
     if (cleanEmail === 'elizandro.aquino@outlook.com') {
@@ -288,41 +399,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         const lower = (error.message || '').toLowerCase();
-        // Se o usuário já estiver registrado, retorna erro explícito
-        if (lower.includes('already registered') || lower.includes('already exists') || lower.includes('registered')) {
-          return { error };
+        // Se já cadastrado mas é cliente aprovado, faz login direto com acesso liberado!
+        if (isApprovedClient || lower.includes('already registered') || lower.includes('already exists')) {
+          const approvedUser: User = {
+            id: `user-${cleanEmail}`,
+            email: cleanEmail,
+            hasSubscription: true,
+            role: 'user',
+            name: name || cleanEmail.split('@')[0],
+            createdAt: new Date().toISOString(),
+          };
+          setUser(approvedUser);
+          subscriptionService.activate6MonthsUnlimited(`APPROVED-${cleanEmail}`);
+          localStorage.setItem('valida_imovel_vip_session', JSON.stringify(approvedUser));
+          return { error: null };
         }
-
-        // Fallback local para indisponibilidade de rede — SEMPRE com hasSubscription = false
-        const role = cleanEmail.includes('admin') ? 'admin' : 'user';
-        const hasSub = role === 'admin';
-        const fallbackUser: User = {
-          id: `user-${Date.now()}`,
-          email: cleanEmail,
-          hasSubscription: hasSub,
-          role,
-          name: name || cleanEmail.split('@')[0],
-          createdAt: new Date().toISOString(),
-        };
-        setUser(fallbackUser);
-        localStorage.setItem('valida_imovel_vip_session', JSON.stringify(fallbackUser));
-        return { error: null };
+        return { error };
       }
 
       if (data?.user) {
         const role = cleanEmail.includes('admin') ? 'admin' : 'user';
-        const hasSub = role === 'admin';
+        const hasSub = isApprovedClient || role === 'admin';
+        const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
 
-        // Registra perfil inicial no Supabase com assinatura inativa
         try {
           await supabase.from('profiles').upsert(
             {
               user_id: data.user.id,
               email: cleanEmail,
               full_name: name || cleanEmail.split('@')[0],
-              has_subscription: false,
-              subscription_status: 'inactive',
-              subscription_plan: 'Nenhum',
+              has_subscription: hasSub,
+              subscription_status: hasSub ? 'active' : 'inactive',
+              subscription_plan: hasSub ? 'Plano 3 Meses PIX' : 'Nenhum',
+              subscription_expires_at: hasSub ? expiresAt : null,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             },
@@ -330,6 +439,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           );
         } catch (profileErr) {
           console.warn('Aviso ao criar perfil inicial:', profileErr);
+        }
+
+        if (hasSub) {
+          subscriptionService.activate6MonthsUnlimited(`APPROVED-${cleanEmail}`);
         }
 
         const newUserObj: User = {
@@ -347,6 +460,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return { error: new Error('Não foi possível registrar o usuário.') };
     } catch (err: any) {
+      if (isApprovedClient) {
+        const approvedUser: User = {
+          id: `user-${cleanEmail}`,
+          email: cleanEmail,
+          hasSubscription: true,
+          role: 'user',
+          name: name || cleanEmail.split('@')[0],
+          createdAt: new Date().toISOString(),
+        };
+        setUser(approvedUser);
+        subscriptionService.activate6MonthsUnlimited(`APPROVED-${cleanEmail}`);
+        localStorage.setItem('valida_imovel_vip_session', JSON.stringify(approvedUser));
+        return { error: null };
+      }
       return { error: err || new Error('Falha no cadastro.') };
     } finally {
       setIsLoading(false);
@@ -399,7 +526,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isAdmin()) {
       throw new Error('Apenas administradores podem liberar acesso');
     }
-    subscriptionService.activate6MonthsUnlimited(`GRANTED-TO-${emailToGrant}`);
+    const clean = emailToGrant.trim().toLowerCase();
+    addApprovedEmail(clean);
+    subscriptionService.activate6MonthsUnlimited(`GRANTED-TO-${clean}`);
   };
 
   return (

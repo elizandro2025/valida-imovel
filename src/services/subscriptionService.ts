@@ -31,11 +31,10 @@ export const isSubscriptionActive = (profile?: ProfileSubscriptionData | null): 
   if (!profile) return false;
   const hasSub = profile.has_subscription === true;
   const isStatusActive = profile.subscription_status === 'active';
-  const notExpired = Boolean(
-    profile.subscription_expires_at &&
-    new Date(profile.subscription_expires_at).getTime() > Date.now()
-  );
-  return hasSub && isStatusActive && notExpired;
+  const notExpired = profile.subscription_expires_at
+    ? new Date(profile.subscription_expires_at).getTime() > Date.now()
+    : true;
+  return (hasSub || isStatusActive) && notExpired;
 };
 
 const SUB_STORAGE_KEY = 'valida_imovel_subscription';
