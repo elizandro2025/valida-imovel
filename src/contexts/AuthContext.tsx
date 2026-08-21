@@ -306,7 +306,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return { error };
         }
 
-        // Fallback de rede
+        // Erro de rede/Supabase pausado — libera cliente aprovado localmente
+        const isNetworkError = !lower.includes('invalid') && !lower.includes('credentials') && !lower.includes('wrong');
+        if (isApprovedClient && isNetworkError) {
+          const approvedUser: User = {
+            id: `user-${cleanEmail}`,
+            email: cleanEmail,
+            hasSubscription: true,
+            role: 'user',
+            name: cleanEmail.split('@')[0],
+            createdAt: new Date().toISOString(),
+          };
+          setUser(approvedUser);
+          subscriptionService.activate6MonthsUnlimited(`APPROVED-${cleanEmail}`);
+          localStorage.setItem('valida_imovel_vip_session', JSON.stringify(approvedUser));
+          setIsLoading(false);
+          return { error: null };
+        }
+
+        // Fallback de rede para outros casos
         const role = cleanEmail.includes('admin') ? 'admin' : 'user';
         const hasSub = isApprovedClient || subscriptionService.getStatus().active || role === 'admin';
         const fallbackUser: User = {
@@ -527,8 +545,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error('Apenas administradores podem liberar acesso');
     }
     const clean = emailToGrant.trim().toLowerCase();
+
+    // 1. Adiciona à lista local de aprovados (fallback imediato neste dispositivo)
     addApprovedEmail(clean);
-    subscriptionService.activate6MonthsUnlimited(`GRANTED-TO-${clean}`);
+
+    // 2. Persiste no Supabase — garante acesso em QUALQUER dispositivo/celular
+    const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+    try {
+      // Tenta encontrar o perfil existente pelo e-mail
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id, user_id')
+        .eq('email', clean)
+        .maybeSingle();
+
+      if (existingProfile) {
+        // Usuário já tem perfil: atualiza assinatura
+        await supabase
+          .from('profiles')
+          .update({
+            has_subscription: true,
+            subscription_status: 'active',
+            subscription_plan: 'Plano 3 Meses Ilimitado',
+            subscription_expires_at: expiresAt,
+            payment_id: `GRANTED-BY-ADMIN-${Date.now()}`,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingProfile.id);
+      } else {
+        // Usuário ainda não tem perfil: cria já com assinatura ativa
+        // (quando ele se cadastrar, o onAuthStateChange vai sincronizar o user_id)
+        await supabase.from('profiles').insert({
+          email: clean,
+          full_name: clean.split('@')[0],
+          has_subscription: true,
+          subscription_status: 'active',
+          subscription_plan: 'Plano 3 Meses Ilimitado',
+          subscription_expires_at: expiresAt,
+          payment_id: `GRANTED-BY-ADMIN-${Date.now()}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      }
+      console.log(`✅ Acesso concedido a ${clean} no Supabase até ${expiresAt}`);
+    } catch (err) {
+      console.error('Erro ao conceder acesso no Supabase:', err);
+      throw new Error(`Acesso liberado localmente, mas falha ao salvar no banco: ${err}`);
+    }
   };
 
   return (

@@ -35,10 +35,14 @@ export function useMatriculaAnalysis() {
     }));
   }, []);
 
-  const processFile = useCallback(async (file: File) => {
-    // 🛡️ Strict Paywall Check
+  const processFile = useCallback(async (file: File, hasSubscriptionOverride?: boolean) => {
+    // 🛡️ Paywall Check — prioriza o status resolvido pelo AuthContext (Supabase + lista aprovada)
+    // O override vem do user.hasSubscription do AuthContext, que já verificou Supabase e e-mails aprovados.
+    // Caso não informado, cai para o localStorage como fallback (ex: demo/embedding).
     const subStatus = subscriptionService.getStatus();
-    if (!subStatus.active) {
+    const isActive = hasSubscriptionOverride === true || subStatus.active;
+
+    if (!isActive) {
       setState(prev => ({
         ...prev,
         file: null,

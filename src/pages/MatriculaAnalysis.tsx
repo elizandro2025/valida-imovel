@@ -33,8 +33,8 @@ const MatriculaAnalysis: React.FC = () => {
   }, [hasSampleParam, analysis.report, analysis.isProcessing]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) analysis.processFile(acceptedFiles[0]);
-  }, [analysis.processFile]);
+    if (acceptedFiles.length > 0) analysis.processFile(acceptedFiles[0], user?.hasSubscription);
+  }, [analysis.processFile, user?.hasSubscription]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -189,7 +189,7 @@ const MatriculaAnalysis: React.FC = () => {
                   </div>
                 ) : (
                   <FileUpload
-                    onFileSelect={analysis.processFile}
+                    onFileSelect={(f) => analysis.processFile(f, user?.hasSubscription)}
                     selectedFile={analysis.file}
                     onClearFile={analysis.clearFile}
                     isProcessing={analysis.isProcessing}
