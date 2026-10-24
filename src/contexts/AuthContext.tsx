@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', userId)
+        .eq('id', userId) // profiles.id é o id do usuário no Supabase Auth
         .maybeSingle();
 
       if (!profile) {
@@ -174,7 +174,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               let { data: profile } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('user_id', currentSession.user.id)
+                .eq('id', currentSession.user.id)
                 .maybeSingle();
 
               if (!profile) {

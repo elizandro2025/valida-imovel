@@ -145,8 +145,9 @@ export const AdminDashboard: React.FC = () => {
     const expiresAt = newStatus ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() : null;
 
     try {
-      if (userItem.user_id) {
-        await supabase
+      // profiles.id é o id do usuário no Supabase Auth ('admin-master' é só o card fixo do admin)
+      if (userItem.id && userItem.id !== 'admin-master') {
+        const { error } = await supabase
           .from('profiles')
           .update({
             has_subscription: newStatus,
@@ -154,7 +155,8 @@ export const AdminDashboard: React.FC = () => {
             subscription_expires_at: expiresAt,
             updated_at: new Date().toISOString(),
           })
-          .eq('user_id', userItem.user_id);
+          .eq('id', userItem.id);
+        if (error) throw error;
       }
 
       toast({
