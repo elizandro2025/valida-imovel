@@ -35,5 +35,13 @@ jobs:
       - name: Testes
         run: npm test
 
+      - name: Chrome (pré-renderização)
+        run: google-chrome --version
+
+      # A pré-renderização executa o app: o cliente do Supabase exige URL e chave, mas as páginas públicas
+      # não consultam o banco sem login. Valores fictícios bastam aqui; o build publicado usa o .env local.
       - name: Build
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://ci-placeholder.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: ci-placeholder
