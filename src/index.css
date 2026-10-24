@@ -4,7 +4,7 @@
 
 /* Design system ValidaImóvel — identidade clara inspirada na Apple:
    fundo cinza-claro (#f5f5f7) com cartões brancos, texto #1d1d1f, um único azul de destaque (#0071e3),
-   cores de status da Apple, tipografia San Francisco (Inter fora do ecossistema Apple), sombras sutis.
+   cores de status da Apple, tipografia do sistema (San Francisco na Apple, Segoe UI no Windows, Roboto no Android), sombras sutis.
    Todas as cores em HSL. */
 
 @layer base {
@@ -19,8 +19,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 3% 12%;
 
-    /* Azul de destaque (ações e links) */
-    --primary: 211 100% 45%;          /* #0071e3 */
+    /* Azul de destaque (ações e links) — tom acessível: 4,9:1 sobre fundos tingidos */
+    --primary: 211 100% 40%;          /* #0066cc */
     --primary-foreground: 0 0% 100%;
     --primary-glow: 211 100% 55%;
     --primary-muted: 211 100% 45% / 0.08;
@@ -31,27 +31,27 @@
 
     /* Botões secundários e divisões mais marcadas */
     --muted: 240 6% 92%;              /* #e8e8ed */
-    --muted-foreground: 240 2% 44%;   /* #6e6e73 — texto secundário */
+    --muted-foreground: 240 2% 40%;   /* #646468 — texto secundário (≥4,5:1 em todos os fundos) */
 
     /* Hover de menus (shadcn) */
     --accent: 240 11% 96%;
     --accent-foreground: 240 3% 12%;
     --accent-glow: 211 100% 55%;
 
-    /* Status (paleta Apple) */
-    --success: 135 59% 40%;           /* verde legível sobre branco */
+    /* Status (variantes acessíveis da paleta Apple: texto pequeno ≥4,5:1 também sobre fundo tingido a 10%) */
+    --success: 137 65% 28%;           /* verde */
     --success-foreground: 0 0% 100%;
-    --warning: 30 100% 45%;           /* laranja legível sobre branco */
+    --warning: 25 100% 33%;           /* laranja escuro */
     --warning-foreground: 0 0% 100%;
-    --info: 211 100% 45%;
+    --info: 211 100% 40%;
     --info-foreground: 0 0% 100%;
-    --destructive: 3 100% 48%;        /* vermelho */
+    --destructive: 354 100% 40%;      /* vermelho */
     --destructive-foreground: 0 0% 100%;
 
     /* Linhas finas */
     --border: 240 6% 87%;             /* #dcdce1 */
     --input: 240 6% 84%;              /* #d2d2d7 */
-    --ring: 211 100% 45%;
+    --ring: 211 100% 40%;
 
     --radius: 0.875rem;
 
@@ -80,8 +80,8 @@
     --transition-elastic: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
 
     /* Tipografia */
-    --font-heading: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif;
-    --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    --font-heading: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
     /* Sidebar (shadcn) */
     --sidebar-background: 0 0% 100%;

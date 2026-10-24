@@ -6,19 +6,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
 import {
-  FileCheck, ShieldCheck, Upload, ArrowRight, Sparkles, Brain, ShieldAlert,
+  ShieldCheck, ArrowRight, Sparkles, Brain, ShieldAlert,
   FileText, CheckCircle2, Zap, Clock, Compass, Lock, User, LogOut,
-  ChevronRight, CreditCard, Check, FileUp, Building2, Scale, HelpCircle,
-  MessageCircle, AlertCircle, Flame, TrendingUp, ThumbsUp, Shield, Play,
-  MapPin, Search, Layers, UserCheck, AlertTriangle, FileCode, Instagram
+  ChevronRight, CreditCard, Check, Building2, Scale,
+  MessageCircle, AlertCircle, TrendingUp, ThumbsUp,
+  Search, Layers, UserCheck, AlertTriangle, FileCode, Instagram
 } from 'lucide-react';
 
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { Logo } from '@/components/Logo';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 export const LandingPage: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  usePageMeta(null, '/');
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [activeModuleCategory, setActiveModuleCategory] = useState<number>(0);
 
@@ -142,7 +144,7 @@ export const LandingPage: React.FC = () => {
     {
       title: 'Leiloeiros & Investidores',
       icon: TrendingUp,
-      benefit: 'Filtre dezenas de certidões por lote em minutos, identificando instantaneamente penhoras, hipotecas e gravames antes de arrematar.'
+      benefit: 'Analise cada certidão do edital em poucos minutos e veja penhoras, hipotecas e indisponibilidades antes de dar o lance.'
     },
     {
       title: 'Engenheiros & Agrimensores',
@@ -172,15 +174,19 @@ export const LandingPage: React.FC = () => {
     },
     {
       q: 'Como funciona o pagamento de R$ 49,90 e a liberação?',
-      a: 'O pagamento é único via Pix ou cartão. Após a confirmação, o acesso ilimitado por 3 meses (90 dias) é liberado imediatamente na sua conta.'
+      a: 'O pagamento é único, via Pix ou cartão, sem renovação automática. Assim que o pagamento é confirmado, o acesso de 3 meses (90 dias) é liberado automaticamente na sua conta. Se renovar antes do fim, os dias que faltavam são somados.'
     },
     {
-      q: 'Existe limite de uploads durante o período de 3 meses?',
-      a: 'Não. Durante os 90 dias de acesso ativo você pode enviar e analisar quantas matrículas imobiliárias precisar, sem custos adicionais por documento.'
+      q: 'Existe limite de análises durante os 3 meses?',
+      a: `Não há cobrança por documento. Para manter o serviço estável para todos, vale o uso justo de até ${COMPANY_CONFIG.offer.fairUseDailyLimit} análises por dia por conta, o que atende com folga o trabalho de escritórios e corretores.`
     },
     {
-      q: 'Como é garantida a segurança e privacidade dos meus documentos?',
-      a: 'A conexão é protegida por HTTPS/TLS e o tratamento dos documentos segue estritamente as práticas descritas na Política de Privacidade.'
+      q: 'A análise pode errar?',
+      a: 'Pode. A leitura é feita por inteligência artificial e o sistema confere automaticamente CPFs, números de atos e trechos citados, avisando o que não conseguiu confirmar. Mesmo assim, confira os pontos decisivos na certidão e, em negócios relevantes, consulte um advogado.'
+    },
+    {
+      q: 'Como meus documentos são tratados?',
+      a: 'O PDF é enviado por conexão segura (HTTPS) e lido pela API de IA do Google. O arquivo não fica guardado nos nossos servidores; o relatório gerado fica salvo na sua conta, em "Minhas análises", e você pode apagá-lo quando quiser. Detalhes na Política de Privacidade.'
     }
   ];
 
@@ -223,10 +229,9 @@ export const LandingPage: React.FC = () => {
 
       {/* 1. BARRA PROMOCIONAL */}
       <div className="w-full bg-card border-b border-border text-center text-[13px] leading-snug text-foreground py-2.5 px-4">
-        Lançamento: {COMPANY_CONFIG.offer.period} de acesso ilimitado por{' '}
-        <strong className="font-semibold">{COMPANY_CONFIG.offer.priceFormatted}</strong>{' '}
-        <span className="text-muted-foreground line-through">{COMPANY_CONFIG.offer.originalPriceFormatted}</span>
-        <Link to="/auth?tab=register" className="text-primary hover:underline ml-2 whitespace-nowrap">Garantir agora ›</Link>
+        {COMPANY_CONFIG.offer.period} de acesso por{' '}
+        <strong className="font-semibold">{COMPANY_CONFIG.offer.priceFormatted}</strong>, pagamento único
+        <Link to="/auth?tab=register" className="text-primary underline underline-offset-2 ml-2 whitespace-nowrap">Começar ›</Link>
       </div>
 
       {/* 2. CABEÇALHO */}
@@ -301,7 +306,7 @@ export const LandingPage: React.FC = () => {
             <div className="space-y-4 max-w-3xl mx-auto w-full">
               <p className="text-primary text-sm sm:text-base font-semibold">Inteligência registral para análise imobiliária</p>
               <h1 className="text-[40px] leading-[1.08] sm:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground break-words">
-                Entenda uma matrícula em segundos.
+                Entenda uma matrícula em minutos.
               </h1>
               <p className="text-lg sm:text-2xl text-muted-foreground leading-snug max-w-2xl mx-auto">
                 Proprietários, ônus, penhoras e cadeia dominial organizados por inteligência artificial.
@@ -339,10 +344,10 @@ export const LandingPage: React.FC = () => {
                 <div className="flex flex-col min-[480px]:flex-row items-start min-[480px]:items-center justify-between gap-2 border-b border-border pb-2.5 w-full">
                   <div className="flex items-center gap-2 min-w-0 max-w-full">
                     <div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse shrink-0" />
-                    <span className="text-xs sm:text-xs font-semibold text-foreground truncate">Dossiê Registral • Matrícula Nº 47.912</span>
+                    <span className="text-xs sm:text-xs font-semibold text-foreground truncate">Exemplo • Matrícula Nº 47.912 (dados fictícios)</span>
                   </div>
-                  <Badge className="bg-success/20 text-success border-success/30 text-xs sm:text-xs font-semibold px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
-                    Score de Risco: 8/100 — Baixo Risco
+                  <Badge className="bg-success/10 text-success border-success/30 text-xs sm:text-xs font-semibold px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
+                    Nota de risco: 8/100 — Baixo
                   </Badge>
                 </div>
 
@@ -447,7 +452,7 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Opção 2 — Imóvel com Pontos de Atenção */}
-              <Card className="relative bg-card/50 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
+              <Card className="relative bg-card border border-dashed border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between w-full">
                 <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Em breve
                 </Badge>
@@ -468,23 +473,22 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Opção 3 — Imóvel com Risco Elevado */}
-              <Card className="relative bg-card/50 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
-                <Badge variant="outline" className="border-destructive/30 text-destructive bg-destructive/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
-                  Em breve
-                </Badge>
+              <Card className="relative bg-card border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between w-full">
                 <div className="space-y-2.5 pt-1">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center font-semibold">
                     <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-semibold text-foreground">Gleba com Risco Elevado</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-foreground">Sítio com Risco Elevado</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                    Demonstração contendo averbações de penhora judicial e ação de execução anotada no texto.
+                    Demonstração com embargo ambiental averbado e hipoteca rural ainda ativa.
                   </p>
                 </div>
                 <div className="pt-1">
-                  <Button disabled variant="outline" className="w-full border-border text-muted-foreground text-xs h-10">
-                    Em breve
-                  </Button>
+                  <Link to="/app?sample=risk" className="block w-full">
+                    <Button variant="outline" className="w-full text-xs h-10 sm:h-11 gap-1.5">
+                      <ShieldAlert className="w-3.5 h-3.5 text-destructive" /> <span>Ver exemplo com risco</span>
+                    </Button>
+                  </Link>
                 </div>
               </Card>
 
@@ -862,11 +866,11 @@ export const LandingPage: React.FC = () => {
                 <div className="space-y-2.5 text-xs text-muted-foreground font-medium">
                   <div className="p-2.5 sm:p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-0.5">
                     <span className="text-xs font-semibold text-primary block">Tempo de Análise</span>
-                    <p className="text-foreground font-semibold">Processamento estruturado em segundos</p>
+                    <p className="text-foreground font-semibold">Relatório estruturado em poucos minutos</p>
                   </div>
                   <div className="p-2.5 sm:p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-0.5">
                     <span className="text-xs font-semibold text-primary block">Custo por Documento</span>
-                    <p className="text-foreground font-semibold">Apenas R$ 49,90 por 3 meses de análises ilimitadas</p>
+                    <p className="text-foreground font-semibold">R$ 49,90 por 3 meses, sem cobrança por documento</p>
                   </div>
                   <div className="p-2.5 sm:p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-0.5">
                     <span className="text-xs font-semibold text-primary block">Organização</span>
@@ -916,37 +920,33 @@ export const LandingPage: React.FC = () => {
             <Card className="border-2 border-primary/30 p-4 sm:p-12 rounded-2xl sm:rounded-3xl shadow-medium space-y-6 sm:space-y-8 text-center relative overflow-hidden w-full bg-background">
               
               <div className="space-y-2 sm:space-y-3">
-                <Badge className="bg-primary text-white font-semibold text-xs sm:text-xs px-3 py-1 rounded-full mx-auto">
-                  Oferta de Lançamento
-                </Badge>
                 <h2 className="text-2xl min-[380px]:text-3xl sm:text-5xl font-semibold text-foreground tracking-tight">
                   Acesso completo por três meses
                 </h2>
                 <p className="text-xs sm:text-base text-muted-foreground max-w-xl mx-auto font-medium leading-relaxed">
-                  Analise quantas matrículas precisar durante 90 dias e utilize todos os recursos disponíveis na plataforma.
+                  Sem cobrança por documento: analise as matrículas do seu dia a dia durante 90 dias, com uso justo de até {COMPANY_CONFIG.offer.fairUseDailyLimit} análises por dia.
                 </p>
               </div>
 
               {/* Bloco de Preço Responsivo */}
               <div className="p-4 sm:p-6 bg-background border border-border rounded-2xl sm:rounded-3xl max-w-md mx-auto space-y-1.5 shadow-inner w-full">
-                <div className="text-xs text-muted-foreground line-through font-semibold">De {COMPANY_CONFIG.offer.originalPriceFormatted}</div>
                 <div className="flex items-baseline justify-center gap-0.5 flex-wrap">
                   <span className="text-3xl min-[360px]:text-4xl sm:text-6xl font-semibold text-foreground">R$ 49</span>
                   <span className="text-lg sm:text-2xl font-semibold text-foreground">,90</span>
                 </div>
-                <span className="text-xs sm:text-xs text-primary font-semibold block pt-1">
-                  Economia de {COMPANY_CONFIG.offer.savingsFormatted} • Pagamento Único ({COMPANY_CONFIG.offer.paymentMethods})
+                <span className="text-xs sm:text-xs text-muted-foreground font-semibold block pt-1">
+                  Equivale a {COMPANY_CONFIG.offer.monthlyEquivalentFormatted}/mês • Pagamento único ({COMPANY_CONFIG.offer.paymentMethods}) • Sem renovação automática
                 </span>
               </div>
 
               {/* Inclusões da Oferta Responsivas (Grid de 1 coluna em celular para evitar estouro) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-left text-xs sm:text-sm text-muted-foreground font-medium max-w-xl mx-auto w-full">
                 <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>12 módulos registrais</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Score de risco registral</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Nota de risco com o trecho que a embasa</span></div>
                 <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Reconstrução da cadeia dominial</span></div>
                 <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Identificação de proprietários</span></div>
                 <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Detecção de ônus e restrições</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Copiloto Registral de IA</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Histórico das suas análises</span></div>
                 <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Exportação do relatório em PDF</span></div>
                 <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Suporte pelo WhatsApp</span></div>
               </div>
@@ -1053,6 +1053,7 @@ export const LandingPage: React.FC = () => {
                   <Instagram className="w-3.5 h-3.5" />
                   <span>{COMPANY_CONFIG.instagramHandle}</span>
                 </a>
+                <Link to="/guia/como-ler-matricula" className="hover:text-foreground transition-colors">Como ler uma matrícula</Link>
                 <Link to="/termos" className="hover:text-foreground transition-colors">Termos de Serviço</Link>
                 <Link to="/privacidade" className="hover:text-foreground transition-colors">Política de Privacidade</Link>
                 <Link to="/auth?tab=login" className="hover:text-foreground transition-colors">Já sou usuário</Link>
@@ -1071,7 +1072,7 @@ export const LandingPage: React.FC = () => {
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 border-t border-border p-2.5 sm:hidden shadow-medium backdrop-blur-md flex items-center justify-between gap-2 max-w-full">
           <div className="min-w-0">
             <span className="text-xs font-semibold text-foreground block truncate">ValidaImóvel (3 Meses)</span>
-            <span className="text-xs font-semibold text-primary block truncate">R$ 49,90 • Acesso Ilimitado</span>
+            <span className="text-xs font-semibold text-primary block truncate">R$ 49,90 • 3 meses de acesso</span>
           </div>
           <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="shrink-0">
             <Button size="sm" className="bg-primary hover:bg-primary text-white font-semibold text-xs px-3 py-2">

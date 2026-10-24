@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { adminService } from '@/services/adminService';
+import { adminService, AdminMetrics, UnlinkedPayment } from '@/services/adminService';
+import { usePageMeta } from '@/hooks/usePageMeta';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -40,23 +41,46 @@ export const AdminDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
+  const [metricsError, setMetricsError] = useState<string | null>(null);
+  const [linkEmails, setLinkEmails] = useState<Record<string, string>>({});
+  usePageMeta('Painel administrativo', '/admin');
 
-  // Busca a lista de usuários pela API (o servidor confere se quem pede é admin)
+  // Busca a lista de usuários e as métricas pela API (o servidor confere se quem pede é admin)
   const fetchUsers = async () => {
     setIsLoadingUsers(true);
     try {
       setUsersList(await adminService.listUsers() as UserProfile[]);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Falha ao carregar usuários:', err);
-      toast({ title: 'Erro ao carregar usuários', description: err?.message || 'Tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro ao carregar usuários', description: err instanceof Error ? err.message : 'Tente novamente.', variant: 'destructive' });
     } finally {
       setIsLoadingUsers(false);
     }
+    adminService.metrics()
+      .then(m => { setMetrics(m); setMetricsError(null); })
+      .catch(err => setMetricsError(err instanceof Error ? err.message : 'Métricas indisponíveis'));
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  // Pagamento que chegou sem conta vinculada: libera para o e-mail informado e associa a cobrança
+  const handleLinkPayment = async (payment: UnlinkedPayment) => {
+    const email = (linkEmails[payment.payment_id] ?? payment.customer_email ?? '').trim().toLowerCase();
+    if (!email.includes('@')) {
+      toast({ title: 'Informe o e-mail da conta', description: 'Use o e-mail com que a pessoa criou a conta no site.', variant: 'destructive' });
+      return;
+    }
+    try {
+      await adminService.setSubscription({ email, payment_id: payment.payment_id }, true);
+      toast({ title: 'Pagamento vinculado', description: `Acesso liberado para ${email}.` });
+      fetchUsers();
+    } catch (err) {
+      toast({ title: 'Não foi possível vincular', description: err instanceof Error ? err.message : 'Tente novamente.', variant: 'destructive' });
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -95,7 +119,7 @@ export const AdminDashboard: React.FC = () => {
   // Alterna o status da assinatura de um usuário específico
   const handleToggleSubscription = async (userItem: UserProfile) => {
     setUpdatingUserId(userItem.id);
-    const newStatus = !userItem.has_subscription;
+    const newStatus = !isActiveSub(userItem);
 
     try {
       await adminService.setSubscription({ id: userItem.id }, newStatus);
@@ -106,10 +130,10 @@ export const AdminDashboard: React.FC = () => {
       });
 
       fetchUsers();
-    } catch (err: any) {
+    } catch (err) {
       toast({
         title: 'Erro ao atualizar',
-        description: err?.message || 'Não foi possível alterar a assinatura.',
+        description: err instanceof Error && err.message ? err.message : 'Não foi possível alterar a assinatura.',
         variant: 'destructive',
       });
     } finally {
@@ -123,18 +147,37 @@ export const AdminDashboard: React.FC = () => {
       (u.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (u.full_name || '').toLowerCase().includes(searchQuery.toLowerCase());
     
-    if (statusFilter === 'active') return matchesSearch && (u.has_subscription || u.role === 'admin');
-    if (statusFilter === 'inactive') return matchesSearch && !u.has_subscription && u.role !== 'admin';
+    if (statusFilter === 'active') return matchesSearch && isActiveSub(u);
+    if (statusFilter === 'inactive') return matchesSearch && !isActiveSub(u);
     return matchesSearch;
   });
 
-  const activeCount = usersList.filter(u => u.has_subscription || u.role === 'admin').length;
+  const isActiveSub = (u: UserProfile) =>
+    u.role === 'admin' || (Boolean(u.has_subscription) && (!u.subscription_expires_at || Date.parse(u.subscription_expires_at) > Date.now()));
+  const activeCount = usersList.filter(isActiveSub).length;
+  const brl = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const pending = 'Aguardando migração do banco';
 
   const stats = [
-    { title: 'Total de Usuários', value: usersList.length.toString(), icon: Users, trend: '+100%' },
-    { title: 'Assinaturas Ativas', value: activeCount.toString(), icon: Sparkles, trend: `${Math.round((activeCount / (usersList.length || 1)) * 100)}%` },
-    { title: 'Análises Realizadas', value: '12', icon: FileText, trend: '+15%' },
-    { title: 'Status do Sistema', value: 'Online', icon: Activity, trend: '99,9%' },
+    { title: 'Usuários cadastrados', value: usersList.length.toString(), icon: Users, detail: `${activeCount} com acesso ativo` },
+    {
+      title: 'Análises (30 dias)',
+      value: metrics?.analyses ? metrics.analyses.last_30_days.toString() : '—',
+      icon: FileText,
+      detail: metrics?.analyses ? `${metrics.analyses.today} hoje • ${metrics.analyses.active_users_7_days} usuários em 7 dias` : pending,
+    },
+    {
+      title: 'Receita (30 dias)',
+      value: metrics?.payments_last_30_days ? brl(metrics.payments_last_30_days.revenue) : '—',
+      icon: CreditCard,
+      detail: metrics?.payments_last_30_days ? `${metrics.payments_last_30_days.count} pagamento(s) • ${metrics.payments_last_30_days.refunds} estorno(s)` : pending,
+    },
+    {
+      title: 'IA (24 horas)',
+      value: metrics?.ai_last_24h ? `${metrics.ai_last_24h.calls - metrics.ai_last_24h.failures}/${metrics.ai_last_24h.calls}` : '—',
+      icon: Activity,
+      detail: metrics?.ai_last_24h ? `${metrics.ai_last_24h.failures} falha(s) • chamadas com sucesso/total` : pending,
+    },
   ];
 
   return (
@@ -179,7 +222,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          {stats.map(({ title, value, icon: Icon, trend }) => (
+          {stats.map(({ title, value, icon: Icon, detail }) => (
             <Card key={title} className="border-border bg-card shadow-sm rounded-2xl text-foreground">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-xs font-semibold text-muted-foreground">{title}</CardTitle>
@@ -189,24 +232,58 @@ export const AdminDashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-semibold text-foreground">{value}</div>
-                <p className="text-xs text-muted-foreground mt-1">{trend} em relação ao total</p>
+                <p className="text-xs text-muted-foreground mt-1">{detail}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* PIX Access Management */}
-        <Card className="border-primary/30 bg-card shadow-sm rounded-2xl overflow-hidden text-foreground">
-          <div className="h-1 bg-primary" />
+        {metricsError && (
+          <p className="text-xs text-warning">Métricas indisponíveis: {metricsError}</p>
+        )}
+
+        {/* Pagamentos que chegaram sem conta vinculada */}
+        {metrics && metrics.unlinked_payments.length > 0 && (
+          <Card className="border-warning/30 bg-card shadow-sm rounded-2xl text-foreground">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <XCircle className="w-5 h-5 text-warning" /> Pagamentos sem conta vinculada ({metrics.unlinked_payments.length})
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
+                O pagamento foi confirmado, mas não encontramos a conta. Informe o e-mail com que a pessoa se cadastrou para liberar o acesso.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {metrics.unlinked_payments.map(p => (
+                <div key={p.payment_id} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-3 rounded-xl border border-border bg-background text-xs">
+                  <span className="md:w-56 shrink-0 text-muted-foreground">
+                    {new Date(p.paid_at || p.created_at).toLocaleDateString('pt-BR')} • {brl(Number(p.value || 0))} • {p.payment_id}
+                  </span>
+                  <Input
+                    type="email"
+                    placeholder="e-mail da conta"
+                    value={linkEmails[p.payment_id] ?? p.customer_email ?? ''}
+                    onChange={(e) => setLinkEmails(prev => ({ ...prev, [p.payment_id]: e.target.value }))}
+                    className="h-10 rounded-xl text-xs"
+                  />
+                  <Button size="sm" onClick={() => handleLinkPayment(p)} className="shrink-0">Vincular e liberar</Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Liberação manual */}
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden text-foreground">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
                 <CreditCard className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-base font-semibold text-foreground">Liberação de Acesso via PIX</CardTitle>
+                <CardTitle className="text-base font-semibold text-foreground">Liberar acesso manualmente</CardTitle>
                 <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                  Libere instantaneamente o acesso para clientes que efetuarem o pagamento via PIX
+                  Adiciona 90 dias (somados ao que ainda restar) para a conta com este e-mail
                 </CardDescription>
               </div>
             </div>
@@ -337,7 +414,7 @@ export const AdminDashboard: React.FC = () => {
                   <tbody className="divide-y divide-border">
                     {filteredUsers.map((item) => {
                       const isAdminUser = item.role === 'admin';
-                      const hasActiveSub = Boolean(item.has_subscription || isAdminUser);
+                      const hasActiveSub = isActiveSub(item);
                       const isUpdating = updatingUserId === item.id;
 
                       return (
@@ -377,11 +454,17 @@ export const AdminDashboard: React.FC = () => {
                           <td className="py-3.5 px-4">
                             {hasActiveSub ? (
                               <Badge variant="outline" className="border-success/30 text-success bg-success/10 gap-1 text-xs font-semibold py-1 px-2.5">
-                                <Check className="w-3 h-3 text-success" /> Assinatura Ativa (90d)
+                                <Check className="w-3 h-3 text-success" />
+                                {isAdminUser || !item.subscription_expires_at
+                                  ? 'Ativo'
+                                  : `Ativo até ${new Date(item.subscription_expires_at).toLocaleDateString('pt-BR')}`}
                               </Badge>
                             ) : (
                               <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 gap-1 text-xs font-medium py-1 px-2.5">
-                                <XCircle className="w-3 h-3 text-warning" /> Sem Assinatura
+                                <XCircle className="w-3 h-3 text-warning" />
+                                {item.subscription_expires_at && Date.parse(item.subscription_expires_at) <= Date.now()
+                                  ? `Venceu em ${new Date(item.subscription_expires_at).toLocaleDateString('pt-BR')}`
+                                  : 'Sem assinatura'}
                               </Badge>
                             )}
                           </td>
@@ -397,7 +480,7 @@ export const AdminDashboard: React.FC = () => {
                           {/* Coluna Ações */}
                           <td className="py-3.5 px-4 text-right">
                             {isAdminUser ? (
-                              <span className="text-xs text-muted-foreground italic">VIP Permanente</span>
+                              <span className="text-xs text-muted-foreground italic">Administrador</span>
                             ) : (
                               <Button
                                 size="sm"
@@ -442,19 +525,27 @@ export const AdminDashboard: React.FC = () => {
               <CardDescription className="text-xs text-muted-foreground">Informações sobre integrações e serviços</CardDescription>
             </CardHeader>
             <CardContent className="pt-5 space-y-3">
-              {[
-                { label: 'Supabase Database & Auth', status: 'Conectado', ok: true },
-                { label: 'Gerenciamento de Perfis', status: 'Ativo', ok: true },
-                { label: 'Serviço de IA Registrária', status: 'Ativo', ok: true },
-                { label: 'Sistema de Pagamentos PIX', status: 'Operacional', ok: true },
-              ].map(({ label, status, ok }) => (
-                <div key={label} className="flex items-center justify-between py-1.5 border-b border-border last:border-0 text-xs">
+              {(metrics
+                ? [
+                  { label: 'Banco de dados (Supabase)', status: metrics.services.database ? 'Respondendo' : 'Sem resposta', ok: metrics.services.database },
+                  { label: 'Tabelas de histórico, uso e pagamentos', status: metrics.tables_ready ? 'Criadas' : 'Rodar a migração', ok: metrics.tables_ready },
+                  { label: 'Chave da IA (Gemini)', status: metrics.services.ai_key_configured ? 'Configurada' : 'Ausente', ok: metrics.services.ai_key_configured },
+                  {
+                    label: 'IA nas últimas 24 h',
+                    status: metrics.ai_last_24h ? `${metrics.ai_last_24h.failures} falha(s) em ${metrics.ai_last_24h.calls}` : 'Sem dados',
+                    ok: !metrics.ai_last_24h || metrics.ai_last_24h.failures <= metrics.ai_last_24h.calls * 0.1,
+                  },
+                  { label: 'Pagamentos (Asaas)', status: metrics.services.payments_key_configured ? `Configurado (${metrics.environment})` : 'Chave ausente', ok: metrics.services.payments_key_configured },
+                ]
+                : [{ label: 'API', status: metricsError ? 'Sem resposta' : 'Carregando...', ok: !metricsError }]
+              ).map(({ label, status, ok }) => (
+                <div key={label} className="flex items-center justify-between gap-2 py-1.5 border-b border-border last:border-0 text-xs">
                   <span className="text-muted-foreground font-medium">{label}</span>
                   <Badge
-                    variant={ok ? 'outline' : 'secondary'}
-                    className="text-xs font-semibold border-success/30 text-success bg-success/10"
+                    variant="outline"
+                    className={`text-xs font-semibold shrink-0 ${ok ? 'border-success/30 text-success bg-success/10' : 'border-warning/30 text-warning bg-warning/10'}`}
                   >
-                    <CheckCircle2 className="w-3 h-3 mr-1 text-success" />
+                    {ok ? <CheckCircle2 className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
                     {status}
                   </Badge>
                 </div>

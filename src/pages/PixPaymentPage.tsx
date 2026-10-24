@@ -6,50 +6,52 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   ArrowLeft, CheckCircle2, ShieldCheck, Copy, QrCode, CreditCard,
-  AlertCircle, FileCheck, Zap, Lock, RefreshCw, Check, ArrowRight,
-  Shield, User, Mail, Loader2, ExternalLink, Sparkles, LogOut
+  AlertCircle, FileCheck, Lock, Check, ArrowRight,
+  Shield, User, Mail, Loader2, ExternalLink, LogOut
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePageMeta } from '@/hooks/usePageMeta';
 import { subscriptionService } from '@/services/subscriptionService';
 import { paymentService, PixPaymentResult, isValidCpf, formatCpf } from '@/services/paymentService';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { Logo } from '@/components/Logo';
+import { COMPANY_CONFIG } from '@/config/companyConfig';
 
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, isLoading, signOut, refreshUser } = useAuth();
+  usePageMeta('Pagamento', '/pagamento');
+
+  // Renovação: quem já tem plano ativo pode pagar de novo; os dias restantes são somados no servidor
+  const isRenewal = searchParams.get('renovar') === '1';
+  const [initialExpiry] = useState<string | null>(() => user?.subscriptionExpiresAt ?? null);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth?tab=register');
   };
 
-  // 🛡️ Regra Estrita:
-  // 1. Visitante não logado -> Redireciona para cadastro
-  // 2. Usuário com assinatura ativa -> NUNCA pede PIX novamente, entra direto no sistema!
+  // Visitante sem conta vai para o cadastro; assinante ativo vai para o app (a não ser que esteja renovando)
   useEffect(() => {
     if (isLoading) return;
 
     if (!user) {
       toast({
-        title: '🔒 Cadastro Obrigatório',
-        description: 'Por favor, crie sua conta primeiro para poder contratar o plano.',
+        title: 'Crie sua conta primeiro',
+        description: 'O plano fica vinculado à sua conta.',
       });
       navigate('/auth?tab=register', { replace: true });
       return;
     }
 
-    if (user.hasSubscription) {
-      toast({
-        title: '✅ Acesso Liberado',
-        description: 'Você já possui uma assinatura ativa! Entrando no sistema...',
-      });
+    if (user.hasSubscription && !isRenewal) {
       navigate('/app', { replace: true });
     }
-  }, [user, isLoading, navigate, toast]);
+  }, [user, isLoading, isRenewal, navigate, toast]);
 
   const [payerName, setPayerName] = useState(user?.name || '');
   const [payerEmail, setPayerEmail] = useState(user?.email || '');
@@ -64,44 +66,26 @@ export const PixPaymentPage: React.FC = () => {
 
   // Preferência de cartão
   const [cardInitPoint, setCardInitPoint] = useState<string | null>(null);
+  const [cardPaymentId, setCardPaymentId] = useState<string | null>(null);
   const [isGeneratingCard, setIsGeneratingCard] = useState(false);
 
   // Status de confirmação
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
-  const [confirmedTxId, setConfirmedTxId] = useState<string | null>(null);
 
-  // Timer de oferta (30 min)
-  const [timeLeft, setTimeLeft] = useState({ minutes: 29, seconds: 59 });
-
-  useEffect(() => {
-    const endTime = Date.now() + 30 * 60 * 1000;
-    const timer = setInterval(() => {
-      const distance = endTime - Date.now();
-      if (distance < 0) {
-        clearInterval(timer);
-        setTimeLeft({ minutes: 0, seconds: 0 });
-      } else {
-        setTimeLeft({
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
-      }
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Callback de ativação — chamado pelo Supabase Realtime ou pela consulta de status.
-  // O acesso é liberado pelo webhook no servidor; aqui só esperamos o perfil refletir isso.
-  const handlePaymentActivated = useCallback(async (txId: string) => {
+  // Chamado pelo Supabase Realtime ou pela consulta de status. O acesso é liberado pelo webhook no
+  // servidor; aqui só esperamos o perfil refletir isso (na renovação, o vencimento novo).
+  const handlePaymentActivated = useCallback(async () => {
     setPaymentConfirmed(true);
-    setConfirmedTxId(txId);
 
     for (let attempt = 0; attempt < 10; attempt++) {
       const refreshed = await refreshUser();
-      if (refreshed?.hasSubscription) {
+      const applied = isRenewal
+        ? Boolean(refreshed?.subscriptionExpiresAt && refreshed.subscriptionExpiresAt !== initialExpiry)
+        : Boolean(refreshed?.hasSubscription);
+      if (applied) {
         toast({
-          title: '🎉 Pagamento Confirmado!',
-          description: 'Seu acesso ilimitado por 3 meses foi liberado!',
+          title: 'Pagamento confirmado',
+          description: isRenewal ? 'Seu acesso foi renovado.' : 'Seu acesso de 3 meses foi liberado.',
         });
         navigate('/app', { replace: true });
         return;
@@ -113,17 +97,16 @@ export const PixPaymentPage: React.FC = () => {
       title: 'Pagamento recebido',
       description: 'Estamos concluindo a liberação do seu acesso. Recarregue a página em instantes ou fale com o suporte.',
     });
-  }, [toast, refreshUser, navigate]);
+  }, [toast, refreshUser, navigate, isRenewal, initialExpiry]);
 
-  // Inscreve no Supabase Realtime para confirmação em tempo real
+  // Supabase Realtime: na renovação, só reage à cobrança gerada nesta página
   useEffect(() => {
     if (!user?.id) return;
-    const unsubscribe = subscriptionService.subscribeToRealtimeActivation(
-      user.id,
-      handlePaymentActivated
-    );
+    const unsubscribe = subscriptionService.subscribeToRealtimeActivation(user.id, (paymentId) => {
+      if (!isRenewal || paymentId === pixPayment?.payment_id || paymentId === cardPaymentId) handlePaymentActivated();
+    });
     return () => unsubscribe();
-  }, [user?.id, handlePaymentActivated]);
+  }, [user?.id, handlePaymentActivated, isRenewal, pixPayment?.payment_id, cardPaymentId]);
 
   // Gera QR Code automaticamente quando e-mail e CPF válido estiverem preenchidos
   useEffect(() => {
@@ -140,7 +123,7 @@ export const PixPaymentPage: React.FC = () => {
       const status = await paymentService.checkPaymentStatus(pixPayment.payment_id);
       if (status.approved) {
         clearInterval(interval);
-        handlePaymentActivated(pixPayment.payment_id);
+        handlePaymentActivated();
       }
     }, 8000);
 
@@ -205,6 +188,7 @@ export const PixPaymentPage: React.FC = () => {
     });
     if (result.success && result.init_point) {
       setCardInitPoint(result.init_point);
+      setCardPaymentId(result.preference_id ?? null);
       window.open(result.init_point, '_blank');
     } else {
       toast({ title: 'Erro ao conectar checkout', description: result.error || 'Tente novamente.', variant: 'destructive' });
@@ -226,7 +210,7 @@ export const PixPaymentPage: React.FC = () => {
           <Logo />
           <div className="flex items-center gap-2 sm:gap-3">
             <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5" /> Pagamento Criptografado
+              <ShieldCheck className="w-3.5 h-3.5" /> Pagamento processado pelo Asaas
             </Badge>
             {user && (
               <Button
@@ -254,26 +238,25 @@ export const PixPaymentPage: React.FC = () => {
 
         {/* Estado: Pagamento Confirmado (Comemoração) */}
         {paymentConfirmed ? (
-          <Card className="border-primary/40 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium text-white bg-primary">
-            <div className="w-20 h-20 mx-auto rounded-3xl bg-primary text-white flex items-center justify-center shadow-medium animate-bounce">
+          <Card className="border-border p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium bg-card">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-success text-white flex items-center justify-center shadow-soft">
               <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
             </div>
             <div className="space-y-2">
-              <Badge className="bg-primary text-white text-xs font-semibold px-4 py-1.5 rounded-full">
-                ✓ Assinatura Ativada
+              <Badge variant="outline" className="border-success/30 bg-success/10 text-success text-xs font-semibold px-4 py-1.5 rounded-full">
+                Pagamento confirmado
               </Badge>
               <h2 className="text-3xl font-semibold tracking-tight pt-2 text-foreground">
-                Bem-vindo ao ValidaImóvel!
+                {isRenewal ? 'Acesso renovado!' : 'Bem-vindo ao ValidaImóvel!'}
               </h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-                Seu plano <strong className="text-primary">3 Meses Ilimitado</strong> foi liberado.<br />
-                Redirecionando você para a plataforma de auditoria em instantes...
+                Estamos liberando o seu acesso e levando você para a área de análises...
               </p>
             </div>
             <div className="pt-4">
               <Link to="/app">
-                <Button size="lg" className="bg-primary hover:bg-primary text-white font-semibold text-base px-10 py-7 gap-2">
-                  Acessar Plataforma Agora <ArrowRight className="w-5 h-5" />
+                <Button size="lg" className="gap-2">
+                  Ir para as análises <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
@@ -287,46 +270,37 @@ export const PixPaymentPage: React.FC = () => {
               
               {/* Card de Oferta */}
               <div className="bg-card/90 border border-border rounded-3xl p-6 space-y-4 shadow-medium">
-                <div className="flex items-center justify-between">
-                  <Badge className="bg-primary/20 text-primary border border-primary/30 font-semibold text-xs px-3 py-1">
-                    ⚡ Acesso Ilimitado • 90 Dias
-                  </Badge>
-                  <div className="flex items-center gap-1.5 text-xs text-warning font-semibold">
-                    <Zap className="w-4 h-4 fill-warning" />
-                    <span>Expira em {String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
-                  </div>
-                </div>
+                <Badge className="bg-primary/10 text-primary border border-primary/30 font-semibold text-xs px-3 py-1">
+                  {isRenewal ? 'Renovação • +90 dias' : '90 dias de acesso'}
+                </Badge>
 
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
-                    Plano 3 Meses Ilimitado
+                    {isRenewal ? 'Renovar o plano de 3 meses' : 'Plano de 3 meses'}
                   </h1>
                   <p className="text-xs text-muted-foreground mt-1 font-medium leading-relaxed">
-                    Auditoria completa em matrículas e certidões imobiliárias com IA Registrária Ativa.
+                    {isRenewal
+                      ? 'Os dias que ainda faltam no seu plano atual são somados aos 90 dias novos.'
+                      : 'Análise de matrículas e certidões imobiliárias com inteligência artificial.'}
                   </p>
                 </div>
 
                 <div className="pt-2 border-t border-border flex items-baseline justify-between">
-                  <div>
-                    <span className="text-xs text-muted-foreground line-through font-semibold block">De R$ 299,70</span>
-                    <span className="text-3xl sm:text-4xl font-semibold text-foreground whitespace-nowrap">R$ 49,<span className="text-xl">90</span></span>
-                  </div>
-                  <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 font-semibold text-xs">
-                    Economia de 83% OFF
-                  </Badge>
+                  <span className="text-3xl sm:text-4xl font-semibold text-foreground whitespace-nowrap">R$ 49,<span className="text-xl">90</span></span>
+                  <span className="text-xs text-muted-foreground font-semibold">pagamento único</span>
                 </div>
               </div>
 
               {/* Benefícios */}
               <div className="bg-card/60 border border-border rounded-3xl p-6 space-y-3.5">
-                <h3 className="text-xs font-semibold text-muted-foreground">O que você recebe imediatamente:</h3>
+                <h3 className="text-xs font-semibold text-muted-foreground">O que está incluído:</h3>
                 {[
-                  'Uploads ilimitados de certidões PDF por 90 dias',
-                  'Auditoria completa nos 12 Módulos Notariais',
-                  'Investigação de Cadeia Dominial Cronológica',
-                  'Filtro de ônus, penhoras (CNIB) e indisponibilidades',
-                  'Dossiê executivo em PDF com Carimbo Registral',
-                  'Ativação instantânea pós-pagamento sem burocracia',
+                  `Análises sem cobrança por documento durante 90 dias (uso justo de até ${COMPANY_CONFIG.offer.fairUseDailyLimit} por dia)`,
+                  'Relatório nos 12 módulos registrais, com nota de risco',
+                  'Cadeia dominial e proprietários atuais',
+                  'Hipotecas, penhoras e indisponibilidades, com o trecho do documento',
+                  'Relatório em PDF e histórico das suas análises',
+                  'Liberação automática após a confirmação do pagamento',
                 ].map((b) => (
                   <div key={b} className="flex items-start gap-2.5 text-xs text-muted-foreground font-medium">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
@@ -339,8 +313,8 @@ export const PixPaymentPage: React.FC = () => {
               <div className="p-4 bg-card border border-border rounded-2xl flex items-center gap-3">
                 <Shield className="w-8 h-8 text-primary flex-shrink-0" />
                 <div className="text-xs">
-                  <p className="font-semibold text-foreground">Garantia Incondicional de 7 Dias</p>
-                  <p className="text-muted-foreground">Teste a plataforma sem riscos. Se não gostar, devolvemos 100% do seu investimento.</p>
+                  <p className="font-semibold text-foreground">7 dias para desistir</p>
+                  <p className="text-muted-foreground">Se não gostar, peça o reembolso integral em até 7 dias pelo WhatsApp de suporte (direito de arrependimento, art. 49 do CDC).</p>
                 </div>
               </div>
 
@@ -439,8 +413,8 @@ export const PixPaymentPage: React.FC = () => {
                             {pixPayment ? 'Aguardando confirmação do Pix...' : 'Preencha e-mail e CPF acima para gerar o Pix'}
                           </span>
                         </div>
-                        <Badge className="bg-primary/20 text-primary border border-primary/30 text-xs font-semibold">
-                          Ativação em ~5s
+                        <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs font-semibold">
+                          Liberação automática
                         </Badge>
                       </div>
 
@@ -448,7 +422,7 @@ export const PixPaymentPage: React.FC = () => {
                       {isGenerating && (
                         <div className="flex flex-col items-center gap-3 py-8 text-muted-foreground">
                           <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                          <span className="text-xs font-semibold">Gerando Chave Pix com confirmação automática...</span>
+                          <span className="text-xs font-semibold">Gerando o Pix...</span>
                         </div>
                       )}
 
@@ -512,7 +486,7 @@ export const PixPaymentPage: React.FC = () => {
 
                       <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-1">
                         <Lock className="w-3.5 h-3.5" />
-                        Ambiente seguro com liberação imediata do sistema
+                        O acesso é liberado assim que o banco confirma o Pix
                       </p>
                     </div>
                   ) : (
@@ -524,7 +498,7 @@ export const PixPaymentPage: React.FC = () => {
                       <div className="space-y-1">
                         <h3 className="text-base font-semibold text-foreground">Pagamento no Cartão de Crédito</h3>
                         <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                          Pague a sua licença de 3 meses no cartão de crédito, na página segura do Asaas, com liberação automática.
+                          Pague no cartão de crédito, na página do Asaas. O acesso é liberado automaticamente quando a operadora aprovar.
                         </p>
                       </div>
 

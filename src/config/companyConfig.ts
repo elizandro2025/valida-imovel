@@ -11,18 +11,20 @@ export const COMPANY_CONFIG = {
   supportEmail: "suporte@validaimovel.com",
   domain: "validaimovel.com",
   canonicalUrl: "https://validaimovel.com/",
+  // Data da última revisão dos Termos e da Política de Privacidade (atualizar ao mudar o texto)
+  legalUpdatedAt: "24/10/2026",
   instagramUrl: "https://www.instagram.com/valida.imovel/",
   instagramHandle: "@valida.imovel",
   
-  // Detalhes da oferta (fixos e protegidos)
+  // Detalhes da oferta (o preço cobrado de fato é definido no servidor: workers/payment-api)
   offer: {
     priceFormatted: "R$ 49,90",
-    originalPriceFormatted: "R$ 299,70",
-    savingsFormatted: "R$ 249,80",
+    monthlyEquivalentFormatted: "R$ 16,63",
     period: "3 meses",
     durationDays: 90,
-    unlimited: true,
-    paymentMethods: "Pix ou Cartão",
+    // Uso justo: mesmo limite aplicado no servidor (DAILY_LIMITS.analise)
+    fairUseDailyLimit: 30,
+    paymentMethods: "Pix ou cartão",
     guaranteeDays: 7,
   },
 

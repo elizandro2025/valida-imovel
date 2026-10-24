@@ -26,12 +26,12 @@ interface GuidedTourProps {
 export const TOUR_STEPS: TourStep[] = [
   {
     target: 'step-1',
-    title: 'Diagnóstico & Score de Risco Registral (0-100)',
-    badge: 'Passo 1 de 6 • Módulo 12',
+    title: 'Parecer e nota de risco (0 a 100)',
+    badge: 'Passo 1 de 6 • Parecer',
     icon: ShieldCheck,
     tabValue: 'parecer',
-    description: 'A IA Registrária faz a varredura nos 12 Módulos e gera a Nota de Risco do imóvel (0 a 100). Imóveis com score baixo (<20) possuem situação juridicamente segura.',
-    tip: '💡 Dica: Veja o parecer em palavras simples, formatado especialmente para leigos e Due Diligence.'
+    description: 'A IA lê os 12 módulos e dá uma nota de risco de 0 a 100. Nota baixa indica que não foram encontrados ônus ativos; os "pontos para conferir" mostram o que a leitura não conseguiu confirmar.',
+    tip: '💡 Dica: cada risco traz o trecho da matrícula que o embasa.'
   },
   {
     target: 'step-2',
@@ -40,7 +40,7 @@ export const TOUR_STEPS: TourStep[] = [
     icon: Building2,
     tabValue: 'imovel',
     description: 'Nesta seção você confere o número da matrícula, comarca, livro, folha, área total (hectares e m²), confrontações e homologação no INCRA/SIGEF.',
-    tip: '💡 Dica: O código do CAR e a certificação georreferenciada SIRGAS 2000 são identificados automaticamente.'
+    tip: '💡 Dica: clique em qualquer campo para copiá-lo.'
   },
   {
     target: 'step-3',
@@ -48,7 +48,7 @@ export const TOUR_STEPS: TourStep[] = [
     badge: 'Passo 3 de 6 • Módulos 7 e 8',
     icon: Users,
     tabValue: 'proprietarios',
-    description: 'Veja os proprietários atuais com qualificação completa (CPF/CNPJ mascarados por LGPD) e a linha do tempo cronológica das transmissões (R-1 ao R-N).',
+    description: 'Veja os proprietários atuais com a qualificação que consta na matrícula e a linha do tempo das transmissões (R-1 em diante). CPFs que não aparecem no texto lido são sinalizados.',
     tip: '💡 Dica: A cadeia dominial ajuda a identificar fraudes em escrituras ou partilhas do passado.'
   },
   {
@@ -57,26 +57,26 @@ export const TOUR_STEPS: TourStep[] = [
     badge: 'Passo 4 de 6 • Módulos 9, 10 e 11',
     icon: AlertTriangle,
     tabValue: 'onus',
-    description: 'A auditoria localiza imediatamente alienações fiduciárias, hipotecas bancárias, penhoras judiciais, indisponividades CNIB e usufrutos averbados.',
-    tip: '💡 Dica: Imóveis com "✓ Nada Consta" possuem certidão negativa comprovada na matrícula.'
+    description: 'Hipotecas, alienações fiduciárias, penhoras e indisponibilidades encontradas no texto, com o status de cada uma: ativo, cancelado (com o ato que cancelou) ou "conferir".',
+    tip: '💡 Dica: a leitura vale para o PDF enviado. Antes de fechar negócio, peça a certidão de ônus atualizada.'
   },
   {
     target: 'step-5',
-    title: 'Assistente Copiloto de IA Registrária',
-    badge: 'Passo 5 de 6 • IA Interativa',
+    title: 'A mesma matrícula, para cada perfil',
+    badge: 'Passo 5 de 6 • Visão por perfil',
     icon: Bot,
     tabValue: 'perfil',
-    description: 'Utilize o chat de IA no canto inferior direito para tirar dúvidas sobre a matrícula em tempo real. A IA cita os números exatos dos atos da certidão (R-1, AV-4, etc).',
-    tip: '💡 Dica: Teste perguntar: "Qual a área total do imóvel?" ou "Quem são os proprietários atuais?".'
+    description: 'Explicações para comprador, corretor, banco, engenheiro e advogado. Assinantes também podem tirar dúvidas no botão "Perguntar à IA", no canto inferior direito.',
+    tip: '💡 Dica: pergunte, por exemplo, "Quem precisa assinar a venda?".'
   },
   {
     target: 'step-6',
-    title: 'Exportação de Dossiê Executivo em PDF & Impressão',
-    badge: 'Passo 6 de 6 • Dossiê PDF',
+    title: 'Relatório em PDF',
+    badge: 'Passo 6 de 6 • PDF',
     icon: Download,
     tabValue: 'parecer',
-    description: 'Baixe um Dossiê em PDF pronto para enviar a bancos, compradores, investidores ou anexar ao processo de Due Diligence.',
-    tip: '💡 Dica: O PDF inclui carimbo digital registral e matriz de risco visual.'
+    description: 'Baixe o relatório em PDF para compartilhar com clientes, compradores ou o seu advogado.',
+    tip: '💡 Dica: o PDF traz um código do relatório que muda se qualquer dado for alterado.'
   }
 ];
 

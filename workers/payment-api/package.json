@@ -1,15 +1,15 @@
 {
   "name": "validaimovel-payment-api",
   "version": "1.0.0",
-  "description": "Cloudflare Worker — Backend seguro para pagamentos Mercado Pago",
+  "description": "Cloudflare Worker — API do ValidaImóvel: pagamentos Asaas, IA (Gemini) e painel admin",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "dev": "npx --yes wrangler@4.152.0 dev",
+    "deploy": "npx --yes wrangler@4.152.0 deploy --env=\"\"",
+    "deploy:sandbox": "npx --yes wrangler@4.152.0 deploy --env=sandbox"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240725.0",
-    "typescript": "^5.5.2",
-    "wrangler": "^3.65.0"
+    "typescript": "^5.5.2"
   }
 }

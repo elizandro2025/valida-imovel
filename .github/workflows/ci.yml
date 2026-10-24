@@ -1,0 +1,39 @@
+# Verificação automática a cada envio: lint, tipos (site e API), testes e build.
+# O deploy continua manual (npm run deploy:site / deploy:api) — ver README.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            workers/payment-api/package-lock.json
+
+      - name: Instalar dependências
+        run: |
+          npm ci
+          npm ci --prefix workers/payment-api
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tipos (site e API)
+        run: npm run typecheck
+
+      - name: Testes
+        run: npm test
+
+      - name: Build
+        run: npm run build

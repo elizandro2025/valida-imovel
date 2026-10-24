@@ -55,7 +55,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
           <div>
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className="text-xs sm:text-sm font-semibold text-foreground">Precisa de Suporte Humano?</span>
-              <span className="bg-success/20 text-success text-xs font-semibold px-2 py-0.5 rounded-full border border-success/30">
+              <span className="bg-success/10 text-success text-xs font-semibold px-2 py-0.5 rounded-full border border-success/30">
                 Online Agora
               </span>
             </div>

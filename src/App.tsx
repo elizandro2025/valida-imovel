@@ -1,40 +1,41 @@
-import React, { Component, ReactNode } from "react";
+import React, { Component, ReactNode, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import Index from "./pages/Index";
-import { MatriculaAnalysis } from "./pages/MatriculaAnalysis";
-import { AuthPage } from "./pages/AuthPage";
-import { AdminDashboard } from "./pages/AdminDashboard";
 import LandingPage from "./pages/LandingPage";
-import PixPaymentPage from "./pages/PixPaymentPage";
-import NotFound from "./pages/NotFound";
-import TermsPage from "./pages/TermsPage";
-import PrivacyPage from "./pages/PrivacyPage";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldAlert, RefreshCcw } from "lucide-react";
+import { ShieldAlert, RefreshCcw, Loader2 } from "lucide-react";
+import { ProtectedRoute as AdminGuard } from "@/components/ProtectedRoute";
+import { reportClientError } from "@/services/errorReporting";
+
+// A página inicial vem no pacote principal; as demais telas (com relatório e gerador de PDF) carregam sob demanda
+const MatriculaAnalysis = lazy(() => import("./pages/MatriculaAnalysis"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
+const PixPaymentPage = lazy(() => import("./pages/PixPaymentPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const GuidePage = lazy(() => import("./pages/GuidePage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 interface GlobalErrorBoundaryProps {
   children: ReactNode;
 }
 interface GlobalErrorBoundaryState {
   hasError: boolean;
-  error: Error | null;
 }
 
 class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErrorBoundaryState> {
-  public state: GlobalErrorBoundaryState = { hasError: false, error: null };
+  public state: GlobalErrorBoundaryState = { hasError: false };
 
-  public static getDerivedStateFromError(error: Error): GlobalErrorBoundaryState {
-    return { hasError: true, error };
+  public static getDerivedStateFromError(): GlobalErrorBoundaryState {
+    return { hasError: true };
   }
 
   public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("🔥 Global Error Boundary capturou exceção:", error, errorInfo);
+    console.error("Erro não tratado na interface:", error, errorInfo);
+    reportClientError(error, `render: ${errorInfo.componentStack?.split("\n")[1]?.trim() ?? ""}`);
   }
 
   public render() {
@@ -42,21 +43,15 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
       return (
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
           <Card className="max-w-md w-full bg-card border border-border p-6 text-center space-y-4 rounded-3xl shadow-medium">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-warning/10 text-warning border border-warning/20 flex items-center justify-center">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-warning/10 text-warning flex items-center justify-center">
               <ShieldAlert className="w-7 h-7" />
             </div>
-            <h2 className="text-lg font-semibold text-foreground">Falha Temporária na Exibição</h2>
+            <h2 className="text-lg font-semibold text-foreground">Algo deu errado nesta tela</h2>
             <p className="text-xs text-muted-foreground">
-              Ocorreu uma inconsistência inesperada na renderização. Clique abaixo para reiniciar a aplicação com segurança.
+              O erro foi registrado para correção. Recarregue a página para continuar.
             </p>
-            <Button
-              onClick={() => {
-                this.setState({ hasError: false, error: null });
-                window.location.reload();
-              }}
-              className="w-full bg-success hover:bg-success text-white font-semibold text-xs py-2.5 rounded-xl gap-2 shadow-medium"
-            >
-              <RefreshCcw className="w-3.5 h-3.5" /> Recarregar Aplicação
+            <Button onClick={() => window.location.reload()} className="w-full gap-2">
+              <RefreshCcw className="w-3.5 h-3.5" /> Recarregar
             </Button>
           </Card>
         </div>
@@ -66,71 +61,60 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
   }
 }
 
-import { ProtectedRoute as AdminGuard } from "@/components/ProtectedRoute";
+const PageFallback = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <Loader2 className="w-8 h-8 animate-spin text-primary" aria-label="Carregando" />
+  </div>
+);
 
 /**
- * Rota Protegida — Exige autenticação E assinatura ativa para acessar o workspace.
- * Permite passagem livre exclusivamente quando há ?sample=safe (demonstração pública).
+ * Rota protegida — exige login e assinatura ativa para o workspace.
+ * Exceção: a demonstração pública (?sample=safe ou ?sample=risk), com dados fictícios.
  */
 const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
   const location = useLocation();
 
-  // Permite a demonstração pública via ?sample=safe sem precisar de login
   const params = new URLSearchParams(location.search);
-  const isSampleDemo = params.get('sample') === 'safe' || params.get('sample') === 'true';
+  const isSampleDemo = ['safe', 'risk', 'true'].includes(params.get('sample') || '');
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-success/30 border-t-success/30 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (isLoading) return <PageFallback />;
 
-  // 1. Usuário não autenticado -> Redireciona para login/cadastro
   if (!user && !isSampleDemo) {
     return <Navigate to="/auth?tab=register" state={{ from: location }} replace />;
   }
 
-  // 2. Usuário autenticado MAS sem assinatura ativa -> Redireciona para pagamento
-  const isSubActive = Boolean(user?.hasSubscription);
-  if (user && !isSubActive && !isSampleDemo) {
-    return <Navigate to="/pagamento-pix" state={{ from: location }} replace />;
+  if (user && !user.hasSubscription && !isSampleDemo) {
+    return <Navigate to="/pagamento" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
 };
 
-const queryClient = new QueryClient();
-
 const App = () => (
   <GlobalErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/demo" element={<Index />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/pagamento-pix" element={<PixPaymentPage />} />
-              <Route path="/pagamento" element={<PixPaymentPage />} />
-              <Route path="/termos" element={<TermsPage />} />
-              <Route path="/privacidade" element={<PrivacyPage />} />
-              {/* Rota protegida — exige login, exceto demonstração pública (?sample=safe) */}
-              <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
-              {/* Painel admin — exige login real com papel de administrador (sem demonstração pública) */}
-              <Route path="/admin" element={<AdminGuard requireAdmin><AdminDashboard /></AdminGuard>} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <Toaster />
+      <BrowserRouter>
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/demo" element={<Navigate to="/app?sample=safe" replace />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/pagamento-pix" element={<PixPaymentPage />} />
+            <Route path="/pagamento" element={<PixPaymentPage />} />
+            <Route path="/termos" element={<TermsPage />} />
+            <Route path="/privacidade" element={<PrivacyPage />} />
+            <Route path="/guia/como-ler-matricula" element={<GuidePage />} />
+            {/* Exige login e assinatura, exceto a demonstração pública (?sample=safe ou ?sample=risk) */}
+            <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
+            {/* Painel admin — exige login real com papel de administrador (o servidor confere de novo) */}
+            <Route path="/admin" element={<AdminGuard requireAdmin><AdminDashboard /></AdminGuard>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </AuthProvider>
   </GlobalErrorBoundary>
 );
 

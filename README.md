@@ -1,92 +1,69 @@
-# Analizerlify
+# ValidaImóvel
 
-**Análise Jurídica Inteligente de Matrículas Imobiliárias**
+Análise de certidões de matrícula de imóveis com inteligência artificial: proprietários, ônus, penhoras,
+cadeia dominial e nota de risco, com o trecho do documento que embasa cada ponto.
+Site: https://validaimovel.com
 
-## 🎯 Visão Geral
+## Arquitetura
 
-Analizerlify é uma plataforma profissional para análise automatizada de matrículas imobiliárias utilizando inteligência artificial avançada. Nossa solução oferece precisão, agilidade e confiabilidade em cada relatório técnico-jurídico.
-
-## ✨ Características Principais
-
-### 🔍 **Análise Completa**
-- Identificação precisa de ônus, gravames e aspectos legais
-- Extração inteligente de dados jurídicos relevantes
-- Análise de riscos e conformidade
-
-### 🤖 **Tecnologia Avançada**
-- Inteligência artificial de última geração
-- Processamento automatizado de documentos PDF
-- Máxima precisão em análises jurídicas
-
-### ⚡ **Eficiência Comprovada**
-- Relatórios profissionais entregues em minutos
-- Interface intuitiva e profissional
-- Resultados confiáveis e estruturados
-
-## 🚀 Processo Simplificado
-
-1. **Envio Seguro** - Upload do documento PDF com total segurança
-2. **Processamento IA** - Análise automatizada com extração inteligente
-3. **Relatório Profissional** - Receba análise técnica completa
-
-## 🛠️ Tecnologias
-
-- **Frontend**: React, TypeScript, Tailwind CSS
-- **IA**: Processamento avançado com modelos de linguagem
-- **Interface**: Design profissional e responsivo
-- **Componentes**: shadcn/ui para interface moderna
-- **Build Tool**: Vite para desenvolvimento otimizado
-
-## 📊 Recursos
-
-- ✅ Upload seguro de arquivos PDF
-- ✅ Análise jurídica automatizada
-- ✅ Relatórios técnicos detalhados
-- ✅ Exportação em PDF
-- ✅ Interface profissional moderna
-- ✅ Design responsivo
-- ✅ Tema profissional corporativo
-
-## 🎨 Identidade Visual
-
-**Analizerlify** representa confiabilidade, inovação e eficiência no setor jurídico, com design minimalista e profissional que transmite seriedade e modernidade.
-
-### Paleta de Cores
-- **Primário**: Navy Blue (#1e3a5f) - Confiança e profissionalismo
-- **Secundário**: Professional Gray - Elegância e sobriedade
-- **Accent**: Trust Blue - Inovação e credibilidade
-
-## 🚀 Como Executar
-
-```sh
-# Instalar dependências
-npm install
-
-# Executar em desenvolvimento
-npm run dev
-
-# Build para produção
-npm run build
-
-# Visualizar build de produção
-npm run preview
+```
+Navegador (React + Vite, Cloudflare Pages)
+   │  login e dados da conta ─────────────► Supabase (Auth, profiles, valida_analyses, valida_payments)
+   │  PDF, etapas da análise, pagamentos ──► API — Cloudflare Worker em api.validaimovel.com
+   │                                            ├─ Gemini (OCR e análise; prompts e chave só no servidor)
+   │                                            ├─ Asaas (Pix e cartão; webhook ativa, renova e estorna)
+   │                                            └─ Supabase (chave de serviço: assinatura, uso, pagamentos)
 ```
 
-## 📁 Estrutura do Projeto
+- **Fluxo da análise** (`src/services/aiService.ts`): OCR do PDF → extração + parecer (+ georreferenciamento) em
+  paralelo → regras de segurança em `src/lib/reportNormalizer.ts`:
+  - resposta incompleta vira erro (nunca "sem ônus");
+  - ônus só conta como cancelado com o ato de cancelamento;
+  - nota de risco mínima conforme os ônus ativos;
+  - CPFs, atos e trechos conferidos no texto lido.
+- **Leitura do relatório** (`src/lib/reportView.ts`): um só formato para a tela e o PDF, compatível com relatórios antigos.
+- **API** (`workers/payment-api`): rotas fixas de IA (`/api/ai/ocr`, `/task`, `/chat`), limite diário de uso justo,
+  webhook do Asaas, painel admin e registro de erros do site (Workers Logs).
+- **Banco**: a migração em `supabase/migrations` cria a trava dos campos de assinatura e as tabelas `valida_*`.
+  O projeto Supabase é compartilhado com o app BUPi — tudo do ValidaImóvel usa o prefixo `valida_`.
+
+## Desenvolvimento
+
+```sh
+npm install
+npm install --prefix workers/payment-api
+npm run dev          # site em http://localhost:8080 (usa a API em localhost:8787)
+npm run check        # lint + tipos (site e API) + testes + build — o mesmo que roda no GitHub (CI)
+```
+
+Variáveis do site (`.env`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_ADMIN_EMAILS` e, opcionalmente:
+- `VITE_API_BASE_URL`: aponta a prévia para a API sandbox;
+- `VITE_GOOGLE_LOGIN=true`: mostra o botão "Continuar com Google".
+
+Os segredos ficam só no Worker: `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `GEMINI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`.
+
+## Publicação
+
+```sh
+npm run deploy:api:sandbox   # API de testes (Asaas sandbox), sem domínio próprio
+npm run deploy:api           # API de produção (api.validaimovel.com)
+npm run deploy:site          # verifica tudo e publica o site no Pages (branch main = validaimovel.com)
+```
+
+O build de produção não pode ter `VITE_API_BASE_URL` definida. Sempre use `wrangler@4.152.0`: o wrangler 3 local guardava
+em cache a conta antiga da Cloudflare.
+
+## Estrutura
 
 ```
 src/
-├── components/          # Componentes reutilizáveis
-│   ├── ui/             # Componentes shadcn/ui
-│   ├── FileUpload.tsx  # Upload de arquivos
-│   ├── AnalysisProgress.tsx # Progresso da análise
-│   └── AnalysisReport.tsx   # Relatório final
-├── pages/              # Páginas da aplicação
-├── assets/             # Recursos estáticos
-├── services/           # Serviços de API
-└── lib/                # Utilitários
+├── components/   relatório, histórico, conta, chat, upload
+├── lib/          reportNormalizer (regras de segurança), reportView (leitura do relatório) + testes
+├── pages/        landing, app, auth, pagamento, admin, termos, privacidade, guia
+├── services/     aiClient/aiService (IA), historyService, paymentService, adminService, errorReporting
+workers/payment-api/
+├── src/index.ts  rotas da API          ├── src/prompts.ts  prompts da análise
+└── test/         testes com Asaas, Supabase e Gemini simulados
+supabase/migrations/   SQL para colar no SQL Editor do Supabase
+docs/emails-marketing/ modelos de e-mail (fora do site público)
 ```
-
----
-
-*Desenvolvido para profissionais que valorizam precisão e agilidade na análise de documentos jurídicos.*

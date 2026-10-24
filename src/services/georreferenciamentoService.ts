@@ -1,5 +1,7 @@
-// Specialized service for georeferencing analysis
-import { chatJSON } from './mistralService';
+// Georreferenciamento: etapa "geo" da IA (prompt no servidor) + coordenadas lidas das tabelas do texto
+/* eslint-disable @typescript-eslint/no-explicit-any -- dados de coordenadas vêm da IA e do texto, com forma livre */
+import { aiClient } from './aiClient';
+import { parseAIJson } from '@/lib/reportNormalizer';
 import { tableAnalysisService, CoordinatePoint } from './tableAnalysisService';
 
 export interface CoordinateGroup {
@@ -17,29 +19,30 @@ export interface CoordinateGroup {
   };
 }
 
+// Campos opcionais: a IA devolve null/omite o que não está no documento
 export interface GeorreferencingData {
   memorial_descritivo_georreferenciamento: {
-    ato_averbacao: string;
-    data_ato: string;
-    situacao_certificacao: string;
-    area_total_ha: string;
-    perimetro_total: string;
-    coordenadas_geograficas: CoordinatePoint[];
-    coordenadas_utm: CoordinatePoint[];
-    coordenadas_agrupadas: {
+    ato_averbacao?: string;
+    data_ato?: string;
+    situacao_certificacao?: string;
+    area_total_ha?: string;
+    perimetro_total?: string;
+    coordenadas_geograficas?: CoordinatePoint[];
+    coordenadas_utm?: CoordinatePoint[];
+    coordenadas_agrupadas?: {
       grupos_geograficas: CoordinateGroup[];
       grupos_utm: CoordinateGroup[];
     };
-    sistema_geodesico: string;
-    datum: string;
-    zona_utm: string;
-    responsavel_tecnico: {
-      nome: string;
-      crea_cft: string;
-      anotacao_tecnica: string;
+    sistema_geodesico?: string;
+    datum?: string;
+    zona_utm?: string;
+    responsavel_tecnico?: {
+      nome?: string;
+      crea_cft?: string;
+      anotacao_tecnica?: string;
     };
-    observacoes_tecnicas: string;
-    qualidade_extracao: {
+    observacoes_tecnicas?: string;
+    qualidade_extracao?: {
       confianca_coordenadas: number;
       tabelas_detectadas: number;
       metodo_extracao: 'manual' | 'tabela' | 'texto_livre';
@@ -52,25 +55,14 @@ export const georreferenciamentoService = {
    * Specialized georeferencing analysis with table support
    */
   async analyzeGeoreferencing(extractedText: string): Promise<GeorreferencingData> {
-    // First, analyze tables in the text
+    // Coordenadas que já dá para ler das tabelas do texto, sem IA
     const tables = tableAnalysisService.analyzeTablesInText(extractedText);
     const coordinates = tableAnalysisService.extractCoordinatesFromTables(tables);
-    
-    console.log(`Detectadas ${tables.length} tabelas e ${coordinates.length} coordenadas`);
-
-    const prompt = this.createGeoreferencingPrompt(extractedText, tables, coordinates);
-    
-    const messages = [
-      { 
-        role: "system", 
-        content: "Você é um especialista em georreferenciamento e registros fundiários. Extraia dados com precisão técnica e retorne JSON válido." 
-      },
-      { role: "user", content: prompt }
-    ];
 
     try {
-      const result = await chatJSON(messages);
-      
+      const response = await aiClient.task('geo', extractedText);
+      const result = parseAIJson(response.text, ['memorial_descritivo_georreferenciamento']) as GeorreferencingData;
+
       // Enhance with extracted coordinates
       if (result.memorial_descritivo_georreferenciamento) {
         const memorial = result.memorial_descritivo_georreferenciamento;
@@ -103,30 +95,16 @@ export const georreferenciamentoService = {
       return result;
     } catch (error) {
       console.error('Erro na análise de georreferenciamento:', error);
-      
-      // Fallback with table data
+
+      // Sem a IA, devolve só as coordenadas lidas das tabelas (os demais campos ficam com o que a extração encontrou)
       return {
         memorial_descritivo_georreferenciamento: {
-          ato_averbacao: "",
-          data_ato: "",
-          situacao_certificacao: "Análise automática falhou",
-          area_total_ha: "",
-          perimetro_total: "",
           coordenadas_geograficas: coordinates.filter(c => c.latitude || c.longitude),
           coordenadas_utm: coordinates.filter(c => c.x_utm || c.y_utm),
           coordenadas_agrupadas: {
             grupos_geograficas: this.groupCoordinates(coordinates.filter(c => c.latitude || c.longitude), 'geograficas'),
             grupos_utm: this.groupCoordinates(coordinates.filter(c => c.x_utm || c.y_utm), 'utm')
           },
-          sistema_geodesico: "",
-          datum: "",
-          zona_utm: "",
-          responsavel_tecnico: {
-            nome: "",
-            crea_cft: "",
-            anotacao_tecnica: ""
-          },
-          observacoes_tecnicas: "Dados extraídos apenas de tabelas detectadas",
           qualidade_extracao: {
             confianca_coordenadas: this.calculateCoordinateConfidence(coordinates, tables),
             tabelas_detectadas: tables.length,
@@ -135,74 +113,6 @@ export const georreferenciamentoService = {
         }
       };
     }
-  },
-
-  /**
-   * Create specialized prompt for georeferencing
-   */
-  createGeoreferencingPrompt(text: string, tables: any[], coordinates: CoordinatePoint[]): string {
-    const tableInfo = tables.length > 0 ? 
-      `\n\n### TABELAS DETECTADAS:\n${tables.map((t, i) => 
-        `Tabela ${i+1} (${t.metadata.tableType}): ${t.headers.join(' | ')}\nConfiança: ${t.metadata.confidence.toFixed(2)}`
-      ).join('\n')}` : '';
-
-    const coordInfo = coordinates.length > 0 ? 
-      `\n\n### COORDENADAS PRÉ-EXTRAÍDAS:\n${coordinates.map(c => 
-        `${c.vertice}: ${c.latitude || c.x_utm || 'N/A'}, ${c.longitude || c.y_utm || 'N/A'}`
-      ).join('\n')}` : '';
-
-    return `Você é um especialista em georreferenciamento e registros fundiários.
-
-Analise o texto da matrícula imobiliária e extraia TODAS as informações de georreferenciamento e memorial descritivo.
-
-INSTRUÇÕES CRÍTICAS:
-- Interprete tabelas mal formatadas e coordenadas dispersas no texto
-- Extraia TODOS os vértices/pontos com suas coordenadas
-- Identifique o sistema geodésico (SIRGAS 2000, SAD 69, etc.)
-- Localize dados do responsável técnico (CREA, ART)
-- Use informações das tabelas detectadas como base
-
-ESTRUTURA JSON ESPERADA:
-{
-  "memorial_descritivo_georreferenciamento": {
-    "ato_averbacao": "",
-    "data_ato": "",
-    "situacao_certificacao": "",
-    "area_total_ha": "",
-    "perimetro_total": "",
-    "coordenadas_geograficas": [
-      {
-        "vertice": "",
-        "latitude": "",
-        "longitude": "",
-        "tipo_marco": "",
-        "descricao": ""
-      }
-    ],
-    "coordenadas_utm": [
-      {
-        "vertice": "",
-        "x_utm": "",
-        "y_utm": "",
-        "zona_utm": "",
-        "tipo_marco": "",
-        "descricao": ""
-      }
-    ],
-    "sistema_geodesico": "",
-    "datum": "",
-    "zona_utm": "",
-    "responsavel_tecnico": {
-      "nome": "",
-      "crea_cft": "",
-      "anotacao_tecnica": ""
-    },
-    "observacoes_tecnicas": ""
-  }
-}
-
-TEXTO DA MATRÍCULA:
-${text.substring(0, 15000)}${tableInfo}${coordInfo}`;
   },
 
   /**

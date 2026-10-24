@@ -5,13 +5,18 @@
  *   POST /api/create-payment      — Cria cobrança Pix no Asaas e devolve o QR Code
  *   POST /api/create-preference   — Cria cobrança no cartão e devolve o link da fatura Asaas
  *   GET  /api/payment-status/:id  — Consulta status de uma cobrança
- *   POST /api/webhook/asaas       — Recebe eventos do Asaas e ativa a assinatura no Supabase
- *   POST /api/ai/generate         — Repassa ao Gemini (exige login + assinatura ativa)
+ *   POST /api/webhook/asaas       — Recebe eventos do Asaas: ativa, renova ou estorna a assinatura
+ *   POST /api/ai/ocr              — Lê o PDF (corpo = PDF em base64) — conta 1 análise do limite diário
+ *   POST /api/ai/task             — Executa uma etapa da análise ({ task, text }) com os prompts do servidor
+ *   POST /api/ai/chat             — Pergunta sobre um relatório ({ question, context })
+ *   POST /api/client-error        — Registra erros do site no log do Worker
  *   GET  /api/admin/users         — Lista usuários (somente admin)
- *   POST /api/admin/subscription  — Libera ou revoga assinatura (somente admin)
+ *   GET  /api/admin/metrics       — Números reais de uso, pagamentos e saúde (somente admin)
+ *   POST /api/admin/subscription  — Libera, renova ou revoga assinatura (somente admin)
  *
  * Cron diário: consulta o Supabase para o projeto gratuito não ser pausado por inatividade.
  */
+import { ANALYSIS_TASKS, AnalysisTask, MAX_TASK_TEXT, buildChatRequest, buildOcrRequestParts, buildTaskRequest } from './prompts';
 
 interface RateLimiter {
   limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -26,22 +31,34 @@ export interface Env {
   GEMINI_API_KEY: string;
   ADMIN_EMAILS: string; // e-mails separados por vírgula
   ENVIRONMENT: string;
+  SELFTEST_TOKEN?: string; // só no sandbox, durante testes automatizados
   AI_LIMITER: RateLimiter;
   PAYMENT_LIMITER: RateLimiter;
+  ERROR_LIMITER: RateLimiter;
 }
 
 // Preço e duração definidos no servidor — qualquer valor enviado pelo navegador é ignorado
 const PLAN = {
   value: 49.9,
   days: 90,
-  name: 'Plano 3 Meses Ilimitado',
-  description: 'ValidaImóvel — Plano 3 Meses Ilimitado',
+  name: 'Plano 3 Meses',
+  description: 'ValidaImóvel — Plano 3 Meses',
 };
+
+// Uso justo por usuário e por dia (horário de Brasília); admins não têm limite
+const DAILY_LIMITS = { analise: 30, tarefa: 120, chat: 150 } as const;
+type UsageKind = keyof typeof DAILY_LIMITS;
 
 // Para onde o Asaas devolve o cliente após pagar no cartão (domínio precisa estar cadastrado na conta Asaas)
 const SUCCESS_URL = 'https://validaimovel.com/app';
 
+const DAY_MS = 24 * 60 * 60 * 1000;
 const PAID_STATUSES = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH'];
+const REVOKE_EVENTS: Record<string, string> = {
+  PAYMENT_REFUNDED: 'estornado',
+  PAYMENT_CHARGEBACK_REQUESTED: 'chargeback',
+  PAYMENT_RECEIVED_IN_CASH_UNDONE: 'desfeito',
+};
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface AsaasPayment {
@@ -49,7 +66,9 @@ interface AsaasPayment {
   customer: string;
   status: string;
   value: number;
+  billingType?: string;
   invoiceUrl: string;
+  transactionReceiptUrl?: string | null;
   externalReference?: string | null;
   confirmedDate?: string | null;
   paymentDate?: string | null;
@@ -67,6 +86,7 @@ function corsHeaders(request: Request): Record<string, string> {
     'Access-Control-Allow-Origin': allowed ? origin : ALLOWED_ORIGINS[0],
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Expose-Headers': 'X-AI-Model',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
@@ -151,7 +171,7 @@ async function findOrCreateCustomer(env: Env, payer: Payer): Promise<string> {
 
 async function createCharge(env: Env, payer: Payer, extra: object): Promise<AsaasPayment> {
   const customer = await findOrCreateCustomer(env, payer);
-  const dueDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const dueDate = new Date(Date.now() + DAY_MS).toISOString().slice(0, 10);
 
   return asaasRequest<AsaasPayment>(env, '/payments', 'POST', {
     customer,
@@ -242,6 +262,15 @@ function supabaseHeaders(env: Env): Record<string, string> {
   };
 }
 
+async function supabaseSelect<T>(env: Env, query: string): Promise<T[] | null> {
+  const response = await fetch(`${env.SUPABASE_URL}/rest/v1/${query}`, { headers: supabaseHeaders(env) });
+  if (!response.ok) {
+    console.warn(`Supabase GET ${query.split('?')[0]}: HTTP ${response.status}`);
+    return null;
+  }
+  return response.json() as Promise<T[]>;
+}
+
 // Atualiza os perfis que casam com o filtro e devolve quantos foram atualizados
 async function supabasePatchProfiles(env: Env, filter: string, fields: object): Promise<number> {
   const response = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?${filter}`, {
@@ -253,42 +282,128 @@ async function supabasePatchProfiles(env: Env, filter: string, fields: object): 
   return (await response.json() as unknown[]).length;
 }
 
-// Devolve false quando não há usuário nem perfil para vincular (liberar manualmente pelo painel admin)
-async function activateSubscription(env: Env, payment: AsaasPayment): Promise<boolean> {
-  const paidAt = payment.confirmedDate || payment.paymentDate || new Date().toISOString().slice(0, 10);
-  const now = new Date().toISOString();
-  const fields = {
+interface SubscriptionProfile {
+  id: string;
+  email?: string | null;
+  has_subscription?: boolean | null;
+  subscription_status?: string | null;
+  subscription_expires_at?: string | null;
+  payment_id?: string | null;
+}
+
+const PROFILE_FIELDS = 'id,email,has_subscription,subscription_status,subscription_expires_at,payment_id';
+
+async function findProfile(env: Env, filter: string): Promise<SubscriptionProfile | null> {
+  const rows = await supabaseSelect<SubscriptionProfile>(env, `profiles?${filter}&select=${PROFILE_FIELDS}&limit=1`);
+  return rows?.[0] ?? null;
+}
+
+// Fim do acesso atual se ainda estiver valendo (renovação soma a partir daí), senão agora
+function renewalBase(profile: SubscriptionProfile | null): number {
+  const now = Date.now();
+  if (!profile) return now;
+  const expires = profile.subscription_expires_at ? Date.parse(profile.subscription_expires_at) : 0;
+  const active = profile.has_subscription === true || profile.subscription_status === 'active';
+  return active && expires > now ? expires : now;
+}
+
+function activeFields(base: number, paymentId: string) {
+  return {
     has_subscription: true,
     subscription_status: 'active',
     subscription_plan: PLAN.name,
-    subscription_expires_at: new Date(new Date(paidAt).getTime() + PLAN.days * 24 * 60 * 60 * 1000).toISOString(),
-    payment_id: payment.id,
-    updated_at: now,
+    subscription_expires_at: new Date(base + PLAN.days * DAY_MS).toISOString(),
+    payment_id: paymentId,
+    updated_at: new Date().toISOString(),
   };
+}
 
+async function customerEmail(env: Env, customerId: string): Promise<string | null> {
+  const customer = await asaasRequest<{ email?: string }>(env, `/customers/${customerId}`);
+  return customer.email?.trim().toLowerCase() || null;
+}
+
+// Ativa ou renova (somando aos dias restantes). Devolve o id do usuário, ou null quando não há a quem vincular.
+async function activateSubscription(env: Env, payment: AsaasPayment): Promise<string | null> {
   // profiles.id é o mesmo id do usuário no Supabase Auth
   const userId = payment.externalReference && UUID_RE.test(payment.externalReference) ? payment.externalReference : null;
 
-  // 1. Pelo id do usuário gravado na cobrança
-  if (userId && await supabasePatchProfiles(env, `id=eq.${userId}`, fields) > 0) return true;
+  // 1. Pelo id do usuário gravado na cobrança; 2. pelo e-mail do cliente no Asaas
+  let profile = userId ? await findProfile(env, `id=eq.${userId}`) : null;
+  let email: string | null = null;
+  if (!profile) {
+    email = await customerEmail(env, payment.customer);
+    if (email) profile = await findProfile(env, `email=eq.${encodeURIComponent(email)}`);
+  }
 
-  // 2. Pelo e-mail do cliente no Asaas
-  const customer = await asaasRequest<{ email?: string }>(env, `/customers/${payment.customer}`);
-  const email = customer.email?.trim().toLowerCase();
-  if (email && await supabasePatchProfiles(env, `email=eq.${encodeURIComponent(email)}`, fields) > 0) return true;
+  if (profile) {
+    // O Asaas manda mais de um evento por cobrança (ex.: CONFIRMED e depois RECEIVED): aplica uma vez só
+    if (profile.payment_id === payment.id) return profile.id;
+    await supabasePatchProfiles(env, `id=eq.${profile.id}`, activeFields(renewalBase(profile), payment.id));
+    return profile.id;
+  }
 
   // 3. Usuário existe mas ainda não tem perfil: cria com o mesmo id
   if (userId) {
     const response = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles`, {
       method: 'POST',
       headers: supabaseHeaders(env),
-      body: JSON.stringify({ id: userId, email, full_name: email?.split('@')[0], created_at: now, ...fields }),
+      body: JSON.stringify({
+        id: userId, email, full_name: email?.split('@')[0], created_at: new Date().toISOString(),
+        ...activeFields(Date.now(), payment.id),
+      }),
     });
     if (!response.ok) throw new Error(`Supabase POST ${response.status}: ${await response.text()}`);
-    return true;
+    return userId;
   }
 
-  return false;
+  return null;
+}
+
+// Estorno ou chargeback: retira os dias que aquela cobrança deu. Devolve o id do usuário afetado.
+async function revokeSubscription(env: Env, payment: AsaasPayment, reason: string): Promise<string | null> {
+  const profile = await findProfile(env, `payment_id=eq.${encodeURIComponent(payment.id)}`);
+  if (!profile) {
+    console.warn(`Cobrança ${payment.id} (${reason}) não é a última aplicada a nenhum perfil — revisar manualmente`);
+    return null;
+  }
+
+  const expires = (profile.subscription_expires_at ? Date.parse(profile.subscription_expires_at) : Date.now()) - PLAN.days * DAY_MS;
+  const stillActive = expires > Date.now();
+  await supabasePatchProfiles(env, `id=eq.${profile.id}`, {
+    has_subscription: stillActive,
+    subscription_status: stillActive ? 'active' : reason,
+    subscription_expires_at: new Date(Math.max(expires, Date.now())).toISOString(),
+    payment_id: `${payment.id}:${reason}`, // evita descontar duas vezes se o evento repetir
+    updated_at: new Date().toISOString(),
+  });
+  return profile.id;
+}
+
+// Histórico de pagamentos (comprovantes para o cliente, receita e pendências no admin). Falha aqui não bloqueia nada.
+async function recordPayment(env: Env, payment: AsaasPayment, userId: string | null, status: string): Promise<void> {
+  try {
+    const email = userId ? null : await customerEmail(env, payment.customer).catch(() => null);
+    const response = await fetch(`${env.SUPABASE_URL}/rest/v1/valida_payments?on_conflict=payment_id`, {
+      method: 'POST',
+      headers: { ...supabaseHeaders(env), Prefer: 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({
+        payment_id: payment.id,
+        user_id: userId,
+        ...(email && { customer_email: email }),
+        value: payment.value,
+        billing_type: payment.billingType ?? null,
+        status,
+        receipt_url: payment.transactionReceiptUrl ?? null,
+        invoice_url: payment.invoiceUrl ?? null,
+        paid_at: payment.confirmedDate || payment.paymentDate || null,
+        updated_at: new Date().toISOString(),
+      }),
+    });
+    if (!response.ok) console.warn(`Histórico de pagamento não gravado (${response.status}): ${await response.text()}`);
+  } catch (err) {
+    console.warn('Histórico de pagamento não gravado:', err);
+  }
 }
 
 // ─── POST /api/webhook/asaas ─────────────────────────────────────────────────
@@ -305,18 +420,26 @@ async function handleWebhook(request: Request, env: Env): Promise<Response> {
   }
 
   console.log('🔔 Webhook Asaas recebido:', event.id, event.event, event.payment?.id);
+  const isPaid = event.event === 'PAYMENT_RECEIVED' || event.event === 'PAYMENT_CONFIRMED';
+  const revokeReason = event.event ? REVOKE_EVENTS[event.event] : undefined;
 
-  if ((event.event === 'PAYMENT_RECEIVED' || event.event === 'PAYMENT_CONFIRMED') && event.payment?.id) {
+  if ((isPaid || revokeReason) && event.payment?.id) {
     try {
       // Reconsulta a cobrança no Asaas em vez de confiar apenas no corpo do evento
       const payment = await asaasRequest<AsaasPayment>(env, `/payments/${event.payment.id}`);
 
-      if (PAID_STATUSES.includes(payment.status) && payment.value >= PLAN.value) {
-        if (await activateSubscription(env, payment)) {
-          console.log(`✅ Assinatura ativada para a cobrança ${payment.id}`);
+      if (isPaid && PAID_STATUSES.includes(payment.status) && payment.value >= PLAN.value) {
+        const userId = await activateSubscription(env, payment);
+        if (userId) {
+          console.log(`✅ Assinatura ativada/renovada para a cobrança ${payment.id}`);
         } else {
-          console.error(`❌ Cobrança ${payment.id} paga, mas nenhum usuário/perfil encontrado — liberar manualmente`);
+          console.error(`❌ Cobrança ${payment.id} paga, mas nenhum usuário/perfil encontrado — aparece no admin para vincular`);
         }
+        await recordPayment(env, payment, userId, 'pago');
+      } else if (revokeReason) {
+        const userId = await revokeSubscription(env, payment, revokeReason);
+        console.log(`↩️ Cobrança ${payment.id}: ${revokeReason} — acesso ajustado para ${userId ?? 'ninguém'}`);
+        await recordPayment(env, payment, userId, revokeReason);
       } else {
         console.log(`⚠️ Cobrança ${payment.id} ignorada: status ${payment.status}, valor ${payment.value}`);
       }
@@ -346,6 +469,7 @@ interface AuthUser {
   email: string;
   isAdmin: boolean;
   profile: ProfileRow | null;
+  selftest?: boolean;
 }
 
 // Admin vem só da lista do servidor (ADMIN_EMAILS), nunca de um campo que o usuário possa editar
@@ -359,11 +483,9 @@ async function authenticate(request: Request, env: Env): Promise<AuthUser | Resp
   if (!userRes.ok) return jsonResponse({ error: 'Sua sessão expirou. Entre novamente na sua conta.' }, 401);
   const user = await userRes.json() as { id: string; email?: string };
 
-  const profileRes = await fetch(
-    `${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=role,has_subscription,subscription_status,subscription_expires_at`,
-    { headers: supabaseHeaders(env) }
-  );
-  const profile = profileRes.ok ? ((await profileRes.json()) as ProfileRow[])[0] ?? null : null;
+  const profile = (await supabaseSelect<ProfileRow>(
+    env, `profiles?id=eq.${user.id}&select=role,has_subscription,subscription_status,subscription_expires_at`,
+  ))?.[0] ?? null;
 
   const email = (user.email || '').toLowerCase();
   const adminEmails = (env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
@@ -377,13 +499,59 @@ function hasActiveSubscription(profile: ProfileRow | null): boolean {
   return active && notExpired;
 }
 
-// ─── POST /api/ai/generate ───────────────────────────────────────────────────
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
-// Modelos em ordem de preferência: se um estiver sobrecarregado (503) ou sem cota (429), tenta o próximo
-const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-flash-lite-latest'];
-const MAX_AI_BODY_BYTES = 20 * 1024 * 1024;
+// Testes automatizados da IA no sandbox: token próprio, nunca em produção, sem acesso ao banco
+function selftestAuth(request: Request, env: Env): AuthUser | null {
+  if (env.ENVIRONMENT !== 'sandbox' || !env.SELFTEST_TOKEN) return null;
+  const token = request.headers.get('X-Selftest-Token') || '';
+  if (token.length !== env.SELFTEST_TOKEN.length) return null;
+  let diff = 0;
+  for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ env.SELFTEST_TOKEN.charCodeAt(i);
+  return diff === 0 ? { userId: 'selftest', email: 'selftest', isAdmin: true, profile: null, selftest: true } : null;
+}
 
-async function handleAiGenerate(request: Request, env: Env): Promise<Response> {
+// ─── Uso da IA (limite diário e métricas) ────────────────────────────────────
+function startOfTodayBrazil(): string {
+  const offset = 3 * 60 * 60 * 1000; // UTC-3
+  const local = new Date(Date.now() - offset);
+  local.setUTCHours(0, 0, 0, 0);
+  return new Date(local.getTime() + offset).toISOString();
+}
+
+// null quando a contagem não está disponível (ex.: tabela ainda não criada) — nesse caso não bloqueia
+async function countUsageToday(env: Env, userId: string, kind: UsageKind): Promise<number | null> {
+  const since = encodeURIComponent(startOfTodayBrazil());
+  const response = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/valida_ai_usage?select=id&user_id=eq.${userId}&kind=eq.${kind}&created_at=gte.${since}`,
+    { headers: { ...supabaseHeaders(env), Prefer: 'count=exact', Range: '0-0' } },
+  );
+  await response.body?.cancel();
+  if (!response.ok) return null;
+  const total = Number(response.headers.get('content-range')?.split('/')[1]);
+  return Number.isFinite(total) ? total : null;
+}
+
+function recordUsage(env: Env, ctx: ExecutionContext, auth: AuthUser, kind: UsageKind, model: string | null, ok: boolean) {
+  if (auth.selftest) return;
+  ctx.waitUntil(
+    fetch(`${env.SUPABASE_URL}/rest/v1/valida_ai_usage`, {
+      method: 'POST',
+      headers: { ...supabaseHeaders(env), Prefer: 'return=minimal' },
+      body: JSON.stringify({ user_id: auth.userId, kind, model, ok }),
+    }).then(r => r.body?.cancel()).catch(() => undefined),
+  );
+}
+
+const LIMIT_MESSAGES: Record<UsageKind, string> = {
+  analise: `Você atingiu o limite de uso justo de ${DAILY_LIMITS.analise} análises por dia. O limite renova à meia-noite (horário de Brasília).`,
+  tarefa: 'Limite diário de processamento atingido. O limite renova à meia-noite (horário de Brasília).',
+  chat: `Você atingiu o limite de ${DAILY_LIMITS.chat} perguntas por dia ao assistente. O limite renova à meia-noite (horário de Brasília).`,
+};
+
+// Login + assinatura + limite por minuto + uso justo diário
+async function aiGuard(request: Request, env: Env, kind: UsageKind): Promise<AuthUser | Response> {
+  const selftest = selftestAuth(request, env);
+  if (selftest) return selftest;
+
   const auth = await authenticate(request, env);
   if (auth instanceof Response) return auth;
 
@@ -396,12 +564,22 @@ async function handleAiGenerate(request: Request, env: Env): Promise<Response> {
     return jsonResponse({ error: 'Muitas solicitações seguidas. Aguarde 1 minuto e tente novamente.' }, 429);
   }
 
-  // O corpo (pedido completo do Gemini, com o PDF em base64) é repassado sem ser interpretado
-  const body = await request.arrayBuffer();
-  if (body.byteLength > MAX_AI_BODY_BYTES) {
-    return jsonResponse({ error: 'Arquivo grande demais para análise.' }, 413);
+  if (!auth.isAdmin) {
+    const used = await countUsageToday(env, auth.userId, kind);
+    if (used !== null && used >= DAILY_LIMITS[kind]) return jsonResponse({ error: LIMIT_MESSAGES[kind] }, 429);
   }
+  return auth;
+}
 
+// ─── Gemini ──────────────────────────────────────────────────────────────────
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
+// Modelos em ordem de preferência: se um estiver sobrecarregado (503) ou sem cota (429), tenta o próximo
+const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-flash-lite-latest'];
+const MAX_PDF_BASE64_BYTES = 20 * 1024 * 1024;
+const MAX_CHAT_CONTEXT = 60_000;
+
+// O corpo é um Blob ou texto, então pode ser reenviado a cada tentativa sem copiar o PDF
+async function callGemini(env: Env, body: Blob | string): Promise<{ response: Response; model: string } | { failedStatus: number }> {
   let lastStatus = 0;
   for (let pass = 0; pass < 2; pass++) {
     if (pass > 0) await new Promise(resolve => setTimeout(resolve, 5000));
@@ -415,19 +593,93 @@ async function handleAiGenerate(request: Request, env: Env): Promise<Response> {
 
       if (response.status === 429 || response.status >= 500) {
         lastStatus = response.status;
+        await response.body?.cancel();
         console.warn(`Gemini ${model} indisponível (${response.status}), tentando o próximo modelo...`);
         continue;
       }
-
-      return new Response(response.body, { status: response.status, headers: { 'Content-Type': 'application/json' } });
+      return { response, model };
     }
   }
+  return { failedStatus: lastStatus };
+}
 
-  return jsonResponse({
-    error: lastStatus === 429
-      ? 'Limite de uso da IA atingido. Tente novamente em alguns minutos — se persistir, o limite diário acabou e renova na madrugada.'
-      : 'O serviço de IA está sobrecarregado no momento. Tente novamente em alguns minutos.',
-  }, 503);
+async function geminiResponse(
+  env: Env, ctx: ExecutionContext, auth: AuthUser, kind: UsageKind, body: Blob | string,
+): Promise<Response> {
+  const result = await callGemini(env, body);
+  if ('failedStatus' in result) {
+    recordUsage(env, ctx, auth, kind, null, false);
+    return jsonResponse({
+      error: result.failedStatus === 429
+        ? 'Limite de uso da IA atingido. Tente novamente em alguns minutos — se persistir, o limite diário acabou e renova na madrugada.'
+        : 'O serviço de IA está sobrecarregado no momento. Tente novamente em alguns minutos.',
+    }, 503);
+  }
+
+  recordUsage(env, ctx, auth, kind, result.model, result.response.ok);
+  if (!result.response.ok) console.warn(`Gemini ${result.model} respondeu ${result.response.status} (${kind})`);
+  return new Response(result.response.body, {
+    status: result.response.status,
+    headers: { 'Content-Type': 'application/json', 'X-AI-Model': result.model },
+  });
+}
+
+// POST /api/ai/ocr — corpo: o PDF em base64 (texto puro)
+async function handleAiOcr(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  const auth = await aiGuard(request, env, 'analise');
+  if (auth instanceof Response) return auth;
+
+  const data = new Uint8Array(await request.arrayBuffer());
+  if (data.byteLength > MAX_PDF_BASE64_BYTES) return jsonResponse({ error: 'Arquivo grande demais para análise (máximo de 15 MB).' }, 413);
+  // "JVBER" é "%PDF" em base64; aspas ou barra invertida não existem em base64 e quebrariam o JSON
+  const header = new TextDecoder().decode(data.subarray(0, 5));
+  if (data.byteLength < 100 || header !== 'JVBER' || data.indexOf(0x22) !== -1 || data.indexOf(0x5c) !== -1) {
+    return jsonResponse({ error: 'O arquivo enviado não é um PDF válido.' }, 400);
+  }
+
+  const { prefix, suffix } = buildOcrRequestParts();
+  return geminiResponse(env, ctx, auth, 'analise', new Blob([prefix, data, suffix], { type: 'application/json' }));
+}
+
+// POST /api/ai/task — { task, text }
+async function handleAiTask(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  const auth = await aiGuard(request, env, 'tarefa');
+  if (auth instanceof Response) return auth;
+
+  let payload: { task?: string; text?: unknown };
+  try {
+    payload = await request.json();
+  } catch {
+    return jsonResponse({ error: 'JSON inválido no corpo da requisição' }, 400);
+  }
+
+  const task = payload.task as AnalysisTask;
+  const text = typeof payload.text === 'string' ? payload.text : '';
+  if (!ANALYSIS_TASKS.includes(task)) return jsonResponse({ error: 'Etapa de análise desconhecida.' }, 400);
+  if (text.trim().length < 50) return jsonResponse({ error: 'Texto do documento vazio ou curto demais.' }, 400);
+  if (text.length > MAX_TASK_TEXT) return jsonResponse({ error: 'Documento longo demais para uma única análise.' }, 413);
+
+  return geminiResponse(env, ctx, auth, 'tarefa', JSON.stringify(buildTaskRequest(task, text)));
+}
+
+// POST /api/ai/chat — { question, context }
+async function handleAiChat(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  const auth = await aiGuard(request, env, 'chat');
+  if (auth instanceof Response) return auth;
+
+  let payload: { question?: unknown; context?: unknown };
+  try {
+    payload = await request.json();
+  } catch {
+    return jsonResponse({ error: 'JSON inválido no corpo da requisição' }, 400);
+  }
+
+  const question = typeof payload.question === 'string' ? payload.question.trim() : '';
+  const context = typeof payload.context === 'string' ? payload.context : '';
+  if (!question || question.length > 2000) return jsonResponse({ error: 'Escreva uma pergunta de até 2.000 caracteres.' }, 400);
+  if (!context || context.length > MAX_CHAT_CONTEXT) return jsonResponse({ error: 'Relatório ausente ou grande demais.' }, 400);
+
+  return geminiResponse(env, ctx, auth, 'chat', JSON.stringify(buildChatRequest(question, context)));
 }
 
 // ─── Admin ───────────────────────────────────────────────────────────────────
@@ -451,23 +703,78 @@ async function handleAdminUsers(request: Request, env: Env): Promise<Response> {
   const auth = await requireAdmin(request, env);
   if (auth instanceof Response) return auth;
 
-  const response = await fetch(
-    `${env.SUPABASE_URL}/rest/v1/profiles?select=id,email,full_name,role,has_subscription,subscription_status,subscription_plan,subscription_expires_at,created_at&order=created_at.desc`,
-    { headers: supabaseHeaders(env) }
+  const profiles = await supabaseSelect<{ id: string; email: string | null }>(
+    env,
+    'profiles?select=id,email,full_name,role,has_subscription,subscription_status,subscription_plan,subscription_expires_at,created_at&order=created_at.desc',
   );
-  if (!response.ok) return jsonResponse({ error: 'Erro ao carregar usuários.' }, 502);
+  if (!profiles) return jsonResponse({ error: 'Erro ao carregar usuários.' }, 502);
 
-  const profiles = await response.json() as Array<{ id: string; email: string | null }>;
   const emails = await authEmailsById(env);
   return jsonResponse({ users: profiles.map(p => ({ ...p, email: p.email || emails.get(p.id) || null })) });
 }
 
-// POST /api/admin/subscription — { id?, email?, active }
+// GET /api/admin/metrics — números reais (as tabelas valida_* vêm da migração em supabase/migrations)
+async function handleAdminMetrics(request: Request, env: Env): Promise<Response> {
+  const auth = await requireAdmin(request, env);
+  if (auth instanceof Response) return auth;
+
+  const now = Date.now();
+  const iso = (ms: number) => encodeURIComponent(new Date(ms).toISOString());
+  const today = Date.parse(startOfTodayBrazil());
+
+  const [analyses, recent, payments, unlinked, subscribers] = await Promise.all([
+    supabaseSelect<{ user_id: string; created_at: string }>(
+      env, `valida_ai_usage?select=user_id,created_at&kind=eq.analise&created_at=gte.${iso(now - 30 * DAY_MS)}&limit=50000`),
+    supabaseSelect<{ kind: string; model: string | null; ok: boolean }>(
+      env, `valida_ai_usage?select=kind,model,ok&created_at=gte.${iso(now - DAY_MS)}&limit=50000`),
+    supabaseSelect<{ value: number; status: string }>(
+      env, `valida_payments?select=value,status&created_at=gte.${iso(now - 30 * DAY_MS)}&limit=10000`),
+    supabaseSelect<{ payment_id: string; customer_email: string | null; value: number; paid_at: string | null; created_at: string }>(
+      env, 'valida_payments?select=payment_id,customer_email,value,paid_at,created_at&user_id=is.null&status=eq.pago&order=created_at.desc&limit=50'),
+    supabaseSelect<{ id: string }>(
+      env, `profiles?select=id&has_subscription=eq.true&subscription_expires_at=gt.${iso(now)}&limit=10000`),
+  ]);
+
+  const since = (rows: Array<{ created_at: string }>, ms: number) => rows.filter(r => Date.parse(r.created_at) >= ms).length;
+  const models: Record<string, number> = {};
+  for (const row of recent ?? []) if (row.model) models[row.model] = (models[row.model] || 0) + 1;
+  const paid = (payments ?? []).filter(p => p.status === 'pago');
+
+  return jsonResponse({
+    environment: env.ENVIRONMENT,
+    tables_ready: analyses !== null && payments !== null,
+    analyses: analyses && {
+      today: since(analyses, today),
+      last_7_days: since(analyses, now - 7 * DAY_MS),
+      last_30_days: analyses.length,
+      active_users_7_days: new Set(analyses.filter(a => Date.parse(a.created_at) >= now - 7 * DAY_MS).map(a => a.user_id)).size,
+    },
+    ai_last_24h: recent && {
+      calls: recent.length,
+      failures: recent.filter(r => !r.ok).length,
+      models,
+    },
+    payments_last_30_days: payments && {
+      count: paid.length,
+      revenue: Math.round(paid.reduce((sum, p) => sum + Number(p.value || 0), 0) * 100) / 100,
+      refunds: payments.filter(p => p.status !== 'pago').length,
+    },
+    unlinked_payments: unlinked ?? [],
+    active_subscribers: subscribers?.length ?? null,
+    services: {
+      database: subscribers !== null,
+      ai_key_configured: Boolean(env.GEMINI_API_KEY),
+      payments_key_configured: Boolean(env.ASAAS_API_KEY),
+    },
+  });
+}
+
+// POST /api/admin/subscription — { id?, email?, active, payment_id? }
 async function handleAdminSubscription(request: Request, env: Env): Promise<Response> {
   const auth = await requireAdmin(request, env);
   if (auth instanceof Response) return auth;
 
-  let body: { id?: string; email?: string; active?: boolean };
+  let body: { id?: string; email?: string; active?: boolean; payment_id?: string };
   try {
     body = await request.json();
   } catch {
@@ -486,31 +793,51 @@ async function handleAdminSubscription(request: Request, env: Env): Promise<Resp
   }
 
   const active = body.active !== false;
-  const fields = {
-    has_subscription: active,
-    subscription_status: active ? 'active' : 'inactive',
-    subscription_plan: active ? PLAN.name : null,
-    subscription_expires_at: active ? new Date(Date.now() + PLAN.days * 24 * 60 * 60 * 1000).toISOString() : null,
-    payment_id: active ? `ADMIN-${auth.email}-${new Date().toISOString().slice(0, 10)}` : null,
-    updated_at: new Date().toISOString(),
-    ...(email && { email }),
-  };
+  const linkedPayment = body.payment_id && /^pay_\w+$/.test(body.payment_id) ? body.payment_id : null;
+  const fields = active
+    ? activeFields(renewalBase(await findProfile(env, `id=eq.${userId}`)),
+      linkedPayment || `ADMIN-${auth.email}-${new Date().toISOString().slice(0, 10)}`)
+    : {
+      has_subscription: false,
+      subscription_status: 'inactive',
+      subscription_plan: null,
+      subscription_expires_at: null,
+      payment_id: null,
+      updated_at: new Date().toISOString(),
+    };
 
   const response = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`, {
     method: 'PATCH',
     headers: supabaseHeaders(env),
-    body: JSON.stringify(fields),
+    body: JSON.stringify({ ...fields, ...(email && { email }) }),
   });
   if (!response.ok) return jsonResponse({ error: 'Erro ao atualizar a assinatura.' }, 502);
   const rows = await response.json() as unknown[];
   if (rows.length === 0) return jsonResponse({ error: 'Perfil do usuário não encontrado.' }, 404);
 
-  console.log(`👤 Admin ${auth.email} ${active ? 'liberou' : 'revogou'} a assinatura de ${userId}`);
+  // Pagamento que chegou sem usuário: passa a constar no histórico da pessoa
+  if (linkedPayment) {
+    await fetch(`${env.SUPABASE_URL}/rest/v1/valida_payments?payment_id=eq.${linkedPayment}`, {
+      method: 'PATCH',
+      headers: { ...supabaseHeaders(env), Prefer: 'return=minimal' },
+      body: JSON.stringify({ user_id: userId, updated_at: new Date().toISOString() }),
+    }).catch(() => undefined);
+  }
+
+  console.log(`👤 Admin ${auth.email} ${active ? 'liberou' : 'revogou'} a assinatura de ${userId}${linkedPayment ? ` (cobrança ${linkedPayment})` : ''}`);
   return jsonResponse({ user: rows[0] });
 }
 
+// ─── POST /api/client-error ──────────────────────────────────────────────────
+async function handleClientError(request: Request, env: Env): Promise<Response> {
+  const ip = request.headers.get('CF-Connecting-IP') || 'desconhecido';
+  const { success } = await env.ERROR_LIMITER.limit({ key: ip });
+  if (success) console.error('🧯 Erro no site:', (await request.text()).slice(0, 4000));
+  return new Response(null, { status: 204 });
+}
+
 // ─── Main Router ──────────────────────────────────────────────────────────────
-async function route(request: Request, env: Env, path: string, method: string): Promise<Response> {
+async function route(request: Request, env: Env, ctx: ExecutionContext, path: string, method: string): Promise<Response> {
   // Health check
   if (path === '/api/health') {
     return jsonResponse({ status: 'ok', provider: 'asaas', environment: env.ENVIRONMENT, timestamp: new Date().toISOString() });
@@ -537,14 +864,20 @@ async function route(request: Request, env: Env, path: string, method: string): 
     return handleWebhook(request, env);
   }
 
-  // IA (Gemini) — exige login e assinatura
-  if (path === '/api/ai/generate' && method === 'POST') {
-    return handleAiGenerate(request, env);
+  // IA (Gemini) — exige login e assinatura; os prompts ficam no servidor
+  if (method === 'POST') {
+    if (path === '/api/ai/ocr') return handleAiOcr(request, env, ctx);
+    if (path === '/api/ai/task') return handleAiTask(request, env, ctx);
+    if (path === '/api/ai/chat') return handleAiChat(request, env, ctx);
+    if (path === '/api/client-error') return handleClientError(request, env);
   }
 
   // Admin
   if (path === '/api/admin/users' && method === 'GET') {
     return handleAdminUsers(request, env);
+  }
+  if (path === '/api/admin/metrics' && method === 'GET') {
+    return handleAdminMetrics(request, env);
   }
   if (path === '/api/admin/subscription' && method === 'POST') {
     return handleAdminSubscription(request, env);
@@ -554,14 +887,14 @@ async function route(request: Request, env: Env, path: string, method: string): 
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     // Preflight CORS
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(request) });
     }
 
     const url = new URL(request.url);
-    const response = await route(request, env, url.pathname, request.method);
+    const response = await route(request, env, ctx, url.pathname, request.method);
 
     const headers = new Headers(response.headers);
     for (const [name, value] of Object.entries(corsHeaders(request))) headers.set(name, value);

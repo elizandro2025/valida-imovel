@@ -1,34 +1,33 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   server: {
     host: "::",
     port: 8080,
   },
-  plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000,
+    // Gera mapas de código para depurar erros de produção (Lighthouse: "missing source maps")
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
-          pdf: ["pdfjs-dist", "jspdf"],
-          charts: ["recharts"],
-          ui: ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tabs"],
+          ui: ["@radix-ui/react-tabs", "@radix-ui/react-alert-dialog", "@radix-ui/react-toast"],
         },
       },
     },
   },
-}));
+  test: {
+    include: ["src/**/*.test.ts", "workers/**/*.test.ts"],
+    environment: "node",
+  },
+});

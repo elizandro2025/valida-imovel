@@ -12,10 +12,15 @@ import {
   Key, FileCheck, ArrowLeft, FileText, Users, Compass, LogOut, Sparkles
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { usePageMeta } from '@/hooks/usePageMeta';
 import { Logo } from '@/components/Logo';
 
+// Botão "Continuar com Google": ligar com VITE_GOOGLE_LOGIN=true depois de liberar a URL de retorno no Supabase
+const GOOGLE_LOGIN = import.meta.env.VITE_GOOGLE_LOGIN === 'true';
+
 export const AuthPage: React.FC = () => {
-  const { user, signIn, signUp, resetPassword, updatePassword, signOut, isLoading } = useAuth();
+  const { user, signIn, signInWithGoogle, signUp, resetPassword, updatePassword, signOut, isLoading } = useAuth();
+  usePageMeta(null, '/auth');
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -40,6 +45,15 @@ export const AuthPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formLoading, setFormLoading] = useState(false);
   const [showResetForm, setShowResetForm] = useState(false);
+
+  const handleGoogle = async () => {
+    setFormLoading(true);
+    const { error } = await signInWithGoogle();
+    if (error) {
+      toast({ title: 'Não foi possível entrar com Google', description: error.message, variant: 'destructive' });
+      setFormLoading(false);
+    }
+  };
   const [showNewPasswordForm, setShowNewPasswordForm] = useState(false);
 
   useEffect(() => {
@@ -72,9 +86,9 @@ export const AuthPage: React.FC = () => {
         toast({ title: 'Bem-vindo!', description: 'Login realizado com sucesso.' });
         navigate('/app');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Erro no handleSignIn:', err);
-      toast({ title: 'Erro no login', description: err?.message || 'Verifique suas credenciais e tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro no login', description: err instanceof Error && err.message ? err.message : 'Verifique suas credenciais e tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
@@ -113,8 +127,8 @@ export const AuthPage: React.FC = () => {
         toast({ title: 'Conta criada com sucesso!', description: 'Selecione a forma de pagamento para liberar o seu acesso.' });
         navigate('/pagamento-pix');
       }
-    } catch (err: any) {
-      toast({ title: 'Erro inesperado', description: err?.message || 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
+    } catch (err) {
+      toast({ title: 'Erro inesperado', description: err instanceof Error && err.message ? err.message : 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
@@ -193,7 +207,7 @@ export const AuthPage: React.FC = () => {
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <Badge className="bg-success/20 text-success border border-success/30 text-xs font-semibold px-3 py-1">
+            <Badge className="bg-success/10 text-success border border-success/30 text-xs font-semibold px-3 py-1">
               Conectado
             </Badge>
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -235,14 +249,14 @@ export const AuthPage: React.FC = () => {
 
           <div className="space-y-8 max-w-sm">
             <div className="space-y-4">
-              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-semibold">
+              <Badge className="bg-primary/10 text-primary border-primary/30 text-xs font-semibold">
                 IA Registrária Notarial 2.0
               </Badge>
               <h2 className="text-3xl xl:text-4xl font-semibold text-foreground leading-tight tracking-tight">
                 Auditoria e Due Diligence com <span className="text-primary">Inteligência Artificial</span>.
               </h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Extraia a cadeia dominial, identifique gravames, penhoras (CNIB) e emita pareceres jurídicos em segundos.
+                Veja a cadeia dominial, os gravames e as penhoras de uma matrícula, com nota de risco, em poucos minutos.
               </p>
             </div>
 
@@ -305,6 +319,7 @@ export const AuthPage: React.FC = () => {
                       <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                       <Input
                         type="email"
+                        autoComplete="email"
                         placeholder="seu.email@exemplo.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -335,6 +350,7 @@ export const AuthPage: React.FC = () => {
                     <Label className="text-xs font-semibold text-muted-foreground">Nova Senha</Label>
                     <Input
                       type="password"
+                      autoComplete="new-password"
                       placeholder="Mínimo 6 caracteres"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
@@ -346,6 +362,7 @@ export const AuthPage: React.FC = () => {
                     <Label className="text-xs font-semibold text-muted-foreground">Confirmar Nova Senha</Label>
                     <Input
                       type="password"
+                      autoComplete="new-password"
                       placeholder="Repita a nova senha"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -372,6 +389,23 @@ export const AuthPage: React.FC = () => {
                     </TabsTrigger>
                   </TabsList>
 
+                  {GOOGLE_LOGIN && (
+                    <div className="space-y-4 mb-4">
+                      <Button type="button" variant="outline" onClick={handleGoogle} disabled={formLoading} className="w-full gap-2 h-11">
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+                          <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z" />
+                          <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z" />
+                          <path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8l4-3.1z" />
+                          <path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z" />
+                        </svg>
+                        Continuar com Google
+                      </Button>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="h-px flex-1 bg-border" /> ou com e-mail <span className="h-px flex-1 bg-border" />
+                      </div>
+                    </div>
+                  )}
+
                   {/* TAB LOGIN */}
                   <TabsContent value="signin" className="space-y-4 mt-0">
                     <form onSubmit={handleSignIn} className="space-y-4">
@@ -381,6 +415,7 @@ export const AuthPage: React.FC = () => {
                           <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="email"
+                            autoComplete="email"
                             placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -405,6 +440,7 @@ export const AuthPage: React.FC = () => {
                           <Lock className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="password"
+                            autoComplete="current-password"
                             placeholder="Sua senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -432,6 +468,7 @@ export const AuthPage: React.FC = () => {
                         <Label className="text-xs font-semibold text-muted-foreground">Nome Completo</Label>
                         <Input
                           type="text"
+                          autoComplete="name"
                           placeholder="Seu nome"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -445,6 +482,7 @@ export const AuthPage: React.FC = () => {
                           <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="email"
+                            autoComplete="email"
                             placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -460,6 +498,7 @@ export const AuthPage: React.FC = () => {
                           <Lock className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="password"
+                            autoComplete="new-password"
                             placeholder="Crie uma senha forte"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

@@ -1,5 +1,10 @@
 import { useState, useCallback } from 'react';
-import { analyzeMatricula, MatriculaReport, AnalysisProgressCallback } from '@/services/mistralService';
+import { analyzeMatricula, MatriculaReport, AnalysisProgressCallback } from '@/services/aiService';
+import { historyService } from '@/services/historyService';
+import { ocrCacheService } from '@/services/ocrCacheService';
+
+// O servidor aceita até 20 MB em base64, o que equivale a cerca de 15 MB de PDF
+export const MAX_PDF_BYTES = 15 * 1024 * 1024;
 
 export interface AnalysisState {
   file: File | null;
@@ -8,9 +13,15 @@ export interface AnalysisState {
   currentStep: string;
   report: MatriculaReport | null;
   error: string | null;
-  ocrMethod?: 'tesseract' | 'pdfjs_text' | 'mistral_ocr';
-  pagesPreviews?: string[];
-  tablesDetected?: number;
+  fileName?: string | null;   // nome do PDF, também para análises reabertas do histórico
+  historyId?: string | null;  // id em "Minhas análises" quando a análise foi salva
+  isSample?: boolean;         // relatório de demonstração (sem conta)
+}
+
+interface ProcessOptions {
+  hasSubscription?: boolean;
+  userId?: string;
+  onSaved?: () => void;
 }
 
 export function useMatriculaAnalysis() {
@@ -23,39 +34,43 @@ export function useMatriculaAnalysis() {
     error: null,
   });
 
-  const updateProgress: AnalysisProgressCallback = useCallback((step, progress, details) => {
-    setState(prev => ({
-      ...prev,
-      currentStep: details?.message || step,
-      progress,
-      ocrMethod: details?.ocrMethod || prev.ocrMethod,
-      pagesPreviews: details?.pagesPreviews || prev.pagesPreviews,
-      tablesDetected: details?.tablesDetected ?? prev.tablesDetected,
-    }));
+  const updateProgress: AnalysisProgressCallback = useCallback((step, progress) => {
+    setState(prev => ({ ...prev, currentStep: step, progress }));
   }, []);
 
-  const processFile = useCallback(async (file: File, hasSubscription?: boolean) => {
-    // 🛡️ Paywall — status vindo do AuthContext (perfil no Supabase). A API de IA confere de novo no servidor.
+  const processFile = useCallback(async (file: File, { hasSubscription, userId, onSaved }: ProcessOptions = {}) => {
+    // Paywall — status vindo do AuthContext (perfil no Supabase). A API de IA confere de novo no servidor.
     if (hasSubscription !== true) {
       setState(prev => ({
         ...prev,
         file: null,
         isProcessing: false,
-        error: '🔒 Acesso Restrito: É necessário assinar o plano para auditar matrículas no sistema. Redirecionando para pagamento...',
+        error: 'É necessário ter o plano ativo para analisar matrículas. Redirecionando para o pagamento...',
       }));
       setTimeout(() => {
-        window.location.href = '/pagamento-pix';
+        window.location.href = '/pagamento';
       }, 2000);
+      return;
+    }
+
+    if (file.type && file.type !== 'application/pdf') {
+      setState(prev => ({ ...prev, error: 'Envie a certidão em PDF.' }));
+      return;
+    }
+    if (file.size > MAX_PDF_BYTES) {
+      setState(prev => ({ ...prev, error: 'O PDF tem mais de 15 MB. Gere a certidão novamente com resolução menor ou envie só as páginas da matrícula.' }));
       return;
     }
 
     setState({
       file,
+      fileName: file.name,
       isProcessing: true,
       progress: 5,
-      currentStep: 'Iniciando leitura e extração de texto do documento...',
+      currentStep: 'Preparando o documento...',
       report: null,
       error: null,
+      isSample: false,
     });
 
     try {
@@ -64,20 +79,41 @@ export function useMatriculaAnalysis() {
         ...prev,
         isProcessing: false,
         progress: 100,
-        currentStep: 'Auditoria notarial concluída com sucesso!',
+        currentStep: 'Análise concluída.',
         report,
       }));
-    } catch (err: any) {
+
+      if (userId) {
+        const hash = await ocrCacheService.computeHash(file);
+        const historyId = await historyService.save(userId, file.name, hash, report);
+        if (historyId) {
+          setState(prev => (prev.report === report ? { ...prev, historyId } : prev));
+          onSaved?.();
+        }
+      }
+    } catch (err) {
       console.error('Erro na análise da matrícula:', err);
       setState(prev => ({
         ...prev,
         isProcessing: false,
         progress: 0,
         currentStep: '',
-        error: err.message || 'Falha ao processar a matrícula. Verifique o arquivo e tente novamente.',
+        error: err instanceof Error && err.message ? err.message : 'Falha ao processar a matrícula. Verifique o arquivo e tente novamente.',
       }));
     }
   }, [updateProgress]);
+
+  // Reabre uma análise salva em "Minhas análises"
+  const openFromHistory = useCallback(async (id: string, fileName: string | null) => {
+    setState(prev => ({ ...prev, isProcessing: true, progress: 50, currentStep: 'Abrindo análise salva...', error: null }));
+    const report = await historyService.get(id);
+    if (!report) {
+      setState(prev => ({ ...prev, isProcessing: false, progress: 0, currentStep: '', error: 'Não foi possível abrir esta análise. Tente novamente.' }));
+      return;
+    }
+    setState({ file: null, fileName, historyId: id, isProcessing: false, progress: 100, currentStep: '', report, error: null, isSample: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   /**
    * Demonstração de Exemplo Ultra-Nutrida de Imóvel Rural (UX 2.0)
@@ -93,6 +129,8 @@ export function useMatriculaAnalysis() {
     // Inicia a simulação animada de auditoria da IA
     setState({
       file: mockFile,
+      fileName,
+      isSample: true,
       isProcessing: true,
       progress: 10,
       currentStep: '⚡ Lendo certidão de imóvel rural em formato PDF digital...',
@@ -310,9 +348,11 @@ export function useMatriculaAnalysis() {
 
       setState({
         file: mockFile,
+        fileName,
+        isSample: true,
         isProcessing: false,
         progress: 100,
-        currentStep: 'Exemplo Instantâneo Carregado!',
+        currentStep: 'Exemplo carregado.',
         report: targetReport,
         error: null,
       });
@@ -320,16 +360,15 @@ export function useMatriculaAnalysis() {
   }, []);
 
   const clearFile = useCallback(() => {
-    setState(prev => ({ 
-      ...prev, 
-      file: null, 
-      report: null, 
-      progress: 0, 
+    setState(prev => ({
+      ...prev,
+      file: null,
+      fileName: null,
+      historyId: null,
+      report: null,
+      progress: 0,
       currentStep: '',
       error: null,
-      ocrMethod: undefined,
-      pagesPreviews: undefined,
-      tablesDetected: undefined
     }));
   }, []);
 
@@ -337,9 +376,15 @@ export function useMatriculaAnalysis() {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
+  const showError = useCallback((message: string) => {
+    setState(prev => ({ ...prev, error: message }));
+  }, []);
+
   return {
     ...state,
     processFile,
+    openFromHistory,
+    showError,
     loadSampleReport,
     clearFile,
     closeError,

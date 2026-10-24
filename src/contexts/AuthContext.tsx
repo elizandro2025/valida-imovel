@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Session } from '@supabase/supabase-js';
+import { AuthError, Session } from '@supabase/supabase-js';
 import { isSubscriptionActive } from '@/services/subscriptionService';
 import { ocrCacheService } from '@/services/ocrCacheService';
 
@@ -10,6 +10,7 @@ export interface User {
   id: string;
   email: string;
   hasSubscription: boolean;
+  subscriptionExpiresAt: string | null;
   role: UserRole;
   name?: string;
   createdAt: string;
@@ -19,11 +20,12 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, name?: string) => Promise<{ error: any; needsConfirmation?: boolean }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signInWithGoogle: () => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, name?: string) => Promise<{ error: AuthError | null; needsConfirmation?: boolean }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: any }>;
-  updatePassword: (newPassword: string) => Promise<{ error: any }>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: AuthError | null }>;
   isAdmin: () => boolean;
   refreshUser: () => Promise<User | null>;
 }
@@ -73,6 +75,7 @@ async function loadUser(session: Session): Promise<User> {
     email,
     role,
     hasSubscription: role === 'admin' || isSubscriptionActive(profile),
+    subscriptionExpiresAt: profile?.subscription_expires_at ?? null,
     name: profile?.full_name || authUser.user_metadata?.full_name || email.split('@')[0],
     createdAt: profile?.created_at || authUser.created_at,
   };
@@ -122,6 +125,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) return { error };
     await applySession(data.session);
     return { error: null };
+  };
+
+  // Login com Google (provedor já ativo no Supabase). A URL de retorno precisa estar liberada em
+  // Supabase → Authentication → URL Configuration → Redirect URLs.
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/app` },
+    });
+    return { error };
   };
 
   const signUp = async (email: string, password: string, name?: string) => {
@@ -183,6 +196,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         session,
         isLoading,
         signIn,
+        signInWithGoogle,
         signUp,
         signOut,
         resetPassword,

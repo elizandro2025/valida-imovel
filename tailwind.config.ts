@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -33,10 +34,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				// San Francisco nos aparelhos Apple; Inter nos demais
-				sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'Inter', '"Helvetica Neue"', 'Arial', 'sans-serif'],
-				display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', 'Inter', '"Helvetica Neue"', 'Arial', 'sans-serif'],
-				inter: ['Inter', 'system-ui', 'sans-serif'],
+				// Fonte do sistema em cada plataforma (como a Apple faz): nada para baixar, sem deslocamento ao carregar
+				sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+				display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
 				mono: ['JetBrains Mono', 'Monaco', 'monospace'],
 			},
 			colors: {
@@ -155,5 +155,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;

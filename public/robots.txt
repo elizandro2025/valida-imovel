@@ -1,52 +1,12 @@
 # Sitemap
 Sitemap: https://validaimovel.com/sitemap.xml
 
-# Googlebot & General Web Crawlers
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /
-
-User-agent: DuckDuckBot
-Allow: /
-
-User-agent: Baiduspider
-Allow: /
-
-User-agent: YandexBot
-Allow: /
-
-# AI Crawlers & Search Engines (GEO — Generative Engine Optimization)
-User-agent: GPTBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: Bytespider
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
+# Buscadores e assistentes de IA podem ler as páginas públicas.
+# Telas que exigem login ou pagamento não têm conteúdo para indexar.
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /app
+Disallow: /auth
+Disallow: /pagamento
+Disallow: /pagamento-pix

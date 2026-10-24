@@ -1,6 +1,6 @@
 import React from 'react';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, Clock, FileText, Brain, ShieldCheck, Sparkles, Loader2, Timer } from 'lucide-react';
+import { CheckCircle2, Brain, ShieldCheck, Loader2, Timer } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -10,11 +10,12 @@ interface AnalysisProgressProps {
   steps?: string[];
 }
 
+// Mesmas etapas de src/services/aiService.ts (15% leitura, 45% análise, 85% conferência)
 const DEFAULT_STEPS = [
-  'Leitura e Extração de Texto da Certidão (OCR)',
-  'Identificação de Cartório, Livro e Matrícula',
-  'Varredura dos 12 Módulos Registrais (Titularidade, CNIB, Penhoras)',
-  'Compilação do Parecer Técnico de IA & Due Diligence'
+  'Leitura do PDF por IA (OCR)',
+  'Extração dos dados da matrícula',
+  'Parecer e nota de risco',
+  'Conferência com o texto do documento'
 ];
 
 export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
@@ -23,8 +24,6 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
   steps = DEFAULT_STEPS
 }) => {
   const safeSteps = Array.isArray(steps) && steps.length > 0 ? steps : DEFAULT_STEPS;
-  // Tempo estimado em segundos com base no progresso atual
-  const secondsLeft = Math.max(1, Math.ceil((100 - progress) / 12));
 
   return (
     <Card className="max-w-3xl mx-auto border-primary/30 bg-card shadow-medium rounded-3xl overflow-hidden animate-fade-in text-foreground">
@@ -40,14 +39,11 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                  Analisando Matrícula em Tempo Real
+                  Analisando a matrícula
                 </h3>
-                <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs font-semibold shrink-0">
-                  Motor IA Ativo
-                </Badge>
               </div>
               <p className="text-xs text-muted-foreground font-medium leading-tight mt-0.5">
-                Auditoria registrária completa dos 12 módulos notariais...
+                Costuma levar de 1 a 4 minutos. Você pode deixar esta aba aberta.
               </p>
             </div>
           </div>
@@ -57,7 +53,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
               {Math.round(progress)}%
             </div>
             <Badge className="bg-background text-primary border border-primary/30 text-xs font-semibold gap-1 px-2.5 py-0.5 sm:mt-1 rounded-full shrink-0">
-              <Timer className="w-3 h-3 text-primary animate-spin" /> ~{secondsLeft}s restantes
+              <Timer className="w-3 h-3 text-primary" /> 1 a 4 min
             </Badge>
           </div>
         </div>
@@ -68,9 +64,8 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
           <div className="flex flex-col sm:flex-row justify-between text-xs text-muted-foreground font-semibold gap-1 pt-1">
             <span className="flex items-center gap-1.5 text-primary">
               <Loader2 className="w-3.5 h-3.5 text-primary animate-spin shrink-0" />
-              <span className="truncate">{currentStep || 'Processando extração...'}</span>
+              <span className="truncate">{currentStep || 'Processando...'}</span>
             </span>
-            <span className="text-muted-foreground text-xs sm:text-xs">Leitura Registrária Conectada</span>
           </div>
         </div>
 
@@ -111,11 +106,8 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
         <div className="p-3.5 bg-background text-foreground border border-border rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-medium">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-            <span className="leading-tight">Mapeando titularidade, cadeia dominial, gravames e indisponividades (CNIB).</span>
+            <span className="leading-tight">Ao final, CPFs, números de atos e trechos citados são conferidos no texto lido do PDF.</span>
           </div>
-          <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs hidden sm:inline-flex shrink-0">
-            Sem Erros
-          </Badge>
         </div>
 
       </CardContent>

@@ -15,6 +15,26 @@ export interface AdminUser {
   created_at?: string | null;
 }
 
+export interface UnlinkedPayment {
+  payment_id: string;
+  customer_email: string | null;
+  value: number;
+  paid_at: string | null;
+  created_at: string;
+}
+
+// Números reais vindos de /api/admin/metrics (null = tabela ainda não criada no banco)
+export interface AdminMetrics {
+  environment: string;
+  tables_ready: boolean;
+  analyses: { today: number; last_7_days: number; last_30_days: number; active_users_7_days: number } | null;
+  ai_last_24h: { calls: number; failures: number; models: Record<string, number> } | null;
+  payments_last_30_days: { count: number; revenue: number; refunds: number } | null;
+  unlinked_payments: UnlinkedPayment[];
+  active_subscribers: number | null;
+  services: { database: boolean; ai_key_configured: boolean; payments_key_configured: boolean };
+}
+
 const readJson = async <T>(response: Response): Promise<T> => {
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
@@ -29,8 +49,11 @@ export const adminService = {
     return result.users;
   },
 
-  // Libera (90 dias) ou revoga a assinatura de um usuário, por id ou e-mail
-  setSubscription: async (target: { id?: string; email?: string }, active: boolean): Promise<AdminUser> => {
+  metrics: (): Promise<AdminMetrics> => authorizedFetch('/api/admin/metrics').then(r => readJson<AdminMetrics>(r)),
+
+  // Libera (+90 dias, somando ao que restar) ou revoga a assinatura, por id ou e-mail.
+  // Com payment_id, também vincula ao usuário um pagamento que chegou sem conta.
+  setSubscription: async (target: { id?: string; email?: string; payment_id?: string }, active: boolean): Promise<AdminUser> => {
     const result = await readJson<{ user: AdminUser }>(
       await authorizedFetch('/api/admin/subscription', {
         method: 'POST',

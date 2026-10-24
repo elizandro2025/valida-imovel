@@ -6,8 +6,10 @@ import { Shield, ArrowLeft, Lock, CheckCircle2 } from 'lucide-react';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { Logo } from '@/components/Logo';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 export const PrivacyPage: React.FC = () => {
+  usePageMeta('Política de privacidade', '/privacidade');
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-white">
       {/* Header */}
@@ -32,7 +34,7 @@ export const PrivacyPage: React.FC = () => {
             Política de Privacidade e Proteção de Dados
           </h1>
           <p className="text-sm text-muted-foreground">
-            Tratamento de dados em conformidade com as diretrizes da LGPD (Lei nº 13.709/2018)
+            Lei Geral de Proteção de Dados (Lei nº 13.709/2018) • Última atualização: {COMPANY_CONFIG.legalUpdatedAt}
           </p>
         </div>
 
@@ -61,6 +63,14 @@ export const PrivacyPage: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span><strong className="text-foreground">Documento analisado:</strong> o PDF da matrícula, que pode conter nomes, CPFs e outros dados pessoais de terceiros, usado exclusivamente para gerar o relatório.</span>
               </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span><strong className="text-foreground">Registro de uso:</strong> data, hora e tipo de cada uso da IA (sem o conteúdo do documento), para aplicar o limite de uso justo e acompanhar falhas.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span><strong className="text-foreground">Erros técnicos:</strong> mensagem de erro, página e navegador, sem dados pessoais, para corrigir falhas do site.</span>
+              </li>
             </ul>
           </section>
 
@@ -79,7 +89,7 @@ export const PrivacyPage: React.FC = () => {
               )}
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <span>O relatório gerado fica salvo apenas no seu navegador, para consulta rápida, e é apagado quando você sai da conta.</span>
+                <span>O relatório gerado (não o PDF) fica salvo na sua conta, em "Minhas análises", para você abrir e exportar de novo. Você pode apagar cada análise a qualquer momento; ao excluir a conta, todas são apagadas. Uma cópia temporária também fica no seu navegador e é removida quando você sai da conta.</span>
               </li>
             </ul>
           </section>
@@ -98,7 +108,7 @@ export const PrivacyPage: React.FC = () => {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <span><strong className="text-foreground">Supabase:</strong> armazenamento da conta e da assinatura.</span>
+                <span><strong className="text-foreground">Supabase:</strong> armazenamento da conta, da assinatura, do histórico de análises e de pagamentos.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -118,7 +128,7 @@ export const PrivacyPage: React.FC = () => {
           <section className="space-y-2">
             <h2 className="text-lg font-semibold text-foreground">5. Contato sobre Privacidade</h2>
             <p>
-              Dúvidas relativas à privacidade e proteção de dados devem ser endereçadas pelo e-mail: <strong className="text-primary">{COMPANY_CONFIG.contactEmail}</strong>.
+              Dúvidas e pedidos relativos à privacidade e proteção de dados podem ser enviados pelo e-mail <strong className="text-primary">{COMPANY_CONFIG.contactEmail}</strong> ou pelo WhatsApp de suporte (link no rodapé).
             </p>
           </section>
 
