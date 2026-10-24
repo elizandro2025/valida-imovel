@@ -240,7 +240,7 @@ export const AuthPage: React.FC = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row antialiased selection:bg-primary selection:text-white">
       {/* Left Panel — Branding Dark */}
       <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-card border-r border-border">
-        <div className="absolute inset-0 bg-background" />
+        <div className="absolute inset-0 bg-card" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
 
@@ -249,29 +249,25 @@ export const AuthPage: React.FC = () => {
 
           <div className="space-y-8 max-w-sm">
             <div className="space-y-4">
-              <Badge className="bg-primary/10 text-primary border-primary/30 text-xs font-semibold">
-                IA Registrária Notarial 2.0
-              </Badge>
-              <h2 className="text-3xl xl:text-4xl font-semibold text-foreground leading-tight tracking-tight">
-                Auditoria e Due Diligence com <span className="text-primary">Inteligência Artificial</span>.
+              <p className="text-primary text-sm font-semibold">Análise de matrícula com IA</p>
+              <h2 className="text-4xl xl:text-5xl font-semibold text-foreground leading-[1.08] tracking-tight">
+                Entenda uma matrícula em minutos.
               </h2>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <p className="text-muted-foreground text-base leading-relaxed">
                 Veja a cadeia dominial, os gravames e as penhoras de uma matrícula, com nota de risco, em poucos minutos.
               </p>
             </div>
 
             <div className="space-y-3">
               {[
-                { icon: FileText, label: 'Análise automática dos 12 Módulos Notariais' },
-                { icon: ShieldCheck, label: 'Detecção de penhoras, hipotecas e indisponividades' },
-                { icon: Compass, label: 'Auditoria de área, confrontações e usucapião' },
-                { icon: Users, label: 'Cadeia dominial cronológica de proprietários' },
+                { icon: FileText, label: 'Relatório nos 12 módulos registrais' },
+                { icon: ShieldCheck, label: 'Penhoras, hipotecas e indisponibilidades' },
+                { icon: Compass, label: 'Área, confrontações e georreferenciamento' },
+                { icon: Users, label: 'Proprietários e cadeia dominial' },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <span className="text-xs text-muted-foreground font-medium">{label}</span>
+                  <Icon className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-sm text-foreground/80">{label}</span>
                 </div>
               ))}
             </div>
@@ -296,17 +292,17 @@ export const AuthPage: React.FC = () => {
         </div>
 
         <div className="my-auto py-8 lg:max-w-md lg:mx-auto w-full">
-          <Card className="border-border bg-card/90 text-foreground rounded-3xl shadow-medium overflow-hidden backdrop-blur-sm">
+          <Card className="border-0 ring-1 ring-black/5 bg-card text-foreground rounded-3xl shadow-medium overflow-hidden">
             <CardHeader className="space-y-1 pb-4">
               <CardTitle className="text-2xl font-semibold text-foreground tracking-tight">
-                {showResetForm ? 'Recuperar Senha' : showNewPasswordForm ? 'Nova Senha' : 'Acessar Conta'}
+                {showResetForm ? 'Recuperar senha' : showNewPasswordForm ? 'Nova senha' : activeTab === 'signup' ? 'Criar conta' : 'Entrar'}
               </CardTitle>
-              <CardDescription className="text-muted-foreground text-xs">
+              <CardDescription className="text-muted-foreground text-sm">
                 {showResetForm
                   ? 'Digite seu e-mail para receber as instruções de recuperação.'
                   : showNewPasswordForm
                   ? 'Digite sua nova senha de acesso.'
-                  : 'Entre com suas credenciais ou crie sua conta gratuitamente.'}
+                  : activeTab === 'signup' ? 'Crie sua conta para analisar matrículas e guardar o histórico.' : 'Use seu e-mail e senha do ValidaImóvel.'}
               </CardDescription>
             </CardHeader>
 
@@ -375,17 +371,17 @@ export const AuthPage: React.FC = () => {
                     disabled={formLoading}
                     className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
                   >
-                    {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Atualizar Senha'}
+                    {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar nova senha'}
                   </Button>
                 </form>
               ) : (
                 <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'signin' | 'signup')} className="w-full">
-                  <TabsList className="grid grid-cols-2 p-1 bg-background border border-border rounded-2xl mb-4">
-                    <TabsTrigger value="signin" className="text-xs font-bold rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  <TabsList className="grid grid-cols-2 p-1 bg-muted/70 rounded-2xl mb-5 h-auto">
+                    <TabsTrigger value="signin" className="text-sm font-medium rounded-xl data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft">
                       Entrar
                     </TabsTrigger>
-                    <TabsTrigger value="signup" className="text-xs font-bold rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-                      Criar Conta
+                    <TabsTrigger value="signup" className="text-sm font-medium rounded-xl data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft">
+                      Criar conta
                     </TabsTrigger>
                   </TabsList>
 
@@ -455,7 +451,7 @@ export const AuthPage: React.FC = () => {
                         disabled={formLoading}
                         className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
                       >
-                        {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar na Plataforma'}
+                        {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
                       </Button>
                     </form>
@@ -513,7 +509,7 @@ export const AuthPage: React.FC = () => {
                         disabled={formLoading}
                         className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
                       >
-                        {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar Minha Conta'}
+                        {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar conta'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
                       </Button>
                     </form>

@@ -49,7 +49,7 @@
     --destructive-foreground: 0 0% 100%;
 
     /* Linhas finas */
-    --border: 240 6% 87%;             /* #dcdce1 */
+    --border: 240 6% 90%;             /* #e4e4e9 — linhas discretas */
     --input: 240 6% 84%;              /* #d2d2d7 */
     --ring: 211 100% 40%;
 

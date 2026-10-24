@@ -26,9 +26,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
   const safeSteps = Array.isArray(steps) && steps.length > 0 ? steps : DEFAULT_STEPS;
 
   return (
-    <Card className="max-w-3xl mx-auto border-primary/30 bg-card shadow-medium rounded-3xl overflow-hidden animate-fade-in text-foreground">
-      {/* Accent line top */}
-      <div className="h-2 bg-primary" />
+    <Card className="max-w-3xl mx-auto border-0 ring-1 ring-black/5 bg-card shadow-medium rounded-3xl overflow-hidden animate-fade-in text-foreground">
       <CardContent className="p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -209,9 +209,9 @@ export const PixPaymentPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-2 sm:gap-3">
-            <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
+            <span className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground">
               <ShieldCheck className="w-3.5 h-3.5" /> Pagamento processado pelo Asaas
-            </Badge>
+            </span>
             {user && (
               <Button
                 variant="ghost"
@@ -238,8 +238,8 @@ export const PixPaymentPage: React.FC = () => {
 
         {/* Estado: Pagamento Confirmado (Comemoração) */}
         {paymentConfirmed ? (
-          <Card className="border-border p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium bg-card">
-            <div className="w-20 h-20 mx-auto rounded-3xl bg-success text-white flex items-center justify-center shadow-soft">
+          <Card className="border-0 ring-1 ring-black/5 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium bg-card">
+            <div className="w-20 h-20 mx-auto rounded-full bg-success text-white flex items-center justify-center shadow-soft">
               <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
             </div>
             <div className="space-y-2">
@@ -269,16 +269,16 @@ export const PixPaymentPage: React.FC = () => {
             <div className="lg:col-span-5 space-y-6 order-2 lg:order-1">
               
               {/* Card de Oferta */}
-              <div className="bg-card/90 border border-border rounded-3xl p-6 space-y-4 shadow-medium">
-                <Badge className="bg-primary/10 text-primary border border-primary/30 font-semibold text-xs px-3 py-1">
+              <div className="bg-card ring-1 ring-black/5 rounded-3xl p-7 space-y-4 shadow-soft">
+                <p className="text-primary text-sm font-semibold">
                   {isRenewal ? 'Renovação • +90 dias' : '90 dias de acesso'}
-                </Badge>
+                </p>
 
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
                     {isRenewal ? 'Renovar o plano de 3 meses' : 'Plano de 3 meses'}
                   </h1>
-                  <p className="text-xs text-muted-foreground mt-1 font-medium leading-relaxed">
+                  <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
                     {isRenewal
                       ? 'Os dias que ainda faltam no seu plano atual são somados aos 90 dias novos.'
                       : 'Análise de matrículas e certidões imobiliárias com inteligência artificial.'}
@@ -286,14 +286,14 @@ export const PixPaymentPage: React.FC = () => {
                 </div>
 
                 <div className="pt-2 border-t border-border flex items-baseline justify-between">
-                  <span className="text-3xl sm:text-4xl font-semibold text-foreground whitespace-nowrap">R$ 49,<span className="text-xl">90</span></span>
-                  <span className="text-xs text-muted-foreground font-semibold">pagamento único</span>
+                  <span className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground whitespace-nowrap">R$ 49,<span className="text-2xl">90</span></span>
+                  <span className="text-sm text-muted-foreground">pagamento único</span>
                 </div>
               </div>
 
               {/* Benefícios */}
-              <div className="bg-card/60 border border-border rounded-3xl p-6 space-y-3.5">
-                <h3 className="text-xs font-semibold text-muted-foreground">O que está incluído:</h3>
+              <div className="bg-card ring-1 ring-black/5 rounded-3xl p-7 space-y-3.5 shadow-soft">
+                <h3 className="text-sm font-semibold text-foreground">O que está incluído</h3>
                 {[
                   `Análises sem cobrança por documento durante 90 dias (uso justo de até ${COMPANY_CONFIG.offer.fairUseDailyLimit} por dia)`,
                   'Relatório nos 12 módulos registrais, com nota de risco',
@@ -302,7 +302,7 @@ export const PixPaymentPage: React.FC = () => {
                   'Relatório em PDF e histórico das suas análises',
                   'Liberação automática após a confirmação do pagamento',
                 ].map((b) => (
-                  <div key={b} className="flex items-start gap-2.5 text-xs text-muted-foreground font-medium">
+                  <div key={b} className="flex items-start gap-2.5 text-sm text-foreground/80">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                     <span>{b}</span>
                   </div>
@@ -310,9 +310,9 @@ export const PixPaymentPage: React.FC = () => {
               </div>
 
               {/* Garantia */}
-              <div className="p-4 bg-card border border-border rounded-2xl flex items-center gap-3">
-                <Shield className="w-8 h-8 text-primary flex-shrink-0" />
-                <div className="text-xs">
+              <div className="px-2 flex items-start gap-3">
+                <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div className="text-xs leading-relaxed">
                   <p className="font-semibold text-foreground">7 dias para desistir</p>
                   <p className="text-muted-foreground">Se não gostar, peça o reembolso integral em até 7 dias pelo WhatsApp de suporte (direito de arrependimento, art. 49 do CDC).</p>
                 </div>
@@ -323,7 +323,7 @@ export const PixPaymentPage: React.FC = () => {
             {/* Coluna Direita: Checkout Clean (7 cols) */}
             <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
               
-              <Card className="border-border bg-card/90 text-foreground rounded-3xl shadow-medium overflow-hidden backdrop-blur-sm">
+              <Card className="border-0 ring-1 ring-black/5 bg-card text-foreground rounded-3xl shadow-medium overflow-hidden">
                 
                 {/* Selector de Pagamento */}
                 <div className="grid grid-cols-2 p-1 m-4 mb-0 bg-muted/70 rounded-xl">
@@ -354,21 +354,14 @@ export const PixPaymentPage: React.FC = () => {
                   {/* Dados de Identificação */}
                   <div className="space-y-3 pb-6 border-b border-border">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-primary" /> Titular do Acesso
-                      </Label>
-                      {user && (
-                        <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                          Conta Conectada
-                        </Badge>
-                      )}
+                      <Label className="text-sm font-semibold text-foreground">Dados do titular</Label>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="relative">
                         <User className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
                         <Input
                           type="text"
-                          placeholder="Seu Nome Completo"
+                          placeholder="Nome completo"
                           value={payerName}
                           onChange={(e) => setPayerName(e.target.value)}
                           className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
@@ -378,7 +371,7 @@ export const PixPaymentPage: React.FC = () => {
                         <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
                         <Input
                           type="email"
-                          placeholder="seu.email@exemplo.com"
+                          placeholder="E-mail"
                           value={payerEmail}
                           onChange={(e) => setPayerEmail(e.target.value)}
                           className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
@@ -389,7 +382,7 @@ export const PixPaymentPage: React.FC = () => {
                         <Input
                           type="text"
                           inputMode="numeric"
-                          placeholder="CPF do titular (000.000.000-00)"
+                          placeholder="CPF (000.000.000-00)"
                           value={payerCpf}
                           onChange={(e) => setPayerCpf(formatCpf(e.target.value))}
                           className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
@@ -403,19 +396,16 @@ export const PixPaymentPage: React.FC = () => {
                     <div className="space-y-5">
                       
                       {/* Indicador de Status em Tempo Real */}
-                      <div className="p-3.5 bg-background border border-border rounded-2xl flex items-center justify-between text-xs">
+                      <div className="p-3.5 bg-secondary rounded-2xl flex items-center text-xs">
                         <div className="flex items-center gap-2.5">
                           <span className="relative flex h-2.5 w-2.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
                           </span>
-                          <span className="font-semibold text-muted-foreground">
-                            {pixPayment ? 'Aguardando confirmação do Pix...' : 'Preencha e-mail e CPF acima para gerar o Pix'}
+                          <span className="text-foreground/80">
+                            {pixPayment ? 'Aguardando o pagamento — o acesso é liberado automaticamente.' : 'Preencha o CPF para gerar o Pix.'}
                           </span>
                         </div>
-                        <Badge className="bg-primary/10 text-primary border border-primary/30 text-xs font-semibold">
-                          Liberação automática
-                        </Badge>
                       </div>
 
                       {/* Estado: Carregando QR Code */}
@@ -429,7 +419,7 @@ export const PixPaymentPage: React.FC = () => {
                       {/* Estado: QR Code Gerado */}
                       {!isGenerating && pixPayment?.qr_code_base64 && (
                         <div className="flex flex-col items-center gap-4 py-2">
-                          <div className="p-4 bg-card rounded-3xl shadow-medium border-4 border-primary/30 relative group">
+                          <div className="p-4 bg-card rounded-3xl shadow-medium ring-1 ring-black/5 relative group">
                             <img
                               src={pixPayment.qr_code_base64}
                               alt="QR Code PIX"

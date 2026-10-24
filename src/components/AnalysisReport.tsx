@@ -15,6 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MatriculaChat } from './MatriculaChat';
 import { GuidedTour } from './GuidedTour';
 import { getReportView, statusOf, LienStatus, RiskLevel } from '@/lib/reportView';
+import { ScoreRing } from './ScoreRing';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- o relatório vem da IA e tem forma livre */
@@ -121,7 +122,7 @@ const CopyableField: React.FC<{ label: string; value: string; warning?: string }
   return (
     <div
       onClick={isCopyable ? handleCopy : undefined}
-      className={`group relative p-3 bg-secondary border border-border hover:border-primary/40 hover:bg-primary/5 rounded-xl space-y-0.5 transition-colors ${isCopyable ? 'cursor-pointer' : ''}`}
+      className={`group relative p-3 bg-secondary hover:border-primary/40 hover:bg-primary/5 rounded-xl space-y-0.5 transition-colors ${isCopyable ? 'cursor-pointer' : ''}`}
       title={isCopyable ? `Clique para copiar "${value}"` : undefined}
     >
       <div className="flex items-center justify-between gap-1">
@@ -187,7 +188,7 @@ const SourceExcerpt: React.FC<{ item: any }> = ({ item }) => {
   if (typeof item?.trecho_origem !== 'string' || !item.trecho_origem.trim()) return null;
   const confirmed = item._trecho_confirmado;
   return (
-    <div className="mt-1.5 p-2.5 rounded-lg bg-secondary border border-border text-xs text-muted-foreground space-y-1">
+    <div className="mt-1.5 p-2.5 rounded-lg bg-secondary text-xs text-muted-foreground space-y-1">
       <p className="flex gap-1.5 leading-relaxed"><Quote className="w-3 h-3 shrink-0 mt-0.5" /><span className="italic">{item.trecho_origem}</span></p>
       {confirmed === true && <p className="text-success font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Trecho localizado no documento</p>}
       {confirmed === false && <p className="text-warning font-semibold flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Trecho não localizado no texto lido — confira na certidão</p>}
@@ -659,40 +660,29 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
     }
   };
 
-  const tabTriggerClass = 'rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]';
+  const tabTriggerClass = 'rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 text-center justify-center shrink-0 min-h-[44px]';
 
   return (
     <div className="space-y-6 antialiased animate-fade-in">
 
-      {/* Aviso de natureza do relatório */}
-      <div className="bg-card text-foreground p-4 sm:p-5 rounded-2xl shadow-sm border border-border flex items-start gap-3.5">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-          <Info className="w-5 h-5" />
-        </div>
-        <div className="space-y-0.5">
-          <h3 className="text-sm font-semibold text-foreground">Análise automatizada por IA</h3>
-          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-            Gerada a partir do PDF enviado, com conferência automática de CPFs, atos e trechos citados.
-            Não substitui a certidão atualizada nem a avaliação de um advogado — confira os pontos decisivos no documento original.
-          </p>
-        </div>
-      </div>
-
-      {/* Cabeçalho & ações */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card border border-border p-5 rounded-2xl shadow-sm">
-        <div className="flex items-center gap-3.5 min-w-0 w-full sm:w-auto sm:flex-1">
-          <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-soft shrink-0">
-            <FileCheck className="w-6 h-6 stroke-[2]" />
-          </div>
-          <div className="min-w-0">
-            <h2 className="text-lg font-semibold text-foreground leading-tight">Relatório da matrícula</h2>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
-              Matrícula nº <strong className="text-foreground font-semibold">{renderSafe(ident.matricula)}</strong> • {renderSafe(ident.cartorio_ri, 'Cartório não identificado')} ({renderSafe(ident.comarca, 'comarca não identificada')})
+      {/* Cabeçalho: nota de risco em destaque, identificação, ações e aviso de IA */}
+      <div className="bg-card rounded-3xl shadow-soft ring-1 ring-black/5 p-5 sm:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <ScoreRing score={scoreRisco} level={nivelRisco} size={128} />
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <p className="text-sm text-muted-foreground">Relatório da matrícula</p>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+              Matrícula nº {renderSafe(ident.matricula, '—')}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {renderSafe(ident.cartorio_ri, 'Cartório não identificado')}
+              {ident.comarca ? ` • ${renderSafe(ident.comarca)}` : ''}
             </p>
+            <Badge variant="outline" className={`${riskBadge.bg} mt-1`}>{statusJuridico}</Badge>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={() => setIsTourOpen(true)} className="gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
             Tour guiado
@@ -717,6 +707,12 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
             {isExporting ? 'Gerando PDF...' : 'Exportar PDF'}
           </Button>
         </div>
+
+        <p className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2 border-t border-border pt-4">
+          <Info className="w-4 h-4 shrink-0 mt-0.5" />
+          Análise automatizada por IA a partir do PDF enviado, com conferência de CPFs, atos e trechos citados.
+          Não substitui a certidão atualizada nem a avaliação de um advogado.
+        </p>
       </div>
 
       {/* Avisos sobre a própria análise */}
@@ -734,76 +730,23 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
       )}
 
       {/* Indicadores */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-border bg-card shadow-sm rounded-2xl">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Nota de risco</span>
-              <Badge variant="outline" className={`${riskBadge.bg} text-xs font-semibold gap-1 px-2.5 py-0.5`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${riskBadge.dot}`} />
-                {nivelRisco}
-              </Badge>
-            </div>
-            <div className="mt-2.5 flex items-baseline gap-2">
-              <span className="text-3xl font-semibold text-foreground">{scoreLabel}</span>
-              <span className="text-xs text-muted-foreground font-semibold">/ 100</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
-              Situação: <strong className="text-foreground">{statusJuridico}</strong>
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card shadow-sm rounded-2xl">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Matrícula</span>
-              <Building2 className="w-4 h-4 text-primary" />
-            </div>
-            <div className="mt-2.5">
-              <span className="text-2xl font-semibold text-foreground truncate block">Nº {renderSafe(ident.matricula, '—')}</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
-              {renderSafe(ident.cartorio_ri, 'Cartório não identificado')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card shadow-sm rounded-2xl">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Proprietários atuais</span>
-              <Users className="w-4 h-4 text-primary" />
-            </div>
-            <div className="mt-2.5">
-              <span className="text-3xl font-semibold text-foreground">{props.length}</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
-              {props.length > 0 ? renderSafe(props[0]?.nome) : 'Nenhum identificado na leitura'}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card shadow-sm rounded-2xl">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">Ônus e restrições ativos</span>
-              <AlertTriangle className={`w-4 h-4 ${onusAtivos.length > 0 ? 'text-warning' : 'text-success'}`} />
-            </div>
-            <div className="mt-2.5">
-              <span className={`text-3xl font-semibold ${onusAtivos.length > 0 ? 'text-warning' : 'text-foreground'}`}>
-                {onusAtivos.length}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">{onusResumo}</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        {[
+          { label: 'Proprietários', value: String(props.length), detail: props.length > 0 ? renderSafe(props[0]?.nome) : 'Nenhum identificado na leitura', tone: 'text-foreground' },
+          { label: 'Ônus ativos', value: String(onusAtivos.length), detail: onusResumo, tone: onusAtivos.length > 0 ? 'text-warning' : 'text-foreground' },
+          { label: 'Transmissões', value: String(cadeia.length), detail: cadeia.length > 0 ? 'na cadeia dominial' : 'Nenhuma identificada na leitura', tone: 'text-foreground' },
+        ].map(({ label, value, detail, tone }) => (
+          <div key={label} className="bg-card rounded-2xl shadow-soft ring-1 ring-black/5 p-3.5 sm:p-5 min-w-0">
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">{label}</p>
+            <p className={`text-3xl sm:text-4xl font-semibold tracking-tight tabular-nums mt-1 ${tone}`}>{value}</p>
+            <p className="hidden sm:block text-xs text-muted-foreground mt-1 truncate">{detail}</p>
+          </div>
+        ))}
       </div>
-
       {/* Módulos */}
       <div className="relative mt-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-          <div className="w-full bg-background border border-border p-1.5 rounded-2xl shadow-soft overflow-x-auto no-scrollbar ios-scroll">
+          <div className="w-full bg-muted/70 p-1 rounded-2xl overflow-x-auto no-scrollbar ios-scroll">
             <TabsList className="w-full min-w-max lg:min-w-0 flex lg:grid lg:grid-cols-6 gap-1.5 bg-transparent h-auto p-0 border-0">
               <TabsTrigger value="parecer" className={tabTriggerClass}>
                 <ShieldCheck className="w-4 h-4 shrink-0 text-primary" />
@@ -834,7 +777,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
 
           {/* PARECER & RISCO */}
           <TabsContent value="parecer" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card data-tour="step-1" className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+            <Card data-tour="step-1" className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl overflow-hidden">
               <CardHeader className="pb-3 border-b border-border">
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
@@ -859,7 +802,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                   </div>
                 )}
 
-                <div className="p-5 border border-border rounded-2xl space-y-4 bg-secondary/50">
+                <div className="p-5 border border-border rounded-2xl space-y-4 bg-secondary/60">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-xl bg-primary text-white flex items-center justify-center shadow-soft">
                       <Sparkles className="w-4 h-4" />
@@ -962,7 +905,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                   </h4>
                   <div className="grid sm:grid-cols-2 gap-3 text-xs">
                     {certidoesRecomendadas.map((cert: any, idx: number) => (
-                      <div key={idx} className="p-3.5 bg-secondary border border-border rounded-xl space-y-1">
+                      <div key={idx} className="p-3.5 bg-secondary rounded-xl space-y-1">
                         <div className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                           <div>
@@ -1025,7 +968,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                 </div>
               </div>
 
-              <div className="p-5 bg-secondary border border-border rounded-2xl text-xs sm:text-sm text-foreground leading-relaxed font-medium whitespace-pre-line">
+              <div className="p-5 bg-secondary rounded-2xl text-xs sm:text-sm text-foreground leading-relaxed font-medium whitespace-pre-line">
                 {profileTab === 'comprador' && renderSafe(perfis.comprador_leigo || parecer.explicacao_descomplicada, 'A IA não gerou esta visão para este documento.')}
                 {profileTab === 'corretor' && renderSafe(perfis.corretor_imoveis, 'A IA não gerou esta visão para este documento.')}
                 {profileTab === 'banco' && renderSafe(perfis.banco_credito, 'A IA não gerou esta visão para este documento.')}
@@ -1037,7 +980,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
 
           {/* IMÓVEL & GEO */}
           <TabsContent value="imovel" data-tour="step-2" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-primary" />
@@ -1079,7 +1022,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <Compass className="w-5 h-5 text-primary" />
@@ -1101,7 +1044,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <TreePine className="w-5 h-5 text-primary" />
@@ -1128,7 +1071,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
 
           {/* DONOS & CADEIA */}
           <TabsContent value="proprietarios" data-tour="step-3" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl overflow-hidden">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
@@ -1155,7 +1098,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                       </thead>
                       <tbody className="divide-y divide-border font-medium">
                         {props.map((p: any, i: number) => (
-                          <tr key={i} className="hover:bg-secondary/50">
+                          <tr key={i} className="hover:bg-secondary/60">
                             <td className="px-4 py-3 font-semibold text-foreground">{renderSafe(p?.nome)}</td>
                             <td className="px-4 py-3 font-mono">
                               {renderSafe(p?.cpf_cnpj)}
@@ -1176,7 +1119,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
@@ -1200,7 +1143,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                         <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-primary text-white text-xs font-semibold flex items-center justify-center">
                           {i + 1}
                         </div>
-                        <div className="p-4 bg-secondary border border-border rounded-2xl space-y-2">
+                        <div className="p-4 bg-secondary rounded-2xl space-y-2">
                           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="border-primary/30 text-primary bg-card font-semibold text-xs px-2 py-0.5">
@@ -1246,7 +1189,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
 
           {/* ÔNUS & PENHORAS */}
           <TabsContent value="onus" data-tour="step-4" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl overflow-hidden">
               <CardHeader className="pb-3 border-b border-border">
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
@@ -1305,7 +1248,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
             </Card>
 
             {averb.length > 0 && (
-              <Card className="border-border bg-card shadow-sm rounded-2xl">
+              <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
                 <CardHeader className="pb-3 border-b border-border">
                   <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                     <FileText className="w-5 h-5 text-muted-foreground" />
@@ -1314,7 +1257,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                 </CardHeader>
                 <CardContent className="pt-4 space-y-2.5">
                   {averb.map((a: any, i: number) => (
-                    <div key={i} className="p-3 bg-secondary border border-border rounded-xl text-xs space-y-1">
+                    <div key={i} className="p-3 bg-secondary rounded-xl text-xs space-y-1">
                       <div className="flex items-center justify-between gap-2 font-semibold text-foreground">
                         <span>{renderSafe(a?.numero_averbacao, `#${i + 1}`)} — {renderSafe(a?.tipo, 'Averbação')}</span>
                         <span className="text-muted-foreground font-normal shrink-0">{renderSafe(a?.data, '')}</span>
@@ -1329,7 +1272,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
 
           {/* REGIMES & DIREITOS */}
           <TabsContent value="especiais" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-primary" />
@@ -1338,18 +1281,18 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardHeader>
               <CardContent className="pt-5">
                 <div className="grid sm:grid-cols-3 gap-4 text-xs">
-                  <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <div className="p-3 bg-secondary rounded-xl">
                     <span className="text-xs font-semibold text-muted-foreground block">Condomínio edilício</span>
                     <span className="font-semibold text-foreground">{renderFlag(regimes.eh_condominio)}</span>
                     {regimes.incorporacao_imobiliaria && <p className="text-xs text-muted-foreground mt-1">{renderSafe(regimes.incorporacao_imobiliaria)}</p>}
                     {regimes.fracao_ideal && <p className="text-xs text-foreground font-semibold mt-1">Fração ideal: {renderSafe(regimes.fracao_ideal)}</p>}
                     {regimes.vaga_garagem && <p className="text-xs text-muted-foreground mt-0.5">Garagem: {renderSafe(regimes.vaga_garagem)}</p>}
                   </div>
-                  <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <div className="p-3 bg-secondary rounded-xl">
                     <span className="text-xs font-semibold text-muted-foreground block">Loteamento</span>
                     <span className="font-semibold text-foreground">{renderFlag(regimes.eh_loteamento, regimes.registro_loteamento)}</span>
                   </div>
-                  <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <div className="p-3 bg-secondary rounded-xl">
                     <span className="text-xs font-semibold text-muted-foreground block">Regularização fundiária (REURB)</span>
                     <span className="font-semibold text-foreground">{renderFlag(regimes.eh_reurb, regimes.tipo_reurb)}</span>
                     {regimes.detalhes_regime && <p className="text-xs text-muted-foreground mt-1">{renderSafe(regimes.detalhes_regime)}</p>}
@@ -1358,7 +1301,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <Landmark className="w-5 h-5 text-primary" />
@@ -1367,18 +1310,18 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardHeader>
               <CardContent className="pt-5">
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                  <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <div className="p-3 bg-secondary rounded-xl">
                     <span className="text-xs font-semibold text-muted-foreground block">Terreno de marinha / SPU</span>
                     <span className="font-semibold text-foreground">{renderFlag(especiais.terreno_marinha, especiais.regime_spu)}</span>
                     {especiais.laudemio && <p className="text-xs text-muted-foreground mt-1">Laudêmio: {renderSafe(especiais.laudemio)}</p>}
                   </div>
-                  <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <div className="p-3 bg-secondary rounded-xl">
                     <span className="text-xs font-semibold text-muted-foreground block">Faixa de fronteira / faixa de domínio</span>
                     <span className="font-semibold text-foreground">
                       {especiais.faixa_fronteira === true ? 'Faixa de fronteira (Lei 6.634/79)' : renderSafe(especiais.faixa_dominio)}
                     </span>
                   </div>
-                  <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <div className="p-3 bg-secondary rounded-xl">
                     <span className="text-xs font-semibold text-muted-foreground block">Tombamento / terra indígena ou quilombola</span>
                     <span className="font-semibold text-foreground">{renderSafe(especiais.tombamento || especiais.terra_indigena_quilombola)}</span>
                   </div>
@@ -1386,7 +1329,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
               <CardHeader className="pb-3 border-b border-border">
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
@@ -1400,12 +1343,12 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
               </CardHeader>
               <CardContent className="pt-4 space-y-2">
                 {usufruto.length === 0 ? (
-                  <div className="p-4 bg-secondary border border-border rounded-xl text-xs text-muted-foreground font-medium">
+                  <div className="p-4 bg-secondary rounded-xl text-xs text-muted-foreground font-medium">
                     Nenhum usufruto, servidão ou cláusula restritiva identificado na leitura.
                   </div>
                 ) : (
                   usufruto.map((u: any, i: number) => (
-                    <div key={i} className="p-3 bg-secondary border border-border rounded-xl text-xs space-y-1">
+                    <div key={i} className="p-3 bg-secondary rounded-xl text-xs space-y-1">
                       <div className="flex items-center justify-between gap-2 font-semibold text-foreground">
                         <span>[{renderSafe(u?.numero_ato, 'ato não informado')}] {renderSafe(u?.tipo)}</span>
                         <StatusBadge item={u} />

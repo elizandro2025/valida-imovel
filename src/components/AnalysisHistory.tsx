@@ -39,13 +39,13 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ refreshKey, on
   if (items === null) return null;
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-3xl">
-      <CardHeader className="pb-3 border-b border-border">
+    <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
+      <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
           <History className="w-4 h-4 text-primary" /> Minhas análises
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pt-0">
         {items === undefined ? (
           <div className="py-6 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
         ) : items.length === 0 ? (

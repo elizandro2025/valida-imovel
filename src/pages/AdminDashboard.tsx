@@ -188,10 +188,8 @@ export const AdminDashboard: React.FC = () => {
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
             <Logo />
-            <div className="hidden sm:block w-px h-5 bg-muted" />
-            <Badge variant="outline" className="hidden sm:flex border-primary/30 text-primary bg-primary/10 gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Painel Administrativo
-            </Badge>
+            
+            <span className="hidden sm:inline text-[13px] text-muted-foreground">Administração</span>
           </div>
 
           {/* Actions */}
@@ -223,7 +221,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {stats.map(({ title, value, icon: Icon, detail }) => (
-            <Card key={title} className="border-border bg-card shadow-sm rounded-2xl text-foreground">
+            <Card key={title} className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl text-foreground">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-xs font-semibold text-muted-foreground">{title}</CardTitle>
                 <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
@@ -274,7 +272,7 @@ export const AdminDashboard: React.FC = () => {
         )}
 
         {/* Liberação manual */}
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden text-foreground">
+        <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl overflow-hidden text-foreground">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -316,7 +314,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* 🚀 TABELA DE GERENCIAMENTO DE USUÁRIOS */}
-        <Card className="border-border bg-card shadow-medium rounded-2xl overflow-hidden text-foreground">
+        <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl overflow-hidden text-foreground">
           <CardHeader className="pb-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
@@ -516,7 +514,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Bottom Grid */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* System Status */}
-          <Card className="border-border bg-card shadow-sm rounded-2xl text-foreground">
+          <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl text-foreground">
             <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center gap-2">
                 <Database className="w-5 h-5 text-primary" />
@@ -554,7 +552,7 @@ export const AdminDashboard: React.FC = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="border-border bg-card shadow-sm rounded-2xl text-foreground">
+          <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl text-foreground">
             <CardHeader className="pb-3 border-b border-border">
               <CardTitle className="text-base font-semibold text-foreground">Ações Rápidas</CardTitle>
               <CardDescription className="text-xs text-muted-foreground">Principais funcionalidades administrativas</CardDescription>

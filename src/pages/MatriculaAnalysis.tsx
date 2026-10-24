@@ -127,7 +127,7 @@ const MatriculaAnalysis: React.FC = () => {
             <h1 className="text-2xl sm:text-4xl font-semibold text-foreground tracking-tight leading-tight">
               Análise de matrícula
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed font-medium">
+            <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Envie a certidão de matrícula em PDF. Em poucos minutos você recebe a nota de risco, os ônus, a cadeia dominial e o parecer dos 12 módulos.
             </p>
           </div>
@@ -135,40 +135,28 @@ const MatriculaAnalysis: React.FC = () => {
 
         <div className="space-y-8">
           {!isSampleDemo && !analysis.report && (
-            <Card className="max-w-2xl mx-auto border-border shadow-medium rounded-3xl bg-card text-foreground overflow-hidden">
-              <CardHeader className="pb-3 border-b border-border">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                      <Upload className="w-3.5 h-3.5 stroke-[2]" />
-                    </div>
-                    Enviar matrícula em PDF
-                  </CardTitle>
-                  <span className="text-xs font-semibold text-muted-foreground">PDF • até 15 MB</span>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-6">
+            <Card className="max-w-2xl mx-auto border-0 ring-1 ring-black/5 shadow-medium rounded-3xl bg-card text-foreground overflow-hidden">
+              <CardContent className="p-4 sm:p-6">
                 {!analysis.file ? (
                   <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-colors duration-300
-                      ${isDragActive ? 'border-primary/40 bg-primary/10' : 'border-border hover:border-primary/30 hover:bg-background/60'}
+                    className={`border-2 border-dashed rounded-2xl px-6 py-12 sm:py-14 text-center cursor-pointer transition-colors duration-300
+                      ${isDragActive ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/40 hover:bg-secondary/60'}
                       ${analysis.isProcessing ? 'pointer-events-none opacity-50' : ''}`}
                   >
                     <input {...getInputProps()} />
-                    <div className="space-y-3">
-                      <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                    <div className="space-y-4">
+                      <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 text-primary flex items-center justify-center">
                         <Upload className="w-7 h-7 stroke-[1.8]" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base font-semibold text-foreground">
-                          {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a certidão em PDF'}
+                        <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">
+                          {isDragActive ? 'Solte a matrícula aqui' : 'Arraste a certidão em PDF'}
                         </h3>
-                        <p className="text-xs text-muted-foreground font-medium">Aceita certidões digitais e digitalizadas (escaneadas)</p>
+                        <p className="text-sm text-muted-foreground">Digital ou escaneada, até 15 MB</p>
                       </div>
-                      <Button size="sm" disabled={analysis.isProcessing}>
-                        Selecionar PDF
-                        <ArrowRight className="ml-1 w-4 h-4" />
+                      <Button disabled={analysis.isProcessing}>
+                        Escolher arquivo
                       </Button>
                     </div>
                   </div>
@@ -211,37 +199,29 @@ const MatriculaAnalysis: React.FC = () => {
           )}
 
           {showWorkspaceHome && user && (
-            <div className="max-w-4xl mx-auto grid md:grid-cols-5 gap-4">
-              <div className="md:col-span-3">
+            <div className="max-w-2xl mx-auto flex flex-col md:flex-row gap-4">
+              <div className="md:flex-[3] min-w-0 empty:hidden">
                 <AnalysisHistory refreshKey={historyKey} onOpen={analysis.openFromHistory} />
               </div>
-              <div className="md:col-span-2">
+              <div className="md:flex-[2] min-w-0">
                 <AccountPanel />
               </div>
             </div>
           )}
 
           {showWorkspaceHome && (
-            <div className="max-w-4xl mx-auto pt-4 space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground text-center">Como funciona</h3>
-              <div className="grid sm:grid-cols-3 gap-4">
-                {[
-                  { num: '01', icon: Upload, title: 'Envio do PDF', desc: 'Conexão segura (HTTPS). O arquivo não fica guardado nos nossos servidores.' },
-                  { num: '02', icon: Brain, title: 'Leitura e análise por IA', desc: 'Proprietários, ônus, penhoras e georreferenciamento, com conferência no texto lido.' },
-                  { num: '03', icon: FileCheck, title: 'Relatório e PDF', desc: 'Nota de risco, pontos para conferir e relatório em PDF, salvos na sua conta.' },
-                ].map(({ num, icon: Icon, title, desc }) => (
-                  <div key={num} className="p-4 rounded-2xl bg-card border border-border space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary text-xs font-semibold flex items-center justify-center">
-                        {num}
-                      </span>
-                      <Icon className="w-4 h-4 text-primary" />
-                      <h4 className="font-semibold text-foreground text-xs">{title}</h4>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed font-medium">{desc}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="max-w-2xl mx-auto pt-6 grid sm:grid-cols-3 gap-6 text-center sm:text-left">
+              {[
+                { icon: Upload, title: 'Envie o PDF', desc: 'Por conexão segura. O arquivo não fica guardado nos nossos servidores.' },
+                { icon: Brain, title: 'A IA analisa', desc: 'Proprietários, ônus e penhoras, conferidos no texto lido.' },
+                { icon: FileCheck, title: 'Receba o relatório', desc: 'Nota de risco e PDF, salvos em "Minhas análises".' },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="space-y-1.5">
+                  <Icon className="w-5 h-5 text-primary mx-auto sm:mx-0" />
+                  <h4 className="font-semibold text-foreground text-sm">{title}</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                </div>
+              ))}
             </div>
           )}
         </div>

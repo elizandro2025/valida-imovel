@@ -35,13 +35,13 @@ export const AccountPanel: React.FC = () => {
   const left = daysLeft(user.subscriptionExpiresAt);
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-3xl">
-      <CardHeader className="pb-3 border-b border-border">
+    <Card className="border-0 ring-1 ring-black/5 bg-card shadow-soft rounded-3xl">
+      <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
           <CalendarClock className="w-4 h-4 text-primary" /> Sua conta
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4 space-y-4 text-xs">
+      <CardContent className="pt-0 space-y-4 text-xs">
         <div className="space-y-1">
           <p className="text-muted-foreground">Plano</p>
           <p className="font-semibold text-foreground">

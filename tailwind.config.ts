@@ -33,6 +33,10 @@ export default {
 			'2xl': '1400px',
 		},
 		extend: {
+			// Texto pequeno com 13px (12px ficava miúdo no computador); demais tamanhos seguem o padrão
+			fontSize: {
+				xs: ['0.8125rem', { lineHeight: '1.25rem' }],
+			},
 			fontFamily: {
 				// Fonte do sistema em cada plataforma (como a Apple faz): nada para baixar, sem deslocamento ao carregar
 				sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
