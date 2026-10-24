@@ -15,6 +15,9 @@ import {
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Logo } from '@/components/Logo';
+import { COMPANY_CONFIG } from '@/config/companyConfig';
+
+const PLAN_DAYS = COMPANY_CONFIG.offer.durationDays;
 
 export interface UserProfile {
   id: string;
@@ -126,7 +129,7 @@ export const AdminDashboard: React.FC = () => {
 
       toast({
         title: newStatus ? 'Assinatura Ativada' : 'Assinatura Desativada',
-        description: `O acesso para ${userItem.email} foi ${newStatus ? 'liberado por 90 dias' : 'removido'}.`,
+        description: `O acesso para ${userItem.email} foi ${newStatus ? `liberado por ${PLAN_DAYS} dias` : 'removido'}.`,
       });
 
       fetchUsers();
@@ -281,7 +284,7 @@ export const AdminDashboard: React.FC = () => {
               <div>
                 <CardTitle className="text-base font-semibold text-foreground">Liberar acesso manualmente</CardTitle>
                 <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                  Adiciona 90 dias (somados ao que ainda restar) para a conta com este e-mail
+                  Adiciona {PLAN_DAYS} dias (somados ao que ainda restar) para a conta com este e-mail
                 </CardDescription>
               </div>
             </div>
@@ -306,7 +309,7 @@ export const AdminDashboard: React.FC = () => {
                   className="w-full h-11 font-medium gap-2"
                 >
                   <UserPlus className="w-4 h-4" />
-                  {isGrantingAccess ? 'Liberando...' : 'Liberar Acesso (90 dias)'}
+                  {isGrantingAccess ? 'Liberando...' : `Liberar Acesso (${PLAN_DAYS} dias)`}
                 </Button>
               </div>
             </div>

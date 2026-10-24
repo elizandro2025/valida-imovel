@@ -19,6 +19,10 @@ import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { Logo } from '@/components/Logo';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
 
+const { offer } = COMPANY_CONFIG;
+// "R$ 99,90" → "R$ 99" e "90" (centavos em tamanho menor)
+const [priceUnits, priceCents] = offer.priceFormatted.split(',');
+
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -85,7 +89,7 @@ export const PixPaymentPage: React.FC = () => {
       if (applied) {
         toast({
           title: 'Pagamento confirmado',
-          description: isRenewal ? 'Seu acesso foi renovado.' : 'Seu acesso de 3 meses foi liberado.',
+          description: isRenewal ? 'Seu acesso foi renovado.' : `Seu acesso de ${offer.period} foi liberado.`,
         });
         navigate('/app', { replace: true });
         return;
@@ -271,22 +275,22 @@ export const PixPaymentPage: React.FC = () => {
               {/* Card de Oferta */}
               <div className="bg-card ring-1 ring-black/5 rounded-3xl p-7 space-y-4 shadow-soft">
                 <p className="text-primary text-sm font-semibold">
-                  {isRenewal ? 'Renovação • +90 dias' : '90 dias de acesso'}
+                  {isRenewal ? `Renovação • +${offer.durationDays} dias` : `${offer.durationDays} dias de acesso`}
                 </p>
 
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
-                    {isRenewal ? 'Renovar o plano de 3 meses' : 'Plano de 3 meses'}
+                    {isRenewal ? `Renovar o ${offer.planName.toLowerCase()}` : offer.planName}
                   </h1>
                   <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
                     {isRenewal
-                      ? 'Os dias que ainda faltam no seu plano atual são somados aos 90 dias novos.'
+                      ? `Os dias que ainda faltam no seu plano atual são somados aos ${offer.durationDays} dias novos.`
                       : 'Análise de matrículas e certidões imobiliárias com inteligência artificial.'}
                   </p>
                 </div>
 
                 <div className="pt-2 border-t border-border flex items-baseline justify-between">
-                  <span className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground whitespace-nowrap">R$ 49,<span className="text-2xl">90</span></span>
+                  <span className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground whitespace-nowrap">{priceUnits},<span className="text-2xl">{priceCents}</span></span>
                   <span className="text-sm text-muted-foreground">pagamento único</span>
                 </div>
               </div>
@@ -295,7 +299,7 @@ export const PixPaymentPage: React.FC = () => {
               <div className="bg-card ring-1 ring-black/5 rounded-3xl p-7 space-y-3.5 shadow-soft">
                 <h3 className="text-sm font-semibold text-foreground">O que está incluído</h3>
                 {[
-                  `Análises sem cobrança por documento durante 90 dias (uso justo de até ${COMPANY_CONFIG.offer.fairUseDailyLimit} por dia)`,
+                  `Análises sem cobrança por documento durante ${offer.durationDays} dias (uso justo de até ${offer.fairUseDailyLimit} por dia)`,
                   'Relatório nos 12 módulos registrais, com nota de risco',
                   'Cadeia dominial e proprietários atuais',
                   'Hipotecas, penhoras e indisponibilidades, com o trecho do documento',
@@ -470,7 +474,7 @@ export const PixPaymentPage: React.FC = () => {
                           onClick={handleGeneratePixPayment}
                           className="w-full bg-primary hover:bg-primary text-white font-semibold text-sm gap-2 transition-all"
                         >
-                          <QrCode className="w-4 h-4" /> Gerar Chave Pix — R$ 49,90
+                          <QrCode className="w-4 h-4" /> Gerar Chave Pix — {offer.priceFormatted}
                         </Button>
                       )}
 

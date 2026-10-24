@@ -6,6 +6,7 @@
  */
 
 import { API_BASE_URL as WORKER_BASE_URL } from './apiClient';
+import { COMPANY_CONFIG } from '@/config/companyConfig';
 
 // Se o domínio principal falhar, tenta o endereço workers.dev do mesmo Worker
 const WORKER_FALLBACK_URL = 'https://validaimovel-payment-api.elizandro-aquino.workers.dev';
@@ -103,7 +104,7 @@ export const paymentService = {
         qr_code: null,
         qr_code_base64: null,
         ticket_url: null,
-        amount: 49.90,
+        amount: COMPANY_CONFIG.offer.priceValue,
         error: err instanceof Error ? err.message : 'Erro de conexão com o servidor de pagamento',
       };
     }

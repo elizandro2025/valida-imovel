@@ -38,12 +38,20 @@ export interface Env {
 }
 
 // Preço e duração definidos no servidor — qualquer valor enviado pelo navegador é ignorado
+interface Plan { value: number; days: number; name: string }
 const PLAN = {
-  value: 49.9,
-  days: 90,
-  name: 'Plano 3 Meses',
-  description: 'ValidaImóvel — Plano 3 Meses',
+  value: 99.9,
+  days: 30,
+  name: 'Plano Mensal',
+  description: 'ValidaImóvel — Plano Mensal (30 dias)',
 };
+// Cobranças criadas antes da mudança de preço (até 24/10/2026) ainda podem ser pagas ou estornadas depois dela:
+// cada cobrança dá — e no estorno retira — os dias do plano que ela comprou
+const LEGACY_PLANS: Plan[] = [{ value: 49.9, days: 90, name: 'Plano 3 Meses' }];
+
+function planForValue(value: number): Plan | null {
+  return [PLAN, ...LEGACY_PLANS].find(plan => value >= plan.value) ?? null;
+}
 
 // Uso justo por usuário e por dia (horário de Brasília); admins não têm limite
 const DAILY_LIMITS = { analise: 30, tarefa: 120, chat: 150 } as const;
@@ -307,12 +315,12 @@ function renewalBase(profile: SubscriptionProfile | null): number {
   return active && expires > now ? expires : now;
 }
 
-function activeFields(base: number, paymentId: string) {
+function activeFields(base: number, paymentId: string, plan: Plan) {
   return {
     has_subscription: true,
     subscription_status: 'active',
-    subscription_plan: PLAN.name,
-    subscription_expires_at: new Date(base + PLAN.days * DAY_MS).toISOString(),
+    subscription_plan: plan.name,
+    subscription_expires_at: new Date(base + plan.days * DAY_MS).toISOString(),
     payment_id: paymentId,
     updated_at: new Date().toISOString(),
   };
@@ -324,7 +332,7 @@ async function customerEmail(env: Env, customerId: string): Promise<string | nul
 }
 
 // Ativa ou renova (somando aos dias restantes). Devolve o id do usuário, ou null quando não há a quem vincular.
-async function activateSubscription(env: Env, payment: AsaasPayment): Promise<string | null> {
+async function activateSubscription(env: Env, payment: AsaasPayment, plan: Plan): Promise<string | null> {
   // profiles.id é o mesmo id do usuário no Supabase Auth
   const userId = payment.externalReference && UUID_RE.test(payment.externalReference) ? payment.externalReference : null;
 
@@ -339,7 +347,7 @@ async function activateSubscription(env: Env, payment: AsaasPayment): Promise<st
   if (profile) {
     // O Asaas manda mais de um evento por cobrança (ex.: CONFIRMED e depois RECEIVED): aplica uma vez só
     if (profile.payment_id === payment.id) return profile.id;
-    await supabasePatchProfiles(env, `id=eq.${profile.id}`, activeFields(renewalBase(profile), payment.id));
+    await supabasePatchProfiles(env, `id=eq.${profile.id}`, activeFields(renewalBase(profile), payment.id, plan));
     return profile.id;
   }
 
@@ -350,7 +358,7 @@ async function activateSubscription(env: Env, payment: AsaasPayment): Promise<st
       headers: supabaseHeaders(env),
       body: JSON.stringify({
         id: userId, email, full_name: email?.split('@')[0], created_at: new Date().toISOString(),
-        ...activeFields(Date.now(), payment.id),
+        ...activeFields(Date.now(), payment.id, plan),
       }),
     });
     if (!response.ok) throw new Error(`Supabase POST ${response.status}: ${await response.text()}`);
@@ -368,7 +376,8 @@ async function revokeSubscription(env: Env, payment: AsaasPayment, reason: strin
     return null;
   }
 
-  const expires = (profile.subscription_expires_at ? Date.parse(profile.subscription_expires_at) : Date.now()) - PLAN.days * DAY_MS;
+  const days = (planForValue(payment.value) ?? PLAN).days;
+  const expires = (profile.subscription_expires_at ? Date.parse(profile.subscription_expires_at) : Date.now()) - days * DAY_MS;
   const stillActive = expires > Date.now();
   await supabasePatchProfiles(env, `id=eq.${profile.id}`, {
     has_subscription: stillActive,
@@ -428,8 +437,9 @@ async function handleWebhook(request: Request, env: Env): Promise<Response> {
       // Reconsulta a cobrança no Asaas em vez de confiar apenas no corpo do evento
       const payment = await asaasRequest<AsaasPayment>(env, `/payments/${event.payment.id}`);
 
-      if (isPaid && PAID_STATUSES.includes(payment.status) && payment.value >= PLAN.value) {
-        const userId = await activateSubscription(env, payment);
+      const plan = planForValue(payment.value);
+      if (isPaid && PAID_STATUSES.includes(payment.status) && plan) {
+        const userId = await activateSubscription(env, payment, plan);
         if (userId) {
           console.log(`✅ Assinatura ativada/renovada para a cobrança ${payment.id}`);
         } else {
@@ -794,9 +804,14 @@ async function handleAdminSubscription(request: Request, env: Env): Promise<Resp
 
   const active = body.active !== false;
   const linkedPayment = body.payment_id && /^pay_\w+$/.test(body.payment_id) ? body.payment_id : null;
+  // Pagamento vinculado dá os dias do plano que ele comprou; liberação manual dá o plano atual
+  const linkedValue = linkedPayment
+    ? (await supabaseSelect<{ value: number }>(env, `valida_payments?payment_id=eq.${linkedPayment}&select=value&limit=1`))?.[0]?.value
+    : undefined;
+  const plan = (linkedValue !== undefined && planForValue(Number(linkedValue))) || PLAN;
   const fields = active
     ? activeFields(renewalBase(await findProfile(env, `id=eq.${userId}`)),
-      linkedPayment || `ADMIN-${auth.email}-${new Date().toISOString().slice(0, 10)}`)
+      linkedPayment || `ADMIN-${auth.email}-${new Date().toISOString().slice(0, 10)}`, plan)
     : {
       has_subscription: false,
       subscription_status: 'inactive',

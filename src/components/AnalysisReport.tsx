@@ -271,7 +271,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
     if (isSubscribed) return true;
     toast({
       title: `${feature} disponível no plano`,
-      description: `Assine o plano de 3 meses por ${COMPANY_CONFIG.offer.priceFormatted} para usar este recurso.`,
+      description: `Assine o ${COMPANY_CONFIG.offer.planName.toLowerCase()} por ${COMPANY_CONFIG.offer.priceFormatted} para usar este recurso.`,
       variant: 'destructive',
     });
     return false;

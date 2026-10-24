@@ -87,7 +87,7 @@ const FAQS = [
   },
   {
     q: 'Como funciona o pagamento?',
-    a: `Pagamento único de ${COMPANY_CONFIG.offer.priceFormatted}, via Pix ou cartão, sem renovação automática. O acesso de 3 meses é liberado automaticamente após a confirmação. Se renovar antes do fim, os dias restantes são somados. Você tem 7 dias para desistir com reembolso integral.`,
+    a: `Pagamento único de ${COMPANY_CONFIG.offer.priceFormatted} por ${COMPANY_CONFIG.offer.period} de acesso, via Pix ou cartão, sem renovação automática. O acesso é liberado automaticamente após a confirmação. Se renovar antes do fim, os dias restantes são somados. Você tem 7 dias para desistir com reembolso integral.`,
   },
   {
     q: 'Existe limite de análises?',
@@ -451,17 +451,17 @@ export const LandingPage: React.FC = () => {
             <div className="bg-card rounded-[2rem] shadow-medium p-6 sm:p-14 space-y-8 text-center">
               <div className="space-y-3">
                 <p className="text-primary text-sm sm:text-base font-semibold">Preço</p>
-                <h2 className="text-[28px] leading-[1.12] sm:text-5xl font-semibold text-foreground tracking-tight">Um preço. Três meses. Sem cobrança por documento.</h2>
+                <h2 className="text-[28px] leading-[1.12] sm:text-5xl font-semibold text-foreground tracking-tight">Um plano mensal. Sem cobrança por documento.</h2>
               </div>
               <div className="space-y-1">
                 <p className="text-5xl sm:text-6xl font-semibold tracking-tight text-foreground">{COMPANY_CONFIG.offer.priceFormatted}</p>
                 <p className="text-sm text-muted-foreground">
-                  pagamento único • equivale a {COMPANY_CONFIG.offer.monthlyEquivalentFormatted}/mês • {COMPANY_CONFIG.offer.paymentMethods}
+                  {COMPANY_CONFIG.offer.period} de acesso • pagamento único • {COMPANY_CONFIG.offer.paymentMethods}
                 </p>
               </div>
               <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 text-left text-sm text-foreground/85 max-w-xl mx-auto">
                 {[
-                  `Até ${COMPANY_CONFIG.offer.fairUseDailyLimit} análises por dia, por 90 dias`,
+                  `Até ${COMPANY_CONFIG.offer.fairUseDailyLimit} análises por dia, por ${COMPANY_CONFIG.offer.durationDays} dias`,
                   'Relatório nos 12 módulos registrais',
                   'Nota de risco com o trecho que a embasa',
                   'Ônus ativos, cancelados e a conferir',
@@ -511,7 +511,7 @@ export const LandingPage: React.FC = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 glass border-x-0 border-b-0 px-4 py-2.5 sm:hidden flex items-center justify-between gap-3">
         <div className="min-w-0 leading-tight">
           <span className="text-sm font-semibold text-foreground block truncate">{COMPANY_CONFIG.offer.priceFormatted}</span>
-          <span className="text-xs text-muted-foreground block truncate">3 meses de acesso</span>
+          <span className="text-xs text-muted-foreground block truncate">{COMPANY_CONFIG.offer.period} de acesso</span>
         </div>
         <Link to={ctaPath} className="shrink-0"><Button size="sm">{ctaLabel}</Button></Link>
       </div>

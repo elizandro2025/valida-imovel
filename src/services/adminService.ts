@@ -51,7 +51,7 @@ export const adminService = {
 
   metrics: (): Promise<AdminMetrics> => authorizedFetch('/api/admin/metrics').then(r => readJson<AdminMetrics>(r)),
 
-  // Libera (+90 dias, somando ao que restar) ou revoga a assinatura, por id ou e-mail.
+  // Libera (+dias do plano, somando ao que restar) ou revoga a assinatura, por id ou e-mail.
   // Com payment_id, também vincula ao usuário um pagamento que chegou sem conta.
   setSubscription: async (target: { id?: string; email?: string; payment_id?: string }, active: boolean): Promise<AdminUser> => {
     const result = await readJson<{ user: AdminUser }>(

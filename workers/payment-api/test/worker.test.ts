@@ -59,9 +59,28 @@ const patches = () => calls.filter(c => c.init.method === 'PATCH' && c.url.pathn
 beforeEach(() => { waits.length = 0; });
 afterEach(() => { globalThis.fetch = realFetch; });
 
+describe('cobrança', () => {
+  it('cria o Pix com o preço do servidor (R$ 99,90), ignorando o valor enviado pelo navegador', async () => {
+    mockFetch([
+      [/GET https:\/\/asaas\.test\/v3\/customers\?cpfCnpj=/, () => json({ data: [{ id: 'cus_1' }] })],
+      [/POST https:\/\/asaas\.test\/v3\/payments$/, () => json({ id: 'pay_9', status: 'PENDING', value: 99.9, invoiceUrl: 'https://asaas.test/i/9' })],
+      [/GET https:\/\/asaas\.test\/v3\/payments\/pay_9\/pixQrCode/, () => json({ encodedImage: 'aW1n', payload: '00020126' })],
+    ]);
+
+    const res = await call('/api/create-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: 'https://validaimovel.com' },
+      body: JSON.stringify({ name: 'Teste', email: 'teste@x.com', cpf: '123.456.789-09', amount: 1 }),
+    });
+    expect(await res.json()).toMatchObject({ success: true, amount: 99.9 });
+    const charge = calls.find(c => c.init.method === 'POST' && c.url.pathname === '/v3/payments');
+    expect(JSON.parse(String(charge?.init.body))).toMatchObject({ value: 99.9, billingType: 'PIX', description: 'ValidaImóvel — Plano Mensal (30 dias)' });
+  });
+});
+
 describe('webhook do Asaas', () => {
-  const payment = (status: string) => json({
-    id: 'pay_1', customer: 'cus_1', status, value: 49.9, billingType: 'PIX', invoiceUrl: 'https://asaas.test/i/1',
+  const payment = (status: string, value = 99.9) => json({
+    id: 'pay_1', customer: 'cus_1', status, value, billingType: 'PIX', invoiceUrl: 'https://asaas.test/i/1',
     transactionReceiptUrl: 'https://asaas.test/comprovante/1', externalReference: USER_ID, confirmedDate: '2026-10-24',
   });
 
@@ -72,7 +91,7 @@ describe('webhook do Asaas', () => {
     expect(calls).toHaveLength(0);
   });
 
-  it('renovação soma 90 dias aos dias que ainda faltam e grava o comprovante', async () => {
+  it('renovação soma 30 dias aos dias que ainda faltam e grava o comprovante', async () => {
     const expires = Date.now() + 10 * DAY;
     mockFetch([
       [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('CONFIRMED')],
@@ -87,26 +106,43 @@ describe('webhook do Asaas', () => {
     expect(res.status).toBe(200);
     const [patch] = patches();
     expect(patch.payment_id).toBe('pay_1');
-    expect(Math.abs(Date.parse(patch.subscription_expires_at) - (expires + 90 * DAY))).toBeLessThan(60_000);
+    expect(patch.subscription_plan).toBe('Plano Mensal');
+    expect(Math.abs(Date.parse(patch.subscription_expires_at) - (expires + 30 * DAY))).toBeLessThan(60_000);
 
     const record = calls.find(c => c.url.pathname === '/rest/v1/valida_payments');
     expect(JSON.parse(String(record?.init.body))).toMatchObject({ payment_id: 'pay_1', user_id: USER_ID, status: 'pago', receipt_url: 'https://asaas.test/comprovante/1' });
   });
 
-  it('primeiro pagamento (sem plano ativo) dá 90 dias a partir de agora', async () => {
-    mockFetch([
-      [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('RECEIVED')],
-      [/GET https:\/\/sb\.test\/rest\/v1\/profiles\?id=eq\./, () => json([{
-        id: USER_ID, has_subscription: false, subscription_expires_at: new Date(Date.now() - 5 * DAY).toISOString(), payment_id: null,
-      }])],
-      [/PATCH https:\/\/sb\.test\/rest\/v1\/profiles/, () => json([{ id: USER_ID }])],
-      [/POST https:\/\/sb\.test\/rest\/v1\/valida_payments/, () => new Response(null, { status: 201 })],
-    ]);
+  const firstPayment = (value: number) => mockFetch([
+    [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('RECEIVED', value)],
+    [/GET https:\/\/sb\.test\/rest\/v1\/profiles\?id=eq\./, () => json([{
+      id: USER_ID, has_subscription: false, subscription_expires_at: new Date(Date.now() - 5 * DAY).toISOString(), payment_id: null,
+    }])],
+    [/PATCH https:\/\/sb\.test\/rest\/v1\/profiles/, () => json([{ id: USER_ID }])],
+    [/POST https:\/\/sb\.test\/rest\/v1\/valida_payments/, () => new Response(null, { status: 201 })],
+  ]);
 
+  it('primeiro pagamento (sem plano ativo) dá 30 dias a partir de agora', async () => {
+    firstPayment(99.9);
     await webhook('PAYMENT_RECEIVED');
     const [patch] = patches();
     expect(patch.has_subscription).toBe(true);
+    expect(Math.abs(Date.parse(patch.subscription_expires_at) - (Date.now() + 30 * DAY))).toBeLessThan(60_000);
+  });
+
+  it('Pix de R$ 49,90 gerado antes da mudança de preço e pago depois ainda dá os 90 dias comprados', async () => {
+    firstPayment(49.9);
+    await webhook('PAYMENT_RECEIVED');
+    const [patch] = patches();
+    expect(patch).toMatchObject({ has_subscription: true, subscription_plan: 'Plano 3 Meses' });
     expect(Math.abs(Date.parse(patch.subscription_expires_at) - (Date.now() + 90 * DAY))).toBeLessThan(60_000);
+  });
+
+  it('cobrança abaixo de qualquer plano não libera acesso', async () => {
+    firstPayment(10);
+    const res = await webhook('PAYMENT_RECEIVED');
+    expect(res.status).toBe(200);
+    expect(patches()).toHaveLength(0);
   });
 
   it('evento repetido da mesma cobrança não soma dias de novo', async () => {
@@ -123,17 +159,18 @@ describe('webhook do Asaas', () => {
     expect(patches()).toHaveLength(0);
   });
 
-  it('estorno retira os 90 dias da cobrança e mantém o acesso se ainda sobrar prazo', async () => {
-    mockFetch([
-      [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('REFUNDED')],
-      [/GET https:\/\/sb\.test\/rest\/v1\/profiles\?payment_id=eq\.pay_1/, () => json([{
-        id: USER_ID, has_subscription: true, subscription_expires_at: new Date(Date.now() + 100 * DAY).toISOString(), payment_id: 'pay_1',
-      }])],
-      [/PATCH https:\/\/sb\.test\/rest\/v1\/profiles/, () => json([{ id: USER_ID }])],
-      [/GET https:\/\/asaas\.test\/v3\/customers\/cus_1/, () => json({ email: 'cliente@x.com' })],
-      [/POST https:\/\/sb\.test\/rest\/v1\/valida_payments/, () => new Response(null, { status: 201 })],
-    ]);
+  const refund = (value: number, daysLeft: number) => mockFetch([
+    [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('REFUNDED', value)],
+    [/GET https:\/\/sb\.test\/rest\/v1\/profiles\?payment_id=eq\.pay_1/, () => json([{
+      id: USER_ID, has_subscription: true, subscription_expires_at: new Date(Date.now() + daysLeft * DAY).toISOString(), payment_id: 'pay_1',
+    }])],
+    [/PATCH https:\/\/sb\.test\/rest\/v1\/profiles/, () => json([{ id: USER_ID }])],
+    [/GET https:\/\/asaas\.test\/v3\/customers\/cus_1/, () => json({ email: 'cliente@x.com' })],
+    [/POST https:\/\/sb\.test\/rest\/v1\/valida_payments/, () => new Response(null, { status: 201 })],
+  ]);
 
+  it('estorno retira os 30 dias da cobrança e mantém o acesso se ainda sobrar prazo', async () => {
+    refund(99.9, 40);
     await webhook('PAYMENT_REFUNDED');
     const [patch] = patches();
     expect(patch.has_subscription).toBe(true);
@@ -141,11 +178,19 @@ describe('webhook do Asaas', () => {
     expect(Math.abs(Date.parse(patch.subscription_expires_at) - (Date.now() + 10 * DAY))).toBeLessThan(60_000);
   });
 
+  it('estorno de uma cobrança antiga de R$ 49,90 retira os 90 dias que ela deu', async () => {
+    refund(49.9, 100);
+    await webhook('PAYMENT_REFUNDED');
+    const [patch] = patches();
+    expect(patch.has_subscription).toBe(true);
+    expect(Math.abs(Date.parse(patch.subscription_expires_at) - (Date.now() + 10 * DAY))).toBeLessThan(60_000);
+  });
+
   it('chargeback encerra o acesso quando não sobra prazo', async () => {
     mockFetch([
       [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('CHARGEBACK_REQUESTED')],
       [/GET https:\/\/sb\.test\/rest\/v1\/profiles\?payment_id=eq\.pay_1/, () => json([{
-        id: USER_ID, has_subscription: true, subscription_expires_at: new Date(Date.now() + 30 * DAY).toISOString(), payment_id: 'pay_1',
+        id: USER_ID, has_subscription: true, subscription_expires_at: new Date(Date.now() + 20 * DAY).toISOString(), payment_id: 'pay_1',
       }])],
       [/PATCH https:\/\/sb\.test\/rest\/v1\/profiles/, () => json([{ id: USER_ID }])],
       [/POST https:\/\/sb\.test\/rest\/v1\/valida_payments/, () => new Response(null, { status: 201 })],

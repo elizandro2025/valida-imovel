@@ -45,7 +45,7 @@ export const AccountPanel: React.FC = () => {
         <div className="space-y-1">
           <p className="text-muted-foreground">Plano</p>
           <p className="font-semibold text-foreground">
-            {isAdmin ? 'Administrador (sem vencimento)' : user.hasSubscription ? `Plano de ${COMPANY_CONFIG.offer.period} ativo` : 'Sem plano ativo'}
+            {isAdmin ? 'Administrador (sem vencimento)' : user.hasSubscription ? `${COMPANY_CONFIG.offer.planName} ativo` : 'Sem plano ativo'}
           </p>
           {!isAdmin && user.subscriptionExpiresAt && (
             <p className="text-muted-foreground">

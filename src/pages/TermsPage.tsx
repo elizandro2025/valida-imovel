@@ -9,7 +9,7 @@ import { PublicLayout } from '@/components/PublicLayout';
 import { usePageMeta } from '@/hooks/usePageMeta';
 
 export const TermsPage: React.FC = () => {
-  usePageMeta('Termos de uso', '/termos', 'Condições de uso do ValidaImóvel: plano de 3 meses com pagamento único, uso justo, direito de arrependimento de 7 dias e limites da análise automatizada de matrículas.');
+  usePageMeta('Termos de uso', '/termos', 'Condições de uso do ValidaImóvel: plano mensal de 30 dias com pagamento único, uso justo, direito de arrependimento de 7 dias e limites da análise automatizada de matrículas.');
   return (
     <PublicLayout>
 
@@ -41,7 +41,10 @@ export const TermsPage: React.FC = () => {
           <section className="space-y-2">
             <h2 className="text-lg font-semibold text-foreground">2. Condições de Acesso e Assinatura</h2>
             <p>
-              O acesso ao sistema é disponibilizado mediante pagamento único no valor de <strong className="text-primary">{COMPANY_CONFIG.offer.priceFormatted}</strong>, pelo período contínuo de <strong className="text-foreground">{COMPANY_CONFIG.offer.period} ({COMPANY_CONFIG.offer.durationDays} dias)</strong> a contar da confirmação do pagamento, sem cobrança por documento analisado.
+              O acesso ao sistema é disponibilizado mediante pagamento único no valor de <strong className="text-primary">{COMPANY_CONFIG.offer.priceFormatted}</strong>, pelo período contínuo de <strong className="text-foreground">{COMPANY_CONFIG.offer.durationDays} dias</strong> a contar da confirmação do pagamento, sem cobrança por documento analisado.
+            </p>
+            <p>
+              Planos contratados até 24/10/2026 (R$ 49,90 por 90 dias), inclusive cobranças geradas até essa data e pagas depois, mantêm o prazo de 90 dias pago.
             </p>
             <p>
               <strong className="text-foreground">Uso justo:</strong> para manter o serviço estável para todos, cada conta pode realizar até {COMPANY_CONFIG.offer.fairUseDailyLimit} análises por dia (o limite renova à meia-noite, horário de Brasília). A conta é pessoal; o compartilhamento de acesso pode levar à suspensão.

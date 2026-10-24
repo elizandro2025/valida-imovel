@@ -166,7 +166,7 @@ fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap);
 // ─── 7. llms.txt e llms-full.txt (resumo e texto completo para assistentes de IA) ──
 // Fatos do produto: manter igual a src/config/companyConfig.ts e workers/payment-api (PLAN, DAILY_LIMITS)
 const facts = [
-  'Preço: R$ 49,90, pagamento único (Pix ou cartão), 3 meses de acesso, sem renovação automática; 7 dias para desistir com reembolso.',
+  'Preço: plano mensal de R$ 99,90 por 30 dias de acesso, pagamento único (Pix ou cartão), sem renovação automática; 7 dias para desistir com reembolso.',
   'Uso justo: até 30 análises por dia por conta, sem cobrança por documento.',
   'Aceita: certidão de matrícula em PDF de qualquer cartório do Brasil, digital ou escaneada, com até 15 MB.',
   'Tempo: em geral de 1 a 4 minutos por análise.',

@@ -18,10 +18,11 @@ export const COMPANY_CONFIG = {
   
   // Detalhes da oferta (o preço cobrado de fato é definido no servidor: workers/payment-api)
   offer: {
-    priceFormatted: "R$ 49,90",
-    monthlyEquivalentFormatted: "R$ 16,63",
-    period: "3 meses",
-    durationDays: 90,
+    planName: "Plano mensal",
+    priceFormatted: "R$ 99,90",
+    priceValue: 99.9,
+    period: "30 dias",
+    durationDays: 30,
     // Uso justo: mesmo limite aplicado no servidor (DAILY_LIMITS.analise)
     fairUseDailyLimit: 30,
     paymentMethods: "Pix ou cartão",
