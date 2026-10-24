@@ -1,22 +1,55 @@
 import { useEffect } from 'react';
 
-const SITE = 'https://validaimovel.com';
-const DEFAULT_TITLE = 'ValidaImóvel — Análise de Matrícula Imobiliária com IA';
+export const SITE_URL = 'https://validaimovel.com';
+export const DEFAULT_TITLE = 'Análise de matrícula de imóvel com IA | ValidaImóvel';
+export const DEFAULT_DESCRIPTION =
+  'Envie a certidão de matrícula em PDF e veja em minutos o dono atual, hipotecas, alienação fiduciária, penhoras e a nota de risco do imóvel. Exemplo grátis.';
 
-// Título da aba e URL canônica por página (o index.html traz os valores da página inicial)
-export function usePageMeta(title: string | null, path: string, description?: string) {
+interface PageMetaOptions {
+  type?: 'website' | 'article';
+  /** Telas de conta e pagamento: fora dos buscadores */
+  noindex?: boolean;
+}
+
+function setMeta(attr: 'name' | 'property', key: string, content: string) {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.content = content;
+}
+
+/**
+ * Título, descrição, canonical, Open Graph, Twitter e robots por página.
+ * No build, as páginas públicas são pré-renderizadas com estes valores (scripts/prerender.mjs),
+ * então buscadores e assistentes de IA recebem o HTML certo sem executar JavaScript.
+ */
+export function usePageMeta(title: string | null, path: string, description?: string, options: PageMetaOptions = {}) {
+  const { type = 'website', noindex = false } = options;
+
   useEffect(() => {
-    document.title = title ? `${title} — ValidaImóvel` : DEFAULT_TITLE;
+    const fullTitle = title ? `${title} | ValidaImóvel` : DEFAULT_TITLE;
+    const desc = description || DEFAULT_DESCRIPTION;
+    const url = `${SITE_URL}${path === '/' ? '/' : path}`;
 
-    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (canonical) canonical.href = `${SITE}${path}`;
+    document.title = fullTitle;
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = url;
 
-    const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    const previous = meta?.content;
-    if (meta && description) meta.content = description;
-
-    return () => {
-      if (meta && description && previous) meta.content = previous;
-    };
-  }, [title, path, description]);
+    setMeta('name', 'description', desc);
+    setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1');
+    setMeta('property', 'og:title', fullTitle);
+    setMeta('property', 'og:description', desc);
+    setMeta('property', 'og:url', url);
+    setMeta('property', 'og:type', type);
+    setMeta('name', 'twitter:title', fullTitle);
+    setMeta('name', 'twitter:description', desc);
+  }, [title, path, description, type, noindex]);
 }

@@ -3,102 +3,94 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    
-    <!-- Primary Meta Tags -->
-    <title>ValidaImóvel — Análise de Matrícula Imobiliária com IA</title>
-    <meta name="title" content="ValidaImóvel — Análise de Matrícula Imobiliária com IA" />
-    <meta name="description" content="Analise matrículas de imóveis com inteligência artificial. Identifique proprietários, cadeia dominial, ônus, penhoras e pontos de atenção e gere um relatório organizado em PDF." />
-    <meta name="keywords" content="matrícula de imóvel, auditoria imobiliária, certidão cartorária, due diligence imobiliário, CNIB, penhora de imóvel, usucapião, usufruto, certidão de matrícula, parecer registral imobiliário, validação de imóvel, cartório de imóveis" />
+
+    <!-- Valores da página inicial; cada página pública é pré-renderizada com os seus (scripts/prerender.mjs) -->
+    <title>Análise de matrícula de imóvel com IA | ValidaImóvel</title>
+    <meta name="description" content="Envie a certidão de matrícula em PDF e veja em minutos o dono atual, hipotecas, alienação fiduciária, penhoras e a nota de risco do imóvel. Exemplo grátis." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="ValidaImóvel" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="language" content="Portuguese" />
-    <meta name="revisit-after" content="1 days" />
     <meta name="theme-color" content="#f5f5f7" />
-    
-    <!-- Canonical URL -->
     <link rel="canonical" href="https://validaimovel.com/" />
 
-    <!-- Favicon & PWA Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
+    <link rel="alternate" type="text/markdown" title="Resumo para assistentes de IA" href="/llms.txt" />
 
     <!-- Fonte do sistema: San Francisco (Apple), Segoe UI (Windows), Roboto (Android) — sem download -->
 
-    <!-- Open Graph / Facebook / WhatsApp -->
+    <!-- Compartilhamento (WhatsApp, LinkedIn, Facebook, X) -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://validaimovel.com/" />
-    <meta property="og:title" content="ValidaImóvel — Análise de Matrícula Imobiliária com IA" />
-    <meta property="og:description" content="Analise matrículas de imóveis com inteligência artificial. Identifique proprietários, cadeia dominial, ônus, penhoras e pontos de atenção e gere um relatório organizado em PDF." />
-    <meta property="og:image" content="https://validaimovel.com/hero_matricula_bg.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Plataforma ValidaImóvel — Análise de Certidões Cartorárias" />
     <meta property="og:site_name" content="ValidaImóvel" />
     <meta property="og:locale" content="pt_BR" />
-
-    <!-- Twitter / X -->
+    <meta property="og:url" content="https://validaimovel.com/" />
+    <meta property="og:title" content="Análise de matrícula de imóvel com IA | ValidaImóvel" />
+    <meta property="og:description" content="Envie a certidão de matrícula em PDF e veja em minutos o dono atual, hipotecas, alienação fiduciária, penhoras e a nota de risco do imóvel. Exemplo grátis." />
+    <meta property="og:image" content="https://validaimovel.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="ValidaImóvel: relatório de matrícula com nota de risco, proprietários e ônus" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://validaimovel.com/" />
-    <meta name="twitter:title" content="ValidaImóvel — Análise de Matrícula Imobiliária com IA" />
-    <meta name="twitter:description" content="Analise matrículas de imóveis com inteligência artificial. Identifique proprietários, cadeia dominial, ônus, penhoras e pontos de atenção e gere um relatório organizado em PDF." />
-    <meta name="twitter:image" content="https://validaimovel.com/hero_matricula_bg.png" />
+    <meta name="twitter:title" content="Análise de matrícula de imóvel com IA | ValidaImóvel" />
+    <meta name="twitter:description" content="Envie a certidão de matrícula em PDF e veja em minutos o dono atual, hipotecas, alienação fiduciária, penhoras e a nota de risco do imóvel. Exemplo grátis." />
+    <meta name="twitter:image" content="https://validaimovel.com/og-image.png" />
 
-    <!-- GEO & AI Search Meta Tags -->
-    <meta name="chatgpt-description" content="ValidaImóvel é o copiloto de análise registral e due diligence imobiliária com inteligência artificial. Estrutura 12 módulos jurídicos, lê matrículas de imóveis, detecta ônus, penhoras e gera pareceres de Due Diligence." />
-    <meta name="perplexity-description" content="ValidaImóvel: Copiloto de análise registral e due diligence imobiliária com inteligência artificial." />
-
-    <!-- Schema.org JSON-LD Structured Data -->
+    <!-- Dados estruturados do site (cada página acrescenta os seus: FAQ, artigo, trilha de navegação) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "SoftwareApplication",
-          "@id": "https://validaimovel.com/#software",
-          "name": "ValidaImóvel",
-          "url": "https://validaimovel.com",
-          "applicationCategory": "BusinessApplication",
-          "operatingSystem": "Web",
-          "inLanguage": "pt-BR",
-          "description": "Copiloto de análise registral e due diligence imobiliária com inteligência artificial.",
-          "offers": {
-            "@type": "Offer",
-            "price": "49.90",
-            "priceCurrency": "BRL",
-            "priceValidUntil": "2027-12-31",
-            "availability": "https://schema.org/InStock",
-            "url": "https://validaimovel.com/auth?tab=register"
-          }
-        },
-        {
           "@type": "Organization",
           "@id": "https://validaimovel.com/#organization",
           "name": "ValidaImóvel",
-          "url": "https://validaimovel.com",
+          "url": "https://validaimovel.com/",
           "logo": "https://validaimovel.com/favicon.svg",
-          "sameAs": [
-            "https://validaimovel.com",
-            "https://www.instagram.com/valida.imovel/"
-          ],
+          "description": "Análise de matrícula de imóvel com inteligência artificial.",
+          "sameAs": ["https://www.instagram.com/valida.imovel/"],
           "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer service",
             "email": "contato@validaimovel.com",
-            "availableLanguage": "Portuguese"
+            "availableLanguage": "Portuguese",
+            "areaServed": "BR"
           }
         },
         {
           "@type": "WebSite",
           "@id": "https://validaimovel.com/#website",
-          "url": "https://validaimovel.com",
+          "url": "https://validaimovel.com/",
           "name": "ValidaImóvel",
-          "description": "Análise de Matrícula Imobiliária com IA",
-          "publisher": {
-            "@id": "https://validaimovel.com/#organization"
-          },
-          "inLanguage": "pt-BR"
+          "inLanguage": "pt-BR",
+          "publisher": { "@id": "https://validaimovel.com/#organization" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://validaimovel.com/#software",
+          "name": "ValidaImóvel",
+          "url": "https://validaimovel.com/",
+          "applicationCategory": "BusinessApplication",
+          "applicationSubCategory": "Análise de matrícula de imóvel",
+          "operatingSystem": "Web",
+          "inLanguage": "pt-BR",
+          "description": "Lê a certidão de matrícula de imóvel em PDF e mostra o dono atual, hipotecas, alienação fiduciária, penhoras, indisponibilidades, cadeia dominial e uma nota de risco de 0 a 100, com o trecho da matrícula que comprova cada ponto.",
+          "featureList": [
+            "Leitura de certidões digitais e escaneadas",
+            "Proprietários atuais e cadeia dominial",
+            "Hipotecas, alienação fiduciária, penhoras e indisponibilidades com status ativo ou cancelado",
+            "Nota de risco de 0 a 100",
+            "Conferência automática de CPFs, atos e trechos citados",
+            "Relatório em PDF e histórico de análises"
+          ],
+          "publisher": { "@id": "https://validaimovel.com/#organization" },
+          "offers": {
+            "@type": "Offer",
+            "name": "Plano de 3 meses",
+            "price": "49.90",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock",
+            "url": "https://validaimovel.com/#preco"
+          }
         }
       ]
     }

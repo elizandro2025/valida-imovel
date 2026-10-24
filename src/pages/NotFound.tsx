@@ -1,16 +1,13 @@
 import { useLocation, Link } from 'react-router-dom';
-import { useEffect } from 'react';
 import { FileCheck, ArrowLeft, FileSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Logo } from '@/components/Logo';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 const NotFound = () => {
   const location = useLocation();
-
-  useEffect(() => {
-    console.error('404 Error: User attempted to access non-existent route:', location.pathname);
-  }, [location.pathname]);
+  usePageMeta('Página não encontrada', location.pathname, undefined, { noindex: true });
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col antialiased">

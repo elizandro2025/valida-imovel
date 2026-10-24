@@ -29,7 +29,7 @@ const MatriculaAnalysis: React.FC = () => {
   const sampleType = sampleParam === 'risk' ? 'risk' : sampleParam === 'safe' || sampleParam === 'true' ? 'safe' : null;
   const isSampleDemo = Boolean(sampleType) || Boolean(analysis.isSample);
 
-  usePageMeta(isSampleDemo ? 'Demonstração' : 'Análise de matrícula', '/app');
+  usePageMeta(isSampleDemo ? 'Exemplo de relatório de matrícula' : 'Análise de matrícula', '/app', undefined, { noindex: true });
 
   const { loadSampleReport } = analysis;
   React.useEffect(() => {

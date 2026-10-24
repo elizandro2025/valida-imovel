@@ -24,7 +24,7 @@ export const PixPaymentPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, isLoading, signOut, refreshUser } = useAuth();
-  usePageMeta('Pagamento', '/pagamento');
+  usePageMeta('Pagamento', '/pagamento', undefined, { noindex: true });
 
   // Renovação: quem já tem plano ativo pode pagar de novo; os dias restantes são somados no servidor
   const isRenewal = searchParams.get('renovar') === '1';

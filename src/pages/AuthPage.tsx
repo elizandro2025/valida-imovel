@@ -20,7 +20,7 @@ const GOOGLE_LOGIN = import.meta.env.VITE_GOOGLE_LOGIN === 'true';
 
 export const AuthPage: React.FC = () => {
   const { user, signIn, signInWithGoogle, signUp, resetPassword, updatePassword, signOut, isLoading } = useAuth();
-  usePageMeta(null, '/auth');
+  usePageMeta('Entrar ou criar conta', '/auth', undefined, { noindex: true });
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p workers/payment-api/tsconfig.json --noEmit",
     "test": "vitest run",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "preview": "vite preview",
+    "seo:indexnow": "node scripts/indexnow.mjs",
     "deploy:site": "npm run check && npx --yes wrangler@4.152.0 pages deploy dist --project-name=validaimovel --branch=main",
     "deploy:api": "cd workers/payment-api && npx --yes wrangler@4.152.0 deploy --env=\"\"",
     "deploy:api:sandbox": "cd workers/payment-api && npx --yes wrangler@4.152.0 deploy --env=sandbox"

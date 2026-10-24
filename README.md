@@ -42,6 +42,16 @@ Variáveis do site (`.env`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY
 
 Os segredos ficam só no Worker: `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `GEMINI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`.
 
+## SEO e GEO (buscadores e assistentes de IA)
+
+- `npm run build` = `vite build` + `scripts/prerender.mjs`. A pré-renderização:
+  - abre as páginas públicas (início, `/guia`, guias, termos, privacidade) num Chrome headless e grava o HTML pronto, com título, descrição, canonical, Open Graph e JSON-LD de cada página;
+  - gera `sitemap.xml`, `llms.txt` e `llms-full.txt` a partir desse conteúdo;
+  - grava `spa.html` e `404.html` (o esqueleto do app, marcado como `noindex`). As telas logadas chegam a ele pelas regras de `public/_redirects`.
+- A pré-renderização precisa do Chrome: use `CHROME_PATH` se ele não estiver no caminho padrão. `SKIP_PRERENDER=1` pula a etapa, só para testes locais.
+- Guias: os metadados ficam em `src/content/guides/index.ts` e o texto em `src/content/guides/content.tsx`. Os testes conferem os limites de título e descrição e os links entre guias.
+- Depois de publicar em produção, rode `npm run seo:indexnow` para avisar Bing, Yandex e outros buscadores das páginas novas.
+
 ## Publicação
 
 ```sh

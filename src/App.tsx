@@ -1,4 +1,4 @@
-import React, { Component, ReactNode, Suspense, lazy } from "react";
+import React, { Component, ReactNode, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -8,16 +8,29 @@ import { Button } from "@/components/ui/button";
 import { ShieldAlert, RefreshCcw, Loader2 } from "lucide-react";
 import { ProtectedRoute as AdminGuard } from "@/components/ProtectedRoute";
 import { reportClientError } from "@/services/errorReporting";
+import { lazyPage } from "@/lib/lazyPage";
 
 // A página inicial vem no pacote principal; as demais telas (com relatório e gerador de PDF) carregam sob demanda
-const MatriculaAnalysis = lazy(() => import("./pages/MatriculaAnalysis"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
-const PixPaymentPage = lazy(() => import("./pages/PixPaymentPage"));
-const TermsPage = lazy(() => import("./pages/TermsPage"));
-const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
-const GuidePage = lazy(() => import("./pages/GuidePage"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const MatriculaAnalysis = lazyPage(() => import("./pages/MatriculaAnalysis"));
+const AuthPage = lazyPage(() => import("./pages/AuthPage"));
+const AdminDashboard = lazyPage(() => import("./pages/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
+const PixPaymentPage = lazyPage(() => import("./pages/PixPaymentPage"));
+const TermsPage = lazyPage(() => import("./pages/TermsPage"));
+const PrivacyPage = lazyPage(() => import("./pages/PrivacyPage"));
+const GuidesIndexPage = lazyPage(() => import("./pages/GuidesIndexPage"));
+const GuidePage = lazyPage(() => import("./pages/GuidePage"));
+const NotFound = lazyPage(() => import("./pages/NotFound"));
+
+// Páginas que chegam pré-renderizadas: o código delas é baixado antes de o React assumir a tela (ver main.tsx)
+export function preloadRoute(pathname: string): Promise<void> {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  if (path === '/') return Promise.resolve();
+  if (path === '/guia') return GuidesIndexPage.preload();
+  if (path.startsWith('/guia/')) return GuidePage.preload();
+  if (path === '/termos') return TermsPage.preload();
+  if (path === '/privacidade') return PrivacyPage.preload();
+  return Promise.resolve();
+}
 
 interface GlobalErrorBoundaryProps {
   children: ReactNode;
@@ -105,7 +118,8 @@ const App = () => (
             <Route path="/pagamento" element={<PixPaymentPage />} />
             <Route path="/termos" element={<TermsPage />} />
             <Route path="/privacidade" element={<PrivacyPage />} />
-            <Route path="/guia/como-ler-matricula" element={<GuidePage />} />
+            <Route path="/guia" element={<GuidesIndexPage />} />
+            <Route path="/guia/:slug" element={<GuidePage />} />
             {/* Exige login e assinatura, exceto a demonstração pública (?sample=safe ou ?sample=risk) */}
             <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
             {/* Painel admin — exige login real com papel de administrador (o servidor confere de novo) */}

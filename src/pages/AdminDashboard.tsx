@@ -44,7 +44,7 @@ export const AdminDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [metricsError, setMetricsError] = useState<string | null>(null);
   const [linkEmails, setLinkEmails] = useState<Record<string, string>>({});
-  usePageMeta('Painel administrativo', '/admin');
+  usePageMeta('Painel administrativo', '/admin', undefined, { noindex: true });
 
   // Busca a lista de usuários e as métricas pela API (o servidor confere se quem pede é admin)
   const fetchUsers = async () => {

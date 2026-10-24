@@ -5,24 +5,13 @@ import { Card } from '@/components/ui/card';
 import { Shield, ArrowLeft, Lock, CheckCircle2 } from 'lucide-react';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
-import { Logo } from '@/components/Logo';
+import { PublicLayout } from '@/components/PublicLayout';
 import { usePageMeta } from '@/hooks/usePageMeta';
 
 export const PrivacyPage: React.FC = () => {
-  usePageMeta('Política de privacidade', '/privacidade');
+  usePageMeta('Política de privacidade', '/privacidade', 'Como o ValidaImóvel trata seus dados e os PDFs de matrícula: o que é coletado, quem processa (Google, Asaas, Supabase, Cloudflare), por quanto tempo e como pedir a exclusão.');
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 text-foreground glass border-x-0 border-t-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Logo />
-          <Link to="/">
-            <Button variant="outline" size="sm" className="border-border text-muted-foreground hover:text-foreground gap-2">
-              <ArrowLeft className="w-4 h-4" /> Voltar ao Início
-            </Button>
-          </Link>
-        </div>
-      </header>
+    <PublicLayout>
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-12 space-y-8">
@@ -31,7 +20,7 @@ export const PrivacyPage: React.FC = () => {
             <Lock className="w-3.5 h-3.5" /> Segurança e Privacidade
           </div>
           <h1 className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">
-            Política de Privacidade e Proteção de Dados
+            Política de privacidade
           </h1>
           <p className="text-sm text-muted-foreground">
             Lei Geral de Proteção de Dados (Lei nº 13.709/2018) • Última atualização: {COMPANY_CONFIG.legalUpdatedAt}
@@ -135,14 +124,7 @@ export const PrivacyPage: React.FC = () => {
         </Card>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} {COMPANY_CONFIG.legalName}. Todos os direitos reservados.</p>
-          <WhatsAppSupport variant="inline" />
-        </div>
-      </footer>
-    </div>
+      </PublicLayout>
   );
 };
 

@@ -1,1 +1,8 @@
-/*  /index.html  200
+# Páginas públicas são arquivos HTML pré-renderizados (scripts/prerender.mjs).
+# As telas do app usam o esqueleto spa.html (alvo sem ".html": a Cloudflare redireciona caminhos .html); rotas desconhecidas caem no 404.html (o app mostra "não encontrada").
+/app /spa 200
+/auth /spa 200
+/admin /spa 200
+/pagamento /spa 200
+/pagamento-pix /spa 200
+/demo /spa 200

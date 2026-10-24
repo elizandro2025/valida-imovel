@@ -1,7 +1,4 @@
-# Sitemap
-Sitemap: https://validaimovel.com/sitemap.xml
-
-# Buscadores e assistentes de IA podem ler as páginas públicas.
+# Buscadores e assistentes de IA podem ler todas as páginas públicas (guias, termos, privacidade).
 # Telas que exigem login ou pagamento não têm conteúdo para indexar.
 User-agent: *
 Allow: /
@@ -10,3 +7,7 @@ Disallow: /app
 Disallow: /auth
 Disallow: /pagamento
 Disallow: /pagamento-pix
+
+# Resumo e texto completo para assistentes de IA: https://validaimovel.com/llms.txt
+
+Sitemap: https://validaimovel.com/sitemap.xml
