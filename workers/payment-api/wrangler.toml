@@ -10,9 +10,25 @@ routes = [
   { pattern = "api.validaimovel.com", custom_domain = true }
 ]
 
+# Keep-alive diário do Supabase (08:00 em Brasília)
+[triggers]
+crons = ["0 11 * * *"]
+
 [vars]
 ENVIRONMENT = "production"
 ASAAS_API_URL = "https://api.asaas.com/v3"
+ADMIN_EMAILS = "elizandro.aquino@outlook.com"
+
+# Limites por usuário (IA) e por IP (criação de cobranças)
+[[ratelimits]]
+name = "AI_LIMITER"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }
+
+[[ratelimits]]
+name = "PAYMENT_LIMITER"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }
 
 # Ambiente de testes: `wrangler deploy --env sandbox` (só no workers.dev, sem domínio próprio)
 [env.sandbox]
@@ -20,6 +36,20 @@ name = "validaimovel-payment-api-sandbox"
 workers_dev = true
 routes = [] # sem isto o ambiente herda o domínio api.validaimovel.com de produção
 
+[env.sandbox.triggers]
+crons = []
+
 [env.sandbox.vars]
 ENVIRONMENT = "sandbox"
 ASAAS_API_URL = "https://api-sandbox.asaas.com/v3"
+ADMIN_EMAILS = "elizandro.aquino@outlook.com"
+
+[[env.sandbox.ratelimits]]
+name = "AI_LIMITER"
+namespace_id = "2001"
+simple = { limit = 20, period = 60 }
+
+[[env.sandbox.ratelimits]]
+name = "PAYMENT_LIMITER"
+namespace_id = "2002"
+simple = { limit = 10, period = 60 }

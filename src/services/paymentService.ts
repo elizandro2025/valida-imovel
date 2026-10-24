@@ -5,14 +5,9 @@
  * Todas as chamadas ao Asaas são feitas via Cloudflare Worker (/api/*).
  */
 
-// URL base do Worker
-// Em produção: https://api.validaimovel.com (ou fallback para workers.dev)
-// Em dev local: http://localhost:8787
-const WORKER_BASE_URL =
-  typeof window !== 'undefined' && window.location.hostname === 'localhost'
-    ? 'http://localhost:8787'
-    : 'https://api.validaimovel.com';
+import { API_BASE_URL as WORKER_BASE_URL } from './apiClient';
 
+// Se o domínio principal falhar, tenta o endereço workers.dev do mesmo Worker
 const WORKER_FALLBACK_URL = 'https://validaimovel-payment-api.elizandro-aquino.workers.dev';
 
 export interface PayerData {

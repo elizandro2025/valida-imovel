@@ -28,9 +28,10 @@ export const COMPANY_CONFIG = {
 
   // Políticas de Retenção e Segurança de Dados
   dataPolicy: {
-    retentionDays: 30, // período de retenção padrão dos arquivos analisados para suporte
     securityStatement: "Conexão protegida por HTTPS/TLS e tratamento dos documentos conforme as práticas descritas na Política de Privacidade.",
-    aiModelTraining: false, // Documentos não utilizados para treinamento de modelos públicos de IA
-    deletionRequest: "A solicitação de exclusão definitiva de documentos pode ser enviada a qualquer momento para suporte@validaimovel.com ou via WhatsApp de suporte.",
+    // Plano gratuito da API Gemini: o Google pode usar o conteúdo enviado para melhorar seus produtos.
+    // Ao migrar para o plano pago da API, trocar para false e ajustar o texto da Política de Privacidade.
+    aiProviderMayUseContent: true,
+    deletionRequest: "A solicitação de exclusão definitiva dos seus dados pode ser enviada a qualquer momento para suporte@validaimovel.com ou via WhatsApp de suporte.",
   }
 };

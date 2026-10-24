@@ -19,7 +19,7 @@ import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, isLoading, signOut } = useAuth();
+  const { user, isLoading, signOut, refreshUser } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -41,8 +41,7 @@ export const PixPaymentPage: React.FC = () => {
       return;
     }
 
-    const subStatus = subscriptionService.getStatus();
-    if (user.hasSubscription || subStatus.active) {
+    if (user.hasSubscription) {
       toast({
         title: '✅ Acesso Liberado',
         description: 'Você já possui uma assinatura ativa! Entrando no sistema...',
@@ -90,32 +89,30 @@ export const PixPaymentPage: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Callback de ativação — chamado pelo Supabase Realtime ou status check
+  // Callback de ativação — chamado pelo Supabase Realtime ou pela consulta de status.
+  // O acesso é liberado pelo webhook no servidor; aqui só esperamos o perfil refletir isso.
   const handlePaymentActivated = useCallback(async (txId: string) => {
     setPaymentConfirmed(true);
     setConfirmedTxId(txId);
 
-    // Ativa local e salva sessão atualizada
-    await subscriptionService.activate6MonthsUnlimited(txId);
-
-    const savedSession = localStorage.getItem('valida_imovel_vip_session');
-    if (savedSession) {
-      try {
-        const parsed = JSON.parse(savedSession);
-        parsed.hasSubscription = true;
-        localStorage.setItem('valida_imovel_vip_session', JSON.stringify(parsed));
-      } catch (e) { /* ok */ }
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const refreshed = await refreshUser();
+      if (refreshed?.hasSubscription) {
+        toast({
+          title: '🎉 Pagamento Confirmado!',
+          description: 'Seu acesso ilimitado por 3 meses foi liberado!',
+        });
+        navigate('/app', { replace: true });
+        return;
+      }
+      await new Promise(resolve => setTimeout(resolve, 3000));
     }
 
     toast({
-      title: '🎉 Pagamento Confirmado!',
-      description: 'Seu acesso ilimitado por 3 meses foi liberado instantaneamente!',
+      title: 'Pagamento recebido',
+      description: 'Estamos concluindo a liberação do seu acesso. Recarregue a página em instantes ou fale com o suporte.',
     });
-
-    setTimeout(() => {
-      window.location.href = '/app';
-    }, 1200);
-  }, [toast]);
+  }, [toast, refreshUser, navigate]);
 
   // Inscreve no Supabase Realtime para confirmação em tempo real
   useEffect(() => {
@@ -142,8 +139,7 @@ export const PixPaymentPage: React.FC = () => {
       const status = await paymentService.checkPaymentStatus(pixPayment.payment_id);
       if (status.approved) {
         clearInterval(interval);
-        await subscriptionService.activate6MonthsUnlimited('TX-' + pixPayment.payment_id);
-        handlePaymentActivated('TX-' + pixPayment.payment_id);
+        handlePaymentActivated(pixPayment.payment_id);
       }
     }, 8000);
 

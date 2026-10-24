@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { analyzeMatricula, MatriculaReport, AnalysisProgressCallback } from '@/services/mistralService';
-import { subscriptionService } from '@/services/subscriptionService';
 
 export interface AnalysisState {
   file: File | null;
@@ -35,14 +34,9 @@ export function useMatriculaAnalysis() {
     }));
   }, []);
 
-  const processFile = useCallback(async (file: File, hasSubscriptionOverride?: boolean) => {
-    // 🛡️ Paywall Check — prioriza o status resolvido pelo AuthContext (Supabase + lista aprovada)
-    // O override vem do user.hasSubscription do AuthContext, que já verificou Supabase e e-mails aprovados.
-    // Caso não informado, cai para o localStorage como fallback (ex: demo/embedding).
-    const subStatus = subscriptionService.getStatus();
-    const isActive = hasSubscriptionOverride === true || subStatus.active;
-
-    if (!isActive) {
+  const processFile = useCallback(async (file: File, hasSubscription?: boolean) => {
+    // 🛡️ Paywall — status vindo do AuthContext (perfil no Supabase). A API de IA confere de novo no servidor.
+    if (hasSubscription !== true) {
       setState(prev => ({
         ...prev,
         file: null,

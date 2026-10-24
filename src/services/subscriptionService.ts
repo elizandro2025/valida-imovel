@@ -1,21 +1,10 @@
 /**
  * Subscription Service — ValidaImóvel
  *
- * Gerencia o status de assinatura do usuário:
- * - LocalStorage (fallback imediato)
- * - Supabase profiles (persistência cross-device)
- * - Supabase Realtime (confirmação automática pós-pagamento)
+ * A assinatura vale somente o que está no Supabase (profiles), gravado pelo webhook de pagamento
+ * no servidor. O navegador apenas lê e acompanha a ativação em tempo real.
  */
 import { supabase } from '@/integrations/supabase/client';
-
-export interface SubscriptionStatus {
-  active: boolean;
-  planName: string;
-  expiresAt: string | null;
-  daysRemaining: number;
-  unlimited: boolean;
-  txId?: string;
-}
 
 export interface ProfileSubscriptionData {
   has_subscription?: boolean | null;
@@ -37,121 +26,17 @@ export const isSubscriptionActive = (profile?: ProfileSubscriptionData | null): 
   return (hasSub || isStatusActive) && notExpired;
 };
 
-const SUB_STORAGE_KEY = 'valida_imovel_subscription';
-
 export const subscriptionService = {
   isSubscriptionActive,
 
-  // Retorna o status atual da assinatura (LocalStorage + Supabase)
-  getStatus: (): SubscriptionStatus => {
-    try {
-      const stored = localStorage.getItem(SUB_STORAGE_KEY);
-      if (!stored) {
-        return {
-          active: false,
-          planName: 'Sem Assinatura Ativa',
-          expiresAt: null,
-          daysRemaining: 0,
-          unlimited: false,
-        };
-      }
-
-      const data = JSON.parse(stored);
-      const active = isSubscriptionActive({
-        has_subscription: data.active,
-        subscription_status: data.active ? 'active' : 'inactive',
-        subscription_expires_at: data.expiresAt,
-      });
-
-      const expiresAtMs = data.expiresAt ? new Date(data.expiresAt).getTime() : 0;
-      const daysRemaining = Math.max(0, Math.ceil((expiresAtMs - Date.now()) / (1000 * 60 * 60 * 24)));
-
-      return {
-        active,
-        planName: data.planName || 'Plano 3 Meses Ilimitado',
-        expiresAt: data.expiresAt || null,
-        daysRemaining,
-        unlimited: true,
-        txId: data.txId,
-      };
-    } catch (e) {
-      console.error('Erro ao ler assinatura:', e);
-      return {
-        active: false,
-        planName: 'Sem Assinatura Ativa',
-        expiresAt: null,
-        daysRemaining: 0,
-        unlimited: false,
-      };
-    }
-  },
-
-  // Limpa assinatura (testes)
-  clearSubscription: () => {
-    localStorage.removeItem(SUB_STORAGE_KEY);
-    window.dispatchEvent(new CustomEvent('valida_subscription_updated', { detail: { active: false } }));
-  },
-
-  // Ativa 3 meses de acesso ilimitado (chamado após confirmação de pagamento)
-  activate6MonthsUnlimited: async (txId: string = 'PIX-' + Date.now()): Promise<SubscriptionStatus> => {
-    const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
-
-    const subData = {
-      active: true,
-      planName: 'Plano 3 Meses Ilimitado',
-      price: 49.90,
-      expiresAt,
-      unlimited: true,
-      txId,
-      activatedAt: new Date().toISOString(),
-    };
-
-    localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(subData));
-
-    // Sincroniza com Supabase
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('profiles').upsert(
-          {
-            user_id: user.id,
-            has_subscription: true,
-            subscription_status: 'active',
-            subscription_plan: 'Plano 3 Meses Ilimitado',
-            subscription_expires_at: expiresAt,
-            payment_id: txId,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'user_id' }
-        );
-      }
-    } catch (err) {
-      console.warn('Erro opcional ao sincronizar Supabase:', err);
-    }
-
-    window.dispatchEvent(new CustomEvent('valida_subscription_updated', { detail: subData }));
-
-    return {
-      active: true,
-      planName: 'Plano 3 Meses Ilimitado',
-      expiresAt,
-      daysRemaining: 90,
-      unlimited: true,
-      txId,
-    };
-  },
-
   /**
-   * Inicia monitoramento via Supabase Realtime.
-   * Quando o Worker atualiza `profiles.has_subscription = true`,
-   * o frontend recebe a notificação em tempo real e ativa o acesso automaticamente.
+   * Acompanha via Supabase Realtime a ativação feita pelo webhook de pagamento.
+   * Quando o perfil passa a ter assinatura válida, chama onActivated.
    */
   subscribeToRealtimeActivation: (
     userId: string,
-    onActivated: (txId: string) => void
+    onActivated: (paymentId: string) => void
   ): (() => void) => {
-    console.log('📡 Supabase Realtime: monitorando ativação de assinatura para', userId);
-
     const channel = supabase
       .channel(`subscription-${userId}`)
       .on(
@@ -162,24 +47,18 @@ export const subscriptionService = {
           table: 'profiles',
           filter: `id=eq.${userId}`, // profiles.id é o id do usuário no Supabase Auth
         },
-        async (payload) => {
+        (payload) => {
           const newData = payload.new as ProfileSubscriptionData & { payment_id?: string };
-
           if (isSubscriptionActive(newData)) {
-            console.log('✅ Realtime: Assinatura ativada via webhook de pagamento!', newData);
-            const txId = newData.payment_id || 'MP-REALTIME-' + Date.now();
-            await subscriptionService.activate6MonthsUnlimited(txId);
-            onActivated(txId);
+            console.log('✅ Realtime: Assinatura ativada via webhook de pagamento!');
+            onActivated(newData.payment_id || '');
           }
         }
       )
-      .subscribe((status) => {
-        console.log('📡 Supabase Realtime status:', status);
-      });
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
   },
 };
-

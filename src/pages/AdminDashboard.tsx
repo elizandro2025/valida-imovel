@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { adminService } from '@/services/adminService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,8 +16,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 export interface UserProfile {
   id: string;
-  user_id: string;
-  email: string;
+  email: string | null;
   full_name?: string;
   role?: string;
   has_subscription?: boolean;
@@ -28,7 +27,7 @@ export interface UserProfile {
 }
 
 export const AdminDashboard: React.FC = () => {
-  const { user, signOut, grantAccess } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -41,45 +40,14 @@ export const AdminDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
 
-  // Busca lista de usuários do Supabase (tabela profiles)
+  // Busca a lista de usuários pela API (o servidor confere se quem pede é admin)
   const fetchUsers = async () => {
     setIsLoadingUsers(true);
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.warn('Erro ao buscar perfis do Supabase:', error);
-      }
-
-      let profiles: UserProfile[] = data || [];
-
-      // Garante que o Admin Mestre esteja sempre visível na lista
-      const adminEmail = 'elizandro.aquino@outlook.com';
-      const hasAdminInList = profiles.some(p => p.email?.toLowerCase() === adminEmail);
-      
-      if (!hasAdminInList) {
-        profiles = [
-          {
-            id: 'admin-master',
-            user_id: 'admin-master-id',
-            email: adminEmail,
-            full_name: 'Elizandro Aquino (Admin Master)',
-            role: 'admin',
-            has_subscription: true,
-            subscription_status: 'active',
-            subscription_plan: 'Ilimitado VIP',
-            created_at: new Date().toISOString(),
-          },
-          ...profiles,
-        ];
-      }
-
-      setUsersList(profiles);
-    } catch (err) {
+      setUsersList(await adminService.listUsers() as UserProfile[]);
+    } catch (err: any) {
       console.error('Falha ao carregar usuários:', err);
+      toast({ title: 'Erro ao carregar usuários', description: err?.message || 'Tente novamente.', variant: 'destructive' });
     } finally {
       setIsLoadingUsers(false);
     }
@@ -105,22 +73,7 @@ export const AdminDashboard: React.FC = () => {
     }
     setIsGrantingAccess(true);
     try {
-      await grantAccess(newUserEmail.trim());
-      
-      // Atualiza ou insere o perfil no Supabase
-      const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
-      await supabase.from('profiles').upsert(
-        {
-          email: newUserEmail.trim().toLowerCase(),
-          full_name: newUserEmail.trim().split('@')[0],
-          has_subscription: true,
-          subscription_status: 'active',
-          subscription_plan: 'Plano 3 Meses PIX',
-          subscription_expires_at: expiresAt,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'email' }
-      );
+      await adminService.setSubscription({ email: newUserEmail.trim().toLowerCase() }, true);
 
       toast({ title: 'Acesso liberado!', description: `Usuário ${newUserEmail} teve a assinatura ativada com sucesso.` });
       setNewUserEmail('');
@@ -140,24 +93,11 @@ export const AdminDashboard: React.FC = () => {
 
   // Alterna o status da assinatura de um usuário específico
   const handleToggleSubscription = async (userItem: UserProfile) => {
-    setUpdatingUserId(userItem.id || userItem.user_id);
+    setUpdatingUserId(userItem.id);
     const newStatus = !userItem.has_subscription;
-    const expiresAt = newStatus ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() : null;
 
     try {
-      // profiles.id é o id do usuário no Supabase Auth ('admin-master' é só o card fixo do admin)
-      if (userItem.id && userItem.id !== 'admin-master') {
-        const { error } = await supabase
-          .from('profiles')
-          .update({
-            has_subscription: newStatus,
-            subscription_status: newStatus ? 'active' : 'inactive',
-            subscription_expires_at: expiresAt,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', userItem.id);
-        if (error) throw error;
-      }
+      await adminService.setSubscription({ id: userItem.id }, newStatus);
 
       toast({
         title: newStatus ? 'Assinatura Ativada' : 'Assinatura Desativada',
@@ -402,12 +342,12 @@ export const AdminDashboard: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-slate-800/60">
                     {filteredUsers.map((item) => {
-                      const isAdminUser = item.role === 'admin' || item.email?.toLowerCase() === 'elizandro.aquino@outlook.com';
+                      const isAdminUser = item.role === 'admin';
                       const hasActiveSub = Boolean(item.has_subscription || isAdminUser);
-                      const isUpdating = updatingUserId === (item.id || item.user_id);
+                      const isUpdating = updatingUserId === item.id;
 
                       return (
-                        <tr key={item.id || item.user_id || item.email} className="hover:bg-slate-900/50 transition-colors">
+                        <tr key={item.id} className="hover:bg-slate-900/50 transition-colors">
                           {/* Coluna Nome / Email */}
                           <td className="py-3.5 px-4 font-medium">
                             <div className="flex items-center gap-3">
@@ -416,7 +356,7 @@ export const AdminDashboard: React.FC = () => {
                               </div>
                               <div>
                                 <div className="text-sm font-bold text-white flex items-center gap-1.5">
-                                  {item.full_name || item.email.split('@')[0]}
+                                  {item.full_name || item.email?.split('@')[0] || 'Sem nome'}
                                   {isAdminUser && <Crown className="w-3.5 h-3.5 text-amber-400 inline" />}
                                 </div>
                                 <div className="text-slate-400 text-xs flex items-center gap-1">

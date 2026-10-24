@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { subscriptionService } from '@/services/subscriptionService';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 
 const MatriculaAnalysis: React.FC = () => {
@@ -74,8 +73,7 @@ const MatriculaAnalysis: React.FC = () => {
             {user && (
               <>
                 {(() => {
-                  const sub = subscriptionService.getStatus();
-                  if (sub.active) {
+                  if (user.hasSubscription) {
                     return (
                       <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-extrabold rounded-full">
                         <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Plano 3 Meses Ilimitado (Ativo)

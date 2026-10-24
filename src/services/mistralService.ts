@@ -1,10 +1,8 @@
 // Service for Google Gemini integration with 12 Dedicated Modules & Strict Anti-Hallucination Directives
+// As chamadas passam pela API (api.validaimovel.com), que guarda a chave do Gemini e confere login e assinatura.
 import { tableAnalysisService, CoordinatePoint } from './tableAnalysisService';
 import { ocrCacheService } from './ocrCacheService';
-
-const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
-// Modelos em ordem de preferência: se um estiver sobrecarregado (503) ou sem cota (429), tenta o próximo
-const GEMINI_MODELS = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-flash-lite-latest"];
+import { authorizedFetch, SessionExpiredError } from './apiClient';
 
 const STRICT_ANTI_HALLUCINATION_SYSTEM =
   "SISTEMA ANTI-ALUCINAÇÃO REGISTRÁRIA ABSOLUTO — LEI 6.015/73 & PROVIMENTO CNJ 89/19:\n" +
@@ -31,89 +29,64 @@ const OCR_PROMPT =
 // Erros de disponibilidade da IA (cota, sobrecarga, chave) — exibidos ao usuário em vez de um relatório vazio
 export class AIServiceError extends Error {}
 
-const getApiKey = (): string => {
-  const key = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!key) {
-    throw new AIServiceError("Chave da IA não configurada (VITE_GEMINI_API_KEY).");
-  }
-  return key;
-};
-
 interface GeminiPart {
   text?: string;
   inline_data?: { mime_type: string; data: string };
 }
 
-// Chamada base ao Gemini com fallback entre modelos (503 = sobrecarga, 429 = cota do plano gratuito)
+// Chamada base ao Gemini pela API: o servidor escolhe o modelo (com fallback 503/429) e aplica os limites
 const geminiGenerate = async (
   parts: GeminiPart[],
   options: { system?: string; json?: boolean } = {}
 ): Promise<string> => {
-  const apiKey = getApiKey();
-  let lastStatus = 0;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 300000);
 
-  for (let pass = 0; pass < 2; pass++) {
-    if (pass > 0) await new Promise(resolve => setTimeout(resolve, 5000));
-
-    for (const model of GEMINI_MODELS) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 300000);
-
-      try {
-        const response = await fetch(`${GEMINI_ENDPOINT}/${model}:generateContent`, {
-          method: "POST",
-          headers: {
-            "x-goog-api-key": apiKey,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            ...(options.system && { systemInstruction: { parts: [{ text: options.system }] } }),
-            contents: [{ role: "user", parts }],
-            generationConfig: {
-              thinkingConfig: { thinkingLevel: "low" },
-              ...(options.json && { responseMimeType: "application/json" })
-            }
-          }),
-          signal: controller.signal
-        });
-
-        if (response.status === 429 || response.status >= 500) {
-          lastStatus = response.status;
-          console.warn(`Gemini ${model} indisponível (${response.status}), tentando o próximo modelo...`);
-          continue;
+  try {
+    const response = await authorizedFetch("/api/ai/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...(options.system && { systemInstruction: { parts: [{ text: options.system }] } }),
+        contents: [{ role: "user", parts }],
+        generationConfig: {
+          thinkingConfig: { thinkingLevel: "low" },
+          ...(options.json && { responseMimeType: "application/json" })
         }
+      }),
+      signal: controller.signal
+    });
 
-        const data = await response.json();
-        if (!response.ok) {
-          throw new AIServiceError(`Erro na IA (${response.status}): ${data?.error?.message || response.statusText}`);
-        }
-
-        const candidate = data?.candidates?.[0];
-        const text = (candidate?.content?.parts || [])
-          .filter((p: any) => !p.thought)
-          .map((p: any) => p.text || "")
-          .join("");
-        if (!text.trim()) {
-          throw new AIServiceError(`A IA não retornou conteúdo (${candidate?.finishReason || data?.promptFeedback?.blockReason || "motivo desconhecido"}).`);
-        }
-        return text;
-      } catch (error: any) {
-        if (error.name === 'AbortError') {
-          throw new AIServiceError("Tempo limite na análise (5 min). Tente novamente.");
-        }
-        if (error instanceof TypeError) {
-          throw new AIServiceError("Falha de conexão com o serviço de IA. Verifique sua internet e tente novamente.");
-        }
-        throw error;
-      } finally {
-        clearTimeout(timeoutId);
-      }
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      // Erros da própria API vêm como texto; erros repassados do Gemini vêm como objeto
+      const message = typeof data?.error === "string" ? data.error : data?.error?.message;
+      throw new AIServiceError(message || `Erro na IA (${response.status}).`);
     }
-  }
 
-  throw new AIServiceError(lastStatus === 429
-    ? "Limite de uso gratuito da IA atingido. Tente novamente em alguns minutos — se persistir, o limite diário acabou e renova na madrugada."
-    : "O serviço de IA está sobrecarregado no momento. Tente novamente em alguns minutos.");
+    const candidate = data?.candidates?.[0];
+    const text = (candidate?.content?.parts || [])
+      .filter((p: any) => !p.thought)
+      .map((p: any) => p.text || "")
+      .join("");
+    if (!text.trim()) {
+      throw new AIServiceError(`A IA não retornou conteúdo (${candidate?.finishReason || data?.promptFeedback?.blockReason || "motivo desconhecido"}).`);
+    }
+    return text;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new AIServiceError("Tempo limite na análise (5 min). Tente novamente.");
+    }
+    if (error instanceof SessionExpiredError) {
+      throw new AIServiceError(error.message);
+    }
+    if (error instanceof TypeError) {
+      throw new AIServiceError("Falha de conexão com o serviço de IA. Verifique sua internet e tente novamente.");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 };
 
 // Helper de higienização e auto-reparo de JSON truncado

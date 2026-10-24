@@ -14,7 +14,7 @@ import {
 import jsPDF from 'jspdf';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import { subscriptionService } from '@/services/subscriptionService';
+import { useAuth } from '@/contexts/AuthContext';
 import { MatriculaChat } from './MatriculaChat';
 import { GuidedTour } from './GuidedTour';
 
@@ -198,19 +198,8 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
     }
   }, [autoStartTour]);
 
-  const [isSubscribed, setIsSubscribed] = useState<boolean>(() => subscriptionService.getStatus().active);
-
-  useEffect(() => {
-    const handleSubChange = (e: any) => {
-      if (e.detail && typeof e.detail.active === 'boolean') {
-        setIsSubscribed(e.detail.active);
-      } else {
-        setIsSubscribed(subscriptionService.getStatus().active);
-      }
-    };
-    window.addEventListener('valida_subscription_updated', handleSubChange);
-    return () => window.removeEventListener('valida_subscription_updated', handleSubChange);
-  }, []);
+  const { user } = useAuth();
+  const isSubscribed = Boolean(user?.hasSubscription);
 
   if (!report) return null;
 

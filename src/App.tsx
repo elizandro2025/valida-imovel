@@ -66,7 +66,7 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
   }
 }
 
-import { subscriptionService } from "@/services/subscriptionService";
+import { ProtectedRoute as AdminGuard } from "@/components/ProtectedRoute";
 
 /**
  * Rota Protegida — Exige autenticação E assinatura ativa para acessar o workspace.
@@ -94,7 +94,7 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   // 2. Usuário autenticado MAS sem assinatura ativa -> Redireciona para pagamento
-  const isSubActive = Boolean(user?.hasSubscription || subscriptionService.getStatus().active);
+  const isSubActive = Boolean(user?.hasSubscription);
   if (user && !isSubActive && !isSampleDemo) {
     return <Navigate to="/pagamento-pix" state={{ from: location }} replace />;
   }
@@ -122,7 +122,8 @@ const App = () => (
               <Route path="/privacidade" element={<PrivacyPage />} />
               {/* Rota protegida — exige login, exceto demonstração pública (?sample=safe) */}
               <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
-              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              {/* Painel admin — exige login real com papel de administrador (sem demonstração pública) */}
+              <Route path="/admin" element={<AdminGuard requireAdmin><AdminDashboard /></AdminGuard>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

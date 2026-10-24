@@ -50,38 +50,79 @@ export const PrivacyPage: React.FC = () => {
           </div>
 
           <section className="space-y-2">
-            <h2 className="text-lg font-extrabold text-white">1. Coleta e Finalidade dos Dados</h2>
+            <h2 className="text-lg font-extrabold text-white">1. Dados Coletados e Finalidade</h2>
             <p>
-              O <strong className="text-white">{COMPANY_CONFIG.name}</strong> coleta exclusivamente as informações necessárias para a prestação do serviço de análise de matrículas, incluindo e-mail de acesso e o arquivo em PDF transmitido para extração estruturada dos dados registrais.
-            </p>
-          </section>
-
-          <section className="space-y-2">
-            <h2 className="text-lg font-extrabold text-white">2. Processamento dos Documentos</h2>
-            <p>
-              Os documentos enviados são processados através de conexões seguras protegidas por HTTPS/TLS.
+              O <strong className="text-white">{COMPANY_CONFIG.name}</strong> coleta apenas o necessário para prestar o serviço:
             </p>
             <ul className="space-y-2 text-xs text-slate-300 pt-1">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>Os arquivos de matrícula permanecem sob estrito sigilo do usuário.</span>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Conta:</strong> nome e e-mail, para login e controle da assinatura.</span>
               </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>Nenhum conteúdo de documento é compartilhado com terceiros ou utilizado para fins comerciais.</span>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Pagamento:</strong> nome, e-mail e CPF, exigidos para emitir a cobrança Pix ou cartão.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Documento analisado:</strong> o PDF da matrícula, que pode conter nomes, CPFs e outros dados pessoais de terceiros, usado exclusivamente para gerar o relatório.</span>
               </li>
             </ul>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-lg font-extrabold text-white">3. Solicitação de Exclusão de Dados</h2>
+            <h2 className="text-lg font-extrabold text-white">2. Como os Documentos São Processados</h2>
+            <ul className="space-y-2 text-xs text-slate-300 pt-1">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span>O PDF é enviado por conexão segura (HTTPS/TLS) e lido por inteligência artificial do Google (API Gemini). O {COMPANY_CONFIG.name} não armazena o arquivo em seus servidores.</span>
+              </li>
+              {COMPANY_CONFIG.dataPolicy.aiProviderMayUseContent && (
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                  <span>Conforme os termos da API Gemini, o Google pode reter o conteúdo enviado e utilizá-lo para melhorar seus produtos e serviços. O processamento pode ocorrer em servidores fora do Brasil.</span>
+                </li>
+              )}
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span>O relatório gerado fica salvo apenas no seu navegador, para consulta rápida, e é apagado quando você sai da conta.</span>
+              </li>
+            </ul>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-lg font-extrabold text-white">3. Empresas Parceiras (Operadores)</h2>
+            <p>Para funcionar, o serviço compartilha dados somente com os fornecedores abaixo, cada um apenas para a sua finalidade:</p>
+            <ul className="space-y-2 text-xs text-slate-300 pt-1">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Google (API Gemini):</strong> leitura e análise do PDF por inteligência artificial.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Asaas:</strong> processamento dos pagamentos (nome, e-mail e CPF).</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Supabase:</strong> armazenamento da conta e da assinatura.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <span><strong className="text-white">Cloudflare:</strong> hospedagem do site e da API.</span>
+              </li>
+            </ul>
+            <p>Nenhum dado é vendido ou usado para publicidade.</p>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-lg font-extrabold text-white">4. Solicitação de Exclusão de Dados</h2>
             <p>
               {COMPANY_CONFIG.dataPolicy.deletionRequest} O titular dos dados possui o direito de solicitar a confirmação, acesso, correção ou eliminação definitiva dos seus dados armazenados a qualquer momento.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-lg font-extrabold text-white">4. Contato sobre Privacidade</h2>
+            <h2 className="text-lg font-extrabold text-white">5. Contato sobre Privacidade</h2>
             <p>
               Dúvidas relativas à privacidade e proteção de dados devem ser endereçadas pelo e-mail: <strong className="text-cyan-400">{COMPANY_CONFIG.contactEmail}</strong>.
             </p>
