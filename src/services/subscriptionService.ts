@@ -160,13 +160,13 @@ export const subscriptionService = {
           event: 'UPDATE',
           schema: 'public',
           table: 'profiles',
-          filter: `user_id=eq.${userId}`,
+          filter: `id=eq.${userId}`, // profiles.id é o id do usuário no Supabase Auth
         },
         async (payload) => {
           const newData = payload.new as ProfileSubscriptionData & { payment_id?: string };
 
           if (isSubscriptionActive(newData)) {
-            console.log('✅ Realtime: Assinatura ativada via Mercado Pago!', newData);
+            console.log('✅ Realtime: Assinatura ativada via webhook de pagamento!', newData);
             const txId = newData.payment_id || 'MP-REALTIME-' + Date.now();
             await subscriptionService.activate6MonthsUnlimited(txId);
             onActivated(txId);

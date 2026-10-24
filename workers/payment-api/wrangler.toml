@@ -1,4 +1,5 @@
 name = "validaimovel-payment-api"
+account_id = "d003fd1278d4195c835a16fb7c65f9b7"
 main = "src/index.ts"
 compatibility_date = "2026-07-28"
 compatibility_flags = ["nodejs_compat"]
@@ -11,3 +12,14 @@ routes = [
 
 [vars]
 ENVIRONMENT = "production"
+ASAAS_API_URL = "https://api.asaas.com/v3"
+
+# Ambiente de testes: `wrangler deploy --env sandbox` (só no workers.dev, sem domínio próprio)
+[env.sandbox]
+name = "validaimovel-payment-api-sandbox"
+workers_dev = true
+routes = [] # sem isto o ambiente herda o domínio api.validaimovel.com de produção
+
+[env.sandbox.vars]
+ENVIRONMENT = "sandbox"
+ASAAS_API_URL = "https://api-sandbox.asaas.com/v3"

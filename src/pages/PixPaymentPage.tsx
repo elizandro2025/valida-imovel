@@ -13,7 +13,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscriptionService } from '@/services/subscriptionService';
-import { mercadoPagoService, PixPaymentResult } from '@/services/mercadoPagoService';
+import { paymentService, PixPaymentResult, isValidCpf, formatCpf } from '@/services/paymentService';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 
 export const PixPaymentPage: React.FC = () => {
@@ -53,6 +53,7 @@ export const PixPaymentPage: React.FC = () => {
 
   const [payerName, setPayerName] = useState(user?.name || '');
   const [payerEmail, setPayerEmail] = useState(user?.email || '');
+  const [payerCpf, setPayerCpf] = useState('');
   const [activeTab, setActiveTab] = useState<'pix' | 'card'>('pix');
   const [copied, setCopied] = useState(false);
 
@@ -126,19 +127,19 @@ export const PixPaymentPage: React.FC = () => {
     return () => unsubscribe();
   }, [user?.id, handlePaymentActivated]);
 
-  // Gera QR Code automaticamente se o e-mail estiver preenchido ao carregar
+  // Gera QR Code automaticamente quando e-mail e CPF válido estiverem preenchidos
   useEffect(() => {
-    if (payerEmail && !pixPayment && !isGenerating && !paymentConfirmed) {
+    if (activeTab === 'pix' && payerEmail && isValidCpf(payerCpf) && !pixPayment && !isGenerating && !paymentConfirmed) {
       handleGeneratePixPayment();
     }
-  }, [payerEmail]);
+  }, [payerEmail, payerCpf, activeTab]);
 
   // Polling de verificação de status a cada 8s
   useEffect(() => {
     if (!pixPayment?.payment_id || paymentConfirmed) return;
 
     const interval = setInterval(async () => {
-      const status = await mercadoPagoService.checkPaymentStatus(pixPayment.payment_id);
+      const status = await paymentService.checkPaymentStatus(pixPayment.payment_id);
       if (status.approved) {
         clearInterval(interval);
         await subscriptionService.activate6MonthsUnlimited('TX-' + pixPayment.payment_id);
@@ -163,19 +164,19 @@ export const PixPaymentPage: React.FC = () => {
       toast({ title: 'Por favor, informe seu e-mail', description: 'Digite seu e-mail para vincular a assinatura à sua conta.', variant: 'destructive' });
       return;
     }
+    if (!isValidCpf(payerCpf)) {
+      toast({ title: 'Por favor, informe seu CPF', description: 'O CPF do titular é exigido para emitir a cobrança.', variant: 'destructive' });
+      return;
+    }
 
     setIsGenerating(true);
     setGenerateError(null);
 
-    const result = await mercadoPagoService.createPixPayment({
-      transaction_amount: 49.90,
-      description: 'ValidaImóvel — Plano 3 Meses Ilimitado',
+    const result = await paymentService.createPixPayment({
+      name: payerName,
+      email: targetEmail,
+      cpf: payerCpf,
       userId: user?.id,
-      payer: {
-        email: targetEmail,
-        first_name: payerName.split(' ')[0] || 'Cliente',
-        last_name: payerName.split(' ').slice(1).join(' ') || 'ValidaImóvel',
-      },
     });
 
     if (result.success && result.qr_code) {
@@ -194,8 +195,17 @@ export const PixPaymentPage: React.FC = () => {
       toast({ title: 'Por favor, informe seu e-mail', description: 'Digite seu e-mail para continuar.', variant: 'destructive' });
       return;
     }
+    if (!isValidCpf(payerCpf)) {
+      toast({ title: 'Por favor, informe seu CPF', description: 'O CPF do titular é exigido para emitir a cobrança.', variant: 'destructive' });
+      return;
+    }
     setIsGeneratingCard(true);
-    const result = await mercadoPagoService.createCardPreference(targetEmail, payerName || 'Cliente');
+    const result = await paymentService.createCardPayment({
+      name: payerName,
+      email: targetEmail,
+      cpf: payerCpf,
+      userId: user?.id,
+    });
     if (result.success && result.init_point) {
       setCardInitPoint(result.init_point);
       window.open(result.init_point, '_blank');
@@ -409,6 +419,17 @@ export const PixPaymentPage: React.FC = () => {
                           className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
                         />
                       </div>
+                      <div className="relative sm:col-span-2">
+                        <FileCheck className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="CPF do titular (000.000.000-00)"
+                          value={payerCpf}
+                          onChange={(e) => setPayerCpf(formatCpf(e.target.value))}
+                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -424,7 +445,7 @@ export const PixPaymentPage: React.FC = () => {
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400"></span>
                           </span>
                           <span className="font-bold text-slate-300">
-                            {pixPayment ? 'Aguardando confirmação do Pix...' : 'Digite seu e-mail acima para gerar o Pix'}
+                            {pixPayment ? 'Aguardando confirmação do Pix...' : 'Preencha e-mail e CPF acima para gerar o Pix'}
                           </span>
                         </div>
                         <Badge className="bg-blue-500/20 text-cyan-400 border border-blue-500/30 text-[10px] font-bold">
@@ -512,7 +533,7 @@ export const PixPaymentPage: React.FC = () => {
                       <div className="space-y-1">
                         <h3 className="text-base font-bold text-white">Pagamento no Cartão de Crédito</h3>
                         <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                          Parcele a sua licença de 3 meses em até 12x no cartão de crédito com liberação instantânea.
+                          Pague a sua licença de 3 meses no cartão de crédito, na página segura do Asaas, com liberação automática.
                         </p>
                       </div>
 
