@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
+import { Logo } from '@/components/Logo';
 
 const MatriculaAnalysis: React.FC = () => {
   const analysis = useMatriculaAnalysis();
@@ -48,24 +49,17 @@ const MatriculaAnalysis: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-white">
       {/* Glassmorphic App Header Estilo AI Platform */}
-      <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 text-white">
+      <header className="sticky top-0 z-50 text-foreground glass border-x-0 border-t-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform font-black">
-              <Sparkles className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <div>
-              <span className="text-lg font-black tracking-tight text-white block leading-tight">
-                Valida<span className="text-cyan-400">Imóvel</span>
-              </span>
-            </div>
-            <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden sm:inline-flex">
-              {isSampleDemo ? 'Demonstração' : 'AI Workspace'}
-            </Badge>
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <Logo />
+            <span className="text-[13px] text-muted-foreground hidden sm:inline">
+              {isSampleDemo ? 'Demonstração' : 'Workspace'}
+            </span>
+          </div>
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
@@ -75,26 +69,26 @@ const MatriculaAnalysis: React.FC = () => {
                 {(() => {
                   if (user.hasSubscription) {
                     return (
-                      <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-extrabold rounded-full">
-                        <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Plano 3 Meses Ilimitado (Ativo)
+                      <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs hidden sm:flex gap-1.5 px-3 py-1 font-semibold rounded-full">
+                        <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Plano 3 Meses Ilimitado (Ativo)
                       </Badge>
                     );
                   }
                   return (
                     <Link to="/pagamento-pix">
-                      <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs px-3.5 h-8 rounded-xl shadow-md gap-1.5">
+                      <Button size="sm" className="text-white font-semibold text-xs px-3.5 h-8 gap-1.5 bg-primary">
                         <Zap className="w-3.5 h-3.5 fill-white" />
                         <span>Garantir 3 Meses por R$ 49,90</span>
                       </Button>
                     </Link>
                   );
                 })()}
-                <span className="text-xs text-slate-400 hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
+                <span className="text-xs text-muted-foreground hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleSignOut}
-                  className="border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl text-xs font-bold gap-1.5 h-9"
+                  className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-semibold gap-1.5 h-9"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   Sair
@@ -105,7 +99,7 @@ const MatriculaAnalysis: React.FC = () => {
             {/* Se for demo pública (não logado), mostra CTA de cadastro */}
             {isSampleDemo && (
               <Link to="/auth">
-                <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs px-4 h-8 rounded-xl shadow-md gap-1.5">
+                <Button size="sm" className="text-white font-semibold text-xs px-4 h-8 gap-1.5 bg-primary">
                   <Zap className="w-3.5 h-3.5 fill-white" />
                   Criar Conta — R$ 49,90
                 </Button>
@@ -123,13 +117,13 @@ const MatriculaAnalysis: React.FC = () => {
         {/* Hero Title & Subtitle — só para workspace real */}
         {!isSampleDemo && (
           <div className="text-center space-y-2 animate-fade-in pt-2">
-            <Badge variant="outline" className="border-slate-800 text-cyan-400 bg-slate-900 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-inner">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-cyan-400 inline" /> Plataforma de Auditoria Registrária Automatizada
+            <Badge variant="outline" className="border-border text-primary bg-card text-xs font-semibold px-3.5 py-1 rounded-full shadow-inner">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-primary inline" /> Plataforma de Auditoria Registrária Automatizada
             </Badge>
-            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl font-semibold text-foreground tracking-tight leading-tight">
               Análise de Matrícula Imobiliária em Tempo Real
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed font-medium">
               Arraste ou selecione a certidão de matrícula em PDF para emissão instantânea do parecer de Due Diligence dos 12 Módulos Registrais.
             </p>
           </div>
@@ -138,16 +132,16 @@ const MatriculaAnalysis: React.FC = () => {
         {/* Direct Upload & Analysis Flow — só para workspace real (usuário logado) */}
         <div className="space-y-8">
           {!isSampleDemo && (
-            <Card className="max-w-2xl mx-auto border-slate-800 shadow-2xl rounded-3xl bg-slate-900 text-white overflow-hidden">
-              <CardHeader className="pb-3 border-b border-slate-800/80 bg-slate-950/60">
+            <Card className="max-w-2xl mx-auto border-border shadow-medium rounded-3xl bg-card text-foreground overflow-hidden">
+              <CardHeader className="pb-3 border-b border-border bg-background/60">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-extrabold text-white flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-xl bg-blue-500/10 text-cyan-400 border border-blue-500/20 flex items-center justify-center">
+                  <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
                       <Upload className="w-3.5 h-3.5 stroke-[2]" />
                     </div>
                     Upload da Matrícula em PDF
                   </CardTitle>
-                  <span className="text-[11px] font-bold text-slate-400">PDF • Máx 10MB</span>
+                  <span className="text-xs font-semibold text-muted-foreground">PDF • Máx 10MB</span>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
@@ -155,29 +149,28 @@ const MatriculaAnalysis: React.FC = () => {
                   <div
                     {...getRootProps()}
                     className={`
-                      border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer
-                      transition-all duration-300 group
+                      border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all duration-300 group
                       ${isDragActive
-                        ? 'border-blue-500 bg-blue-500/10 scale-[0.99]'
-                        : 'border-slate-800 hover:border-blue-500/60 hover:bg-slate-950/60'
+                        ? 'border-primary/30 bg-primary/10 scale-[0.99]'
+                        : 'border-border hover:border-primary/60 hover:bg-background/60'
                       }
                       ${analysis.isProcessing ? 'pointer-events-none opacity-50' : ''}
                     `}
                   >
                     <input {...getInputProps()} />
                     <div className="space-y-3">
-                      <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-500/10 text-cyan-400 border border-blue-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shadow-inner transition-transform">
                         <Upload className="w-7 h-7 stroke-[1.8]" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base font-extrabold text-white">
+                        <h3 className="text-sm sm:text-base font-semibold text-foreground">
                           {isDragActive ? 'Solte a matrícula aqui' : 'Arraste ou selecione a certidão em PDF'}
                         </h3>
-                        <p className="text-xs text-slate-400 font-medium">Suporta matrículas digitalizadas, escaneadas ou nativas em PDF</p>
+                        <p className="text-xs text-muted-foreground font-medium">Suporta matrículas digitalizadas, escaneadas ou nativas em PDF</p>
                       </div>
                       <Button
                         size="sm"
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl text-xs h-9 px-5 shadow-lg shadow-blue-500/20 transition-all"
+                        className="bg-primary hover:bg-primary text-white font-semibold text-xs h-9 px-5 transition-all"
                         disabled={analysis.isProcessing}
                       >
                         Selecionar Arquivo PDF
@@ -223,7 +216,7 @@ const MatriculaAnalysis: React.FC = () => {
           {!isSampleDemo && !analysis.file && !analysis.isProcessing && !analysis.report && (
             <div className="max-w-4xl mx-auto pt-4 space-y-4">
               <div className="text-center">
-                <h3 className="text-sm font-extrabold text-slate-300 uppercase tracking-wider">Como Funciona a Auditoria Automatizada</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground">Como Funciona a Auditoria Automatizada</h3>
               </div>
               <div className="grid sm:grid-cols-3 gap-4">
                 {[
@@ -231,14 +224,14 @@ const MatriculaAnalysis: React.FC = () => {
                   { num: '02', icon: Brain, title: 'Extração dos 12 Módulos', desc: 'Processamento de proprietários, ônus, penhoras e georreferenciamento.' },
                   { num: '03', icon: FileCheck, title: 'Parecer & Exportação PDF', desc: 'Score de Risco, Semáforo Notarial e Dossiê em PDF completo.' },
                 ].map(({ num, icon: Icon, title, desc }) => (
-                  <div key={num} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                  <div key={num} className="p-4 rounded-2xl bg-card/60 border border-border space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-blue-500/20 text-cyan-400 text-xs font-black flex items-center justify-center border border-blue-500/30">
+                      <span className="w-6 h-6 rounded-lg bg-primary/20 text-primary text-xs font-semibold flex items-center justify-center border border-primary/30">
                         {num}
                       </span>
-                      <h4 className="font-extrabold text-white text-xs">{title}</h4>
+                      <h4 className="font-semibold text-foreground text-xs">{title}</h4>
                     </div>
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium pl-8">{desc}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed font-medium pl-8">{desc}</p>
                   </div>
                 ))}
               </div>

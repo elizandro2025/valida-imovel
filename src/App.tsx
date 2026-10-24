@@ -40,13 +40,13 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
-          <Card className="max-w-md w-full bg-slate-900 border border-slate-800 p-6 text-center space-y-4 rounded-3xl shadow-2xl">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+        <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+          <Card className="max-w-md w-full bg-card border border-border p-6 text-center space-y-4 rounded-3xl shadow-medium">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-warning/10 text-warning border border-warning/20 flex items-center justify-center">
               <ShieldAlert className="w-7 h-7" />
             </div>
-            <h2 className="text-lg font-black text-white">Falha Temporária na Exibição</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-lg font-semibold text-foreground">Falha Temporária na Exibição</h2>
+            <p className="text-xs text-muted-foreground">
               Ocorreu uma inconsistência inesperada na renderização. Clique abaixo para reiniciar a aplicação com segurança.
             </p>
             <Button
@@ -54,7 +54,7 @@ class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErro
                 this.setState({ hasError: false, error: null });
                 window.location.reload();
               }}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl gap-2 shadow-lg shadow-emerald-600/30"
+              className="w-full bg-success hover:bg-success text-white font-semibold text-xs py-2.5 rounded-xl gap-2 shadow-medium"
             >
               <RefreshCcw className="w-3.5 h-3.5" /> Recarregar Aplicação
             </Button>
@@ -82,8 +82,8 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-success/30 border-t-success/30 rounded-full animate-spin" />
       </div>
     );
   }

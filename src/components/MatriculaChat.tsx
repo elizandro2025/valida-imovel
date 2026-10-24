@@ -34,14 +34,14 @@ const renderFormattedText = (text: string, isUser: boolean = false) => {
             {parts.map((part, partIdx) => {
               if (part.startsWith('**') && part.endsWith('**')) {
                 return (
-                  <strong key={partIdx} className={`font-bold ${isUser ? 'text-cyan-300' : 'text-slate-900 font-extrabold'}`}>
+                  <strong key={partIdx} className={`font-semibold ${isUser ? 'text-primary' : 'text-foreground font-semibold'}`}>
                     {part.slice(2, -2)}
                   </strong>
                 );
               }
               if (part.startsWith('*') && part.endsWith('*')) {
                 return (
-                  <em key={partIdx} className={isUser ? 'text-slate-200' : 'text-slate-700 font-medium'}>
+                  <em key={partIdx} className={isUser ? 'text-foreground' : 'text-foreground font-medium'}>
                     {part.slice(1, -1)}
                   </em>
                 );
@@ -153,21 +153,21 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
   };
 
   return (
-    <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden flex flex-col h-[480px] sm:h-[580px] max-h-[70vh]">
-      <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+    <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden flex flex-col h-[480px] sm:h-[580px] max-h-[70vh]">
+      <CardHeader className="pb-3 border-b border-border bg-secondary/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/20">
+            <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center shadow-soft">
               <Bot className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                 Agente de Inteligência Registrária
-                <Badge variant="outline" className="border-blue-300 text-blue-700 bg-blue-50 text-[10px]">
+                <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs">
                   IA Conectada à Matrícula
                 </Badge>
               </CardTitle>
-              <CardDescription className="text-xs text-slate-500">
+              <CardDescription className="text-xs text-muted-foreground">
                 Respostas diretas e precisas fundamentadas nos atos oficiais do Cartório de Imóveis.
               </CardDescription>
             </div>
@@ -176,22 +176,22 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
       </CardHeader>
 
       {/* Messages Scroll Area */}
-      <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/30">
+      <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-secondary/30">
         {messages.map(msg => (
           <div
             key={msg.id}
             className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
           >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-white text-xs font-bold ${
-              msg.sender === 'user' ? 'bg-slate-800' : 'bg-blue-600 shadow-sm'
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-foreground text-xs font-semibold ${
+              msg.sender === 'user' ? 'bg-muted' : 'bg-primary shadow-sm'
             }`}>
               {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
             </div>
             <div className="space-y-1">
               <div className={`p-3.5 rounded-2xl text-xs leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-slate-900 text-white rounded-tr-none'
-                  : 'bg-white border border-slate-200/80 text-slate-800 shadow-sm rounded-tl-none'
+                  ? 'bg-card text-foreground rounded-tr-none'
+                  : 'bg-card border border-border text-foreground shadow-sm rounded-tl-none'
               }`}>
                 {renderFormattedText(msg.text, msg.sender === 'user')}
               </div>
@@ -204,14 +204,14 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
 
         {isTyping && (
           <div className="flex gap-3 max-w-[85%]">
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">
+            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs shrink-0">
               <Bot className="w-4 h-4 animate-spin" />
             </div>
-            <div className="p-3.5 bg-white border border-slate-200/80 rounded-2xl rounded-tl-none text-xs text-slate-400 flex items-center gap-1.5 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" />
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce [animation-delay:0.2s]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce [animation-delay:0.4s]" />
-              <span className="ml-1 text-[11px] font-medium text-slate-500">Consultando atos registrais...</span>
+            <div className="p-3.5 bg-card border border-border rounded-2xl rounded-tl-none text-xs text-muted-foreground flex items-center gap-1.5 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]" />
+              <span className="ml-1 text-xs font-medium text-muted-foreground">Consultando atos registrais...</span>
             </div>
           </div>
         )}
@@ -219,16 +219,16 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
       </CardContent>
 
       {/* Quick Questions Buttons */}
-      <div className="px-4 py-2 border-t border-slate-100 bg-white flex items-center gap-2 overflow-x-auto no-scrollbar">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-          <HelpCircle className="w-3 h-3 text-blue-600" /> Sugestões:
+      <div className="px-4 py-2 border-t border-border bg-card flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <span className="text-xs font-semibold text-muted-foreground shrink-0 flex items-center gap-1">
+          <HelpCircle className="w-3 h-3 text-primary" /> Sugestões:
         </span>
         {quickQuestions.map((q, i) => (
           <button
             key={i}
             onClick={() => handleSendMessage(q)}
             disabled={isTyping}
-            className="text-[11px] bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-600 px-2.5 py-1 rounded-lg shrink-0 transition-colors font-medium border border-slate-200/60"
+            className="text-xs bg-secondary hover:bg-primary/10 hover:text-primary text-muted-foreground px-2.5 py-1 rounded-lg shrink-0 transition-colors font-medium border border-border"
           >
             {q}
           </button>
@@ -236,7 +236,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
       </div>
 
       {/* Input Form */}
-      <div className="p-3 border-t border-slate-200/80 bg-white">
+      <div className="p-3 border-t border-border bg-card">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -249,12 +249,12 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
             onChange={(e) => setInput(e.target.value)}
             placeholder="Pergunte sobre os proprietários, valores, penhoras, áreas..."
             disabled={isTyping}
-            className="text-xs border-slate-200 focus-visible:ring-blue-500 rounded-xl"
+            className="text-xs border-border focus-visible:ring-primary rounded-xl"
           />
           <Button
             type="submit"
             disabled={!input.trim() || isTyping}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-9 px-4 shrink-0 shadow-md shadow-blue-600/20"
+            className="bg-primary hover:bg-primary text-white h-9 px-4 shrink-0"
           >
             <Send className="w-3.5 h-3.5" />
           </Button>

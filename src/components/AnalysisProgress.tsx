@@ -27,50 +27,50 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
   const secondsLeft = Math.max(1, Math.ceil((100 - progress) / 12));
 
   return (
-    <Card className="max-w-3xl mx-auto border-blue-500/40 bg-slate-900 shadow-2xl rounded-3xl overflow-hidden animate-fade-in text-white">
+    <Card className="max-w-3xl mx-auto border-primary/40 bg-card shadow-medium rounded-3xl overflow-hidden animate-fade-in text-foreground">
       {/* Accent line top */}
-      <div className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 h-2" />
+      <div className="h-2 bg-primary" />
       <CardContent className="p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-cyan-400 flex items-center justify-center shrink-0 shadow-inner border border-blue-500/20">
-              <Brain className="w-6 h-6 animate-pulse text-cyan-400" />
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner border border-primary/20">
+              <Brain className="w-6 h-6 animate-pulse text-primary" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-base sm:text-lg font-black text-white">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">
                   Analisando Matrícula em Tempo Real
                 </h3>
-                <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 text-[10px] font-bold shrink-0">
+                <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 text-xs font-semibold shrink-0">
                   Motor IA Ativo
                 </Badge>
               </div>
-              <p className="text-xs text-slate-400 font-medium leading-tight mt-0.5">
+              <p className="text-xs text-muted-foreground font-medium leading-tight mt-0.5">
                 Auditoria registrária completa dos 12 módulos notariais...
               </p>
             </div>
           </div>
 
           <div className="text-left sm:text-right flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto">
-            <div className="text-2xl sm:text-3xl font-black text-cyan-400 tabular-nums">
+            <div className="text-2xl sm:text-3xl font-semibold text-primary tabular-nums">
               {Math.round(progress)}%
             </div>
-            <Badge className="bg-slate-950 text-cyan-400 border border-blue-500/30 text-[10px] font-extrabold gap-1 px-2.5 py-0.5 sm:mt-1 rounded-full shrink-0">
-              <Timer className="w-3 h-3 text-cyan-400 animate-spin" /> ~{secondsLeft}s restantes
+            <Badge className="bg-background text-primary border border-primary/30 text-xs font-semibold gap-1 px-2.5 py-0.5 sm:mt-1 rounded-full shrink-0">
+              <Timer className="w-3 h-3 text-primary animate-spin" /> ~{secondsLeft}s restantes
             </Badge>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="space-y-2">
-          <Progress value={progress} className="h-3.5 bg-slate-950 rounded-full" />
-          <div className="flex flex-col sm:flex-row justify-between text-xs text-slate-400 font-semibold gap-1 pt-1">
-            <span className="flex items-center gap-1.5 text-cyan-300">
-              <Loader2 className="w-3.5 h-3.5 text-cyan-400 animate-spin shrink-0" />
+          <Progress value={progress} className="h-3.5 bg-background rounded-full" />
+          <div className="flex flex-col sm:flex-row justify-between text-xs text-muted-foreground font-semibold gap-1 pt-1">
+            <span className="flex items-center gap-1.5 text-primary">
+              <Loader2 className="w-3.5 h-3.5 text-primary animate-spin shrink-0" />
               <span className="truncate">{currentStep || 'Processando extração...'}</span>
             </span>
-            <span className="text-slate-500 text-[11px] sm:text-xs">Leitura Registrária Conectada</span>
+            <span className="text-muted-foreground text-xs sm:text-xs">Leitura Registrária Conectada</span>
           </div>
         </div>
 
@@ -87,19 +87,19 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                 className={`
                   flex items-center gap-3 p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 min-w-0 w-full
                   ${isCompleted 
-                    ? 'bg-blue-950/60 border-blue-500/40 text-cyan-300 shadow-xs' 
+                    ? 'bg-primary/60 border-primary/40 text-primary shadow-xs' 
                     : isCurrent 
-                      ? 'bg-amber-950/60 border-amber-500/50 text-amber-200 shadow-md scale-[1.01]' 
-                      : 'bg-slate-950/50 border-slate-800 text-slate-500'
+                      ? 'bg-warning/60 border-warning/50 text-warning shadow-soft scale-[1.01]' 
+                      : 'bg-background/50 border-border text-muted-foreground'
                   }
                 `}
               >
                 {isCompleted ? (
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 stroke-[2.5]" />
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0 stroke-[2.5]" />
                 ) : isCurrent ? (
-                  <Loader2 className="w-4 h-4 text-amber-400 animate-spin shrink-0" />
+                  <Loader2 className="w-4 h-4 text-warning animate-spin shrink-0" />
                 ) : (
-                  <div className="w-4 h-4 rounded-full border-2 border-slate-700 shrink-0" />
+                  <div className="w-4 h-4 rounded-full border-2 border-border shrink-0" />
                 )}
                 <span className="break-words leading-tight flex-1 min-w-0">{step}</span>
               </div>
@@ -108,12 +108,12 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
         </div>
 
         {/* Informative notice */}
-        <div className="p-3.5 bg-slate-950 text-white border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-medium">
+        <div className="p-3.5 bg-background text-foreground border border-border rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-medium">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
             <span className="leading-tight">Mapeando titularidade, cadeia dominial, gravames e indisponividades (CNIB).</span>
           </div>
-          <Badge variant="outline" className="border-blue-500/30 text-cyan-300 bg-blue-500/10 text-[10px] hidden sm:inline-flex shrink-0">
+          <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs hidden sm:inline-flex shrink-0">
             Sem Erros
           </Badge>
         </div>

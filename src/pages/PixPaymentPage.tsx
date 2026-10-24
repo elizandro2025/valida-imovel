@@ -15,6 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { subscriptionService } from '@/services/subscriptionService';
 import { paymentService, PixPaymentResult, isValidCpf, formatCpf } from '@/services/paymentService';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
+import { Logo } from '@/components/Logo';
 
 export const PixPaymentPage: React.FC = () => {
   const { toast } = useToast();
@@ -212,26 +213,19 @@ export const PixPaymentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-white">
       {/* Background Glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/15 rounded-full blur-3xl hidden" />
+        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl hidden" />
       </div>
 
       {/* Header Slim & Seguro */}
-      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 shadow-lg">
+      <header className="sticky top-0 z-50 glass border-x-0 border-t-0">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform font-black">
-              <Sparkles className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <span className="text-lg font-extrabold tracking-tight text-white">
-              Valida<span className="text-cyan-400">Imóvel</span>
-            </span>
-          </Link>
+          <Logo />
           <div className="flex items-center gap-2 sm:gap-3">
-            <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 text-xs font-bold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
+            <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" /> Pagamento Criptografado
             </Badge>
             {user && (
@@ -239,16 +233,16 @@ export const PixPaymentPage: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-slate-300 hover:text-red-400 hover:bg-slate-800 text-xs gap-1.5 font-bold rounded-xl h-9"
+                className="text-muted-foreground hover:text-destructive hover:bg-muted text-xs gap-1.5 font-semibold h-9"
                 title="Sair ou entrar com outra conta"
               >
-                <LogOut className="w-3.5 h-3.5 text-slate-400 hover:text-red-400" />
+                <LogOut className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
                 <span className="hidden xs:inline">Trocar conta</span>
                 <span className="xs:hidden">Sair</span>
               </Button>
             )}
             <Link to="/">
-              <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800 text-xs gap-1.5 font-bold rounded-xl h-9">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-muted text-xs gap-1.5 font-semibold h-9">
                 <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao site
               </Button>
             </Link>
@@ -260,25 +254,25 @@ export const PixPaymentPage: React.FC = () => {
 
         {/* Estado: Pagamento Confirmado (Comemoração) */}
         {paymentConfirmed ? (
-          <Card className="border-blue-500/40 bg-gradient-to-br from-blue-950 via-slate-900 to-cyan-950 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-2xl text-white">
-            <div className="w-20 h-20 mx-auto rounded-3xl bg-blue-600 text-white flex items-center justify-center shadow-xl shadow-blue-600/30 animate-bounce">
+          <Card className="border-primary/40 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium text-white bg-primary">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-primary text-white flex items-center justify-center shadow-medium animate-bounce">
               <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
             </div>
             <div className="space-y-2">
-              <Badge className="bg-blue-600 text-white text-xs font-black uppercase px-4 py-1.5 rounded-full">
+              <Badge className="bg-primary text-white text-xs font-semibold px-4 py-1.5 rounded-full">
                 ✓ Assinatura Ativada
               </Badge>
-              <h2 className="text-3xl font-black tracking-tight pt-2 text-white">
+              <h2 className="text-3xl font-semibold tracking-tight pt-2 text-foreground">
                 Bem-vindo ao ValidaImóvel!
               </h2>
-              <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-                Seu plano <strong className="text-cyan-400">3 Meses Ilimitado</strong> foi liberado.<br />
+              <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+                Seu plano <strong className="text-primary">3 Meses Ilimitado</strong> foi liberado.<br />
                 Redirecionando você para a plataforma de auditoria em instantes...
               </p>
             </div>
             <div className="pt-4">
               <Link to="/app">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-base px-10 py-7 rounded-2xl shadow-xl shadow-blue-600/30 gap-2">
+                <Button size="lg" className="bg-primary hover:bg-primary text-white font-semibold text-base px-10 py-7 gap-2">
                   Acessar Plataforma Agora <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
@@ -291,40 +285,40 @@ export const PixPaymentPage: React.FC = () => {
             <div className="lg:col-span-5 space-y-6">
               
               {/* Card de Oferta */}
-              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
+              <div className="bg-card/90 border border-border rounded-3xl p-6 space-y-4 shadow-medium">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-blue-500/20 text-cyan-400 border border-blue-500/30 font-extrabold text-xs px-3 py-1">
+                  <Badge className="bg-primary/20 text-primary border border-primary/30 font-semibold text-xs px-3 py-1">
                     ⚡ Acesso Ilimitado • 90 Dias
                   </Badge>
-                  <div className="flex items-center gap-1.5 text-xs text-amber-400 font-extrabold">
-                    <Zap className="w-4 h-4 fill-amber-400" />
+                  <div className="flex items-center gap-1.5 text-xs text-warning font-semibold">
+                    <Zap className="w-4 h-4 fill-warning" />
                     <span>Expira em {String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
                   </div>
                 </div>
 
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
                     Plano 3 Meses Ilimitado
                   </h1>
-                  <p className="text-xs text-slate-400 mt-1 font-medium leading-relaxed">
+                  <p className="text-xs text-muted-foreground mt-1 font-medium leading-relaxed">
                     Auditoria completa em matrículas e certidões imobiliárias com IA Registrária Ativa.
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
+                <div className="pt-2 border-t border-border flex items-baseline justify-between">
                   <div>
-                    <span className="text-xs text-slate-500 line-through font-bold block">De R$ 299,70</span>
-                    <span className="text-3xl sm:text-4xl font-black text-white">R$ 49,<span className="text-xl">90</span></span>
+                    <span className="text-xs text-muted-foreground line-through font-semibold block">De R$ 299,70</span>
+                    <span className="text-3xl sm:text-4xl font-semibold text-foreground whitespace-nowrap">R$ 49,<span className="text-xl">90</span></span>
                   </div>
-                  <Badge variant="outline" className="border-blue-500/40 text-cyan-400 bg-blue-500/10 font-bold text-xs">
+                  <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 font-semibold text-xs">
                     Economia de 83% OFF
                   </Badge>
                 </div>
               </div>
 
               {/* Benefícios */}
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 space-y-3.5">
-                <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">O que você recebe imediatamente:</h3>
+              <div className="bg-card/60 border border-border rounded-3xl p-6 space-y-3.5">
+                <h3 className="text-xs font-semibold text-muted-foreground">O que você recebe imediatamente:</h3>
                 {[
                   'Uploads ilimitados de certidões PDF por 90 dias',
                   'Auditoria completa nos 12 Módulos Notariais',
@@ -333,19 +327,19 @@ export const PixPaymentPage: React.FC = () => {
                   'Dossiê executivo em PDF com Carimbo Registral',
                   'Ativação instantânea pós-pagamento sem burocracia',
                 ].map((b) => (
-                  <div key={b} className="flex items-start gap-2.5 text-xs text-slate-300 font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0 mt-0.5" />
+                  <div key={b} className="flex items-start gap-2.5 text-xs text-muted-foreground font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                     <span>{b}</span>
                   </div>
                 ))}
               </div>
 
               {/* Garantia */}
-              <div className="p-4 bg-blue-950/40 border border-blue-800/50 rounded-2xl flex items-center gap-3">
-                <Shield className="w-8 h-8 text-cyan-400 flex-shrink-0" />
+              <div className="p-4 bg-card border border-border rounded-2xl flex items-center gap-3">
+                <Shield className="w-8 h-8 text-primary flex-shrink-0" />
                 <div className="text-xs">
-                  <p className="font-bold text-white">Garantia Incondicional de 7 Dias</p>
-                  <p className="text-slate-400">Teste a plataforma sem riscos. Se não gostar, devolvemos 100% do seu investimento.</p>
+                  <p className="font-semibold text-foreground">Garantia Incondicional de 7 Dias</p>
+                  <p className="text-muted-foreground">Teste a plataforma sem riscos. Se não gostar, devolvemos 100% do seu investimento.</p>
                 </div>
               </div>
 
@@ -354,76 +348,76 @@ export const PixPaymentPage: React.FC = () => {
             {/* Coluna Direita: Checkout Clean (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               
-              <Card className="border-slate-800 bg-slate-900/90 text-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm">
+              <Card className="border-border bg-card/90 text-foreground rounded-3xl shadow-medium overflow-hidden backdrop-blur-sm">
                 
                 {/* Selector de Pagamento */}
-                <div className="grid grid-cols-2 p-1.5 bg-slate-950 border-b border-slate-800">
+                <div className="grid grid-cols-2 p-1 m-4 mb-0 bg-muted/70 rounded-xl">
                   <button
                     onClick={() => setActiveTab('pix')}
-                    className={`py-3 min-h-[44px] text-xs sm:text-sm font-black rounded-2xl flex items-center justify-center gap-2 transition-all touch-target ${
+                    className={`py-2 min-h-[40px] text-[13px] sm:text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors touch-target ${
                       activeTab === 'pix'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-card text-foreground shadow-soft'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <QrCode className="w-4 h-4" /> ⚡ Pix Instantâneo
+                    <QrCode className="w-4 h-4" /> Pix
                   </button>
                   <button
                     onClick={() => setActiveTab('card')}
-                    className={`py-3 min-h-[44px] text-xs sm:text-sm font-black rounded-2xl flex items-center justify-center gap-2 transition-all touch-target ${
+                    className={`py-2 min-h-[40px] text-[13px] sm:text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors touch-target ${
                       activeTab === 'card'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-card text-foreground shadow-soft'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <CreditCard className="w-4 h-4" /> Cartão de Crédito
+                    <CreditCard className="w-4 h-4" /> Cartão de crédito
                   </button>
                 </div>
 
                 <CardContent className="p-5 sm:p-8 space-y-6">
 
                   {/* Dados de Identificação */}
-                  <div className="space-y-3 pb-6 border-b border-slate-800">
+                  <div className="space-y-3 pb-6 border-b border-border">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-extrabold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-cyan-400" /> Titular do Acesso
+                      <Label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-primary" /> Titular do Acesso
                       </Label>
                       {user && (
-                        <Badge variant="outline" className="border-blue-500/30 text-cyan-400 text-[10px]">
+                        <Badge variant="outline" className="border-primary/30 text-primary text-xs">
                           Conta Conectada
                         </Badge>
                       )}
                     </div>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="relative">
-                        <User className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+                        <User className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
                         <Input
                           type="text"
                           placeholder="Seu Nome Completo"
                           value={payerName}
                           onChange={(e) => setPayerName(e.target.value)}
-                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
+                          className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
                         />
                       </div>
                       <div className="relative">
-                        <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+                        <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
                         <Input
                           type="email"
                           placeholder="seu.email@exemplo.com"
                           value={payerEmail}
                           onChange={(e) => setPayerEmail(e.target.value)}
-                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
+                          className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
                         />
                       </div>
                       <div className="relative sm:col-span-2">
-                        <FileCheck className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+                        <FileCheck className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
                         <Input
                           type="text"
                           inputMode="numeric"
                           placeholder="CPF do titular (000.000.000-00)"
                           value={payerCpf}
                           onChange={(e) => setPayerCpf(formatCpf(e.target.value))}
-                          className="bg-slate-950 border-slate-800 text-white pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-blue-500"
+                          className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
                         />
                       </div>
                     </div>
@@ -434,25 +428,25 @@ export const PixPaymentPage: React.FC = () => {
                     <div className="space-y-5">
                       
                       {/* Indicador de Status em Tempo Real */}
-                      <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
+                      <div className="p-3.5 bg-background border border-border rounded-2xl flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2.5">
                           <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
                           </span>
-                          <span className="font-bold text-slate-300">
+                          <span className="font-semibold text-muted-foreground">
                             {pixPayment ? 'Aguardando confirmação do Pix...' : 'Preencha e-mail e CPF acima para gerar o Pix'}
                           </span>
                         </div>
-                        <Badge className="bg-blue-500/20 text-cyan-400 border border-blue-500/30 text-[10px] font-bold">
+                        <Badge className="bg-primary/20 text-primary border border-primary/30 text-xs font-semibold">
                           Ativação em ~5s
                         </Badge>
                       </div>
 
                       {/* Estado: Carregando QR Code */}
                       {isGenerating && (
-                        <div className="flex flex-col items-center gap-3 py-8 text-slate-400">
-                          <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+                        <div className="flex flex-col items-center gap-3 py-8 text-muted-foreground">
+                          <Loader2 className="w-10 h-10 text-primary animate-spin" />
                           <span className="text-xs font-semibold">Gerando Chave Pix com confirmação automática...</span>
                         </div>
                       )}
@@ -460,18 +454,18 @@ export const PixPaymentPage: React.FC = () => {
                       {/* Estado: QR Code Gerado */}
                       {!isGenerating && pixPayment?.qr_code_base64 && (
                         <div className="flex flex-col items-center gap-4 py-2">
-                          <div className="p-4 bg-white rounded-3xl shadow-2xl border-4 border-blue-500/30 relative group">
+                          <div className="p-4 bg-card rounded-3xl shadow-medium border-4 border-primary/30 relative group">
                             <img
                               src={pixPayment.qr_code_base64}
                               alt="QR Code PIX"
                               className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
                             />
-                            <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
-                              <Badge className="bg-blue-600 text-white text-xs font-bold">Escaneie com o app do seu Banco</Badge>
+                            <div className="absolute inset-0 bg-card/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                              <Badge className="bg-primary text-white text-xs font-semibold">Escaneie com o app do seu Banco</Badge>
                             </div>
                           </div>
-                          <p className="text-xs text-slate-400 font-semibold text-center">
-                            Abra a opção <strong className="text-white">Pix</strong> no aplicativo do seu banco e escaneie o código acima.
+                          <p className="text-xs text-muted-foreground font-semibold text-center">
+                            Abra a opção <strong className="text-foreground">Pix</strong> no aplicativo do seu banco e escaneie o código acima.
                           </p>
                         </div>
                       )}
@@ -479,16 +473,16 @@ export const PixPaymentPage: React.FC = () => {
                       {/* Chave Pix Copia e Cola */}
                       {!isGenerating && pixPayment?.qr_code && (
                         <div className="space-y-2">
-                          <Label className="text-xs font-bold text-slate-300 uppercase tracking-wider">Chave Pix Copia e Cola</Label>
+                          <Label className="text-xs font-semibold text-muted-foreground">Chave Pix Copia e Cola</Label>
                           <div className="flex gap-2">
                             <Input
                               readOnly
                               value={pixPayment.qr_code}
-                              className="bg-slate-950 border-slate-800 text-slate-300 font-mono text-[11px] h-11 rounded-xl truncate"
+                              className="bg-background border-border text-muted-foreground font-mono text-xs h-11 rounded-xl truncate"
                             />
                             <Button
                               onClick={() => copyToClipboard(pixPayment.qr_code!, 'Chave PIX')}
-                              className={`${copied ? 'bg-blue-700' : 'bg-blue-600 hover:bg-blue-500'} text-white font-bold text-xs px-5 h-11 rounded-xl flex-shrink-0 gap-1.5 shadow-md`}
+                              className="bg-primary hover:bg-primary/90 text-white font-medium text-xs px-5 h-11 flex-shrink-0 gap-1.5"
                             >
                               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                               {copied ? 'Copiado!' : 'Copiar Pix'}
@@ -499,8 +493,8 @@ export const PixPaymentPage: React.FC = () => {
 
                       {/* Erro ao gerar */}
                       {generateError && (
-                        <div className="flex items-start gap-2 p-3 bg-red-950/40 border border-red-800/50 rounded-2xl text-xs text-red-300">
-                          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+                        <div className="flex items-start gap-2 p-3 bg-destructive/40 border border-destructive/50 rounded-2xl text-xs text-destructive">
+                          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-destructive" />
                           <span>{generateError}</span>
                         </div>
                       )}
@@ -509,13 +503,13 @@ export const PixPaymentPage: React.FC = () => {
                       {!isGenerating && (!pixPayment || generateError) && (
                         <Button
                           onClick={handleGeneratePixPayment}
-                          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-sm h-13 rounded-2xl shadow-lg shadow-blue-600/20 gap-2 transition-all"
+                          className="w-full bg-primary hover:bg-primary text-white font-semibold text-sm gap-2 transition-all"
                         >
                           <QrCode className="w-4 h-4" /> Gerar Chave Pix — R$ 49,90
                         </Button>
                       )}
 
-                      <p className="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 pt-1">
+                      <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-1">
                         <Lock className="w-3.5 h-3.5" />
                         Ambiente seguro com liberação imediata do sistema
                       </p>
@@ -523,19 +517,19 @@ export const PixPaymentPage: React.FC = () => {
                   ) : (
                     /* TAB CARTÃO DE CRÉDITO */
                     <div className="py-6 text-center space-y-5">
-                      <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-cyan-400">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-background border border-border flex items-center justify-center text-primary">
                         <CreditCard className="w-7 h-7" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="text-base font-bold text-white">Pagamento no Cartão de Crédito</h3>
-                        <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                        <h3 className="text-base font-semibold text-foreground">Pagamento no Cartão de Crédito</h3>
+                        <p className="text-xs text-muted-foreground max-w-sm mx-auto">
                           Pague a sua licença de 3 meses no cartão de crédito, na página segura do Asaas, com liberação automática.
                         </p>
                       </div>
 
                       {cardInitPoint ? (
                         <a href={cardInitPoint} target="_blank" rel="noopener noreferrer">
-                          <Button className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-8 py-5 rounded-xl shadow-lg gap-2">
+                          <Button className="bg-primary hover:bg-primary text-white font-semibold text-xs px-8 gap-2">
                             Pagar no Cartão de Crédito <ExternalLink className="w-4 h-4" />
                           </Button>
                         </a>
@@ -543,7 +537,7 @@ export const PixPaymentPage: React.FC = () => {
                         <Button
                           onClick={handleGenerateCardPayment}
                           disabled={isGeneratingCard}
-                          className="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-8 py-5 rounded-xl shadow-lg gap-2"
+                          className="bg-primary hover:bg-primary text-white font-semibold text-xs px-8 gap-2"
                         >
                           {isGeneratingCard ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> Conectando ao checkout...</>

@@ -36,7 +36,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-md text-center space-y-6 p-8">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-2xl font-semibold text-foreground">
               Acesso Restrito
             </h1>
             <p className="text-muted-foreground">
@@ -58,7 +58,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (requireSubscription && !user.hasSubscription) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-8">
+      <div className="min-h-screen from-background via-background to-primary/5 flex items-center justify-center p-8 bg-background">
         <div className="max-w-2xl w-full">
           <div className="text-center space-y-8">
             {/* Hero Section */}
@@ -68,7 +68,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                   <Shield className="w-10 h-10 text-primary" />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold text-foreground">
+              <h1 className="text-3xl font-semibold text-foreground">
                 Desbloqueie o Poder Completo
               </h1>
               <p className="text-lg text-muted-foreground max-w-md mx-auto">

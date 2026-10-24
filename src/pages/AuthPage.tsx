@@ -12,6 +12,7 @@ import {
   Key, FileCheck, ArrowLeft, FileText, Users, Compass, LogOut, Sparkles
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Logo } from '@/components/Logo';
 
 export const AuthPage: React.FC = () => {
   const { user, signIn, signUp, resetPassword, updatePassword, signOut, isLoading } = useAuth();
@@ -172,12 +173,12 @@ export const AuthPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-success/20 border border-success/30 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-success" />
           </div>
-          <p className="text-slate-400 text-sm font-medium">Carregando autenticação...</p>
+          <p className="text-muted-foreground text-sm font-medium">Carregando autenticação...</p>
         </div>
       </div>
     );
@@ -186,32 +187,32 @@ export const AuthPage: React.FC = () => {
   // Se o usuário já estiver conectado, exibe tela de status em vez de redirecionar sem aviso
   if (user && !showNewPasswordForm) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
-        <Card className="max-w-md w-full border-slate-800 bg-slate-900/90 rounded-3xl p-6 text-center space-y-6 shadow-2xl">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+        <Card className="max-w-md w-full border-border bg-card/90 rounded-3xl p-6 text-center space-y-6 shadow-medium">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-success/20 border border-success/40 flex items-center justify-center text-success">
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3 py-1">
+            <Badge className="bg-success/20 text-success border border-success/30 text-xs font-semibold px-3 py-1">
               Conectado
             </Badge>
-            <h2 className="text-2xl font-black tracking-tight text-white">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               Você já está autenticado!
             </h2>
-            <p className="text-xs text-slate-400">
-              Conectado como <strong className="text-white">{user.email}</strong>
+            <p className="text-xs text-muted-foreground">
+              Conectado como <strong className="text-foreground">{user.email}</strong>
             </p>
           </div>
           <div className="space-y-3 pt-2">
             <Link to="/app" className="block">
-              <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs py-5 rounded-xl shadow-lg gap-2">
+              <Button className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs gap-2">
                 Ir para o Workspace de Auditoria <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
             <Button
               onClick={() => signOut()}
               variant="outline"
-              className="w-full border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800 font-bold text-xs py-5 rounded-xl gap-2"
+              className="w-full border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted font-semibold text-xs py-5 rounded-xl gap-2"
             >
               <LogOut className="w-4 h-4" /> Sair da Conta (Desconectar)
             </Button>
@@ -222,32 +223,25 @@ export const AuthPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col lg:flex-row antialiased selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row antialiased selection:bg-primary selection:text-white">
       {/* Left Panel — Branding Dark */}
-      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-slate-900 border-r border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-card border-r border-border">
+        <div className="absolute inset-0 bg-background" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
 
         <div className="relative z-10 flex flex-col justify-between h-full p-10 xl:p-14">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-blue-500/20 font-black">
-              <Sparkles className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <span className="text-xl font-black text-white tracking-tight">
-              Valida<span className="text-cyan-400">Imóvel</span>
-            </span>
-          </Link>
+          <Logo />
 
           <div className="space-y-8 max-w-sm">
             <div className="space-y-4">
-              <Badge className="bg-blue-500/20 text-cyan-400 border-blue-500/30 text-xs font-bold">
+              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-semibold">
                 IA Registrária Notarial 2.0
               </Badge>
-              <h2 className="text-3xl xl:text-4xl font-black text-white leading-tight tracking-tight">
-                Auditoria e Due Diligence com <span className="text-cyan-400">Inteligência Artificial</span>.
+              <h2 className="text-3xl xl:text-4xl font-semibold text-foreground leading-tight tracking-tight">
+                Auditoria e Due Diligence com <span className="text-primary">Inteligência Artificial</span>.
               </h2>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Extraia a cadeia dominial, identifique gravames, penhoras (CNIB) e emita pareceres jurídicos em segundos.
               </p>
             </div>
@@ -260,16 +254,16 @@ export const AuthPage: React.FC = () => {
                 { icon: Users, label: 'Cadeia dominial cronológica de proprietários' },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-cyan-400" />
+                  <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
                   </div>
-                  <span className="text-xs text-slate-300 font-medium">{label}</span>
+                  <span className="text-xs text-muted-foreground font-medium">{label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="text-xs text-slate-500 font-medium">
+          <div className="text-xs text-muted-foreground font-medium">
             © {new Date().getFullYear()} ValidaImóvel — Todos os direitos reservados.
           </div>
         </div>
@@ -280,25 +274,25 @@ export const AuthPage: React.FC = () => {
         
         <div className="flex items-center justify-between lg:justify-end">
           <Link to="/" className="lg:hidden flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
               <Sparkles className="w-4 h-4" />
             </div>
-            <span className="font-extrabold text-white">ValidaImóvel</span>
+            <span className="font-semibold text-foreground">ValidaImóvel</span>
           </Link>
           <Link to="/">
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-slate-900 text-xs gap-1.5 font-bold rounded-xl">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-card text-xs gap-1.5 font-semibold">
               <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao site
             </Button>
           </Link>
         </div>
 
         <div className="my-auto py-8 lg:max-w-md lg:mx-auto w-full">
-          <Card className="border-slate-800 bg-slate-900/90 text-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm">
+          <Card className="border-border bg-card/90 text-foreground rounded-3xl shadow-medium overflow-hidden backdrop-blur-sm">
             <CardHeader className="space-y-1 pb-4">
-              <CardTitle className="text-2xl font-black text-white tracking-tight">
+              <CardTitle className="text-2xl font-semibold text-foreground tracking-tight">
                 {showResetForm ? 'Recuperar Senha' : showNewPasswordForm ? 'Nova Senha' : 'Acessar Conta'}
               </CardTitle>
-              <CardDescription className="text-slate-400 text-xs">
+              <CardDescription className="text-muted-foreground text-xs">
                 {showResetForm
                   ? 'Digite seu e-mail para receber as instruções de recuperação.'
                   : showNewPasswordForm
@@ -311,15 +305,15 @@ export const AuthPage: React.FC = () => {
               {showResetForm ? (
                 <form onSubmit={handleResetPassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-slate-300">E-mail</Label>
+                    <Label className="text-xs font-semibold text-muted-foreground">E-mail</Label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                       <Input
                         type="email"
                         placeholder="seu.email@exemplo.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
+                        className="bg-background border-border text-foreground pl-9 text-xs h-10 rounded-xl focus:border-primary/30"
                         required
                       />
                     </div>
@@ -327,7 +321,7 @@ export const AuthPage: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
+                    className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar Instruções'}
                   </Button>
@@ -335,7 +329,7 @@ export const AuthPage: React.FC = () => {
                     type="button"
                     variant="ghost"
                     onClick={() => setShowResetForm(false)}
-                    className="w-full text-slate-400 hover:text-white text-xs font-bold"
+                    className="w-full text-muted-foreground hover:text-foreground text-xs font-semibold"
                   >
                     Voltar ao Login
                   </Button>
@@ -343,38 +337,38 @@ export const AuthPage: React.FC = () => {
               ) : showNewPasswordForm ? (
                 <form onSubmit={handleUpdatePassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-slate-300">Nova Senha</Label>
+                    <Label className="text-xs font-semibold text-muted-foreground">Nova Senha</Label>
                     <Input
                       type="password"
                       placeholder="Mínimo 6 caracteres"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-blue-500"
+                      className="bg-background border-border text-foreground text-xs h-10 rounded-xl focus:border-primary/30"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-slate-300">Confirmar Nova Senha</Label>
+                    <Label className="text-xs font-semibold text-muted-foreground">Confirmar Nova Senha</Label>
                     <Input
                       type="password"
                       placeholder="Repita a nova senha"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-blue-500"
+                      className="bg-background border-border text-foreground text-xs h-10 rounded-xl focus:border-primary/30"
                       required
                     />
                   </div>
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2"
+                    className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Atualizar Senha'}
                   </Button>
                 </form>
               ) : (
                 <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'signin' | 'signup')} className="w-full">
-                  <TabsList className="grid grid-cols-2 p-1 bg-slate-950 border border-slate-800 rounded-2xl mb-4">
+                  <TabsList className="grid grid-cols-2 p-1 bg-background border border-border rounded-2xl mb-4">
                     <TabsTrigger value="signin" className="text-xs font-bold rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                       Entrar
                     </TabsTrigger>
@@ -387,15 +381,15 @@ export const AuthPage: React.FC = () => {
                   <TabsContent value="signin" className="space-y-4 mt-0">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-slate-300">E-mail</Label>
+                        <Label className="text-xs font-semibold text-muted-foreground">E-mail</Label>
                         <div className="relative">
-                          <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                          <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="email"
                             placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
+                            className="bg-background border-border text-foreground pl-9 text-xs h-10 rounded-xl focus:border-primary/30"
                             required
                           />
                         </div>
@@ -403,23 +397,23 @@ export const AuthPage: React.FC = () => {
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <Label className="text-xs font-bold text-slate-300">Senha</Label>
+                          <Label className="text-xs font-semibold text-muted-foreground">Senha</Label>
                           <button
                             type="button"
                             onClick={() => setShowResetForm(true)}
-                            className="text-[11px] text-cyan-400 hover:underline font-bold"
+                            className="text-xs text-primary hover:underline font-semibold"
                           >
                             Esqueceu a senha?
                           </button>
                         </div>
                         <div className="relative">
-                          <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                          <Lock className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="password"
                             placeholder="Sua senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
+                            className="bg-background border-border text-foreground pl-9 text-xs h-10 rounded-xl focus:border-primary/30"
                             required
                           />
                         </div>
@@ -428,7 +422,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
+                        className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar na Plataforma'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
@@ -440,41 +434,41 @@ export const AuthPage: React.FC = () => {
                   <TabsContent value="signup" className="space-y-4 mt-0">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-slate-300">Nome Completo</Label>
+                        <Label className="text-xs font-semibold text-muted-foreground">Nome Completo</Label>
                         <Input
                           type="text"
                           placeholder="Seu nome"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="bg-slate-950 border-slate-800 text-white text-xs h-10 rounded-xl focus:border-blue-500"
+                          className="bg-background border-border text-foreground text-xs h-10 rounded-xl focus:border-primary/30"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-slate-300">E-mail</Label>
+                        <Label className="text-xs font-semibold text-muted-foreground">E-mail</Label>
                         <div className="relative">
-                          <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                          <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="email"
                             placeholder="seu.email@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
+                            className="bg-background border-border text-foreground pl-9 text-xs h-10 rounded-xl focus:border-primary/30"
                             required
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-slate-300">Senha (mínimo 6 caracteres)</Label>
+                        <Label className="text-xs font-semibold text-muted-foreground">Senha (mínimo 6 caracteres)</Label>
                         <div className="relative">
-                          <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                          <Lock className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
                             type="password"
                             placeholder="Crie uma senha forte"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="bg-slate-950 border-slate-800 text-white pl-9 text-xs h-10 rounded-xl focus:border-blue-500"
+                            className="bg-background border-border text-foreground pl-9 text-xs h-10 rounded-xl focus:border-primary/30"
                             required
                           />
                         </div>
@@ -483,7 +477,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs h-11 rounded-xl shadow-lg gap-2 mt-2"
+                        className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar Minha Conta'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
@@ -494,15 +488,15 @@ export const AuthPage: React.FC = () => {
               )}
             </CardContent>
 
-            <CardFooter className="border-t border-slate-800/80 pt-4 text-center justify-center">
-              <p className="text-[11px] text-slate-500">
+            <CardFooter className="border-t border-border pt-4 text-center justify-center">
+              <p className="text-xs text-muted-foreground">
                 Ao continuar, você concorda com os Termos de Serviço e Política de Privacidade.
               </p>
             </CardFooter>
           </Card>
         </div>
 
-        <div className="text-center lg:hidden text-xs text-slate-600">
+        <div className="text-center lg:hidden text-xs text-muted-foreground">
           © {new Date().getFullYear()} ValidaImóvel
         </div>
       </div>

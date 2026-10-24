@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
+import { Logo } from '@/components/Logo';
 
 export const LandingPage: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -215,41 +216,24 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white pb-20 sm:pb-0 overflow-x-hidden max-w-[100vw] w-full">
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-white pb-20 sm:pb-0 overflow-x-hidden max-w-[100vw] w-full">
       
       {/* Script JSON-LD de SEO */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }} />
 
-      {/* 1. BARRA PROMOCIONAL (PROMO BAR ultra-responsiva) */}
-      <div className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 text-white text-[10px] min-[360px]:text-xs sm:text-sm font-black py-2 px-3 text-center shadow-xl flex items-center justify-center gap-1.5 sm:gap-2.5 flex-wrap relative z-50 border-b border-cyan-400/30 w-full max-w-full leading-snug">
-        <div className="flex items-center gap-1 bg-amber-400/20 px-2 py-0.5 rounded-full text-amber-300 border border-amber-400/40 shrink-0">
-          <Flame className="w-3 h-3 text-amber-300 fill-amber-400 shrink-0" />
-          <span>ACESSO COMPLETO</span>
-        </div>
-        <span className="tracking-wide">
-          DE <span className="line-through opacity-75">{COMPANY_CONFIG.offer.originalPriceFormatted}</span> POR APENAS <strong className="text-amber-300 font-mono text-xs sm:text-sm underline decoration-amber-300 underline-offset-2">{COMPANY_CONFIG.offer.priceFormatted}</strong> ({COMPANY_CONFIG.offer.period.toUpperCase()} ILIMITADOS)
-        </span>
-        <div className="bg-slate-950/60 px-2.5 py-0.5 rounded-full text-amber-300 font-sans text-[10px] sm:text-xs font-bold border border-amber-400/40 shadow-inner hidden min-[540px]:inline-flex">
-          <span>Condição especial de lançamento por tempo limitado</span>
-        </div>
+      {/* 1. BARRA PROMOCIONAL */}
+      <div className="w-full bg-card border-b border-border text-center text-[13px] leading-snug text-foreground py-2.5 px-4">
+        Lançamento: {COMPANY_CONFIG.offer.period} de acesso ilimitado por{' '}
+        <strong className="font-semibold">{COMPANY_CONFIG.offer.priceFormatted}</strong>{' '}
+        <span className="text-muted-foreground line-through">{COMPANY_CONFIG.offer.originalPriceFormatted}</span>
+        <Link to="/auth?tab=register" className="text-primary hover:underline ml-2 whitespace-nowrap">Garantir agora ›</Link>
       </div>
 
-      {/* 2. CABEÇALHO (NAVBAR RESPONSIVA) */}
-      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-2xl border-b border-slate-800/80 text-white shadow-2xl w-full">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 w-full">
-          
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-slate-950 shadow-md shadow-blue-500/30 font-black">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
-            </div>
-            <span className="text-base min-[380px]:text-lg sm:text-xl font-black tracking-tight text-white block">
-              Valida<span className="text-cyan-400">Imóvel</span>
-            </span>
-            <Badge variant="outline" className="border-cyan-400/50 text-cyan-300 bg-blue-500/20 text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full hidden md:inline-flex">
-              IA Registrária
-            </Badge>
-          </Link>
+      {/* 2. CABEÇALHO */}
+      <header className="sticky top-0 z-50 glass border-x-0 border-t-0 text-foreground w-full glass border-x-0 border-t-0">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-2 w-full">
+
+          <Logo />
 
           {/* Navigation Actions */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
@@ -257,30 +241,30 @@ export const LandingPage: React.FC = () => {
               href={COMPANY_CONFIG.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden min-[900px]:inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-amber-500/10 hover:from-purple-500/20 hover:to-amber-500/20 text-pink-400 border border-pink-500/30 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all hover:scale-105"
+              className="hidden min-[900px]:inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground px-2 py-1.5 text-[13px] transition-colors"
               title="Siga o ValidaImóvel no Instagram"
             >
-              <Instagram className="w-3.5 h-3.5 text-pink-400" />
+              <Instagram className="w-4 h-4" />
               <span>{COMPANY_CONFIG.instagramHandle}</span>
             </a>
             <WhatsAppSupport variant="banner" className="hidden lg:inline-flex" />
             {user ? (
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg sm:rounded-xl max-w-[100px] min-[360px]:max-w-[150px] sm:max-w-[240px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0" />
-                  <span className="text-[10px] sm:text-xs font-semibold text-slate-300 truncate" title={user.email}>
+                <div className="flex items-center gap-1 bg-card border border-border px-2 py-1 rounded-lg sm:rounded-xl max-w-[100px] min-[360px]:max-w-[150px] sm:max-w-[240px]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shrink-0" />
+                  <span className="text-xs sm:text-xs font-semibold text-muted-foreground truncate" title={user.email}>
                     {user.email}
                   </span>
                   <button
                     onClick={handleSignOut}
                     title="Sair"
-                    className="text-slate-400 hover:text-red-400 transition-colors p-0.5 rounded hover:bg-slate-800 shrink-0"
+                    className="text-muted-foreground hover:text-destructive transition-colors p-0.5 rounded hover:bg-muted shrink-0"
                   >
                     <LogOut className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </button>
                 </div>
                 <Link to={user.hasSubscription ? "/app" : "/pagamento-pix"}>
-                  <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-[11px] sm:text-sm px-2.5 sm:px-5 h-8 sm:h-10 shadow-lg shadow-blue-500/30 rounded-lg sm:rounded-xl gap-1">
+                  <Button className="text-white font-semibold text-xs sm:text-sm px-2.5 sm:px-5 h-8 sm:h-10 gap-1 bg-primary">
                     <Sparkles className="w-3.5 h-3.5 fill-white stroke-[2]" />
                     <span>{user.hasSubscription ? "Workspace" : "Garantir"}</span>
                   </Button>
@@ -289,13 +273,13 @@ export const LandingPage: React.FC = () => {
             ) : (
               <>
                 <Link to="/auth?tab=login">
-                  <Button variant="ghost" className="text-slate-300 hover:text-white font-bold text-[11px] sm:text-xs px-2 sm:px-3 h-8 sm:h-9 rounded-lg sm:rounded-xl border border-slate-800 hover:border-slate-700">
-                    <User className="w-3.5 h-3.5 text-cyan-400 shrink-0 mr-1 hidden min-[380px]:inline" />
+                  <Button variant="ghost" className="text-muted-foreground hover:text-foreground font-semibold text-xs sm:text-xs px-2 sm:px-3 h-8 sm:h-9 border border-border hover:border-border">
+                    <User className="w-3.5 h-3.5 text-primary shrink-0 mr-1 hidden min-[380px]:inline" />
                     <span>Entrar</span>
                   </Button>
                 </Link>
                 <Link to="/auth?tab=register">
-                  <Button className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-[11px] sm:text-sm px-2.5 sm:px-5 h-8 sm:h-10 shadow-xl shadow-blue-500/30 rounded-lg sm:rounded-xl gap-1">
+                  <Button className="text-white font-semibold text-xs sm:text-sm px-2.5 sm:px-5 h-8 sm:h-10 gap-1 bg-primary">
                     <Sparkles className="w-3.5 h-3.5 fill-white stroke-[2]" />
                     <span>Criar Conta</span>
                     <ArrowRight className="w-3.5 h-3.5 hidden sm:inline-block" />
@@ -309,78 +293,55 @@ export const LandingPage: React.FC = () => {
 
       <main className="w-full max-w-full overflow-x-hidden">
         {/* 3. HERO SECTION RESPONSIVA */}
-        <section className="relative pt-6 min-[400px]:pt-10 sm:pt-14 lg:pt-16 pb-14 sm:pb-20 overflow-hidden bg-[#040809] text-white border-b border-slate-900 px-3 sm:px-6 w-full">
-          
-          {/* Background Ambient Effects */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-30 scale-105"
-            style={{ backgroundImage: "url('/hero_matricula_bg.png')" }}
-          />
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#040809]/80 via-[#040809]/60 to-[#040809]" />
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[700px] h-[300px] sm:h-[400px] bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+        <section className="relative pt-16 sm:pt-24 pb-16 sm:pb-24 bg-card text-foreground border-b border-border px-4 sm:px-6 w-full">
 
-          <div className="max-w-6xl mx-auto relative z-10 space-y-6 sm:space-y-8 text-center w-full">
-            
-            {/* Selo Superior */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 sm:py-1.5 rounded-full bg-slate-900/90 border border-blue-500/40 text-cyan-300 text-[10px] sm:text-xs font-black shadow-md backdrop-blur-md max-w-[92vw] leading-tight">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span className="truncate">Inteligência registral aplicada à análise imobiliária</span>
-            </div>
+          <div className="max-w-5xl mx-auto relative space-y-8 sm:space-y-10 text-center w-full">
 
             {/* Título Principal & Subtítulo */}
-            <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto px-1 w-full">
-              <h1 className="text-2xl min-[360px]:text-3xl min-[500px]:text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight break-words">
-                Entenda uma matrícula de imóvel em segundos
+            <div className="space-y-4 max-w-3xl mx-auto w-full">
+              <p className="text-primary text-sm sm:text-base font-semibold">Inteligência registral para análise imobiliária</p>
+              <h1 className="text-[40px] leading-[1.08] sm:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground break-words">
+                Entenda uma matrícula em segundos.
               </h1>
-              <p className="text-xs min-[360px]:text-sm sm:text-lg text-slate-300 font-medium leading-relaxed max-w-3xl mx-auto">
-                Identifique proprietários, ônus, penhoras, cadeia dominial, dados do imóvel e pontos de atenção com uma análise estruturada por inteligência artificial.
+              <p className="text-lg sm:text-2xl text-muted-foreground leading-snug max-w-2xl mx-auto">
+                Proprietários, ônus, penhoras e cadeia dominial organizados por inteligência artificial.
               </p>
             </div>
 
             {/* Botões Principais & Sub-informações */}
-            <div className="space-y-3 sm:space-y-4 max-w-xl mx-auto pt-1 sm:pt-2 w-full">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 w-full">
+            <div className="space-y-5 max-w-xl mx-auto w-full">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
                 <Link to="/app?sample=safe" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs min-[400px]:text-sm py-3.5 sm:py-5 px-4 sm:px-7 rounded-xl sm:rounded-2xl shadow-xl shadow-blue-500/30 gap-2 h-auto">
-                    <Sparkles className="w-4 h-4 fill-white shrink-0" />
-                    <span>Testar demonstração gratuita</span>
-                    <ArrowRight className="w-4 h-4 shrink-0" />
+                  <Button size="lg" className="w-full sm:w-auto">
+                    Testar demonstração gratuita
                   </Button>
                 </Link>
                 <Link to="/auth?tab=register" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto border-slate-700 bg-slate-900/90 text-slate-200 hover:text-white hover:bg-slate-800 font-extrabold text-xs min-[400px]:text-sm py-3.5 sm:py-5 px-4 sm:px-6 rounded-xl sm:rounded-2xl gap-2 h-auto">
-                    <User className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Criar minha conta</span>
+                  <Button size="lg" variant="link" className="w-full sm:w-auto text-base">
+                    Criar minha conta ›
                   </Button>
                 </Link>
               </div>
 
               {/* Informações abaixo dos botões */}
-              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[10px] sm:text-xs text-slate-400 font-medium pt-1">
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Sem necessidade de cadastro para testar</span>
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Demonstração guiada</span>
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Resultado em 12 módulos</span>
+              <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-muted-foreground">
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-success shrink-0" /> Sem cadastro para testar</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-success shrink-0" /> Demonstração guiada</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-success shrink-0" /> Resultado em 12 módulos</span>
               </div>
             </div>
 
-            {/* Aviso Discreto */}
-            <div className="max-w-2xl mx-auto pt-1 w-full">
-              <p className="text-[10px] min-[380px]:text-[11px] text-slate-400 bg-slate-900/60 p-2.5 sm:p-3 rounded-xl border border-slate-800/80 leading-relaxed font-medium">
-                ⚠️ <strong className="text-slate-300 font-semibold">Nota responsável:</strong> A análise automatizada auxilia a triagem documental e não substitui matrícula atualizada, certidões oficiais ou orientação profissional.
-              </p>
-            </div>
-
             {/* Visual Realista do Relatório no Hero (SCORE 8/100 + ÔNUS LIMPO) */}
-            <div className="max-w-4xl mx-auto pt-2 sm:pt-4 w-full">
-              <div className="p-3 sm:p-6 bg-slate-900/95 border-2 border-blue-500/40 shadow-2xl shadow-blue-500/20 rounded-2xl sm:rounded-3xl backdrop-blur-xl text-left space-y-3.5 w-full">
+            <div className="max-w-4xl mx-auto pt-4 sm:pt-8 w-full">
+              <div className="p-4 sm:p-6 bg-card border border-border shadow-hard rounded-3xl text-left space-y-4 w-full">
                 
                 {/* Header da Prévia ultra-responsivo */}
-                <div className="flex flex-col min-[480px]:flex-row items-start min-[480px]:items-center justify-between gap-2 border-b border-slate-800 pb-2.5 w-full">
+                <div className="flex flex-col min-[480px]:flex-row items-start min-[480px]:items-center justify-between gap-2 border-b border-border pb-2.5 w-full">
                   <div className="flex items-center gap-2 min-w-0 max-w-full">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-wider truncate">Dossiê Registral • Matrícula Nº 47.912</span>
+                    <div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse shrink-0" />
+                    <span className="text-xs sm:text-xs font-semibold text-foreground truncate">Dossiê Registral • Matrícula Nº 47.912</span>
                   </div>
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[9px] sm:text-[11px] font-black px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
+                  <Badge className="bg-success/20 text-success border-success/40 text-xs sm:text-xs font-semibold px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
                     Score de Risco: 8/100 — Baixo Risco
                   </Badge>
                 </div>
@@ -389,27 +350,27 @@ export const LandingPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs w-full">
                   
                   {/* Card Proprietários */}
-                  <div className="p-2.5 sm:p-3 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl space-y-1">
-                    <span className="text-[9px] sm:text-[10px] font-black text-cyan-400 uppercase tracking-wider block">Proprietários (R-3)</span>
-                    <p className="font-bold text-white text-[11px] sm:text-xs break-words">Carlos Eduardo Faria (50%)</p>
-                    <p className="font-bold text-white text-[11px] sm:text-xs break-words">Mariana Silveira Faria (50%)</p>
+                  <div className="p-2.5 sm:p-3 bg-background border border-border rounded-xl sm:rounded-2xl space-y-1">
+                    <span className="text-xs sm:text-xs font-semibold text-primary block">Proprietários (R-3)</span>
+                    <p className="font-semibold text-foreground text-xs sm:text-xs break-words">Carlos Eduardo Faria (50%)</p>
+                    <p className="font-semibold text-foreground text-xs sm:text-xs break-words">Mariana Silveira Faria (50%)</p>
                   </div>
 
                   {/* Card Ônus */}
-                  <div className="p-2.5 sm:p-3 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl space-y-1">
-                    <span className="text-[9px] sm:text-[10px] font-black text-emerald-400 uppercase tracking-wider block">Ônus & Restrições</span>
-                    <p className="font-bold text-emerald-300 text-[11px] sm:text-xs break-words">Ônus ativos: nenhum identificado no documento analisado</p>
+                  <div className="p-2.5 sm:p-3 bg-background border border-border rounded-xl sm:rounded-2xl space-y-1">
+                    <span className="text-xs sm:text-xs font-semibold text-success block">Ônus & Restrições</span>
+                    <p className="font-semibold text-success text-xs sm:text-xs break-words">Ônus ativos: nenhum identificado no documento analisado</p>
                   </div>
 
                   {/* Card Cadeia Dominial & CTA */}
-                  <div className="p-2.5 sm:p-3 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl space-y-1.5 flex flex-col justify-between">
+                  <div className="p-2.5 sm:p-3 bg-background border border-border rounded-xl sm:rounded-2xl space-y-1.5 flex flex-col justify-between">
                     <div>
-                      <span className="text-[9px] sm:text-[10px] font-black text-cyan-400 uppercase tracking-wider block">Cadeia Dominial</span>
-                      <p className="font-semibold text-slate-300 text-[11px] sm:text-xs break-words">Reconstrução dos atos do R-1 ao R-3</p>
+                      <span className="text-xs sm:text-xs font-semibold text-primary block">Cadeia Dominial</span>
+                      <p className="font-semibold text-muted-foreground text-xs sm:text-xs break-words">Reconstrução dos atos do R-1 ao R-3</p>
                     </div>
                     <div className="pt-1">
                       <Link to="/app?sample=safe" className="block w-full">
-                        <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] h-7 rounded-lg gap-1">
+                        <Button size="sm" className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-7 gap-1">
                           <FileText className="w-3 h-3 shrink-0" /> <span>Explorar Relatório</span>
                         </Button>
                       </Link>
@@ -421,35 +382,40 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Aviso Discreto */}
+            <p className="max-w-2xl mx-auto text-xs text-muted-foreground leading-relaxed">
+              A análise automatizada auxilia a triagem documental e não substitui matrícula atualizada, certidões oficiais ou orientação profissional.
+            </p>
+
           </div>
         </section>
 
         {/* 4. FAIXA CURTA DE CONFIANÇA */}
-        <section className="py-4 sm:py-6 bg-slate-900 border-b border-slate-800 px-3 w-full">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-[11px] sm:text-xs font-bold text-slate-300 text-center">
+        <section className="py-4 sm:py-6 bg-card border-b border-border px-3 w-full">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-xs sm:text-xs font-semibold text-muted-foreground text-center">
             <span className="flex items-center justify-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+              <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
               Conexão protegida por HTTPS/TLS e privacidade assegurada
             </span>
             <span className="flex items-center justify-center gap-1.5">
-              <Scale className="w-4 h-4 text-cyan-400 shrink-0" />
+              <Scale className="w-4 h-4 text-primary shrink-0" />
               Análise estruturada considerando informações registrais e referências normativas aplicáveis
             </span>
           </div>
         </section>
 
         {/* 5. DEMONSTRAÇÃO INTERATIVA */}
-        <section id="demonstracao" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="demonstracao" className="py-12 sm:py-20 bg-background border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Teste Sem Cadastro
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Demonstração: análise completa de uma matrícula rural
               </h2>
-              <p className="text-xs sm:text-base text-slate-300 font-medium">
+              <p className="text-xs sm:text-base text-muted-foreground font-medium">
                 Explore a demonstração prática interativa sem precisar criar conta.
               </p>
             </div>
@@ -458,22 +424,22 @@ export const LandingPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full">
               
               {/* Opção 1 — Imóvel Regular (Disponível) */}
-              <Card className="bg-slate-900 border-2 border-cyan-500/60 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between shadow-xl relative w-full">
-                <Badge className="bg-cyan-500 text-slate-950 font-black text-[9px] sm:text-[10px] uppercase absolute top-4 right-4">
+              <Card className="bg-card border-2 border-primary/60 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between shadow-medium relative w-full">
+                <Badge className="bg-primary text-white font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Disponível Agora ⚡
                 </Badge>
                 <div className="space-y-2.5 pt-1">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                     <Compass className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-white">Imóvel Rural Regular (1.450 Ha)</h3>
-                  <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                  <h3 className="text-sm sm:text-base font-semibold text-foreground">Imóvel Rural Regular (1.450 Ha)</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                     Demonstração completa com georreferenciamento, código CAR, CCIR/INCRA, certidão SIGEF e 12 módulos estruturados.
                   </p>
                 </div>
                 <div className="pt-1">
                   <Link to="/app?sample=safe" className="block w-full">
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs h-10 sm:h-11 rounded-xl gap-1.5 shadow-lg shadow-blue-500/20">
+                    <Button className="w-full text-white font-semibold text-xs h-10 sm:h-11 gap-1.5 bg-primary">
                       <Sparkles className="w-3.5 h-3.5" /> <span>Explorar relatório demonstrativo</span>
                     </Button>
                   </Link>
@@ -481,42 +447,42 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Opção 2 — Imóvel com Pontos de Atenção */}
-              <Card className="bg-slate-900/50 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
-                <Badge variant="outline" className="border-amber-500/40 text-amber-300 bg-amber-500/10 font-bold text-[9px] sm:text-[10px] uppercase absolute top-4 right-4">
+              <Card className="relative bg-card/50 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
+                <Badge variant="outline" className="border-warning/40 text-warning bg-warning/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Em breve
                 </Badge>
                 <div className="space-y-2.5 pt-1">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center font-semibold">
                     <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-200">Imóvel Urbano com Pontos de Atenção</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                  <h3 className="text-sm sm:text-base font-semibold text-foreground">Imóvel Urbano com Pontos de Atenção</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                     Demonstração focada na identificação de usufruto gravado e pendência de averbação de reforma.
                   </p>
                 </div>
                 <div className="pt-1">
-                  <Button disabled variant="outline" className="w-full border-slate-800 text-slate-500 text-xs h-10 rounded-xl">
+                  <Button disabled variant="outline" className="w-full border-border text-muted-foreground text-xs h-10">
                     Em breve
                   </Button>
                 </div>
               </Card>
 
               {/* Opção 3 — Imóvel com Risco Elevado */}
-              <Card className="bg-slate-900/50 border border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
-                <Badge variant="outline" className="border-red-500/40 text-red-300 bg-red-500/10 font-bold text-[9px] sm:text-[10px] uppercase absolute top-4 right-4">
+              <Card className="relative bg-card/50 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
+                <Badge variant="outline" className="border-destructive/40 text-destructive bg-destructive/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Em breve
                 </Badge>
                 <div className="space-y-2.5 pt-1">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center font-semibold">
                     <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-200">Gleba com Risco Elevado</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                  <h3 className="text-sm sm:text-base font-semibold text-foreground">Gleba com Risco Elevado</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                     Demonstração contendo averbações de penhora judicial e ação de execução anotada no texto.
                   </p>
                 </div>
                 <div className="pt-1">
-                  <Button disabled variant="outline" className="w-full border-slate-800 text-slate-500 text-xs h-10 rounded-xl">
+                  <Button disabled variant="outline" className="w-full border-border text-muted-foreground text-xs h-10">
                     Em breve
                   </Button>
                 </div>
@@ -525,7 +491,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Explicação de dados fictícios */}
-            <p className="text-center text-[11px] sm:text-xs text-slate-400 font-medium">
+            <p className="text-center text-xs sm:text-xs text-muted-foreground font-medium">
               ℹ️ Os nomes, números, CPFs, matrículas e informações da demonstração são dados fictícios utilizados apenas para apresentar o funcionamento da plataforma.
             </p>
 
@@ -533,98 +499,98 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 6. PRINCIPAIS RESULTADOS ENTREGUES */}
-        <section className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+        <section className="py-12 sm:py-20 bg-card border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Capacidades do Sistema
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Principais entregas da análise automatizada
               </h2>
-              <p className="text-xs sm:text-base text-slate-300 font-medium">
+              <p className="text-xs sm:text-base text-muted-foreground font-medium">
                 Estruturação completa das informações essenciais para apoiar a Due Diligence.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Organização da Matrícula</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Organização da Matrícula</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Extração estruturada em 12 módulos de análise registral.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <UserCheck className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Identificação de Proprietários</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Identificação de Proprietários</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Mapeamento dos titulares atuais e qualificações registradas.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Reconstrução Dominial</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Reconstrução Dominial</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Linha do tempo histórica dos atos de transmissão (R-1 ao R-N).
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Ônus & Restrições</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Ônus & Restrições</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Detecção de alienações, hipotecas, penhoras e indisponividades anotadas no texto.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <Compass className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Dados Urbanos & Rurais</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Dados Urbanos & Rurais</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Identificação de códigos CAR, CCIR/INCRA, ITR e certidão SIGEF citados.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Pontos de Atenção</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Pontos de Atenção</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Score de risco registral e sinalização visual de inconsistências.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <FileText className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Recomendações Práticas</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Recomendações Práticas</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Sugestão de certidões e verificações complementares de apoio.
                 </p>
               </Card>
 
-              <Card className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+              <Card className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                   <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Dossiê Executivo em PDF</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Dossiê Executivo em PDF</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Exportação do parecer em PDF formatado para auditoria.
                 </p>
               </Card>
@@ -634,17 +600,17 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 7. PRÉVIA DOS 12 MÓDULOS REGISTRAIS (ABAS DESLIZÁVEIS MOBILE) */}
-        <section id="modulos" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="modulos" className="py-12 sm:py-20 bg-background border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Estrutura Registral
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Organização dos 12 Módulos do Relatório
               </h2>
-              <p className="text-xs sm:text-base text-slate-300 font-medium">
+              <p className="text-xs sm:text-base text-muted-foreground font-medium">
                 Navegue pelas categorias e veja exatamente o que a inteligência artificial analisa em cada seção.
               </p>
             </div>
@@ -659,10 +625,10 @@ export const LandingPage: React.FC = () => {
                     <button
                       key={cat.id}
                       onClick={() => setActiveModuleCategory(idx)}
-                      className={`px-3.5 py-2 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 border snap-start ${
+                      className={`px-3.5 py-2 rounded-xl sm:rounded-2xl text-xs sm:text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0 border snap-start ${
                         isActive
-                          ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30'
-                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
+                          ? 'bg-primary text-white border-primary/30 shadow-soft'
+                          : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -674,21 +640,21 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Conteúdo da Aba Ativa */}
-            <Card className="bg-slate-900 border-slate-800 p-4 sm:p-8 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 w-full">
-              <h3 className="text-base sm:text-xl font-black text-white flex items-center gap-2 leading-tight">
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 shrink-0" />
+            <Card className="bg-card border-border p-4 sm:p-8 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 w-full">
+              <h3 className="text-base sm:text-xl font-semibold text-foreground flex items-center gap-2 leading-tight">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
                 <span>{moduleCategories[activeModuleCategory].title}</span>
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1 w-full">
                 {moduleCategories[activeModuleCategory].items.map((item, i) => (
-                  <div key={i} className="p-3 sm:p-3.5 bg-slate-950 border border-slate-800/80 rounded-xl sm:rounded-2xl flex items-start gap-2 text-xs sm:text-sm text-slate-300 font-medium w-full">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                  <div key={i} className="p-3 sm:p-3.5 bg-background border border-border rounded-xl sm:rounded-2xl flex items-start gap-2 text-xs sm:text-sm text-muted-foreground font-medium w-full">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     <span className="break-words">{item}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-slate-400 pt-2 border-t border-slate-800">
-                💡 <strong className="text-slate-300 font-semibold">Funcionalidade prática:</strong> Copie qualquer campo extraído com um clique e exporte o relatório completo formatado em PDF.
+              <p className="text-xs sm:text-xs text-muted-foreground pt-2 border-t border-border">
+                💡 <strong className="text-muted-foreground font-semibold">Funcionalidade prática:</strong> Copie qualquer campo extraído com um clique e exporte o relatório completo formatado em PDF.
               </p>
             </Card>
 
@@ -696,35 +662,35 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 8. COPILOTO REGISTRAL DE IA */}
-        <section className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+        <section className="py-12 sm:py-20 bg-card border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Interatividade
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Converse diretamente com os dados da matrícula
               </h2>
-              <p className="text-xs sm:text-base text-slate-300 font-medium">
+              <p className="text-xs sm:text-base text-muted-foreground font-medium">
                 Tire dúvidas instantâneas sobre atos, proprietários ou restrições em linguagem natural.
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center w-full">
               <div className="lg:col-span-5 space-y-3.5 sm:space-y-4 w-full">
-                <h3 className="text-lg sm:text-xl font-extrabold text-white">Copiloto Registral de IA</h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground">Copiloto Registral de IA</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-medium">
                   Pergunte em português simples e receba respostas vinculadas aos atos registrais encontrados no documento enviado.
                 </p>
-                <ul className="space-y-2 text-xs text-slate-300 font-medium">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Respostas orientadas estritamente pelas informações presentes no arquivo</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Dados estruturados para facilitar a conferência</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Disponível durante toda a sessão de análise</li>
+                <ul className="space-y-2 text-xs text-muted-foreground font-medium">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" /> Respostas orientadas estritamente pelas informações presentes no arquivo</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" /> Dados estruturados para facilitar a conferência</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" /> Disponível durante toda a sessão de análise</li>
                 </ul>
                 <div className="pt-1">
                   <Link to="/app?sample=safe" className="block w-full sm:w-auto">
-                    <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs h-10 px-5 rounded-xl gap-2">
+                    <Button className="w-full sm:w-auto bg-primary hover:bg-primary text-white font-semibold text-xs h-10 px-5 gap-2">
                       <MessageCircle className="w-4 h-4 shrink-0" /> <span>Experimentar Copiloto</span>
                     </Button>
                   </Link>
@@ -733,22 +699,22 @@ export const LandingPage: React.FC = () => {
 
               {/* Chat Simulation Card */}
               <div className="lg:col-span-7 w-full">
-                <Card className="bg-slate-950 border-2 border-blue-500/40 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 shadow-xl w-full">
-                  <div className="flex items-center gap-2.5 border-b border-slate-800 pb-2.5 w-full min-w-0">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-600 flex items-center justify-center text-white font-black shrink-0">
+                <Card className="bg-background border-2 border-primary/40 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 shadow-medium w-full">
+                  <div className="flex items-center gap-2.5 border-b border-border pb-2.5 w-full min-w-0">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-primary flex items-center justify-center text-white font-semibold shrink-0">
                       <Brain className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-xs font-black text-white truncate">Copiloto Registral de IA</h4>
-                      <span className="text-[10px] text-cyan-400 font-medium block truncate">Consultando Matrícula Rural Nº 47.912</span>
+                      <h4 className="text-xs font-semibold text-foreground truncate">Copiloto Registral de IA</h4>
+                      <span className="text-xs text-primary font-medium block truncate">Consultando Matrícula Rural Nº 47.912</span>
                     </div>
                   </div>
                   <div className="space-y-2.5 text-xs w-full">
-                    <div className="p-2.5 sm:p-3 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 text-slate-200 break-words">
-                      💬 <strong className="text-white">Pergunta:</strong> Quais são os proprietários atuais e existe algum ônus gravado no texto?
+                    <div className="p-2.5 sm:p-3 bg-card rounded-xl sm:rounded-2xl border border-border text-foreground break-words">
+                      💬 <strong className="text-foreground">Pergunta:</strong> Quais são os proprietários atuais e existe algum ônus gravado no texto?
                     </div>
-                    <div className="p-2.5 sm:p-3 bg-blue-950/60 border border-blue-500/30 rounded-xl sm:rounded-2xl text-slate-200 space-y-1 break-words">
-                      🤖 <strong className="text-cyan-400">Resposta:</strong> De acordo com as informações presentes no documento analisado, os proprietários atuais são Carlos Eduardo Faria (50%) e Mariana Silveira Faria (50%), conforme R-3. Não foram identificados ônus ativos gravados no documento.
+                    <div className="p-2.5 sm:p-3 bg-primary/5 border border-primary/20 rounded-xl sm:rounded-2xl text-foreground space-y-1 break-words">
+                      🤖 <strong className="text-primary">Resposta:</strong> De acordo com as informações presentes no documento analisado, os proprietários atuais são Carlos Eduardo Faria (50%) e Mariana Silveira Faria (50%), conforme R-3. Não foram identificados ônus ativos gravados no documento.
                     </div>
                   </div>
                 </Card>
@@ -759,50 +725,50 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 9. COMO FUNCIONA */}
-        <section id="como-funciona" className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="como-funciona" className="py-12 sm:py-20 bg-background border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Fluxo Simples
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Como funciona a análise em 4 passos
               </h2>
-              <p className="text-xs sm:text-base text-slate-300 font-medium">
+              <p className="text-xs sm:text-base text-muted-foreground font-medium">
                 Sem instalação de software, 100% online no seu navegador.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 01</span>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Envie o PDF</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              <Card className="bg-card border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <span className="text-xs sm:text-xs font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/30 inline-block">PASSO 01</span>
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Envie o PDF</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Faça o upload do documento da matrícula em PDF no sistema.
                 </p>
               </Card>
 
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 02</span>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Processamento</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              <Card className="bg-card border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <span className="text-xs sm:text-xs font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/30 inline-block">PASSO 02</span>
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Processamento</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   A inteligência artificial estrutura os dados nos 12 módulos registrais.
                 </p>
               </Card>
 
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 03</span>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Diagnóstico</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              <Card className="bg-card border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <span className="text-xs sm:text-xs font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/30 inline-block">PASSO 03</span>
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Diagnóstico</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Veja o Score de risco e os pontos de atenção destacados.
                 </p>
               </Card>
 
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
-                <span className="text-[10px] sm:text-xs font-mono font-black text-cyan-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/30 inline-block">PASSO 04</span>
-                <h3 className="text-sm sm:text-base font-extrabold text-white">Dossiê PDF</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              <Card className="bg-card border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 w-full">
+                <span className="text-xs sm:text-xs font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/30 inline-block">PASSO 04</span>
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">Dossiê PDF</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Exporte o relatório executivo formatado para guardar ou enviar.
                 </p>
               </Card>
@@ -812,17 +778,17 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 10. PARA QUEM É O SISTEMA (PÚBLICOS ATENDIDOS) */}
-        <section id="publicos" className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="publicos" className="py-12 sm:py-20 bg-card border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Perfis Atendidos
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Para quem é o ValidaImóvel
               </h2>
-              <p className="text-xs sm:text-base text-slate-300 font-medium">
+              <p className="text-xs sm:text-base text-muted-foreground font-medium">
                 Desenvolvido para agilizar a rotina de quem lida com documentação imobiliária.
               </p>
             </div>
@@ -831,22 +797,22 @@ export const LandingPage: React.FC = () => {
               {targetAudiences.map((aud, i) => {
                 const Icon = aud.icon;
                 return (
-                  <Card key={i} className="bg-slate-950 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 hover:border-blue-500/40 transition-colors w-full">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                  <Card key={i} className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 hover:border-primary/40 transition-colors w-full">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
-                    <h3 className="text-sm sm:text-base font-extrabold text-white">{aud.title}</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium">{aud.benefit}</p>
+                    <h3 className="text-sm sm:text-base font-semibold text-foreground">{aud.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed font-medium">{aud.benefit}</p>
                   </Card>
                 );
               })}
             </div>
 
             {/* Mensagem substitutiva */}
-            <div className="p-4 sm:p-6 bg-slate-950/80 border border-slate-800 rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto space-y-2 w-full">
-              <ThumbsUp className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400 mx-auto" />
-              <h4 className="text-sm sm:text-base font-extrabold text-white">Feito para quem precisa entender uma matrícula com mais rapidez e organização.</h4>
-              <p className="text-xs text-slate-400 font-medium">
+            <div className="p-4 sm:p-6 bg-background/80 border border-border rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto space-y-2 w-full">
+              <ThumbsUp className="w-5 h-5 sm:w-6 sm:h-6 text-primary mx-auto" />
+              <h4 className="text-sm sm:text-base font-semibold text-foreground">Feito para quem precisa entender uma matrícula com mais rapidez e organização.</h4>
+              <p className="text-xs text-muted-foreground font-medium">
                 Ideal para otimizar o tempo de triagem documental no seu dia a dia.
               </p>
             </div>
@@ -855,56 +821,56 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 11. COMPARATIVO */}
-        <section className="py-12 sm:py-20 bg-slate-950 border-b border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+        <section className="py-12 sm:py-20 bg-background border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-5xl mx-auto space-y-8 sm:space-y-12 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Comparativo
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Análise Manual vs ValidaImóvel
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full">
               {/* Lado Tradicional */}
-              <Card className="bg-slate-900 border-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 w-full">
-                <h3 className="text-base sm:text-lg font-black text-slate-300 pb-2 border-b border-slate-800">Processo Manual Tradicional</h3>
-                <div className="space-y-2.5 text-xs text-slate-400 font-medium">
-                  <div className="p-2.5 sm:p-3 bg-slate-950 rounded-xl space-y-0.5">
-                    <span className="text-[9px] uppercase font-bold text-slate-500 block">Tempo de Análise</span>
-                    <p className="text-slate-300 font-semibold">Horas ou dias conferindo folha por folha</p>
+              <Card className="bg-card border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 w-full">
+                <h3 className="text-base sm:text-lg font-semibold text-muted-foreground pb-2 border-b border-border">Processo Manual Tradicional</h3>
+                <div className="space-y-2.5 text-xs text-muted-foreground font-medium">
+                  <div className="p-2.5 sm:p-3 bg-background rounded-xl space-y-0.5">
+                    <span className="text-xs font-semibold text-muted-foreground block">Tempo de Análise</span>
+                    <p className="text-muted-foreground font-semibold">Horas ou dias conferindo folha por folha</p>
                   </div>
-                  <div className="p-2.5 sm:p-3 bg-slate-950 rounded-xl space-y-0.5">
-                    <span className="text-[9px] uppercase font-bold text-slate-500 block">Custo por Documento</span>
-                    <p className="text-slate-300 font-semibold">Custo elevado por análise avulsa contratada</p>
+                  <div className="p-2.5 sm:p-3 bg-background rounded-xl space-y-0.5">
+                    <span className="text-xs font-semibold text-muted-foreground block">Custo por Documento</span>
+                    <p className="text-muted-foreground font-semibold">Custo elevado por análise avulsa contratada</p>
                   </div>
-                  <div className="p-2.5 sm:p-3 bg-slate-950 rounded-xl space-y-0.5">
-                    <span className="text-[9px] uppercase font-bold text-slate-500 block">Organização</span>
-                    <p className="text-slate-300 font-semibold">Anotações manuais dispersas em rascunhos</p>
+                  <div className="p-2.5 sm:p-3 bg-background rounded-xl space-y-0.5">
+                    <span className="text-xs font-semibold text-muted-foreground block">Organização</span>
+                    <p className="text-muted-foreground font-semibold">Anotações manuais dispersas em rascunhos</p>
                   </div>
                 </div>
               </Card>
 
               {/* Lado ValidaImóvel */}
-              <Card className="bg-slate-900 border-2 border-blue-500/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 shadow-xl w-full">
-                <h3 className="text-base sm:text-lg font-black text-white pb-2 border-b border-blue-500/30 flex items-center justify-between">
+              <Card className="bg-card border-2 border-primary/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 shadow-medium w-full">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground pb-2 border-b border-primary/30 flex items-center justify-between">
                   <span>ValidaImóvel com IA</span>
-                  <Badge className="bg-blue-600 text-white text-[9px] sm:text-[10px]">Recomendado</Badge>
+                  <Badge className="bg-primary text-white text-xs sm:text-xs">Recomendado</Badge>
                 </h3>
-                <div className="space-y-2.5 text-xs text-slate-300 font-medium">
-                  <div className="p-2.5 sm:p-3 bg-blue-950/40 border border-blue-500/20 rounded-xl space-y-0.5">
-                    <span className="text-[9px] uppercase font-bold text-cyan-400 block">Tempo de Análise</span>
-                    <p className="text-white font-bold">Processamento estruturado em segundos</p>
+                <div className="space-y-2.5 text-xs text-muted-foreground font-medium">
+                  <div className="p-2.5 sm:p-3 bg-primary/40 border border-primary/20 rounded-xl space-y-0.5">
+                    <span className="text-xs font-semibold text-primary block">Tempo de Análise</span>
+                    <p className="text-foreground font-semibold">Processamento estruturado em segundos</p>
                   </div>
-                  <div className="p-2.5 sm:p-3 bg-blue-950/40 border border-blue-500/20 rounded-xl space-y-0.5">
-                    <span className="text-[9px] uppercase font-bold text-cyan-400 block">Custo por Documento</span>
-                    <p className="text-white font-bold">Apenas R$ 49,90 por 3 meses de análises ilimitadas</p>
+                  <div className="p-2.5 sm:p-3 bg-primary/40 border border-primary/20 rounded-xl space-y-0.5">
+                    <span className="text-xs font-semibold text-primary block">Custo por Documento</span>
+                    <p className="text-foreground font-semibold">Apenas R$ 49,90 por 3 meses de análises ilimitadas</p>
                   </div>
-                  <div className="p-2.5 sm:p-3 bg-blue-950/40 border border-blue-500/20 rounded-xl space-y-0.5">
-                    <span className="text-[9px] uppercase font-bold text-cyan-400 block">Organização</span>
-                    <p className="text-white font-bold">Relatório executivo completo nos 12 módulos + PDF</p>
+                  <div className="p-2.5 sm:p-3 bg-primary/40 border border-primary/20 rounded-xl space-y-0.5">
+                    <span className="text-xs font-semibold text-primary block">Organização</span>
+                    <p className="text-foreground font-semibold">Relatório executivo completo nos 12 módulos + PDF</p>
                   </div>
                 </div>
               </Card>
@@ -914,22 +880,22 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 12. VÍDEO DEMONSTRATIVO */}
-        <section id="video" className="py-12 sm:py-20 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="video" className="py-12 sm:py-20 bg-card border-b border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 text-center w-full">
             
             <div className="space-y-2 sm:space-y-3 max-w-2xl mx-auto">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Demonstração em Vídeo
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Veja o sistema em funcionamento
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300 font-medium">
+              <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                 Assista ao vídeo demonstrativo e confira como a plataforma realiza a leitura e extração das informações da matrícula.
               </p>
             </div>
 
-            <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-blue-500/40 shadow-2xl bg-slate-950 max-w-full">
+            <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-primary/40 shadow-medium bg-background max-w-full">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/QRCzsDTiRd0?rel=0"
                 title="Demonstração do Sistema ValidaImóvel"
@@ -944,59 +910,59 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 13. OFERTA */}
-        <section id="oferta" className="py-12 sm:py-20 bg-slate-950 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="oferta" className="py-12 sm:py-20 bg-background px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-4xl mx-auto w-full">
             
-            <Card className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border-2 border-blue-500/60 p-4 sm:p-12 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 sm:space-y-8 text-center relative overflow-hidden w-full">
+            <Card className="border-2 border-primary/60 p-4 sm:p-12 rounded-2xl sm:rounded-3xl shadow-medium space-y-6 sm:space-y-8 text-center relative overflow-hidden w-full bg-background">
               
               <div className="space-y-2 sm:space-y-3">
-                <Badge className="bg-blue-600 text-white font-black text-[10px] sm:text-xs uppercase px-3 py-1 rounded-full mx-auto">
+                <Badge className="bg-primary text-white font-semibold text-xs sm:text-xs px-3 py-1 rounded-full mx-auto">
                   Oferta de Lançamento
                 </Badge>
-                <h2 className="text-2xl min-[380px]:text-3xl sm:text-5xl font-black text-white tracking-tight">
+                <h2 className="text-2xl min-[380px]:text-3xl sm:text-5xl font-semibold text-foreground tracking-tight">
                   Acesso completo por três meses
                 </h2>
-                <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto font-medium leading-relaxed">
+                <p className="text-xs sm:text-base text-muted-foreground max-w-xl mx-auto font-medium leading-relaxed">
                   Analise quantas matrículas precisar durante 90 dias e utilize todos os recursos disponíveis na plataforma.
                 </p>
               </div>
 
               {/* Bloco de Preço Responsivo */}
-              <div className="p-4 sm:p-6 bg-slate-950 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-md mx-auto space-y-1.5 shadow-inner w-full">
-                <div className="text-xs text-slate-400 line-through font-bold">De {COMPANY_CONFIG.offer.originalPriceFormatted}</div>
+              <div className="p-4 sm:p-6 bg-background border border-border rounded-2xl sm:rounded-3xl max-w-md mx-auto space-y-1.5 shadow-inner w-full">
+                <div className="text-xs text-muted-foreground line-through font-semibold">De {COMPANY_CONFIG.offer.originalPriceFormatted}</div>
                 <div className="flex items-baseline justify-center gap-0.5 flex-wrap">
-                  <span className="text-3xl min-[360px]:text-4xl sm:text-6xl font-black text-white">R$ 49</span>
-                  <span className="text-lg sm:text-2xl font-extrabold text-white">,90</span>
+                  <span className="text-3xl min-[360px]:text-4xl sm:text-6xl font-semibold text-foreground">R$ 49</span>
+                  <span className="text-lg sm:text-2xl font-semibold text-foreground">,90</span>
                 </div>
-                <span className="text-[11px] sm:text-xs text-cyan-400 font-extrabold block pt-1">
+                <span className="text-xs sm:text-xs text-primary font-semibold block pt-1">
                   Economia de {COMPANY_CONFIG.offer.savingsFormatted} • Pagamento Único ({COMPANY_CONFIG.offer.paymentMethods})
                 </span>
               </div>
 
               {/* Inclusões da Oferta Responsivas (Grid de 1 coluna em celular para evitar estouro) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-left text-xs sm:text-sm text-slate-300 font-medium max-w-xl mx-auto w-full">
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>12 módulos registrais</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Score de risco registral</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Reconstrução da cadeia dominial</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Identificação de proprietários</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Detecção de ônus e restrições</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Copiloto Registral de IA</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Exportação do relatório em PDF</span></div>
-                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 shrink-0" /> <span>Suporte pelo WhatsApp</span></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-left text-xs sm:text-sm text-muted-foreground font-medium max-w-xl mx-auto w-full">
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>12 módulos registrais</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Score de risco registral</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Reconstrução da cadeia dominial</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Identificação de proprietários</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Detecção de ônus e restrições</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Copiloto Registral de IA</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Exportação do relatório em PDF</span></div>
+                <div className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> <span>Suporte pelo WhatsApp</span></div>
               </div>
 
               {/* Botão de Criação de Conta */}
               <div className="space-y-3 pt-1 max-w-md mx-auto w-full">
                 <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="block w-full">
-                  <Button size="lg" className="w-full max-w-full bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-xs min-[400px]:text-sm sm:text-base py-3.5 sm:py-5 min-h-[48px] rounded-xl sm:rounded-2xl shadow-xl shadow-blue-500/30 gap-2 h-auto">
+                  <Button size="lg" className="w-full max-w-full text-white font-semibold text-xs min-[400px]:text-sm sm:text-base py-3.5 sm:py-5 min-h-[48px] gap-2 h-auto bg-primary">
                     <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                     <span>Criar conta e garantir acesso</span>
                   </Button>
                 </Link>
 
-                <div className="flex items-center justify-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-slate-400 font-medium flex-wrap">
-                  <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> {COMPANY_CONFIG.offer.guaranteeDays} Dias de Garantia</span>
-                  <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Liberação Imediata</span>
+                <div className="flex items-center justify-center gap-3 sm:gap-4 text-xs sm:text-xs text-muted-foreground font-medium flex-wrap">
+                  <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-primary shrink-0" /> {COMPANY_CONFIG.offer.guaranteeDays} Dias de Garantia</span>
+                  <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-primary shrink-0" /> Liberação Imediata</span>
                 </div>
               </div>
 
@@ -1006,14 +972,14 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 14. PERGUNTAS FREQUENTES (FAQ) */}
-        <section id="faq" className="py-12 sm:py-20 bg-slate-900 border-t border-slate-800 px-3 sm:px-6 lg:px-8 w-full">
+        <section id="faq" className="py-12 sm:py-20 bg-card border-t border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-4xl mx-auto space-y-8 sm:space-y-10 w-full">
             
             <div className="text-center space-y-2 sm:space-y-3">
-              <Badge variant="outline" className="border-blue-500/30 text-cyan-400 bg-blue-500/10 px-3 py-1 font-extrabold text-[10px] sm:text-xs uppercase">
+              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1 font-semibold text-xs sm:text-xs">
                 Perguntas Frequentes
               </Badge>
-              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-xl min-[380px]:text-2xl sm:text-4xl font-semibold text-foreground tracking-tight">
                 Tire suas dúvidas sobre a plataforma
               </h2>
             </div>
@@ -1023,14 +989,14 @@ export const LandingPage: React.FC = () => {
                 <div
                   key={index}
                   onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                  className="p-4 sm:p-5 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl cursor-pointer hover:border-blue-500/40 transition-colors space-y-2 w-full"
+                  className="p-4 sm:p-5 bg-background border border-border rounded-xl sm:rounded-2xl cursor-pointer hover:border-primary/40 transition-colors space-y-2 w-full"
                 >
-                  <div className="flex items-center justify-between font-bold text-white text-xs sm:text-sm">
+                  <div className="flex items-center justify-between font-semibold text-foreground text-xs sm:text-sm">
                     <span className="pr-2">{faq.q}</span>
-                    <ChevronRight className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${activeFaq === index ? 'rotate-90 text-cyan-400' : ''}`} />
+                    <ChevronRight className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform ${activeFaq === index ? 'rotate-90 text-primary' : ''}`} />
                   </div>
                   {activeFaq === index && (
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pt-2 border-t border-slate-800/80 font-medium">
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed pt-2 border-t border-border font-medium">
                       {faq.a}
                     </p>
                   )}
@@ -1046,10 +1012,10 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 15. AVISO DE USO RESPONSÁVEL */}
-        <section className="py-8 sm:py-10 bg-slate-950 border-t border-slate-900 px-3 sm:px-6 w-full">
+        <section className="py-8 sm:py-10 bg-background border-t border-border px-3 sm:px-6 w-full">
           <div className="max-w-4xl mx-auto text-center w-full">
-            <Card className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-1.5 text-[11px] sm:text-xs text-slate-400 font-medium leading-relaxed w-full">
-              <span className="font-bold text-slate-300 block">⚖️ Uso Responsável e Limites do Sistema</span>
+            <Card className="bg-card/60 border border-border p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-1.5 text-xs sm:text-xs text-muted-foreground font-medium leading-relaxed w-full">
+              <span className="font-semibold text-muted-foreground block">⚖️ Uso Responsável e Limites do Sistema</span>
               <p>
                 O ValidaImóvel atua como uma ferramenta tecnológica de apoio à due diligence imobiliária. O relatório gerado pela inteligência artificial é estruturado com base estrita no documento em PDF disponibilizado pelo usuário. A plataforma não realiza consultas em tempo real em cartórios de registro ou órgãos públicos e não emite certidões oficiais.
               </p>
@@ -1058,49 +1024,42 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* 16. RODAPÉ RESPONSIVO */}
-        <footer className="bg-slate-950 text-slate-400 py-10 sm:py-12 border-t border-slate-900 px-3 sm:px-6 lg:px-8 w-full">
+        <footer className="bg-background text-muted-foreground py-10 sm:py-12 border-t border-border px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full">
             
             {/* Bloco de Proteção de Dados */}
-            <div className="p-4 sm:p-6 bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-xs font-medium text-slate-300 w-full">
+            <div className="p-4 sm:p-6 bg-card/80 border border-border rounded-2xl sm:rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-xs font-medium text-muted-foreground w-full">
               <div className="space-y-1">
-                <span className="font-bold text-cyan-400 block">🔒 Proteção de Conexão</span>
-                <p className="text-slate-400 text-[11px] sm:text-xs">Conexão protegida por HTTPS/TLS e tratamento dos documentos conforme as práticas descritas na Política de Privacidade.</p>
+                <span className="font-semibold text-primary block">🔒 Proteção de Conexão</span>
+                <p className="text-muted-foreground text-xs sm:text-xs">Conexão protegida por HTTPS/TLS e tratamento dos documentos conforme as práticas descritas na Política de Privacidade.</p>
               </div>
               <div className="space-y-1">
-                <span className="font-bold text-cyan-400 block">🗑️ Exclusão a Pedido</span>
-                <p className="text-slate-400 text-[11px] sm:text-xs">Solicite a exclusão definitiva dos seus arquivos de análise a qualquer momento.</p>
+                <span className="font-semibold text-primary block">🗑️ Exclusão a Pedido</span>
+                <p className="text-muted-foreground text-xs sm:text-xs">Solicite a exclusão definitiva dos seus arquivos de análise a qualquer momento.</p>
               </div>
             </div>
 
             {/* Links e Direitos Autorais */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 pt-4 border-t border-slate-900 text-xs w-full">
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
-                  <FileCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
-                </div>
-                <span className="text-base font-black text-white">
-                  Valida<span className="text-cyan-400">Imóvel</span>
-                </span>
-              </div>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 pt-4 border-t border-border text-xs w-full">
+              <Logo />
 
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-semibold text-[11px] sm:text-xs">
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-semibold text-xs sm:text-xs">
                 <a
                   href={COMPANY_CONFIG.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-pink-400 hover:text-pink-300 font-extrabold transition-colors bg-pink-500/10 px-2.5 py-1 rounded-full border border-pink-500/20"
+                  className="flex items-center gap-1.5 text-destructive hover:text-destructive font-semibold transition-colors bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20"
                 >
                   <Instagram className="w-3.5 h-3.5" />
                   <span>{COMPANY_CONFIG.instagramHandle}</span>
                 </a>
-                <Link to="/termos" className="hover:text-white transition-colors">Termos de Serviço</Link>
-                <Link to="/privacidade" className="hover:text-white transition-colors">Política de Privacidade</Link>
-                <Link to="/auth?tab=login" className="hover:text-white transition-colors">Já sou usuário</Link>
-                <Link to="/auth?tab=register" className="hover:text-white transition-colors">Criar Conta</Link>
+                <Link to="/termos" className="hover:text-foreground transition-colors">Termos de Serviço</Link>
+                <Link to="/privacidade" className="hover:text-foreground transition-colors">Política de Privacidade</Link>
+                <Link to="/auth?tab=login" className="hover:text-foreground transition-colors">Já sou usuário</Link>
+                <Link to="/auth?tab=register" className="hover:text-foreground transition-colors">Criar Conta</Link>
               </div>
 
-              <p className="text-slate-500 text-center font-medium text-[11px] sm:text-xs">
+              <p className="text-muted-foreground text-center font-medium text-xs sm:text-xs">
                 © {new Date().getFullYear()} {COMPANY_CONFIG.legalName}.
               </p>
             </div>
@@ -1109,13 +1068,13 @@ export const LandingPage: React.FC = () => {
         </footer>
 
         {/* 📌 BARRA FIXA STICKY BOTTOM DE CONVERSÃO NO MOBILE */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 p-2.5 sm:hidden shadow-2xl backdrop-blur-md flex items-center justify-between gap-2 max-w-full">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 border-t border-border p-2.5 sm:hidden shadow-medium backdrop-blur-md flex items-center justify-between gap-2 max-w-full">
           <div className="min-w-0">
-            <span className="text-[11px] font-black text-white block truncate">ValidaImóvel (3 Meses)</span>
-            <span className="text-[10px] font-extrabold text-cyan-400 block truncate">R$ 49,90 • Acesso Ilimitado</span>
+            <span className="text-xs font-semibold text-foreground block truncate">ValidaImóvel (3 Meses)</span>
+            <span className="text-xs font-semibold text-primary block truncate">R$ 49,90 • Acesso Ilimitado</span>
           </div>
           <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="shrink-0">
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] px-3 py-2 rounded-xl shadow-md h-9">
+            <Button size="sm" className="bg-primary hover:bg-primary text-white font-semibold text-xs px-3 py-2 h-9">
               <span>{user ? (user.hasSubscription ? "Workspace" : "Garantir") : "Criar Conta"}</span>
               <ArrowRight className="ml-1 w-3 h-3" />
             </Button>

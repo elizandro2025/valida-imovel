@@ -88,15 +88,15 @@ class ReportErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
   public render() {
     if (this.state.hasError) {
       return (
-        <Card className="max-w-md mx-auto bg-white border-red-200 p-6 text-center space-y-4 rounded-3xl shadow-xl">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
+        <Card className="max-w-md mx-auto bg-card border-destructive/30 p-6 text-center space-y-4 rounded-3xl shadow-medium">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center">
             <ShieldAlert className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-slate-900">Falha Temporária no Componente de Relatório</h3>
-          <p className="text-xs text-slate-500">Ocorreu um erro ao formatar um dos campos. Clique abaixo para tentar novamente.</p>
+          <h3 className="text-base font-semibold text-foreground">Falha Temporária no Componente de Relatório</h3>
+          <p className="text-xs text-muted-foreground">Ocorreu um erro ao formatar um dos campos. Clique abaixo para tentar novamente.</p>
           <Button
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl gap-2"
+            className="bg-destructive hover:bg-destructive text-white font-semibold text-xs rounded-xl gap-2"
           >
             <RefreshCcw className="w-3.5 h-3.5" /> Recarregar Exibição
           </Button>
@@ -126,19 +126,19 @@ const CopyableField: React.FC<{ label: string; value: string; className?: string
   return (
     <div 
       onClick={isCopyable ? handleCopy : undefined}
-      className={`group relative p-3 bg-slate-50 border border-slate-200/70 hover:border-emerald-400 hover:bg-emerald-50/50 rounded-xl space-y-0.5 transition-all ${isCopyable ? 'cursor-pointer' : ''} ${className}`}
+      className={`group relative p-3 bg-secondary border border-border hover:border-primary/40 hover:bg-primary/5 rounded-xl space-y-0.5 transition-colors ${isCopyable ? 'cursor-pointer' : ''} ${className}`}
       title={isCopyable ? `Clique para copiar "${value}"` : undefined}
     >
       <div className="flex items-center justify-between gap-1">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">{label}</span>
+        <span className="text-xs font-semibold text-muted-foreground block truncate">{label}</span>
         {isCopyable && (
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold text-emerald-600 flex items-center gap-0.5 shrink-0">
-            {copiedField ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-semibold text-success flex items-center gap-0.5 shrink-0">
+            {copiedField ? <Check className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
             {copiedField ? 'Copiado!' : 'Copiar'}
           </span>
         )}
       </div>
-      <span className="font-semibold text-slate-800 block truncate">{value}</span>
+      <span className="font-semibold text-foreground block truncate">{value}</span>
     </div>
   );
 };
@@ -159,16 +159,16 @@ const CopyableBlock: React.FC<{ label: string; text: string }> = ({ label, text 
   return (
     <div className="group relative space-y-1">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</span>
+        <span className="text-xs font-semibold text-muted-foreground">{label}</span>
         <button
           onClick={handleCopy}
-          className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200"
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-semibold text-success hover:text-success flex items-center gap-1 bg-success/10 px-2 py-0.5 rounded-lg border border-success/30"
         >
-          {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+          {copied ? <Check className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
           {copied ? 'Copiado!' : 'Copiar Texto'}
         </button>
       </div>
-      <p className="text-xs text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200/70 leading-relaxed font-medium">
+      <p className="text-xs text-foreground bg-secondary p-3.5 rounded-xl border border-border leading-relaxed font-medium">
         {text}
       </p>
     </div>
@@ -228,13 +228,13 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
   const getRiskBadge = (nivel: string) => {
     switch (nivel.toUpperCase()) {
       case 'CRÍTICO':
-        return { bg: 'bg-red-50 text-red-700 border-red-200', dot: 'bg-red-600', label: 'Risco Crítico' };
+        return { bg: 'bg-destructive/10 text-destructive border-destructive/30', dot: 'bg-destructive', label: 'Risco Crítico' };
       case 'ALTO':
-        return { bg: 'bg-orange-50 text-orange-700 border-orange-200', dot: 'bg-orange-600', label: 'Risco Alto' };
+        return { bg: 'bg-warning/10 text-warning border-warning/30', dot: 'bg-warning', label: 'Risco Alto' };
       case 'MÉDIO':
-        return { bg: 'bg-amber-50 text-amber-800 border-amber-200', dot: 'bg-amber-500', label: 'Risco Médio' };
+        return { bg: 'bg-warning/10 text-warning border-warning/30', dot: 'bg-warning', label: 'Risco Médio' };
       default:
-        return { bg: 'bg-emerald-50 text-emerald-800 border-emerald-200', dot: 'bg-emerald-600', label: 'Risco Baixo' };
+        return { bg: 'bg-success/10 text-success border-success/30', dot: 'bg-success', label: 'Risco Baixo' };
     }
   };
 
@@ -721,58 +721,58 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     <div className="space-y-6 antialiased animate-fade-in">
 
       {/* Carimbo Digital de Autenticidade Registral & Selo de Confiança */}
-      <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-card text-foreground p-4 sm:p-5 rounded-2xl shadow-medium border border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-slate-950 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0 font-black">
+          <div className="w-12 h-12 rounded-xl text-white flex items-center justify-center shadow-medium shrink-0 font-semibold bg-primary">
             <ShieldCheck className="w-6 h-6 stroke-[2.5]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm sm:text-base font-extrabold text-white tracking-wide">
+              <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-wide">
                 CARIMBO DIGITAL DE AUDITORIA REGISTRAL & FIDELIDADE
               </h3>
-              <Badge className="bg-blue-500/20 text-cyan-400 border-blue-500/40 text-[10px] font-bold uppercase">
+              <Badge className="bg-primary/20 text-primary border-primary/40 text-xs font-semibold">
                 100% Auditado
               </Badge>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 font-medium">
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium">
               Conformidade com a Lei de Registros Públicos (Lei 6.015/73) • Criptografia SSL 256-bit • Sigilo LGPD Garantido
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
-          <Badge variant="outline" className="border-slate-700 bg-slate-800/90 text-emerald-400 text-[11px] font-bold gap-1 px-3 py-1.5 shadow-inner">
-            <Lock className="w-3.5 h-3.5 text-emerald-400" /> Criptografia de Nível Bancário
+          <Badge variant="outline" className="border-border bg-muted/90 text-success text-xs font-semibold gap-1 px-3 py-1.5 shadow-inner">
+            <Lock className="w-3.5 h-3.5 text-success" /> Criptografia de Nível Bancário
           </Badge>
         </div>
       </div>
 
       {/* Header Limpo & Barra de Ações */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card border border-border p-5 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-success text-white flex items-center justify-center shadow-soft shrink-0">
             <FileCheck className="w-6 h-6 stroke-[2]" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-black text-slate-900 leading-tight">
+              <h2 className="text-lg font-semibold text-foreground leading-tight">
                 Relatório Auditado (12 Módulos Registrais)
               </h2>
-              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-extrabold text-[10px] uppercase">
+              <Badge className="bg-success/10 text-success border-success/30 font-semibold text-xs">
                 100% Abrangente
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Matrícula Nº <strong className="text-slate-800 font-bold">{renderSafe(ident.matricula)}</strong> • {renderSafe(ident.cartorio_ri, 'CRI')} ({renderSafe(ident.comarca, 'Comarca N/I')})
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium">
+              Matrícula Nº <strong className="text-foreground font-semibold">{renderSafe(ident.matricula)}</strong> • {renderSafe(ident.cartorio_ri, 'CRI')} ({renderSafe(ident.comarca, 'Comarca N/I')})
             </p>
           </div>
         </div>
 
         {/* Botões de Ação */}
         <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-          <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          <Badge variant="outline" className="bg-success/10 text-success border-success/30 font-semibold text-xs gap-1.5 py-1.5 px-3 rounded-xl shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-success" />
             <span>Relatório Desbloqueado</span>
           </Badge>
 
@@ -780,9 +780,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             variant="outline"
             size="sm"
             onClick={() => setIsTourOpen(true)}
-            className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl text-xs font-black gap-1.5 shadow-sm"
+            className="border-success/40 text-success bg-success/10 hover:bg-success/20 rounded-xl text-xs font-semibold gap-1.5 shadow-sm"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <Sparkles className="w-3.5 h-3.5 text-success" />
             Tour Guiado
           </Button>
 
@@ -790,9 +790,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             variant="outline"
             size="sm"
             onClick={handleCopyAllFields}
-            className="border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold gap-1.5"
+            className="border-border text-foreground hover:bg-secondary text-xs font-semibold gap-1.5"
           >
-            <Copy className="w-3.5 h-3.5 text-slate-500" />
+            <Copy className="w-3.5 h-3.5 text-muted-foreground" />
             Copiar Dados
           </Button>
 
@@ -800,9 +800,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             data-tour="step-6"
             onClick={exportToPDF}
             disabled={isExporting}
-            className={`${isSubscribed ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-800 hover:bg-slate-700'} text-white font-bold rounded-xl text-xs shadow-md gap-1.5`}
+            className={`${isSubscribed ? 'bg-primary text-white hover:bg-primary/90' : 'bg-muted text-foreground hover:bg-muted/70'} font-medium text-xs gap-1.5`}
           >
-            {isSubscribed ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5 text-amber-400" />}
+            {isSubscribed ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5 text-warning" />}
             {isExporting ? 'Exportando PDF...' : 'Exportar PDF'}
           </Button>
         </div>
@@ -811,72 +811,72 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
       {/* KPI Cards Limpos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Risk Card */}
-        <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+        <Card className="border-border bg-card shadow-sm rounded-2xl">
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Score de Risco</span>
-              <Badge variant="outline" className={`${riskBadge.bg} text-[11px] font-bold gap-1 px-2.5 py-0.5`}>
+              <span className="text-xs font-semibold text-muted-foreground">Score de Risco</span>
+              <Badge variant="outline" className={`${riskBadge.bg} text-xs font-semibold gap-1 px-2.5 py-0.5`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${riskBadge.dot}`} />
                 {nivelRisco}
               </Badge>
             </div>
             <div className="mt-2.5 flex items-baseline gap-2">
-              <span className="text-3xl font-black text-slate-900">{scoreRisco}</span>
-              <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              <span className="text-3xl font-semibold text-foreground">{scoreRisco}</span>
+              <span className="text-xs text-muted-foreground font-semibold">/ 100</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
-              Status: <strong className="text-slate-700">{statusJuridico}</strong>
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
+              Status: <strong className="text-foreground">{statusJuridico}</strong>
             </p>
           </CardContent>
         </Card>
 
         {/* Cartório & Matrícula */}
-        <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+        <Card className="border-border bg-card shadow-sm rounded-2xl">
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Matrícula / CRI</span>
-              <Building2 className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-semibold text-muted-foreground">Matrícula / CRI</span>
+              <Building2 className="w-4 h-4 text-success" />
             </div>
             <div className="mt-2.5">
-              <span className="text-2xl font-black text-slate-900 truncate block">
+              <span className="text-2xl font-semibold text-foreground truncate block">
                 Nº {renderSafe(ident.matricula)}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
               {renderSafe(ident.cartorio_ri, 'CRI')} ({renderSafe(ident.comarca, 'Comarca N/I')})
             </p>
           </CardContent>
         </Card>
 
         {/* Proprietários */}
-        <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+        <Card className="border-border bg-card shadow-sm rounded-2xl">
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Proprietários Atuais</span>
-              <Users className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-semibold text-muted-foreground">Proprietários Atuais</span>
+              <Users className="w-4 h-4 text-success" />
             </div>
             <div className="mt-2.5">
-              <span className="text-3xl font-black text-slate-900">{props.length}</span>
+              <span className="text-3xl font-semibold text-foreground">{props.length}</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
               {props.length > 0 ? renderSafe(props[0]?.nome, 'Titular Registrado') : 'Sem registros ativos'}
             </p>
           </CardContent>
         </Card>
 
         {/* Restrições */}
-        <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
+        <Card className="border-border bg-card shadow-sm rounded-2xl">
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ônus / Indisponidades</span>
-              <AlertTriangle className={`w-4 h-4 ${onus.length > 0 ? 'text-amber-500' : 'text-emerald-600'}`} />
+              <span className="text-xs font-semibold text-muted-foreground">Ônus / Indisponidades</span>
+              <AlertTriangle className={`w-4 h-4 ${onus.length > 0 ? 'text-warning' : 'text-success'}`} />
             </div>
             <div className="mt-2.5">
-              <span className={`text-3xl font-black ${onus.length > 0 ? 'text-amber-600' : 'text-slate-900'}`}>
+              <span className={`text-3xl font-semibold ${onus.length > 0 ? 'text-warning' : 'text-foreground'}`}>
                 {onus.length}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium truncate">
               {onus.length > 0 ? `${onus.length} gravame(s) ativo(s)` : 'Matrícula livre de ônus'}
             </p>
           </CardContent>
@@ -890,53 +890,53 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
             {/* NAVEGAÇÃO DE ABAS 100% RESPONSIVA PARA IOS & ANDROID COM SWIPE E TOUCH SWIPE */}
-            <div className="w-full bg-slate-950 border border-slate-800/90 p-1.5 rounded-2xl shadow-2xl backdrop-blur-xl overflow-x-auto no-scrollbar ios-scroll">
+            <div className="w-full bg-background border border-border p-1.5 rounded-2xl shadow-medium backdrop-blur-xl overflow-x-auto no-scrollbar ios-scroll">
               <TabsList className="w-full min-w-max lg:min-w-0 flex lg:grid lg:grid-cols-6 gap-1.5 bg-transparent h-auto p-0 border-0">
                 <TabsTrigger
                   value="parecer"
-                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                  className="rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <ShieldCheck className="w-4 h-4 shrink-0 text-cyan-400" />
+                  <ShieldCheck className="w-4 h-4 shrink-0 text-primary" />
                   <span className="whitespace-nowrap">Mód 12 • Parecer & Risco</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="imovel"
-                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                  className="rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Building2 className="w-4 h-4 shrink-0 text-sky-400" />
+                  <Building2 className="w-4 h-4 shrink-0 text-primary" />
                   <span className="whitespace-nowrap">Mód 1-3 • Imóvel & Geo</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="especiais"
-                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                  className="rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Landmark className="w-4 h-4 shrink-0 text-indigo-400" />
+                  <Landmark className="w-4 h-4 shrink-0 text-primary" />
                   <span className="whitespace-nowrap">Mód 4-6 • Regimes</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="proprietarios"
-                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                  className="rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Users className="w-4 h-4 shrink-0 text-teal-400" />
+                  <Users className="w-4 h-4 shrink-0 text-success" />
                   <span className="whitespace-nowrap">Mód 7-8 • Donos & Cadeia</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="onus"
-                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                  className="rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-warning" />
                   <span className="whitespace-nowrap">Mód 9-11 • Ônus & Penhoras</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="perfil"
-                  className="rounded-xl text-xs font-black gap-2 py-3 px-4 sm:px-3 text-slate-400 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/30 hover:text-white hover:bg-slate-800/80 transition-all duration-200 border border-transparent data-[state=active]:border-blue-500/40 text-center justify-center shrink-0 min-h-[44px]"
+                  className="rounded-xl text-[13px] font-medium gap-2 py-2.5 px-4 sm:px-3 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft hover:text-foreground transition-colors duration-200 border border-transparent data-[state=active]:border-border text-center justify-center shrink-0 min-h-[44px]"
                 >
-                  <Bot className="w-4 h-4 shrink-0 text-cyan-400" />
+                  <Bot className="w-4 h-4 shrink-0 text-primary" />
                   <span className="whitespace-nowrap">Copiloto IA</span>
                 </TabsTrigger>
               </TabsList>
@@ -944,14 +944,14 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
           {/* TAB 1: PARECER & RISCO */}
           <TabsContent value="parecer" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
-            <Card data-tour="step-1" className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
-              <CardHeader className="pb-3 border-b border-slate-100">
+            <Card data-tour="step-1" className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+              <CardHeader className="pb-3 border-b border-border">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-success" />
                     Diagnóstico Completo de Risco e Segurança do Imóvel
                   </CardTitle>
-                  <Badge variant="outline" className={`${riskBadge.bg} text-xs font-bold px-3 py-1`}>
+                  <Badge variant="outline" className={`${riskBadge.bg} text-xs font-semibold px-3 py-1`}>
                     {nivelRisco} ({scoreRisco}/100)
                   </Badge>
                 </div>
@@ -959,42 +959,42 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               <CardContent className="pt-5 space-y-5">
                 
                 {/* Uncomplicated Plain Language Card */}
-                <div className="p-5 bg-gradient-to-br from-emerald-50/90 via-teal-50/50 to-slate-50 border border-emerald-200/80 rounded-2xl space-y-4 shadow-sm">
+                <div className="p-5 border border-success/20 rounded-2xl space-y-4 bg-success/5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
+                    <div className="w-8 h-8 rounded-xl bg-success text-white flex items-center justify-center shadow-soft">
                       <Sparkles className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-extrabold text-slate-900">Entenda este Imóvel em Palavras Simples</h3>
-                      <p className="text-xs text-slate-500">Resumo direto e descomplicado para compradores, proprietários e corretores</p>
+                      <h3 className="text-sm font-semibold text-foreground">Entenda este Imóvel em Palavras Simples</h3>
+                      <p className="text-xs text-muted-foreground">Resumo direto e descomplicado para compradores, proprietários e corretores</p>
                     </div>
                   </div>
 
                   <div className="grid sm:grid-cols-3 gap-3 pt-1">
-                    <div className="p-3.5 bg-white border border-slate-200/80 rounded-xl space-y-1">
-                      <span className="text-[11px] font-extrabold text-emerald-700 uppercase tracking-wider block">👤 Quem pode Vender</span>
-                      <p className="text-xs text-slate-700 font-semibold truncate">
+                    <div className="p-3.5 bg-card border border-border rounded-xl space-y-1">
+                      <span className="text-xs font-semibold text-success block">👤 Quem pode Vender</span>
+                      <p className="text-xs text-foreground font-semibold truncate">
                         {props.length > 0 ? props.map((p: any) => renderSafe(p.nome)).join(', ') : 'Consulte no histórico'}
                       </p>
                     </div>
 
-                    <div className="p-3.5 bg-white border border-slate-200/80 rounded-xl space-y-1">
-                      <span className="text-[11px] font-extrabold text-amber-700 uppercase tracking-wider block">🛑 Dívidas ou Bloqueios</span>
-                      <p className="text-xs text-slate-700 font-semibold truncate">
+                    <div className="p-3.5 bg-card border border-border rounded-xl space-y-1">
+                      <span className="text-xs font-semibold text-warning block">🛑 Dívidas ou Bloqueios</span>
+                      <p className="text-xs text-foreground font-semibold truncate">
                         {onus.length > 0 ? `${onus.length} pendência(s) encontrada(s)` : 'Nenhuma dívida ou bloqueio'}
                       </p>
                     </div>
 
-                    <div className="p-3.5 bg-white border border-slate-200/80 rounded-xl space-y-1">
-                      <span className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block">🛡️ Nível de Segurança</span>
-                      <p className="text-xs text-slate-700 font-semibold truncate">
+                    <div className="p-3.5 bg-card border border-border rounded-xl space-y-1">
+                      <span className="text-xs font-semibold text-foreground block">🛡️ Nível de Segurança</span>
+                      <p className="text-xs text-foreground font-semibold truncate">
                         {scoreRisco <= 25 ? 'Excelente — Alta Segurança' : scoreRisco <= 50 ? 'Atenção Moderada às Certidões' : 'Exige Cuidado / Análise Técnica'}
                       </p>
                     </div>
                   </div>
 
                   {parecer.explicacao_descomplicada && (
-                    <p className="text-xs text-slate-700 bg-white/90 p-3.5 rounded-xl border border-emerald-100 leading-relaxed font-medium">
+                    <p className="text-xs text-foreground bg-card/90 p-3.5 rounded-xl border border-success/30 leading-relaxed font-medium">
                       💡 <strong>Resumo Direto:</strong> {renderSafe(parecer.explicacao_descomplicada)}
                     </p>
                   )}
@@ -1002,8 +1002,8 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               
               {/* Executive Summary */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Resumo Executivo Diagnóstico</h4>
-                <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200/70">
+                <h4 className="text-xs font-semibold text-muted-foreground">Resumo Executivo Diagnóstico</h4>
+                <p className="text-sm text-foreground leading-relaxed bg-secondary p-4 rounded-xl border border-border">
                   {renderSafe(parecer.resumo_geral, 'Nenhum resumo executivo gerado.')}
                 </p>
               </div>
@@ -1011,23 +1011,23 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               {/* Identified Risks */}
               {Array.isArray(parecer.riscos_identificados) && parecer.riscos_identificados.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Matriz de Riscos Mapeados</h4>
+                  <h4 className="text-xs font-semibold text-muted-foreground">Matriz de Riscos Mapeados</h4>
                   <div className="space-y-2.5">
                     {parecer.riscos_identificados
                       .filter((r: any) => !searchTerm || JSON.stringify(r).toLowerCase().includes(searchTerm.toLowerCase()))
                       .map((risco: any, i: number) => (
-                        <div key={i} className="p-3.5 bg-amber-50/60 border border-amber-200/80 rounded-xl space-y-1">
+                        <div key={i} className="p-3.5 bg-warning/60 border border-warning/80 rounded-xl space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-amber-900 text-xs flex items-center gap-1.5">
-                              <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                            <span className="font-semibold text-warning text-xs flex items-center gap-1.5">
+                              <AlertCircle className="w-3.5 h-3.5 text-warning" />
                               {renderSafe(risco.descricao, 'Risco Detectado')}
                             </span>
-                            <Badge variant="outline" className="border-amber-300 text-amber-800 bg-amber-100 text-[10px] font-bold">
+                            <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 text-xs font-semibold">
                               {renderSafe(risco.tipo_risco, 'ALERTA')}
                             </Badge>
                           </div>
-                          {risco.impacto && <p className="text-xs text-slate-600 pl-5"><strong>Impacto:</strong> {renderSafe(risco.impacto)}</p>}
-                          {risco.acao_recomendada && <p className="text-xs text-slate-600 pl-5"><strong>Ação:</strong> {renderSafe(risco.acao_recomendada)}</p>}
+                          {risco.impacto && <p className="text-xs text-muted-foreground pl-5"><strong>Impacto:</strong> {renderSafe(risco.impacto)}</p>}
+                          {risco.acao_recomendada && <p className="text-xs text-muted-foreground pl-5"><strong>Ação:</strong> {renderSafe(risco.acao_recomendada)}</p>}
                         </div>
                       ))}
                   </div>
@@ -1037,10 +1037,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               {/* Formal Pendencies */}
               {Array.isArray(parecer.pendencias_formais) && parecer.pendencias_formais.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pendências Formais e Cadastrais</h4>
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-1 text-xs">
+                  <h4 className="text-xs font-semibold text-muted-foreground">Pendências Formais e Cadastrais</h4>
+                  <div className="p-3 bg-warning/10 border border-warning/30 rounded-xl space-y-1 text-xs">
                     {parecer.pendencias_formais.map((p: any, i: number) => (
-                      <p key={i} className="text-amber-900 font-medium">⚠️ {renderSafe(p)}</p>
+                      <p key={i} className="text-warning font-medium">⚠️ {renderSafe(p)}</p>
                     ))}
                   </div>
                 </div>
@@ -1049,10 +1049,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               {/* Regularities */}
               {Array.isArray(parecer.regularidades_e_conformidade) && parecer.regularidades_e_conformidade.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Conformidades e Pontos Positivos</h4>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1 text-xs">
+                  <h4 className="text-xs font-semibold text-muted-foreground">Conformidades e Pontos Positivos</h4>
+                  <div className="p-3 bg-success/10 border border-success/30 rounded-xl space-y-1 text-xs">
                     {parecer.regularidades_e_conformidade.map((c: any, i: number) => (
-                      <p key={i} className="text-emerald-900 font-medium">✓ {renderSafe(c)}</p>
+                      <p key={i} className="text-success font-medium">✓ {renderSafe(c)}</p>
                     ))}
                   </div>
                 </div>
@@ -1060,19 +1060,19 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
               {/* Due Diligence Certifications Checklist */}
               <div className="space-y-3 pt-2">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <CheckSquare className="w-4 h-4 text-emerald-600" />
+                <h4 className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <CheckSquare className="w-4 h-4 text-success" />
                   Checklist de Certidões Recomendadas para Due Diligence
                 </h4>
                 <div className="grid sm:grid-cols-2 gap-3 text-xs">
                   {certidoesRecomendadas.map((cert, idx) => (
-                    <div key={idx} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1 hover:border-emerald-300 transition-colors">
+                    <div key={idx} className="p-3.5 bg-secondary border border-border rounded-xl space-y-1 hover:border-success/30 transition-colors">
                       <div className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
                         <div>
-                          <h5 className="font-bold text-slate-900">{cert.title}</h5>
-                          <span className="text-[10px] font-bold text-emerald-700 block mt-0.5">Escopo: {cert.scope}</span>
-                          <p className="text-[11px] text-slate-500 mt-1 leading-snug">{cert.purpose}</p>
+                          <h5 className="font-semibold text-foreground">{cert.title}</h5>
+                          <span className="text-xs font-semibold text-success block mt-0.5">Escopo: {cert.scope}</span>
+                          <p className="text-xs text-muted-foreground mt-1 leading-snug">{cert.purpose}</p>
                         </div>
                       </div>
                     </div>
@@ -1082,9 +1082,9 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
               {/* Final Recommendation */}
               <div className="space-y-2 pt-2">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Orientação para Due Diligence</h4>
-                <div className="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-xl space-y-2">
-                  <p className="text-sm text-slate-800 font-semibold leading-relaxed">
+                <h4 className="text-xs font-semibold text-muted-foreground">Orientação para Due Diligence</h4>
+                <div className="p-4 bg-success/10 border border-success/30 rounded-xl space-y-2">
+                  <p className="text-sm text-foreground font-semibold leading-relaxed">
                     {renderSafe(parecer.recomendacao_final || parecer.conclusao_juridica, 'Análise concluída com sucesso.')}
                   </p>
                 </div>
@@ -1096,23 +1096,23 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* TAB 2: IA EXPLICA POR PERFIL (5 LINGUAGENS DE NEGÓCIO) */}
         <TabsContent value="perfil" data-tour="step-5" className="mt-5 space-y-6">
-          <div className="bg-slate-900 text-white p-4 sm:p-6 rounded-3xl shadow-xl border border-slate-800 space-y-5">
+          <div className="bg-card text-foreground p-4 sm:p-6 rounded-3xl shadow-medium border border-border space-y-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl text-white flex items-center justify-center shadow-medium shrink-0 bg-success">
                 <Bot className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-extrabold text-white">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">
                   IA Explica — Diagnóstico Registral por Persona
                 </h3>
-                <p className="text-xs text-slate-300 font-medium mt-0.5">
+                <p className="text-xs text-muted-foreground font-medium mt-0.5">
                   Visualização adaptada para a linguagem exata e prioridades de cada perfil de atuação
                 </p>
               </div>
             </div>
 
             {/* Abas dos Perfis — Horizontal Touch Scroll no Mobile */}
-            <div className="w-full overflow-x-auto no-scrollbar ios-scroll p-1.5 bg-slate-950 border border-slate-800 rounded-2xl">
+            <div className="w-full overflow-x-auto no-scrollbar ios-scroll p-1.5 bg-background border border-border rounded-2xl">
               <div className="flex items-center gap-2 min-w-max">
                 {[
                   { id: 'comprador', label: '👤 Comprador / Leigo' },
@@ -1124,10 +1124,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                   <button
                     key={p.id}
                     onClick={() => setProfileTab(p.id as any)}
-                    className={`px-3.5 py-2.5 rounded-xl text-xs font-black whitespace-nowrap shrink-0 transition-all min-h-[44px] flex items-center gap-1.5 border ${
+                    className={`px-3.5 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all min-h-[44px] flex items-center gap-1.5 border ${
                       profileTab === p.id
-                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
-                        : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
+                        ? 'bg-success text-white border-success/30 shadow-soft'
+                        : 'bg-card/90 text-muted-foreground border-border hover:text-foreground hover:bg-muted'
                     }`}
                   >
                     <span>{p.label}</span>
@@ -1137,38 +1137,38 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             </div>
 
             {/* Conteúdo Adaptado */}
-            <div className="p-5 bg-slate-800/70 border border-slate-700/80 rounded-2xl text-xs sm:text-sm text-slate-200 leading-relaxed space-y-3 font-medium">
+            <div className="p-5 bg-muted/70 border border-border rounded-2xl text-xs sm:text-sm text-foreground leading-relaxed space-y-3 font-medium">
               {profileTab === 'comprador' && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">👤 Parecer Direto para o Comprador / Leigo</span>
+                  <span className="text-xs font-semibold text-success block">👤 Parecer Direto para o Comprador / Leigo</span>
                   <p>{renderSafe(parecer.explicacoes_por_perfil?.comprador_leigo || parecer.explicacao_descomplicada || parecer.resumo_geral)}</p>
                 </div>
               )}
 
               {profileTab === 'corretor' && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">🏡 Visão Comercial & Corretagem Imobiliária</span>
+                  <span className="text-xs font-semibold text-success block">🏡 Visão Comercial & Corretagem Imobiliária</span>
                   <p>{renderSafe(parecer.explicacoes_por_perfil?.corretor_imoveis || `Imóvel com status ${statusJuridico}. Documentação apta para apresentação a clientes e elaboração do contrato de compra e venda.`)}</p>
                 </div>
               )}
 
               {profileTab === 'banco' && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">🏦 Análise de Garantia Fiduciária & Risco de Crédito</span>
+                  <span className="text-xs font-semibold text-success block">🏦 Análise de Garantia Fiduciária & Risco de Crédito</span>
                   <p>{renderSafe(parecer.explicacoes_por_perfil?.banco_credito || `Score de garantia: ${Math.max(10, 100 - scoreRisco)}/100. Gravames ativos: ${onus.length}. Avaliação recomendada para constituição de Alienação Fiduciária.`)}</p>
                 </div>
               )}
 
               {profileTab === 'engenheiro' && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">📐 Análise Física, Territorial & Engenharia</span>
+                  <span className="text-xs font-semibold text-success block">📐 Análise Física, Territorial & Engenharia</span>
                   <p>{renderSafe(parecer.explicacoes_por_perfil?.engenheiro_agronomo || `Área total: ${carac.area_total_m2 || 'Conforme certidão'}. Georreferenciamento: ${geo.possui_georreferenciamento ? 'Homologado SIGEF' : 'Em análise'}. Reserva legal e APP mapeadas.`)}</p>
                 </div>
               )}
 
               {profileTab === 'advogado' && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">⚖️ Parecer Registral Notarial & Fundamentação Jurídica</span>
+                  <span className="text-xs font-semibold text-success block">⚖️ Parecer Registral Notarial & Fundamentação Jurídica</span>
                   <p>{renderSafe(parecer.explicacoes_por_perfil?.advogado_parecerista || parecer.conclusao_juridica || parecer.resumo_geral)}</p>
                 </div>
               )}
@@ -1180,10 +1180,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         <TabsContent value="imovel" data-tour="step-2" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 1 & 2 */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-600" />
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-success" />
                 Dados Cartorários e Caracterização Física (Módulos 1 e 2)
               </CardTitle>
             </CardHeader>
@@ -1226,10 +1226,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Card>
 
           {/* Módulo 3: Georreferenciamento */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-emerald-600" />
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <Compass className="w-5 h-5 text-success" />
                 Georreferenciamento e Registro Agrário (Módulo 3)
               </CardTitle>
             </CardHeader>
@@ -1250,33 +1250,33 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Card>
 
           {/* Módulo 5: Registro Ambiental */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <TreePine className="w-5 h-5 text-emerald-600" />
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <TreePine className="w-5 h-5 text-success" />
                 Registro Ambiental e Recursos Hídricos (Módulo 5)
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-5 space-y-3">
               <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Reserva Legal</span>
-                  <span className="font-semibold text-slate-800">{renderSafe(ambiental?.reserva_legal_averbada, 'Conforme CAR / Averbada')}</span>
+                <div className="p-3 bg-secondary border border-border rounded-xl space-y-1">
+                  <span className="text-xs font-semibold text-muted-foreground block">Reserva Legal</span>
+                  <span className="font-semibold text-foreground">{renderSafe(ambiental?.reserva_legal_averbada, 'Conforme CAR / Averbada')}</span>
                 </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Área de Preservação (APP)</span>
-                  <span className="font-semibold text-slate-800">{renderSafe(ambiental?.area_preservacao_permanente_app, 'Mapeada')}</span>
+                <div className="p-3 bg-secondary border border-border rounded-xl space-y-1">
+                  <span className="text-xs font-semibold text-muted-foreground block">Área de Preservação (APP)</span>
+                  <span className="font-semibold text-foreground">{renderSafe(ambiental?.area_preservacao_permanente_app, 'Mapeada')}</span>
                 </div>
                 {ambiental?.embargos_ambientais && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1">
-                    <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider block">Embargos Ambientais</span>
-                    <span className="font-semibold text-red-900">{renderSafe(ambiental.embargos_ambientais)}</span>
+                  <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-xl space-y-1">
+                    <span className="text-xs font-semibold text-destructive block">Embargos Ambientais</span>
+                    <span className="font-semibold text-destructive">{renderSafe(ambiental.embargos_ambientais)}</span>
                   </div>
                 )}
                 {ambiental?.outorga_agua && (
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Outorga de Recursos Hídricos</span>
-                    <span className="font-semibold text-slate-800">{renderSafe(ambiental.outorga_agua)}</span>
+                  <div className="p-3 bg-secondary border border-border rounded-xl space-y-1">
+                    <span className="text-xs font-semibold text-muted-foreground block">Outorga de Recursos Hídricos</span>
+                    <span className="font-semibold text-foreground">{renderSafe(ambiental.outorga_agua)}</span>
                   </div>
                 )}
               </div>
@@ -1289,22 +1289,22 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         <TabsContent value="proprietarios" data-tour="step-3" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 7: Proprietários */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-100">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-600" />
+          <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <Users className="w-5 h-5 text-success" />
                 Proprietários Atuais e Qualificação (Módulo 7)
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {props.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400">
+                <div className="p-8 text-center text-xs text-muted-foreground">
                   Nenhum proprietário atual identificado explicitamente.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left text-slate-600">
-                    <thead className="bg-slate-50 text-slate-400 uppercase font-bold border-b border-slate-100">
+                  <table className="w-full text-xs text-left text-muted-foreground">
+                    <thead className="bg-secondary text-muted-foreground font-semibold border-b border-border">
                       <tr>
                         <th className="px-4 py-3">Titular</th>
                         <th className="px-4 py-3">CPF / CNPJ</th>
@@ -1314,15 +1314,15 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                         <th className="px-4 py-3">Ato de Origem</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 font-medium">
+                    <tbody className="divide-y divide-border font-medium">
                       {props
                         .filter((p: any) => !searchTerm || JSON.stringify(p).toLowerCase().includes(searchTerm.toLowerCase()))
                         .map((p: any, i: number) => (
-                          <tr key={i} className="hover:bg-slate-50/50">
-                            <td className="px-4 py-3 font-bold text-slate-900">{renderSafe(p?.nome, 'N/I')}</td>
+                          <tr key={i} className="hover:bg-secondary/50">
+                            <td className="px-4 py-3 font-semibold text-foreground">{renderSafe(p?.nome, 'N/I')}</td>
                             <td className="px-4 py-3 font-mono">{renderSafe(p?.cpf_cnpj, 'N/I')}</td>
                             <td className="px-4 py-3">{renderSafe(p?.estado_civil, '')} {p?.regime_bens ? `(${renderSafe(p.regime_bens)})` : ''}</td>
-                            <td className="px-4 py-3 font-bold text-emerald-700">{renderSafe(p?.percentual_propriedade, '100%')}</td>
+                            <td className="px-4 py-3 font-semibold text-success">{renderSafe(p?.percentual_propriedade, '100%')}</td>
                             <td className="px-4 py-3">{renderSafe(p?.natureza_propriedade, 'Proprietário')}</td>
                             <td className="px-4 py-3 font-mono">{renderSafe(p?.ato_aquisicao, 'R-X')}</td>
                           </tr>
@@ -1335,46 +1335,46 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           </Card>
 
           {/* Módulo 8: Cadeia Dominial com Diagrama Gráfico Conectado */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-emerald-600" />
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-success" />
                   Cadeia Dominial Cronológica Interativa (Módulo 8)
                 </CardTitle>
-                <Badge variant="outline" className="border-emerald-300 text-emerald-700 bg-emerald-50 text-[10px] font-bold">
+                <Badge variant="outline" className="border-success/30 text-success bg-success/10 text-xs font-semibold">
                   {cadeia.length} Transmissões
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="pt-6">
               {cadeia.length === 0 ? (
-                <div className="text-center py-6 text-xs text-slate-400">
+                <div className="text-center py-6 text-xs text-muted-foreground">
                   Nenhum ato de transmissão mapeado no histórico.
                 </div>
               ) : (
-                <div className="relative pl-6 space-y-6 before:absolute before:left-3 before:top-4 before:bottom-4 before:w-1 before:bg-gradient-to-b before:from-emerald-600 before:via-emerald-400 before:to-slate-300">
+                <div className="relative pl-6 space-y-6 before:absolute before:left-3 before:top-4 before:bottom-4 before:w-1 bg-primary">
                   {cadeia
                     .filter((ato: any) => !searchTerm || JSON.stringify(ato).toLowerCase().includes(searchTerm.toLowerCase()))
                     .map((ato: any, i: number) => (
                       <div key={i} className="relative group animate-fade-in">
                         {/* Node Icon Circle */}
-                        <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-md flex items-center justify-center text-white text-[10px] font-bold group-hover:scale-125 transition-transform">
+                        <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-success border-2 border-border shadow-soft flex items-center justify-center text-white text-xs font-semibold transition-transform">
                           {i + 1}
                         </div>
 
-                        <div className="p-4 bg-slate-50/80 border border-slate-200/80 rounded-2xl space-y-2 hover:border-emerald-400 hover:bg-white transition-all shadow-sm">
-                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                        <div className="p-4 bg-secondary/80 border border-border rounded-2xl space-y-2 hover:border-success/30 hover:bg-card transition-all shadow-sm">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="border-emerald-400 text-emerald-800 bg-emerald-100/60 font-black text-xs px-2 py-0.5">
+                              <Badge variant="outline" className="border-success/30 text-success bg-success/60 font-semibold text-xs px-2 py-0.5">
                                 {renderSafe(ato?.numero_ato, `R-${i + 1}`)}
                               </Badge>
-                              <span className="font-bold text-slate-900 text-xs">
+                              <span className="font-semibold text-foreground text-xs">
                                 {renderSafe(ato?.tipo_transmissao, 'Transmissão de Propriedade')}
                               </span>
                             </div>
-                            <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
-                              <Calendar className="w-3 h-3 text-slate-400" />
+                            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-muted-foreground" />
                               {renderSafe(ato?.data_registro, 'Data N/I')}
                             </span>
                           </div>
@@ -1382,28 +1382,28 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                           {/* Seller to Buyer visual path */}
                           <div className="grid sm:grid-cols-2 gap-3 text-xs pt-1">
                             {ato?.transmitentes && (
-                              <div className="p-2.5 bg-red-50/50 border border-red-100 rounded-xl space-y-0.5">
-                                <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider block">Transmitente (Vendedor/Doador)</span>
-                                <span className="font-bold text-slate-800">{renderSafe(ato.transmitentes)}</span>
+                              <div className="p-2.5 bg-destructive/50 border border-destructive/30 rounded-xl space-y-0.5">
+                                <span className="text-xs font-semibold text-destructive block">Transmitente (Vendedor/Doador)</span>
+                                <span className="font-semibold text-foreground">{renderSafe(ato.transmitentes)}</span>
                               </div>
                             )}
                             {ato?.adquirentes && (
-                              <div className="p-2.5 bg-emerald-50/50 border border-emerald-100 rounded-xl space-y-0.5">
-                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block">Adquirente (Comprador/Beneficiário)</span>
-                                <span className="font-bold text-slate-800">{renderSafe(ato.adquirentes)}</span>
+                              <div className="p-2.5 bg-success/50 border border-success/30 rounded-xl space-y-0.5">
+                                <span className="text-xs font-semibold text-success block">Adquirente (Comprador/Beneficiário)</span>
+                                <span className="font-semibold text-foreground">{renderSafe(ato.adquirentes)}</span>
                               </div>
                             )}
                           </div>
 
                           {/* Value & Observations */}
-                          <div className="flex items-center justify-between text-xs pt-1 text-slate-500">
+                          <div className="flex items-center justify-between text-xs pt-1 text-muted-foreground">
                             {ato?.valor_transacao && (
-                              <span className="font-bold text-slate-900 bg-slate-200/60 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                                <DollarSign className="w-3 h-3 text-emerald-600" /> {renderSafe(ato.valor_transacao)}
+                              <span className="font-semibold text-foreground bg-muted/60 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                                <DollarSign className="w-3 h-3 text-success" /> {renderSafe(ato.valor_transacao)}
                               </span>
                             )}
                             {ato?.observacoes && (
-                              <span className="text-[11px] text-slate-500 italic">
+                              <span className="text-xs text-muted-foreground italic">
                                 {renderSafe(ato.observacoes)}
                               </span>
                             )}
@@ -1422,14 +1422,14 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         <TabsContent value="onus" data-tour="step-4" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulos 9 & 10: Garantias e Indisponividades */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-100">
+          <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-amber-500" />
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-warning" />
                   Garantias, Penhoras e Indisponividades (Módulos 9 e 10)
                 </CardTitle>
-                <Badge variant="outline" className={onus.length > 0 ? 'border-amber-300 text-amber-800 bg-amber-50' : 'border-emerald-300 text-emerald-800 bg-emerald-50'}>
+                <Badge variant="outline" className={onus.length > 0 ? 'border-warning/30 text-warning bg-warning/10' : 'border-success/30 text-success bg-success/10'}>
                   {onus.length} Restrições
                 </Badge>
               </div>
@@ -1437,33 +1437,33 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             <CardContent className="p-0">
               {onus.length === 0 ? (
                 <div className="p-8 text-center space-y-2">
-                  <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-success/10 text-success flex items-center justify-center">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm">Matrícula Livre de Ônus</h4>
-                  <p className="text-xs text-slate-500">Não foram identificadas penhoras, hipotecas, alienações fiduciárias ou indisponividades (CNIB) ativas.</p>
+                  <h4 className="font-semibold text-foreground text-sm">Matrícula Livre de Ônus</h4>
+                  <p className="text-xs text-muted-foreground">Não foram identificadas penhoras, hipotecas, alienações fiduciárias ou indisponividades (CNIB) ativas.</p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-border">
                   {onus
                     .filter((o: any) => !searchTerm || JSON.stringify(o).toLowerCase().includes(searchTerm.toLowerCase()))
                     .map((o: any, i: number) => (
-                      <div key={i} className="p-4 hover:bg-slate-50/50 space-y-1 text-xs">
+                      <div key={i} className="p-4 hover:bg-secondary/50 space-y-1 text-xs">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                            <Badge variant="outline" className="border-amber-300 text-amber-900 bg-amber-100 font-mono text-[10px]">
+                          <span className="font-semibold text-foreground text-sm flex items-center gap-2">
+                            <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 font-mono text-xs">
                               {renderSafe(o?.numero_ato, 'ATO')}
                             </Badge>
                             {renderSafe(o?.tipo, 'Restrição')}
                           </span>
-                          <Badge className={String(o?.status).toUpperCase() === 'CANCELADO' ? 'bg-slate-100 text-slate-600' : 'bg-red-100 text-red-800 border-red-200'}>
+                          <Badge className={String(o?.status).toUpperCase() === 'CANCELADO' ? 'bg-secondary text-muted-foreground' : 'bg-destructive/10 text-destructive border-destructive/30'}>
                             {renderSafe(o?.status, 'ATIVO')}
                           </Badge>
                         </div>
                         {(o?.credor_banco || o?.credor_beneficiario || o?.autor_exequente) && (
-                          <p className="text-slate-600"><strong>Credor / Autor da Ação:</strong> {renderSafe(o.credor_banco || o.credor_beneficiario || o.autor_exequente)}</p>
+                          <p className="text-muted-foreground"><strong>Credor / Autor da Ação:</strong> {renderSafe(o.credor_banco || o.credor_beneficiario || o.autor_exequente)}</p>
                         )}
-                        <p className="text-slate-600 leading-relaxed">{renderSafe(o?.detalhes || o?.processo_vara, 'Sem descrição adicional')}</p>
+                        <p className="text-muted-foreground leading-relaxed">{renderSafe(o?.detalhes || o?.processo_vara, 'Sem descrição adicional')}</p>
                       </div>
                     ))}
                 </div>
@@ -1473,10 +1473,10 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
           {/* Averbações Diversas */}
           {averb.length > 0 && (
-            <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-              <CardHeader className="pb-3 border-b border-slate-100">
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-slate-500" />
+            <Card className="border-border bg-card shadow-sm rounded-2xl">
+              <CardHeader className="pb-3 border-b border-border">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-muted-foreground" />
                   Averbações Diversas ({averb.length})
                 </CardTitle>
               </CardHeader>
@@ -1484,12 +1484,12 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                 {averb
                   .filter((a: any) => !searchTerm || JSON.stringify(a).toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((a: any, i: number) => (
-                    <div key={i} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs space-y-1">
-                      <div className="flex items-center justify-between font-bold text-slate-800">
+                    <div key={i} className="p-3 bg-secondary border border-border rounded-xl text-xs space-y-1">
+                      <div className="flex items-center justify-between font-semibold text-foreground">
                         <span>{renderSafe(a?.numero_averbacao, `AV-${i + 1}`)} — {renderSafe(a?.tipo, 'Averbação')}</span>
-                        <span className="text-slate-400 font-normal">{renderSafe(a?.data, '')}</span>
+                        <span className="text-muted-foreground font-normal">{renderSafe(a?.data, '')}</span>
                       </div>
-                      <p className="text-slate-600">{renderSafe(a?.descricao || a?.observacoes)}</p>
+                      <p className="text-muted-foreground">{renderSafe(a?.descricao || a?.observacoes)}</p>
                     </div>
                   ))}
               </CardContent>
@@ -1502,87 +1502,87 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
         <TabsContent value="especiais" className="mt-5 space-y-6 animate-in fade-in-50 duration-300 slide-in-from-bottom-1">
 
           {/* Módulo 4: Condomínios / REURB */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-600" />
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-success" />
                 Condomínios, Loteamentos e REURB (Módulo 4)
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-5">
               <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Condomínio Edilício</span>
-                  <span className="font-bold text-slate-800">{regimes.e_condominio_edilicio ? 'SIM' : 'NÃO CONSTA'}</span>
-                  {regimes.incorporacao_imobiliaria && <p className="text-[11px] text-slate-600 mt-1">{renderSafe(regimes.incorporacao_imobiliaria)}</p>}
-                  {regimes.fracao_ideal && <p className="text-[11px] text-emerald-700 font-bold mt-1">Fração Ideal: {renderSafe(regimes.fracao_ideal)}</p>}
-                  {regimes.vaga_garagem && <p className="text-[11px] text-slate-600 mt-0.5">Garagem: {renderSafe(regimes.vaga_garagem)}</p>}
+                <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <span className="text-xs font-semibold text-muted-foreground block">Condomínio Edilício</span>
+                  <span className="font-semibold text-foreground">{regimes.e_condominio_edilicio ? 'SIM' : 'NÃO CONSTA'}</span>
+                  {regimes.incorporacao_imobiliaria && <p className="text-xs text-muted-foreground mt-1">{renderSafe(regimes.incorporacao_imobiliaria)}</p>}
+                  {regimes.fracao_ideal && <p className="text-xs text-success font-semibold mt-1">Fração Ideal: {renderSafe(regimes.fracao_ideal)}</p>}
+                  {regimes.vaga_garagem && <p className="text-xs text-muted-foreground mt-0.5">Garagem: {renderSafe(regimes.vaga_garagem)}</p>}
                 </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Regularização Fundiária (REURB)</span>
-                  <span className="font-bold text-slate-800">{regimes.e_reurb ? renderSafe(regimes.tipo_reurb, 'SIM') : 'NÃO CONSTA'}</span>
-                  {regimes.detalhes_regime && <p className="text-[11px] text-slate-600 mt-1">{renderSafe(regimes.detalhes_regime)}</p>}
+                <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <span className="text-xs font-semibold text-muted-foreground block">Regularização Fundiária (REURB)</span>
+                  <span className="font-semibold text-foreground">{regimes.e_reurb ? renderSafe(regimes.tipo_reurb, 'SIM') : 'NÃO CONSTA'}</span>
+                  {regimes.detalhes_regime && <p className="text-xs text-muted-foreground mt-1">{renderSafe(regimes.detalhes_regime)}</p>}
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Módulo 6: Imóveis Especiais (SPU / Marinha / Tombamento) */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Landmark className="w-5 h-5 text-emerald-600" />
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <Landmark className="w-5 h-5 text-success" />
                 Imóveis da União, Marinha (SPU), Fronteira e Tombamento (Módulo 6)
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-5">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Terreno de Marinha / SPU</span>
-                  <span className="font-bold text-slate-800">{especiais.terreno_marinha ? renderSafe(especiais.regime_spu, 'SIM') : 'NÃO CONSTA'}</span>
-                  {especiais.laudemic_inscrito && <p className="text-[11px] text-amber-700 font-bold mt-1">Laudêmio Inscrito</p>}
+                <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <span className="text-xs font-semibold text-muted-foreground block">Terreno de Marinha / SPU</span>
+                  <span className="font-semibold text-foreground">{especiais.terreno_marinha ? renderSafe(especiais.regime_spu, 'SIM') : 'NÃO CONSTA'}</span>
+                  {especiais.laudemic_inscrito && <p className="text-xs text-warning font-semibold mt-1">Laudêmio Inscrito</p>}
                 </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Faixa de Fronteira / Faixa de Domínio</span>
-                  <span className="font-bold text-slate-800">{especiais.faixa_fronteira ? 'Faixa de Fronteira (Lei 6.634/79)' : especiais.faixa_dominio ? 'Faixa de Domínio' : 'NÃO CONSTA'}</span>
+                <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <span className="text-xs font-semibold text-muted-foreground block">Faixa de Fronteira / Faixa de Domínio</span>
+                  <span className="font-semibold text-foreground">{especiais.faixa_fronteira ? 'Faixa de Fronteira (Lei 6.634/79)' : especiais.faixa_dominio ? 'Faixa de Domínio' : 'NÃO CONSTA'}</span>
                 </div>
-                <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tombamento Histórico / Terras Indígenas</span>
-                  <span className="font-bold text-slate-800">{especiais.tombamento ? 'Tombamento Registrado' : especiais.terra_indigena_quilombola ? 'Área Indígena/Quilombola' : 'NÃO CONSTA'}</span>
+                <div className="p-3 bg-secondary border border-border rounded-xl">
+                  <span className="text-xs font-semibold text-muted-foreground block">Tombamento Histórico / Terras Indígenas</span>
+                  <span className="font-semibold text-foreground">{especiais.tombamento ? 'Tombamento Registrado' : especiais.terra_indigena_quilombola ? 'Área Indígena/Quilombola' : 'NÃO CONSTA'}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Módulo 11: Usufruto, Servidões e Direitos Reais */}
-          <Card className="border-slate-200/80 bg-white shadow-sm rounded-2xl">
-            <CardHeader className="pb-3 border-b border-slate-100">
+          <Card className="border-border bg-card shadow-sm rounded-2xl">
+            <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Key className="w-5 h-5 text-emerald-600" />
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <Key className="w-5 h-5 text-success" />
                   Usufruto, Servidões e Direitos Reais Averbados (Módulo 11)
                 </CardTitle>
-                <Badge variant="outline" className={usufruto.length > 0 ? 'border-amber-300 text-amber-800 bg-amber-50' : 'border-emerald-300 text-emerald-800 bg-emerald-50'}>
+                <Badge variant="outline" className={usufruto.length > 0 ? 'border-warning/30 text-warning bg-warning/10' : 'border-success/30 text-success bg-success/10'}>
                   {usufruto.length > 0 ? `${usufruto.length} Registros` : '✓ Sem Restrições'}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="pt-4 space-y-2">
               {usufruto.length === 0 ? (
-                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 font-medium">
+                <div className="p-4 bg-success/10 border border-success/30 rounded-xl text-xs text-success font-medium">
                   ✓ Nenhum usufruto vitalício, servidão de passagem ou direito real de superfície averbado na matrícula.
                 </div>
               ) : (
                 usufruto
                   .filter((u: any) => !searchTerm || JSON.stringify(u).toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((u: any, i: number) => (
-                    <div key={i} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs space-y-1">
-                      <div className="flex items-center justify-between font-bold text-slate-800">
+                    <div key={i} className="p-3 bg-secondary border border-border rounded-xl text-xs space-y-1">
+                      <div className="flex items-center justify-between font-semibold text-foreground">
                         <span>[{renderSafe(u?.numero_ato, 'ATO')}] {renderSafe(u?.tipo, 'Direito Real')}</span>
-                        <Badge variant="outline" className="text-[10px]">{renderSafe(u?.status, 'ATIVO')}</Badge>
+                        <Badge variant="outline" className="text-xs">{renderSafe(u?.status, 'ATIVO')}</Badge>
                       </div>
-                      {u?.beneficiarios && <p className="text-slate-600"><strong>Beneficiários:</strong> {renderSafe(u.beneficiarios)}</p>}
-                      {u?.clausulas_restritivas && <p className="text-amber-800"><strong>Cláusulas:</strong> {renderSafe(u.clausulas_restritivas)}</p>}
+                      {u?.beneficiarios && <p className="text-muted-foreground"><strong>Beneficiários:</strong> {renderSafe(u.beneficiarios)}</p>}
+                      {u?.clausulas_restritivas && <p className="text-warning"><strong>Cláusulas:</strong> {renderSafe(u.clausulas_restritivas)}</p>}
                     </div>
                   ))
               )}
@@ -1593,16 +1593,16 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
 
         {/* TAB 5: COPILOTO IA CHAT INTERATIVO */}
         <TabsContent value="copiloto" data-tour="step-5" className="mt-5 space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl text-white space-y-4">
-            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+          <div className="bg-card border border-border rounded-3xl p-5 sm:p-6 shadow-medium text-foreground space-y-4">
+            <div className="flex items-center gap-3 border-b border-border pb-4">
+              <div className="w-10 h-10 rounded-2xl text-white flex items-center justify-center shadow-medium shrink-0 bg-success">
                 <Bot className="w-5 h-5 stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base font-extrabold text-white">
+                <h3 className="text-base font-semibold text-foreground">
                   Copiloto Notarial de IA Registrária
                 </h3>
-                <p className="text-xs text-slate-300">
+                <p className="text-xs text-muted-foreground">
                   Respostas imediatas com citação direta dos atos da certidão (R-1, AV-2, penhoras, áreas e titularidades)
                 </p>
               </div>
@@ -1620,24 +1620,24 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     <div className="fixed bottom-6 right-6 z-50">
       <Button
         onClick={() => setShowAiChat(!showAiChat)}
-        className="bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 rounded-full px-5 py-6 shadow-2xl font-extrabold text-xs flex items-center gap-2.5 transition-all hover:scale-105"
+        className="bg-card hover:bg-muted text-success border border-success/40 rounded-full px-5 py-6 shadow-medium font-semibold text-xs flex items-center gap-2.5 transition-all"
       >
-        <Bot className="w-5 h-5 text-emerald-400" />
+        <Bot className="w-5 h-5 text-success" />
         <span>{showAiChat ? 'Fechar Assistente IA' : '💬 Assistente Copiloto IA'}</span>
       </Button>
     </div>
 
     {/* Copilot Assistant Floating Panel */}
     {showAiChat && (
-      <div className="fixed bottom-20 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[480px] bg-slate-950 border border-slate-800 rounded-3xl shadow-2xl p-4 text-white animate-fade-in max-h-[75vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+      <div className="fixed bottom-20 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[480px] bg-background border border-border rounded-3xl shadow-medium p-4 text-foreground animate-fade-in max-h-[75vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-border pb-3 mb-3">
           <div className="flex items-center gap-2">
-            <Bot className="w-4 h-4 text-emerald-400" />
-            <h4 className="text-xs font-bold text-white">Copiloto Notarial de IA Registrária</h4>
+            <Bot className="w-4 h-4 text-success" />
+            <h4 className="text-xs font-semibold text-foreground">Copiloto Notarial de IA Registrária</h4>
           </div>
           <button
             onClick={() => setShowAiChat(false)}
-            className="text-slate-400 hover:text-white text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-800"
+            className="text-muted-foreground hover:text-foreground text-xs font-semibold px-2 py-1 rounded-lg hover:bg-muted"
           >
             ✕
           </button>
@@ -1656,21 +1656,21 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     {/* === OFERTA FINAL DA DEMONSTRAÇÃO === */}
     {isSampleDemo && (
       <div className="mt-10 max-w-4xl mx-auto px-4 pb-16">
-        <div className="relative overflow-hidden rounded-3xl border border-blue-500/40 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/80 shadow-2xl shadow-blue-500/10 p-8 sm:p-10 text-center space-y-7">
+        <div className="relative overflow-hidden rounded-3xl border border-primary/40 shadow-medium p-8 sm:p-10 text-center space-y-7 bg-background">
           {/* Background glow */}
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
 
           {/* Header */}
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-2 bg-blue-500/20 text-cyan-300 border border-blue-500/30 text-xs font-black uppercase tracking-wider px-4 py-1.5 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> Você acabou de ver o poder do ValidaImóvel
+            <span className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/30 text-xs font-semibold px-4 py-1.5 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 text-primary" /> Você acabou de ver o poder do ValidaImóvel
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight leading-tight">
               Agora Analise Qualquer Matrícula Real<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">por Apenas R$ 16,63/mês</span>
+              <span className="text-primary">por Apenas R$ 16,63/mês</span>
             </h2>
-            <p className="text-sm text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
               Plano 3 Meses Ilimitados — audite quantas matrículas precisar, com Score de Risco, Dossiê PDF e os 12 Módulos Registrais completos.
             </p>
           </div>
@@ -1682,13 +1682,13 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               { icon: FileCheck, title: 'Dossiê PDF Completo', desc: 'Exportação profissional em PDF com capa, módulos e parecer jurídico.' },
               { icon: Zap, title: 'Resultado em < 30 seg', desc: 'IA Registrária com temperatura zero — zero invenção, 100% fidelidade ao texto.' },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-3 p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-                <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-cyan-400 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+              <div key={title} className="flex items-start gap-3 p-4 bg-card/80 rounded-2xl border border-border">
+                <div className="w-8 h-8 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center shrink-0 mt-0.5 font-semibold">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-white">{title}</p>
-                  <p className="text-[11px] text-slate-400 font-medium leading-relaxed mt-0.5">{desc}</p>
+                  <p className="text-xs font-semibold text-foreground">{title}</p>
+                  <p className="text-xs text-muted-foreground font-medium leading-relaxed mt-0.5">{desc}</p>
                 </div>
               </div>
             ))}
@@ -1698,21 +1698,21 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <div className="text-center">
-                <span className="text-slate-500 text-sm line-through">R$ 299,70</span>
-                <div className="text-4xl font-black text-white">R$ 49<span className="text-2xl">,90</span></div>
-                <span className="text-xs text-cyan-400 font-bold">3 meses ilimitados • pagamento único</span>
+                <span className="text-muted-foreground text-sm line-through">R$ 299,70</span>
+                <div className="text-4xl font-semibold text-foreground">R$ 49<span className="text-2xl">,90</span></div>
+                <span className="text-xs text-primary font-semibold">3 meses ilimitados • pagamento único</span>
               </div>
             </div>
 
             <Link to="/auth" className="inline-block w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-base px-10 py-7 rounded-2xl shadow-2xl shadow-blue-500/40 gap-3 transition-all hover:scale-105">
+              <Button className="w-full sm:w-auto text-white font-semibold text-base px-10 py-7 gap-3 transition-all bg-primary">
                 <Zap className="w-5 h-5 fill-white stroke-[2]" />
                 <span>QUERO ANALISAR MATRÍCULAS REAIS AGORA</span>
                 <ArrowRight className="w-5 h-5 stroke-[2.5]" />
               </Button>
             </Link>
 
-            <p className="text-[11px] text-slate-500 font-medium">
+            <p className="text-xs text-muted-foreground font-medium">
               Pagamento via PIX • Ativação imediata • Sem renovação automática • Cancele quando quiser
             </p>
           </div>
