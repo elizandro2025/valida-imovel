@@ -22,7 +22,12 @@ export const EXTRACTION_KEYS = [
   'indisponividades_e_penhoras', 'usufruto_servidoes_e_direitos', 'averbacoes_diversas',
 ];
 
-export class IncompleteAnalysisError extends Error {}
+export class IncompleteAnalysisError extends Error {
+  // Seções que faltaram na resposta (para o registro técnico; a mensagem mostrada ao usuário não cita nomes de campo)
+  constructor(message: string, readonly missing: string[] = []) {
+    super(message);
+  }
+}
 
 // ─── Texto enviado à análise ────────────────────────────────────────────────
 export interface PreparedText {
@@ -54,7 +59,10 @@ export function parseAIJson(raw: string, requiredKeys: string[]): Record<string,
   }
   const missing = requiredKeys.filter(key => !(key in (parsed as object)));
   if (missing.length > 0) {
-    throw new IncompleteAnalysisError(`A análise veio incompleta (faltou: ${missing.join(', ')}). Tente analisar de novo.`);
+    throw new IncompleteAnalysisError(
+      'A IA não devolveu todas as partes da análise e, para não mostrar um relatório incompleto, paramos aqui. Tente analisar de novo.',
+      missing,
+    );
   }
   return parsed as Record<string, any>;
 }

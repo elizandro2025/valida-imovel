@@ -2,12 +2,13 @@
  * Análise de matrícula: leitura do PDF (OCR) → extração + parecer (+ georreferenciamento) em paralelo
  * → regras de segurança e conferência com o texto lido (src/lib/reportNormalizer.ts).
  */
-import { AIServiceError, aiClient, fileToBase64 } from './aiClient';
+import { AIServiceError, AnalysisTask, aiClient, fileToBase64 } from './aiClient';
 import { ocrCacheService } from './ocrCacheService';
 import { georreferenciamentoService } from './georreferenciamentoService';
 import {
   EXTRACTION_KEYS, IncompleteAnalysisError, normalizeReport, parseAIJson, prepareText,
 } from '@/lib/reportNormalizer';
+import { OWN_REPORT_MESSAGE, isOwnReportPdf, isOwnReportText } from '@/lib/uploadCheck';
 
 export { AIServiceError };
 
@@ -20,7 +21,21 @@ const GEO_HINT = /georreferenc|SIGEF|SIRGAS|UTM|v[ée]rtice/i;
 // Última leitura do PDF: se a análise falhar depois do OCR, a nova tentativa não lê (nem conta) o arquivo de novo
 let lastOcr: { hash: string; text: string; model: string | null; cut: boolean } | null = null;
 
+// A IA às vezes omite uma seção do JSON ou corta a resposta: repete a etapa uma vez antes de mostrar o erro
+async function runTask(task: AnalysisTask, text: string, keys: string[]) {
+  try {
+    const result = await aiClient.task(task, text);
+    return { data: parseAIJson(result.text, keys), model: result.model };
+  } catch (error) {
+    if (!(error instanceof IncompleteAnalysisError)) throw error;
+    console.warn(`Etapa "${task}" veio incompleta (${error.missing.join(', ') || 'JSON inválido'}); repetindo uma vez.`);
+    const result = await aiClient.task(task, text);
+    return { data: parseAIJson(result.text, keys), model: result.model };
+  }
+}
+
 export async function analyzeMatricula(file: File, onProgress?: AnalysisProgressCallback): Promise<MatriculaReport> {
+  if (isOwnReportPdf(new Uint8Array(await file.arrayBuffer()))) throw new AIServiceError(OWN_REPORT_MESSAGE);
   const hash = await ocrCacheService.computeHash(file);
 
   // Matrícula já analisada neste navegador: não gasta a cota da IA de novo
@@ -35,6 +50,7 @@ export async function analyzeMatricula(file: File, onProgress?: AnalysisProgress
       if (result.text.trim().length < 100) {
         throw new AIServiceError('Não foi possível ler texto suficiente no PDF. Verifique se é a certidão completa e legível.');
       }
+      if (isOwnReportText(result.text)) throw new AIServiceError(OWN_REPORT_MESSAGE);
       ocr = { hash, text: result.text, model: result.model, cut: result.finishReason === 'MAX_TOKENS' };
       lastOcr = ocr;
     }
@@ -42,19 +58,15 @@ export async function analyzeMatricula(file: File, onProgress?: AnalysisProgress
     onProgress?.('Analisando titularidade, ônus e restrições...', 45);
     const prepared = prepareText(ocr.text);
     const [extracao, parecer, geo] = await Promise.all([
-      aiClient.task('extracao', prepared.text),
-      aiClient.task('parecer', prepared.text),
+      runTask('extracao', prepared.text, EXTRACTION_KEYS),
+      runTask('parecer', prepared.text, ['parecer_analise']),
       // Georreferenciamento é complementar: se falhar, o relatório sai sem os vértices detalhados
       GEO_HINT.test(prepared.text) ? georreferenciamentoService.analyzeGeoreferencing(prepared.text).catch(() => null) : null,
     ]);
 
     onProgress?.('Conferindo os dados com o documento...', 85);
     const report = normalizeReport(
-      {
-        extracao: parseAIJson(extracao.text, EXTRACTION_KEYS),
-        parecer: parseAIJson(parecer.text, ['parecer_analise']),
-        geo,
-      },
+      { extracao: extracao.data, parecer: parecer.data, geo },
       {
         source: ocr.text,
         models: [ocr.model, extracao.model, parecer.model],

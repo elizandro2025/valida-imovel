@@ -44,8 +44,12 @@ describe('parseAIJson', () => {
     expect(() => parseAIJson('{"a": [1, 2', ['a'])).toThrow(IncompleteAnalysisError);
   });
 
-  it('chave ausente vira erro', () => {
-    expect(() => parseAIJson('{"a":1}', ['a', 'parecer_analise'])).toThrow(/parecer_analise/);
+  it('chave ausente vira erro, com a seção no registro técnico e não na mensagem', () => {
+    let error: unknown;
+    try { parseAIJson('{"a":1}', ['a', 'parecer_analise']); } catch (e) { error = e; }
+    expect(error).toBeInstanceOf(IncompleteAnalysisError);
+    expect((error as IncompleteAnalysisError).missing).toEqual(['parecer_analise']);
+    expect((error as Error).message).not.toMatch(/parecer_analise/);
   });
 });
 
