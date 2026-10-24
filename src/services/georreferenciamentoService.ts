@@ -69,7 +69,7 @@ export const georreferenciamentoService = {
     ];
 
     try {
-      const result = await chatJSON(messages, 4000, 2);
+      const result = await chatJSON(messages);
       
       // Enhance with extracted coordinates
       if (result.memorial_descritivo_georreferenciamento) {

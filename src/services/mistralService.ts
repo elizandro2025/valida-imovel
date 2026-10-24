@@ -1,10 +1,10 @@
-// Service for Mistral AI integration with 12 Dedicated Modules & Strict Anti-Hallucination Directives
-import { pdfToImagesService, PDFPageInfo } from './pdfToImagesService';
+// Service for Google Gemini integration with 12 Dedicated Modules & Strict Anti-Hallucination Directives
 import { tableAnalysisService, CoordinatePoint } from './tableAnalysisService';
 import { ocrCacheService } from './ocrCacheService';
 
-const OCR_ENDPOINT = "https://api.mistral.ai/v1/ocr";
-const CHAT_ENDPOINT = "https://api.mistral.ai/v1/chat/completions";
+const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
+// Modelos em ordem de preferência: se um estiver sobrecarregado (503) ou sem cota (429), tenta o próximo
+const GEMINI_MODELS = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-flash-lite-latest"];
 
 const STRICT_ANTI_HALLUCINATION_SYSTEM =
   "SISTEMA ANTI-ALUCINAÇÃO REGISTRÁRIA ABSOLUTO — LEI 6.015/73 & PROVIMENTO CNJ 89/19:\n" +
@@ -22,26 +22,99 @@ const STRICT_ANTI_HALLUCINATION_SYSTEM =
   "10. Retorne SEMPRE um JSON válido e bem formado, sem comentários, sem texto fora do JSON.";
 
 
+const OCR_PROMPT =
+  "Transcreva INTEGRAL e LITERALMENTE todo o texto deste documento (certidão de matrícula imobiliária). " +
+  "Separe as páginas com a linha \"--- Página N ---\". Não resuma, não corrija, não interprete e não omita nada: " +
+  "mantenha números de matrícula, R-/AV-, CPFs, CNPJs, datas, valores, áreas e coordenadas exatamente como estão. " +
+  "Trechos ilegíveis: escreva [ilegível]. Responda apenas com a transcrição.";
+
+// Erros de disponibilidade da IA (cota, sobrecarga, chave) — exibidos ao usuário em vez de um relatório vazio
+export class AIServiceError extends Error {}
+
 const getApiKey = (): string => {
-  const envKey = import.meta.env.VITE_MISTRAL_API_KEY;
-  const localKey = localStorage.getItem('mistral_api_key');
-  return envKey || localKey || 'OOS8gD1hWs5Mndq7ySdBSnjGTuZZz2fl';
+  const key = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!key) {
+    throw new AIServiceError("Chave da IA não configurada (VITE_GEMINI_API_KEY).");
+  }
+  return key;
 };
 
-export interface OCRResponse {
-  pages: Array<{
-    markdown: string;
-  }>;
+interface GeminiPart {
+  text?: string;
+  inline_data?: { mime_type: string; data: string };
 }
 
-export interface ChatResponse {
-  choices: Array<{
-    message: {
-      content: string;
-    };
-    finish_reason?: string;
-  }>;
-}
+// Chamada base ao Gemini com fallback entre modelos (503 = sobrecarga, 429 = cota do plano gratuito)
+const geminiGenerate = async (
+  parts: GeminiPart[],
+  options: { system?: string; json?: boolean } = {}
+): Promise<string> => {
+  const apiKey = getApiKey();
+  let lastStatus = 0;
+
+  for (let pass = 0; pass < 2; pass++) {
+    if (pass > 0) await new Promise(resolve => setTimeout(resolve, 5000));
+
+    for (const model of GEMINI_MODELS) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 300000);
+
+      try {
+        const response = await fetch(`${GEMINI_ENDPOINT}/${model}:generateContent`, {
+          method: "POST",
+          headers: {
+            "x-goog-api-key": apiKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...(options.system && { systemInstruction: { parts: [{ text: options.system }] } }),
+            contents: [{ role: "user", parts }],
+            generationConfig: {
+              thinkingConfig: { thinkingLevel: "low" },
+              ...(options.json && { responseMimeType: "application/json" })
+            }
+          }),
+          signal: controller.signal
+        });
+
+        if (response.status === 429 || response.status >= 500) {
+          lastStatus = response.status;
+          console.warn(`Gemini ${model} indisponível (${response.status}), tentando o próximo modelo...`);
+          continue;
+        }
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new AIServiceError(`Erro na IA (${response.status}): ${data?.error?.message || response.statusText}`);
+        }
+
+        const candidate = data?.candidates?.[0];
+        const text = (candidate?.content?.parts || [])
+          .filter((p: any) => !p.thought)
+          .map((p: any) => p.text || "")
+          .join("");
+        if (!text.trim()) {
+          throw new AIServiceError(`A IA não retornou conteúdo (${candidate?.finishReason || data?.promptFeedback?.blockReason || "motivo desconhecido"}).`);
+        }
+        return text;
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          throw new AIServiceError("Tempo limite na análise (5 min). Tente novamente.");
+        }
+        if (error instanceof TypeError) {
+          throw new AIServiceError("Falha de conexão com o serviço de IA. Verifique sua internet e tente novamente.");
+        }
+        throw error;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+  }
+
+  throw new AIServiceError(lastStatus === 429
+    ? "Limite de uso gratuito da IA atingido. Tente novamente em alguns minutos — se persistir, o limite diário acabou e renova na madrugada."
+    : "O serviço de IA está sobrecarregado no momento. Tente novamente em alguns minutos.");
+};
 
 // Helper de higienização e auto-reparo de JSON truncado
 export const safeParseJSON = (str: string): any => {
@@ -69,276 +142,65 @@ export const safeParseJSON = (str: string): any => {
   }
 };
 
-// Helper otimizado para chamadas JSON com temperatura 0.0 (Zero Aleatoriedade)
-export const chatJSON = async (
-  messages: any[], 
-  maxTokens: number = 4000, 
-  retries: number = 2, 
-  model: string = "mistral-small-latest"
-): Promise<any> => {
-  const apiKey = getApiKey();
-  
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
-
-    try {
-      const response = await fetch(CHAT_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Accept-Encoding": "gzip, deflate, br"
-        },
-        body: JSON.stringify({
-          model: model,
-          messages,
-          max_tokens: maxTokens,
-          temperature: 0.0, // TEMPERATURA 0.0: Zero aleatoriedade, resposta estritamente literal e determinística
-          response_format: { "type": "json_object" }
-        }),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Erro na API (${response.status}): ${response.statusText}`);
-      }
-
-      const data: ChatResponse = await response.json();
-      const content = data?.choices?.[0]?.message?.content || "";
-      const finishReason = data?.choices?.[0]?.finish_reason;
-
-      if (finishReason === "length" && attempt < retries) {
-        const continuationMessages = [...messages, 
-          { role: "assistant", content },
-          { role: "user", content: "Continue o JSON de onde parou, completando a estrutura estritamente em JSON válido baseando-se APENAS no texto." }
-        ];
-        const continuation = await chatJSON(continuationMessages, maxTokens, 0, model);
-        return { ...safeParseJSON(content), ...continuation };
-      }
-
-      return safeParseJSON(content);
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      if (attempt === retries) {
-        if (error.name === 'AbortError') {
-          throw new Error("Tempo limite na análise (90s)");
-        }
-        throw error;
-      }
-      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
-    }
-  }
+// Helper para chamadas JSON — mensagens no formato chat (system/user) convertidas para o Gemini
+export const chatJSON = async (messages: Array<{ role: string; content: string }>): Promise<any> => {
+  const system = messages.filter(m => m.role === "system").map(m => m.content).join("\n\n");
+  const prompt = messages.filter(m => m.role !== "system").map(m => m.content).join("\n\n");
+  const content = await geminiGenerate([{ text: prompt }], { system, json: true });
+  return safeParseJSON(content);
 };
 
 export const ocrService = {
-  async extractText(base64PDF: string): Promise<string> {
-    const apiKey = getApiKey();
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
+  // O Gemini lê o PDF diretamente (inclusive páginas escaneadas), sem conversão para imagens
+  async extractText(file: File): Promise<string> {
+    const base64PDF = await fileUtils.toBase64(file);
+    const text = await geminiGenerate([
+      { inline_data: { mime_type: "application/pdf", data: base64PDF } },
+      { text: OCR_PROMPT }
+    ]);
 
-    try {
-      const response = await fetch(OCR_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Accept-Encoding": "gzip, deflate, br"
-        },
-        body: JSON.stringify({
-          model: "mistral-ocr-latest",
-          document: {
-            type: "document_url",
-            document_url: `data:application/pdf;base64,${base64PDF}`
-          }
-        }),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Erro no OCR: ${response.status} - ${errorText}`);
-      }
-
-      const data: OCRResponse = await response.json();
-      const extractedText = data.pages.map(page => page.markdown).join("\n");
-      
-      if (!extractedText || extractedText.trim().length < 100) {
-        throw new Error("Texto extraído muito curto ou vazio. Verifique a qualidade do PDF.");
-      }
-      
-      return extractedText;
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
-        throw new Error("Tempo limite excedido no OCR (90s)");
-      }
-      console.error('Erro detalhado no OCR:', error);
-      throw error;
-    }
-  },
-
-  async extractImageText(base64Image: string): Promise<string> {
-    const apiKey = getApiKey();
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-    try {
-      const response = await fetch(OCR_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "mistral-ocr-latest",
-          document: {
-            type: "image_url",
-            image_url: `data:image/jpeg;base64,${base64Image}`
-          }
-        }),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Erro no OCR da imagem: ${response.status} - ${errorText}`);
-      }
-
-      const data: OCRResponse = await response.json();
-      return data.pages.map(p => p.markdown).join("\n");
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
-        throw new Error("Tempo limite excedido no OCR (60s)");
-      }
-      throw error;
-    }
-  },
-
-  async extractFromImages(base64Images: string[]): Promise<string> {
-    const texts = await Promise.all(
-      base64Images.map(async (img, i) => {
-        try {
-          console.log(`Extraindo OCR da página ${i + 1}/${base64Images.length}`);
-          return await this.extractImageText(img);
-        } catch (e) {
-          console.error(`Erro na página ${i + 1}:`, e);
-          return "";
-        }
-      })
-    );
-
-    const fullText = texts.join("\n\n").trim();
-
-    if (!fullText || fullText.length < 100) {
-      throw new Error("Texto extraído é muito curto ou vazio. Verifique as imagens.");
+    if (text.trim().length < 100) {
+      throw new Error("Texto extraído muito curto ou vazio. Verifique a qualidade do PDF.");
     }
 
-    return fullText;
-  },
-
-  async extractTextHybrid(file: File): Promise<{ text: string; method: 'pdf' | 'images' | 'mixed'; pages?: PDFPageInfo[] }> {
-    try {
-      console.log("Iniciando OCR direto via PDF...");
-      const base64PDF = await fileUtils.toBase64(file);
-      const pdfText = await this.extractText(base64PDF);
-      
-      if (pdfText && pdfText.length > 200 && !this.hasLowQualityIndicators(pdfText)) {
-        console.log("OCR do PDF bem-sucedido");
-        return { text: pdfText, method: 'pdf' };
-      }
-      
-      console.log("Qualidade do OCR do PDF baixa, tentando conversão para imagens...");
-      throw new Error("PDF OCR quality too low");
-      
-    } catch (pdfError) {
-      console.log("OCR do PDF falhou, convertendo páginas para imagens...");
-      
-      try {
-        const arrayBuffer = await pdfToImagesService.fileToArrayBuffer(file);
-        const pages = await pdfToImagesService.convertToImages(arrayBuffer, {
-          scale: 2.0,
-          quality: 0.9
-        });
-        
-        const sortedPages = pages.sort((a, b) => {
-          if (a.hasTablesIndicator && !b.hasTablesIndicator) return -1;
-          if (!a.hasTablesIndicator && b.hasTablesIndicator) return 1;
-          return a.pageNumber - b.pageNumber;
-        });
-        
-        const imageTexts = await this.extractFromImages(sortedPages.map(p => p.base64));
-        
-        return { 
-          text: imageTexts, 
-          method: 'images',
-          pages: sortedPages
-        };
-        
-      } catch (imageError) {
-        console.error("Ambos os métodos de OCR falharam:", { pdfError, imageError });
-        throw new Error(`OCR falhou em ambos os métodos.`);
-      }
-    }
-  },
-
-  hasLowQualityIndicators(text: string): boolean {
-    const lowQualityPatterns = [
-      /[^\w\s\.\,\-\(\)\[\]]/g,
-      /\s{5,}/g,
-      /(.)\1{4,}/g,
-    ];
-    const specialCharCount = (text.match(lowQualityPatterns[0]) || []).length;
-    return (specialCharCount / text.length) > 0.2 ||
-           lowQualityPatterns.slice(1).some(pattern => pattern.test(text));
+    return text;
   }
 };
 
 export const analysisService = {
   async analyzeWithGeoreferencing(extractedText: string): Promise<any> {
     const { georreferenciamentoService } = await import('./georreferenciamentoService');
-    
-    try {
-      const [geoResults, dedicatedResults] = await Promise.all([
-        georreferenciamentoService.analyzeGeoreferencing(extractedText),
-        this.analyzeWith12DedicatedPrompts(extractedText)
-      ]);
 
-      const merged = {
-        ...dedicatedResults,
-        memorial_descritivo_georreferenciamento: {
-          ...dedicatedResults.memorial_descritivo_georreferenciamento,
-          ...geoResults.memorial_descritivo_georreferenciamento
-        }
-      };
+    // Análise dedicada de georreferenciamento só quando o texto cita coordenadas/SIGEF (economiza cota da IA)
+    const temGeorreferenciamento = /georreferenc|SIGEF|SIRGAS|UTM|v[ée]rtice/i.test(extractedText);
 
-      return this.normalizeReport(merged);
-    } catch (error) {
-      console.error('Falha no paralelismo de análise, executando fallback por prompts:', error);
-      const raw = await this.analyzeWith12DedicatedPrompts(extractedText);
-      return this.normalizeReport(raw);
-    }
+    const [geoResults, dedicatedResults] = await Promise.all([
+      temGeorreferenciamento ? georreferenciamentoService.analyzeGeoreferencing(extractedText) : null,
+      this.analyzeWith12DedicatedPrompts(extractedText)
+    ]);
+
+    const merged = {
+      ...dedicatedResults,
+      memorial_descritivo_georreferenciamento: {
+        ...dedicatedResults.memorial_descritivo_georreferenciamento,
+        ...geoResults?.memorial_descritivo_georreferenciamento
+      }
+    };
+
+    return this.normalizeReport(merged);
   },
 
   // 🏛️ PROMPTS DEDICADOS COM DIRETIVAS RÍGIDAS ANTI-ALUCINAÇÃO & PARÂMETROS ENRIQUECIDOS DE ALTO VALOR
   async analyzeWith12DedicatedPrompts(extractedText: string): Promise<any> {
-    // Usando os primeiros 30.000 caracteres para maximizar cobertura de documentos extensos
-    const textChunk = extractedText.substring(0, 30000);
+    // Usando os primeiros 120.000 caracteres para maximizar cobertura de documentos extensos
+    const textChunk = extractedText.substring(0, 120000);
     
     const dedicatedPrompts = [
 
       // 1. IDENTIFICAÇÃO REGISTRÁRIA E CARTORÁRIA ENRIQUECIDA
       {
         name: "identificacao_geral",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Oficial Registrador de Imóveis sênior.",
+        persona: "Você é um Oficial Registrador de Imóveis sênior.",
         prompt: `EXAMINADOR CARTORÁRIO SÊNIOR: Extraia TODA a IDENTIFICAÇÃO DA MATRÍCULA E CARTÓRIO presentes no texto.
 Varredura obrigatória: leia o cabeçalho, rodapé e todas as averbações (AV-) e registros (R-) em busca desses dados.
 
@@ -365,17 +227,13 @@ Retorne este JSON (null nos campos não encontrados):
   }
 }
 
-NOTA FINAL: Se algum campo não constar no texto, retorne null. Não omita campos presentes — prefira incluir a omitir.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Se algum campo não constar no texto, retorne null. Não omita campos presentes — prefira incluir a omitir.`
       },
 
       // 2. CARACTERIZAÇÃO FÍSICA E BENFEITORIAS ENRIQUECIDA
       {
         name: "caracteristicas_fisicas",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Perito Engenheiro Imobiliário.",
+        persona: "Você é um Perito Engenheiro Imobiliário.",
         prompt: `PERITO ENGENHEIRO IMOBILIÁRIO SÊNIOR: Extraia TODAS as CARACTERÍSTICAS FÍSICAS, BENFEITORIAS E ESTRUTURA CONSTRUTIVA presentes no texto.
 Varredura obrigatória: examine todas as averbações (AV-) de construção, habite-se, demolição e reformas.
 
@@ -405,17 +263,13 @@ Retorne este JSON (null nos campos não encontrados):
   }
 }
 
-NOTA FINAL: Transcreva perimetros_confrontacoes e descricao_legal de forma COMPLETA e LITERAL. Não resuma.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Transcreva perimetros_confrontacoes e descricao_legal de forma COMPLETA e LITERAL. Não resuma.`
       },
 
       // 3. GEORREFERENCIAMENTO & REGISTRO AGRÁRIO ENRIQUECIDO (SIGEF / INCRA / CAR)
       {
         name: "memorial_descritivo_georreferenciamento",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Especialista em Georreferenciamento Rural.",
+        persona: "Você é um Especialista em Georreferenciamento Rural.",
         prompt: `ESPECIALISTA EM GEORREFERENCIAMENTO RURAL & REGISTRO AGRÁRIO: Extraia TODOS os dados de GEORREFERENCIAMENTO, SIGEF, CAR, CCIR E CADASTROS FEDERAIS presentes no texto.
 Varredura obrigatória: examine cabeçalho, averbações (AV-) e quaisquer notas técnicas ou memoriais.
 
@@ -448,17 +302,13 @@ Retorne este JSON (null nos campos não encontrados):
   }
 }
 
-NOTA FINAL: Transcreva coordenadas_geograficas de forma COMPLETA e LITERAL. Não resuma pontos do memorial.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Transcreva coordenadas_geograficas de forma COMPLETA e LITERAL. Não resuma pontos do memorial.`
       },
 
       // 4. REGIMES ESPECIAIS: CONDOMÍNIOS, LOTEAMENTOS & REURB ENRIQUECIDO
       {
         name: "regimes_especiais",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Advogado Registrador Especialista em Condomínios e Loteamentos.",
+        persona: "Você é um Advogado Registrador Especialista em Condomínios e Loteamentos.",
         prompt: `ESPECIALISTA EM REGIMES ESPECIAIS: Extraia dados de CONDOMÍNIO, LOTEAMENTO OU REURB presentes no texto.
 
 Retorne este JSON:
@@ -481,17 +331,13 @@ Retorne este JSON:
     "situacao_reurb": "Certidão de Regularização Fundiária (CRF) averbada",
     "detalhes_regime": "Detalhes adicionais sobre o regime especial"
   }
-}
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+}`
       },
 
       // 5. AMBIENTAL & RECURSOS HÍDRICOS ENRIQUECIDO
       {
         name: "registro_ambiental",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Perito em Direito Ambiental Imobiliário.",
+        persona: "Você é um Perito em Direito Ambiental Imobiliário.",
         prompt: `PERITO AMBIENTAL: Extraia informações de RESERVA LEGAL, APP, EMBARGOS E RECURSOS HÍDRICOS no texto.
 
 Retorne este JSON:
@@ -512,17 +358,13 @@ Retorne este JSON:
     "unidade_conservacao": "Sobreposição com Unidade de Conservação ou Zona de Amortecimento",
     "observacoes_ambientais": "Resumo das restrições ecológicas"
   }
-}
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+}`
       },
 
       // 6. IMÓVEIS ESPECIAIS: MARINHA, UNIÃO, FRONTEIRA & TOMBAMENTO ENRIQUECIDO
       {
         name: "imoveis_especiais",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Especialista em Direito Imobiliário Público.",
+        persona: "Você é um Especialista em Direito Imobiliário Público.",
         prompt: `ESPECIALISTA EM DIREITO PÚBLICO: Identifique se o imóvel possui REGIME ESPECIAL DA UNIÃO/SPU, MARINHA, FRONTEIRA OU TOMBAMENTO gravado no texto.
 
 Retorne este JSON:
@@ -540,17 +382,13 @@ Retorne este JSON:
     "tombamento": "Tombamento por patrimônio histórico (IPHAN/CONDEPHAAT)",
     "detalhes_especiais": "Outras restrições de direito público"
   }
-}
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+}`
       },
 
       // 7. PROPRIETÁRIOS ATUAIS E REGIME DE BENS ENRIQUECIDO (COM MASCARAMENTO LGPD)
       {
         name: "proprietarios_atuais",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Advogado Especialista em Direitos Reais.",
+        persona: "Você é um Advogado Especialista em Direitos Reais.",
         prompt: `ADVOGADO REGISTRADOR: Identifique a TITULARIDADE ATUAL COMPLETA gravada no último ato de transmissão do texto.
 
 Retorne este JSON:
@@ -576,17 +414,13 @@ Retorne este JSON:
       "data_aquisicao": "Data em que adquiriu o imóvel"
     }
   ]
-}
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+}`
       },
 
       // 8. CADEIA DOMINIAL CRONOLÓGICA ENRIQUECIDA (HISTÓRICO INTELIGENTE)
       {
         name: "cadeia_dominial",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Historiador Registrário.",
+        persona: "Você é um Historiador Registrário.",
         prompt: `HISTORIADOR REGISTRÁRIO NOTARIAL: Extraia a CADEIA DOMINIAL COMPLETA presente no texto (TODOS os atos R- de transmissão de domínio em ORDEM CRONOLÓGICA, sem omitir nenhum).
 Varredura obrigatória: leia cada R- (R-1, R-2, R-3...) do início ao fim — não pule registros.
 
@@ -609,17 +443,13 @@ Retorne este JSON (liste TODOS os atos encontrados):
   ]
 }
 
-NOTA FINAL: Liste TODOS os atos R- encontrados, do primeiro ao último. Não omita nenhum ato.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Liste TODOS os atos R- encontrados, do primeiro ao último. Não omita nenhum ato.`
       },
 
       // 9. ÔNUS REAIS & GARANTIAS FINANCEIRAS ENRIQUECIDO
       {
         name: "onus_garantias_financeiras",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Auditor de Garantias Financeiras.",
+        persona: "Você é um Auditor de Garantias Financeiras.",
         prompt: `AUDITOR FINANCEIRO DE GARANTIAS IMOBILIÁRIAS: Identifique TODAS as GARANTIAS REAIS, HIPOTECAS E ALIENAÇÕES FIDUCIÁRIAS registradas no texto, inclusive as já canceladas/baixadas.
 Varredura obrigatória: leia TODOS os atos R- (registros) e AV- (averbações) em busca de hipotecas, alienações fiduciárias, cessões, cédulas e penhores.
 
@@ -646,17 +476,13 @@ Retorne este JSON (liste TODAS as garantias encontradas, incluindo canceladas):
   ]
 }
 
-NOTA FINAL: Inclua TODOS os ônus reais, inclusive cancelados. Nunca omita. Determine o status correto lendo se há AV- posterior de baixa.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Inclua TODOS os ônus reais, inclusive cancelados. Nunca omita. Determine o status correto lendo se há AV- posterior de baixa.`
       },
 
       // 10. INDISPONIBILIDADES & RESTRIÇÕES JUDICIAIS ENRIQUECIDO
       {
         name: "indisponividades_e_penhoras",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Auditor de Penhoras e Indisponibilidades.",
+        persona: "Você é um Auditor de Penhoras e Indisponibilidades.",
         prompt: `AUDITOR PROCESSUAL IMOBILIÁRIO SÊNIOR: Identifique TODAS as PENHORAS, INDISPONIBILIDADES (CNIB), ARRESTOS, BLOQUEIOS JUDICIAIS E AÇÕES REGISTRADAS no texto.
 Varredura obrigatória: leia TODOS os AV- (averbações) e R- (registros) em busca de qualquer restrição judicial, administrativa ou extrajudicial.
 
@@ -682,17 +508,13 @@ Retorne este JSON (liste TODOS os atos restritivos encontrados, incluindo cancel
   ]
 }
 
-NOTA FINAL: Inclua TODOS os atos judiciais e administrativos, mesmo os cancelados. Indique sempre o número do AV-.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Inclua TODOS os atos judiciais e administrativos, mesmo os cancelados. Indique sempre o número do AV-.`
       },
 
       // 11. USUFRUTO, SERVIDÕES & DIREITOS REAIS ENRIQUECIDO
       {
         name: "usufruto_servidoes_e_direitos",
-        model: "mistral-small-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Especialista em Direitos Reais.",
+        persona: "Você é um Especialista em Direitos Reais.",
         prompt: `ESPECIALISTA EM DIREITOS REAIS: Identifique USUFRUTO, SERVIDÕES, DIREITO DE SUPERFÍCIE, HABITAÇÃO, LAJE E ENFITEUSE gravados no texto.
 
 Retorne este JSON:
@@ -710,17 +532,13 @@ Retorne este JSON:
       "status": "ATIVO ou CANCELADO"
     }
   ]
-}
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+}`
       },
 
       // 12. PARECER TÉCNICO-JURÍDICO & IA EXPLICA MULTI-PERFIL (DUE DILIGENCE MULTIDIMENSIONAL)
       {
         name: "parecer_analise",
-        model: "mistral-large-latest",
-        system: STRICT_ANTI_HALLUCINATION_SYSTEM + "\nVocê é um Advogado Sênior parecerista e Perito em Due Diligence Notarial.",
+        persona: "Você é um Advogado Sênior parecerista e Perito em Due Diligence Notarial.",
         prompt: `ADVOGADO SÊNIOR PARECERISTA & PERITO EM DUE DILIGENCE NOTARIAL: Elabore o PARECER TÉCNICO-JURÍDICO COMPLETO E MULTI-PERFIL baseado EXCLUSIVAMENTE nos fatos da matrícula fornecida.
 Análise obrigatória: leia o documento inteiro — registros (R-), averbações (AV-), histórico de transmissões, ônus e situação ambiental.
 
@@ -788,38 +606,33 @@ Retorne este JSON completo com TODAS as seções preenchidas:
   }
 }
 
-NOTA FINAL: Todas as seções são OBRIGATÓRIAS. Preencha score_risco com base nos ônus e penhoras ATIVOS encontrados. Não deixe nenhuma seção vazia.
-
-DOCUMENTO DE ORIGEM:
-${textChunk}`
+NOTA FINAL: Todas as seções são OBRIGATÓRIAS. Preencha score_risco com base nos ônus e penhoras ATIVOS encontrados. Não deixe nenhuma seção vazia.`
       }
     ];
 
-    const results: any = {};
-    
-    const sectionPromises = dedicatedPrompts.map(async (sec) => {
-      try {
-        const messages = [
-          { role: "system", content: sec.system },
-          { role: "user", content: sec.prompt }
-        ];
-        // Módulo 12 (parecer) recebe mais tokens para garantir parecer completo
-      const maxTok = sec.name === 'parecer_analise' ? 6000 : 5000;
-      return await chatJSON(messages, maxTok, 1, sec.model);
-      } catch (err) {
-        console.error(`Aviso no módulo ${sec.name}:`, err);
-        return {};
-      }
-    });
+    // Os módulos vão em 2 chamadas paralelas (extração + parecer) em vez de 12 simultâneas,
+    // para caber no limite de requisições por minuto do plano gratuito do Gemini
+    const runModules = (modules: typeof dedicatedPrompts) => {
+      const keys = modules.map(sec => `"${sec.name}"`).join(", ");
+      const instructions = modules
+        .map(sec => `### MÓDULO ${sec.name}\n${sec.persona}\n${sec.prompt}`)
+        .join("\n\n");
 
-    const settled = await Promise.allSettled(sectionPromises);
-    settled.forEach(res => {
-      if (res.status === 'fulfilled' && res.value) {
-        Object.assign(results, res.value);
-      }
-    });
+      return chatJSON([
+        { role: "system", content: STRICT_ANTI_HALLUCINATION_SYSTEM },
+        {
+          role: "user",
+          content: `Execute TODOS os módulos abaixo sobre o MESMO documento e retorne UM ÚNICO objeto JSON com exatamente estas chaves de primeiro nível: ${keys}. Cada chave segue o formato pedido no seu módulo.\n\n${instructions}\n\nDOCUMENTO DE ORIGEM:\n${textChunk}`
+        }
+      ]);
+    };
 
-    return results;
+    const [extracao, parecer] = await Promise.all([
+      runModules(dedicatedPrompts.filter(sec => sec.name !== "parecer_analise")),
+      runModules(dedicatedPrompts.filter(sec => sec.name === "parecer_analise"))
+    ]);
+
+    return { ...extracao, ...parecer };
   },
 
   normalizeReport(rawReport: any): any {
@@ -1014,6 +827,7 @@ ${textChunk}`
 
       return await this.analyzeWithGeoreferencing(extractedText);
     } catch (error) {
+      if (error instanceof AIServiceError) throw error;
       console.error("Falha na matriz de 12 módulos:", error);
       return this.normalizeReport({
         identificacao_geral: { 
@@ -1049,10 +863,14 @@ export type AnalysisProgressCallback = (step: string, progress: number, details?
 export type MatriculaReport = any;
 
 export async function analyzeMatricula(file: File, onProgress?: AnalysisProgressCallback): Promise<MatriculaReport> {
-  onProgress?.('Extraindo texto do documento...', 20);
-  const hybrid = await ocrService.extractTextHybrid(file);
+  // Matrícula já analisada neste navegador: evita gastar a cota da IA com OCR e análise de novo
+  const cachedReport = ocrCacheService.getCachedReport(await ocrCacheService.computeHash(file));
+  if (cachedReport) return cachedReport;
+
+  onProgress?.('Lendo o documento com IA (OCR)...', 20);
+  const text = await ocrService.extractText(file);
   onProgress?.('Auditando os 12 Módulos Notariais com IA...', 60);
-  const report = await analysisService.analyzeDocument(hybrid.text, file);
+  const report = await analysisService.analyzeDocument(text, file);
   onProgress?.('Análise concluída com sucesso!', 100);
   return report;
 }

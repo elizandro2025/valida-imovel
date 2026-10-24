@@ -125,7 +125,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
         }
       ];
 
-      const res = await chatJSON(promptMessages, 1000, 1, "mistral-small-latest");
+      const res = await chatJSON(promptMessages);
       const assistantText = res?.resposta || "Não foi possível identificar esse dado específico no texto extraído da matrícula.";
 
       const assistantMessage: Message = {
