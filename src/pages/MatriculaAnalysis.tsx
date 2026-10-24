@@ -76,7 +76,7 @@ const MatriculaAnalysis: React.FC = () => {
                   }
                   return (
                     <Link to="/pagamento-pix">
-                      <Button size="sm" className="text-white font-semibold text-xs px-3.5 h-8 gap-1.5 bg-primary">
+                      <Button size="sm" className="text-white font-semibold text-xs px-3.5 gap-1.5 bg-primary">
                         <Zap className="w-3.5 h-3.5 fill-white" />
                         <span>Garantir 3 Meses por R$ 49,90</span>
                       </Button>
@@ -88,7 +88,7 @@ const MatriculaAnalysis: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleSignOut}
-                  className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-semibold gap-1.5 h-9"
+                  className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-semibold gap-1.5"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   Sair
@@ -99,9 +99,9 @@ const MatriculaAnalysis: React.FC = () => {
             {/* Se for demo pública (não logado), mostra CTA de cadastro */}
             {isSampleDemo && (
               <Link to="/auth">
-                <Button size="sm" className="text-white font-semibold text-xs px-4 h-8 gap-1.5 bg-primary">
-                  <Zap className="w-3.5 h-3.5 fill-white" />
-                  Criar Conta — R$ 49,90
+                <Button size="sm" className="text-white font-semibold text-xs px-4 gap-1.5 bg-primary">
+                  <span className="sm:hidden">Assinar</span>
+                  <span className="hidden sm:inline">Criar conta — R$ 49,90</span>
                 </Button>
               </Link>
             )}
@@ -110,7 +110,7 @@ const MatriculaAnalysis: React.FC = () => {
       </header>
 
       {/* Main Content Workspace */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 sm:py-10 space-y-8">
 
 
 
@@ -152,7 +152,7 @@ const MatriculaAnalysis: React.FC = () => {
                       border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all duration-300 group
                       ${isDragActive
                         ? 'border-primary/30 bg-primary/10 scale-[0.99]'
-                        : 'border-border hover:border-primary/60 hover:bg-background/60'
+                        : 'border-border hover:border-primary/30 hover:bg-background/60'
                       }
                       ${analysis.isProcessing ? 'pointer-events-none opacity-50' : ''}
                     `}
@@ -170,7 +170,7 @@ const MatriculaAnalysis: React.FC = () => {
                       </div>
                       <Button
                         size="sm"
-                        className="bg-primary hover:bg-primary text-white font-semibold text-xs h-9 px-5 transition-all"
+                        className="bg-primary hover:bg-primary text-white font-semibold text-xs px-5 transition-all"
                         disabled={analysis.isProcessing}
                       >
                         Selecionar Arquivo PDF

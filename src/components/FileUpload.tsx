@@ -63,7 +63,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <div className="relative overflow-hidden">
-      <div className="glass-card border-dashed border-2 hover:border-primary/70 transition-all duration-500 hover:shadow-medium">
+      <div className="glass-card border-dashed border-2 hover:border-primary/30 transition-all duration-500 hover:shadow-medium">
         <div
           {...getRootProps()}
           className={`p-6 sm:p-8 lg:p-10 text-center cursor-pointer transition-all duration-500 ${

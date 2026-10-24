@@ -160,7 +160,7 @@ export const AdminDashboard: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleSignOut}
-              className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-semibold gap-1.5 h-9"
+              className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-semibold gap-1.5"
             >
               <LogOut className="w-3.5 h-3.5" /> Sair
             </Button>
@@ -178,7 +178,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {stats.map(({ title, value, icon: Icon, trend }) => (
             <Card key={title} className="border-border bg-card shadow-sm rounded-2xl text-foreground">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -260,7 +260,7 @@ export const AdminDashboard: React.FC = () => {
                 size="sm"
                 onClick={fetchUsers}
                 disabled={isLoadingUsers}
-                className="border-border bg-background text-muted-foreground hover:text-foreground text-xs gap-1.5 h-9"
+                className="border-border bg-background text-muted-foreground hover:text-foreground text-xs gap-1.5"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin' : ''}`} /> Atualizar
               </Button>
@@ -287,7 +287,7 @@ export const AdminDashboard: React.FC = () => {
                   size="sm"
                   variant={statusFilter === 'all' ? 'default' : 'ghost'}
                   onClick={() => setStatusFilter('all')}
-                  className={`text-xs h-8 rounded-lg font-semibold ${statusFilter === 'all' ? 'bg-primary text-white font-semibold' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`text-xs h-10 lg:h-8 rounded-lg font-semibold ${statusFilter === 'all' ? 'bg-primary text-white font-semibold' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Todos ({usersList.length})
                 </Button>
@@ -295,7 +295,7 @@ export const AdminDashboard: React.FC = () => {
                   size="sm"
                   variant={statusFilter === 'active' ? 'default' : 'ghost'}
                   onClick={() => setStatusFilter('active')}
-                  className={`text-xs h-8 rounded-lg font-semibold ${statusFilter === 'active' ? 'bg-success text-white font-semibold' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`text-xs h-10 lg:h-8 rounded-lg font-semibold ${statusFilter === 'active' ? 'bg-success text-white font-semibold' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Ativos ({activeCount})
                 </Button>
@@ -303,7 +303,7 @@ export const AdminDashboard: React.FC = () => {
                   size="sm"
                   variant={statusFilter === 'inactive' ? 'default' : 'ghost'}
                   onClick={() => setStatusFilter('inactive')}
-                  className={`text-xs h-8 rounded-lg font-semibold ${statusFilter === 'inactive' ? 'bg-warning text-white font-semibold' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`text-xs h-10 lg:h-8 rounded-lg font-semibold ${statusFilter === 'inactive' ? 'bg-warning text-white font-semibold' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Sem Assinatura ({usersList.length - activeCount})
                 </Button>
@@ -328,9 +328,9 @@ export const AdminDashboard: React.FC = () => {
                   <thead className="bg-card/80 text-muted-foreground font-semibold border-b border-border">
                     <tr>
                       <th className="py-3 px-4">Usuário</th>
-                      <th className="py-3 px-4">Função / Perfil</th>
+                      <th className="py-3 px-4 hidden md:table-cell">Função / Perfil</th>
                       <th className="py-3 px-4">Status da Assinatura</th>
-                      <th className="py-3 px-4">Data de Cadastro</th>
+                      <th className="py-3 px-4 hidden md:table-cell">Data de Cadastro</th>
                       <th className="py-3 px-4 text-right">Ação</th>
                     </tr>
                   </thead>
@@ -361,9 +361,9 @@ export const AdminDashboard: React.FC = () => {
                           </td>
 
                           {/* Coluna Role */}
-                          <td className="py-3.5 px-4">
+                          <td className="py-3.5 px-4 hidden md:table-cell">
                             {isAdminUser ? (
-                              <Badge variant="outline" className="border-warning/40 text-warning bg-warning/10 gap-1 text-xs">
+                              <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 gap-1 text-xs">
                                 <Crown className="w-3 h-3 text-warning" /> Admin Master
                               </Badge>
                             ) : (
@@ -376,18 +376,18 @@ export const AdminDashboard: React.FC = () => {
                           {/* Coluna Status Assinatura */}
                           <td className="py-3.5 px-4">
                             {hasActiveSub ? (
-                              <Badge variant="outline" className="border-success/40 text-success bg-success/10 gap-1 text-xs font-semibold py-1 px-2.5">
+                              <Badge variant="outline" className="border-success/30 text-success bg-success/10 gap-1 text-xs font-semibold py-1 px-2.5">
                                 <Check className="w-3 h-3 text-success" /> Assinatura Ativa (90d)
                               </Badge>
                             ) : (
-                              <Badge variant="outline" className="border-warning/40 text-warning bg-warning/10 gap-1 text-xs font-medium py-1 px-2.5">
+                              <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 gap-1 text-xs font-medium py-1 px-2.5">
                                 <XCircle className="w-3 h-3 text-warning" /> Sem Assinatura
                               </Badge>
                             )}
                           </td>
 
                           {/* Coluna Data */}
-                          <td className="py-3.5 px-4 text-muted-foreground">
+                          <td className="py-3.5 px-4 text-muted-foreground hidden md:table-cell">
                             <div className="flex items-center gap-1.5 text-xs">
                               <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
                               {item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR') : 'Recente'}
@@ -406,7 +406,7 @@ export const AdminDashboard: React.FC = () => {
                                 onClick={() => handleToggleSubscription(item)}
                                 className={`text-xs rounded-xl font-semibold gap-1.5 h-8 ${
                                   hasActiveSub
-                                    ? 'border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 hover:bg-destructive/10'
+                                    ? 'border-border text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/10'
                                     : 'bg-success hover:bg-success text-white shadow-soft'
                                 }`}
                               >
@@ -474,7 +474,7 @@ export const AdminDashboard: React.FC = () => {
                 { icon: FileText, label: 'Ir para Análise de Matrículas', action: () => navigate('/app') },
                 { icon: Settings, label: 'Voltar para a Página Inicial', action: () => navigate('/') },
               ].map(({ icon: Icon, label, action }) => (
-                <Button key={label} onClick={action} variant="outline" className="w-full justify-start border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card text-xs font-semibold gap-2.5 h-10">
+                <Button key={label} onClick={action} variant="outline" className="w-full justify-start border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-card text-xs font-semibold gap-2.5 h-10">
                   <Icon className="w-4 h-4 text-primary" /> {label}
                 </Button>
               ))}

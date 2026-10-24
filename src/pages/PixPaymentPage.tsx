@@ -225,7 +225,7 @@ export const PixPaymentPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-2 sm:gap-3">
-            <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
+            <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 gap-1.5 hidden md:flex rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" /> Pagamento Criptografado
             </Badge>
             {user && (
@@ -233,7 +233,7 @@ export const PixPaymentPage: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-muted-foreground hover:text-destructive hover:bg-muted text-xs gap-1.5 font-semibold h-9"
+                className="text-muted-foreground hover:text-destructive hover:bg-muted text-xs gap-1.5 font-semibold"
                 title="Sair ou entrar com outra conta"
               >
                 <LogOut className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
@@ -241,9 +241,9 @@ export const PixPaymentPage: React.FC = () => {
                 <span className="xs:hidden">Sair</span>
               </Button>
             )}
-            <Link to="/">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-muted text-xs gap-1.5 font-semibold h-9">
-                <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao site
+            <Link to="/" aria-label="Voltar ao site">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-muted text-xs gap-1.5 font-semibold">
+                <ArrowLeft className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Voltar ao site</span>
               </Button>
             </Link>
           </div>
@@ -282,7 +282,8 @@ export const PixPaymentPage: React.FC = () => {
           <div className="grid lg:grid-cols-12 gap-8 items-start">
 
             {/* Coluna Esquerda: Resumo do Plano (5 cols) */}
-            <div className="lg:col-span-5 space-y-6">
+            {/* No celular o formulário de pagamento vem primeiro; o resumo do plano desce */}
+            <div className="lg:col-span-5 space-y-6 order-2 lg:order-1">
               
               {/* Card de Oferta */}
               <div className="bg-card/90 border border-border rounded-3xl p-6 space-y-4 shadow-medium">
@@ -310,7 +311,7 @@ export const PixPaymentPage: React.FC = () => {
                     <span className="text-xs text-muted-foreground line-through font-semibold block">De R$ 299,70</span>
                     <span className="text-3xl sm:text-4xl font-semibold text-foreground whitespace-nowrap">R$ 49,<span className="text-xl">90</span></span>
                   </div>
-                  <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 font-semibold text-xs">
+                  <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 font-semibold text-xs">
                     Economia de 83% OFF
                   </Badge>
                 </div>
@@ -346,7 +347,7 @@ export const PixPaymentPage: React.FC = () => {
             </div>
 
             {/* Coluna Direita: Checkout Clean (7 cols) */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
               
               <Card className="border-border bg-card/90 text-foreground rounded-3xl shadow-medium overflow-hidden backdrop-blur-sm">
                 
@@ -493,7 +494,7 @@ export const PixPaymentPage: React.FC = () => {
 
                       {/* Erro ao gerar */}
                       {generateError && (
-                        <div className="flex items-start gap-2 p-3 bg-destructive/40 border border-destructive/50 rounded-2xl text-xs text-destructive">
+                        <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-2xl text-xs text-destructive">
                           <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-destructive" />
                           <span>{generateError}</span>
                         </div>
@@ -563,7 +564,6 @@ export const PixPaymentPage: React.FC = () => {
       </main>
 
       {/* Botão Flutuante WhatsApp */}
-      <WhatsAppSupport variant="floating" />
     </div>
   );
 };

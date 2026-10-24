@@ -731,7 +731,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
               <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-wide">
                 CARIMBO DIGITAL DE AUDITORIA REGISTRAL & FIDELIDADE
               </h3>
-              <Badge className="bg-primary/20 text-primary border-primary/40 text-xs font-semibold">
+              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-semibold">
                 100% Auditado
               </Badge>
             </div>
@@ -780,7 +780,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
             variant="outline"
             size="sm"
             onClick={() => setIsTourOpen(true)}
-            className="border-success/40 text-success bg-success/10 hover:bg-success/20 rounded-xl text-xs font-semibold gap-1.5 shadow-sm"
+            className="border-success/30 text-success bg-success/10 hover:bg-success/20 rounded-xl text-xs font-semibold gap-1.5 shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5 text-success" />
             Tour Guiado
@@ -1016,7 +1016,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                     {parecer.riscos_identificados
                       .filter((r: any) => !searchTerm || JSON.stringify(r).toLowerCase().includes(searchTerm.toLowerCase()))
                       .map((risco: any, i: number) => (
-                        <div key={i} className="p-3.5 bg-warning/60 border border-warning/80 rounded-xl space-y-1">
+                        <div key={i} className="p-3.5 bg-warning/10 border border-warning/30 rounded-xl space-y-1">
                           <div className="flex items-center justify-between">
                             <span className="font-semibold text-warning text-xs flex items-center gap-1.5">
                               <AlertCircle className="w-3.5 h-3.5 text-warning" />
@@ -1366,7 +1366,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                         <div className="p-4 bg-secondary/80 border border-border rounded-2xl space-y-2 hover:border-success/30 hover:bg-card transition-all shadow-sm">
                           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="border-success/30 text-success bg-success/60 font-semibold text-xs px-2 py-0.5">
+                              <Badge variant="outline" className="border-success/30 text-success bg-success/10 font-semibold text-xs px-2 py-0.5">
                                 {renderSafe(ato?.numero_ato, `R-${i + 1}`)}
                               </Badge>
                               <span className="font-semibold text-foreground text-xs">
@@ -1382,13 +1382,13 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
                           {/* Seller to Buyer visual path */}
                           <div className="grid sm:grid-cols-2 gap-3 text-xs pt-1">
                             {ato?.transmitentes && (
-                              <div className="p-2.5 bg-destructive/50 border border-destructive/30 rounded-xl space-y-0.5">
+                              <div className="p-2.5 bg-destructive/10 border border-destructive/30 rounded-xl space-y-0.5">
                                 <span className="text-xs font-semibold text-destructive block">Transmitente (Vendedor/Doador)</span>
                                 <span className="font-semibold text-foreground">{renderSafe(ato.transmitentes)}</span>
                               </div>
                             )}
                             {ato?.adquirentes && (
-                              <div className="p-2.5 bg-success/50 border border-success/30 rounded-xl space-y-0.5">
+                              <div className="p-2.5 bg-success/10 border border-success/30 rounded-xl space-y-0.5">
                                 <span className="text-xs font-semibold text-success block">Adquirente (Comprador/Beneficiário)</span>
                                 <span className="font-semibold text-foreground">{renderSafe(ato.adquirentes)}</span>
                               </div>
@@ -1620,7 +1620,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     <div className="fixed bottom-6 right-6 z-50">
       <Button
         onClick={() => setShowAiChat(!showAiChat)}
-        className="bg-card hover:bg-muted text-success border border-success/40 rounded-full px-5 py-6 shadow-medium font-semibold text-xs flex items-center gap-2.5 transition-all"
+        className="bg-card hover:bg-muted text-success border border-success/30 rounded-full px-5 py-6 shadow-medium font-semibold text-xs flex items-center gap-2.5 transition-all"
       >
         <Bot className="w-5 h-5 text-success" />
         <span>{showAiChat ? 'Fechar Assistente IA' : '💬 Assistente Copiloto IA'}</span>
@@ -1656,7 +1656,7 @@ _Gerado automaticamente via Valida Imóvel com IA Registrária_`.trim();
     {/* === OFERTA FINAL DA DEMONSTRAÇÃO === */}
     {isSampleDemo && (
       <div className="mt-10 max-w-4xl mx-auto px-4 pb-16">
-        <div className="relative overflow-hidden rounded-3xl border border-primary/40 shadow-medium p-8 sm:p-10 text-center space-y-7 bg-background">
+        <div className="relative overflow-hidden rounded-3xl border border-primary/30 shadow-medium p-8 sm:p-10 text-center space-y-7 bg-background">
           {/* Background glow */}
           <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />
           <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none hidden" />

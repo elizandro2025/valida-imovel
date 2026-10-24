@@ -123,6 +123,11 @@
     background: hsl(var(--primary) / 0.18);
   }
 
+  /* Itens de grade podem encolher: evita que textos truncados empurrem cartões para fora da tela no celular */
+  .grid > * {
+    min-width: 0;
+  }
+
   /* Vidro: cabeçalhos e barras translúcidas */
   .glass {
     background: var(--glass-bg);

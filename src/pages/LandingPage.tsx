@@ -264,7 +264,7 @@ export const LandingPage: React.FC = () => {
                   </button>
                 </div>
                 <Link to={user.hasSubscription ? "/app" : "/pagamento-pix"}>
-                  <Button className="text-white font-semibold text-xs sm:text-sm px-2.5 sm:px-5 h-8 sm:h-10 gap-1 bg-primary">
+                  <Button className="text-white font-semibold text-xs sm:text-sm px-2.5 sm:px-5 sm:h-10 gap-1 bg-primary">
                     <Sparkles className="w-3.5 h-3.5 fill-white stroke-[2]" />
                     <span>{user.hasSubscription ? "Workspace" : "Garantir"}</span>
                   </Button>
@@ -273,13 +273,13 @@ export const LandingPage: React.FC = () => {
             ) : (
               <>
                 <Link to="/auth?tab=login">
-                  <Button variant="ghost" className="text-muted-foreground hover:text-foreground font-semibold text-xs sm:text-xs px-2 sm:px-3 h-8 sm:h-9 border border-border hover:border-border">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-foreground font-semibold text-xs sm:text-xs px-2 sm:px-3 sm:h-9 border border-border hover:border-border">
                     <User className="w-3.5 h-3.5 text-primary shrink-0 mr-1 hidden min-[380px]:inline" />
                     <span>Entrar</span>
                   </Button>
                 </Link>
                 <Link to="/auth?tab=register">
-                  <Button className="text-white font-semibold text-xs sm:text-sm px-2.5 sm:px-5 h-8 sm:h-10 gap-1 bg-primary">
+                  <Button className="text-white font-semibold text-xs sm:text-sm px-2.5 sm:px-5 sm:h-10 gap-1 bg-primary">
                     <Sparkles className="w-3.5 h-3.5 fill-white stroke-[2]" />
                     <span>Criar Conta</span>
                     <ArrowRight className="w-3.5 h-3.5 hidden sm:inline-block" />
@@ -341,7 +341,7 @@ export const LandingPage: React.FC = () => {
                     <div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse shrink-0" />
                     <span className="text-xs sm:text-xs font-semibold text-foreground truncate">Dossiê Registral • Matrícula Nº 47.912</span>
                   </div>
-                  <Badge className="bg-success/20 text-success border-success/40 text-xs sm:text-xs font-semibold px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
+                  <Badge className="bg-success/20 text-success border-success/30 text-xs sm:text-xs font-semibold px-2 py-0.5 shrink-0 self-start min-[480px]:self-auto">
                     Score de Risco: 8/100 — Baixo Risco
                   </Badge>
                 </div>
@@ -370,7 +370,7 @@ export const LandingPage: React.FC = () => {
                     </div>
                     <div className="pt-1">
                       <Link to="/app?sample=safe" className="block w-full">
-                        <Button size="sm" className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-7 gap-1">
+                        <Button size="sm" className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs gap-1">
                           <FileText className="w-3 h-3 shrink-0" /> <span>Explorar Relatório</span>
                         </Button>
                       </Link>
@@ -424,7 +424,7 @@ export const LandingPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full">
               
               {/* Opção 1 — Imóvel Regular (Disponível) */}
-              <Card className="bg-card border-2 border-primary/60 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between shadow-medium relative w-full">
+              <Card className="bg-card border-2 border-primary/30 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between shadow-medium relative w-full">
                 <Badge className="bg-primary text-white font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Disponível Agora ⚡
                 </Badge>
@@ -448,7 +448,7 @@ export const LandingPage: React.FC = () => {
 
               {/* Opção 2 — Imóvel com Pontos de Atenção */}
               <Card className="relative bg-card/50 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
-                <Badge variant="outline" className="border-warning/40 text-warning bg-warning/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
+                <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Em breve
                 </Badge>
                 <div className="space-y-2.5 pt-1">
@@ -469,7 +469,7 @@ export const LandingPage: React.FC = () => {
 
               {/* Opção 3 — Imóvel com Risco Elevado */}
               <Card className="relative bg-card/50 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 flex flex-col justify-between opacity-80 w-full">
-                <Badge variant="outline" className="border-destructive/40 text-destructive bg-destructive/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
+                <Badge variant="outline" className="border-destructive/30 text-destructive bg-destructive/10 font-semibold text-xs sm:text-xs absolute top-4 right-4">
                   Em breve
                 </Badge>
                 <div className="space-y-2.5 pt-1">
@@ -625,7 +625,7 @@ export const LandingPage: React.FC = () => {
                     <button
                       key={cat.id}
                       onClick={() => setActiveModuleCategory(idx)}
-                      className={`px-3.5 py-2 rounded-xl sm:rounded-2xl text-xs sm:text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0 border snap-start ${
+                      className={`px-3.5 py-2 min-h-[44px] sm:min-h-0 rounded-full text-[13px] font-medium transition-colors flex items-center gap-1.5 shrink-0 border snap-start ${
                         isActive
                           ? 'bg-primary text-white border-primary/30 shadow-soft'
                           : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'
@@ -699,7 +699,7 @@ export const LandingPage: React.FC = () => {
 
               {/* Chat Simulation Card */}
               <div className="lg:col-span-7 w-full">
-                <Card className="bg-background border-2 border-primary/40 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 shadow-medium w-full">
+                <Card className="bg-background border-2 border-primary/30 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 shadow-medium w-full">
                   <div className="flex items-center gap-2.5 border-b border-border pb-2.5 w-full min-w-0">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-primary flex items-center justify-center text-white font-semibold shrink-0">
                       <Brain className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -797,7 +797,7 @@ export const LandingPage: React.FC = () => {
               {targetAudiences.map((aud, i) => {
                 const Icon = aud.icon;
                 return (
-                  <Card key={i} className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 hover:border-primary/40 transition-colors w-full">
+                  <Card key={i} className="bg-background border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2.5 hover:border-primary/30 transition-colors w-full">
                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
@@ -854,21 +854,21 @@ export const LandingPage: React.FC = () => {
               </Card>
 
               {/* Lado ValidaImóvel */}
-              <Card className="bg-card border-2 border-primary/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 shadow-medium w-full">
+              <Card className="bg-card border-2 border-primary/30 p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 shadow-medium w-full">
                 <h3 className="text-base sm:text-lg font-semibold text-foreground pb-2 border-b border-primary/30 flex items-center justify-between">
                   <span>ValidaImóvel com IA</span>
                   <Badge className="bg-primary text-white text-xs sm:text-xs">Recomendado</Badge>
                 </h3>
                 <div className="space-y-2.5 text-xs text-muted-foreground font-medium">
-                  <div className="p-2.5 sm:p-3 bg-primary/40 border border-primary/20 rounded-xl space-y-0.5">
+                  <div className="p-2.5 sm:p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-0.5">
                     <span className="text-xs font-semibold text-primary block">Tempo de Análise</span>
                     <p className="text-foreground font-semibold">Processamento estruturado em segundos</p>
                   </div>
-                  <div className="p-2.5 sm:p-3 bg-primary/40 border border-primary/20 rounded-xl space-y-0.5">
+                  <div className="p-2.5 sm:p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-0.5">
                     <span className="text-xs font-semibold text-primary block">Custo por Documento</span>
                     <p className="text-foreground font-semibold">Apenas R$ 49,90 por 3 meses de análises ilimitadas</p>
                   </div>
-                  <div className="p-2.5 sm:p-3 bg-primary/40 border border-primary/20 rounded-xl space-y-0.5">
+                  <div className="p-2.5 sm:p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-0.5">
                     <span className="text-xs font-semibold text-primary block">Organização</span>
                     <p className="text-foreground font-semibold">Relatório executivo completo nos 12 módulos + PDF</p>
                   </div>
@@ -895,7 +895,7 @@ export const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-primary/40 shadow-medium bg-background max-w-full">
+            <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-primary/30 shadow-medium bg-background max-w-full">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/QRCzsDTiRd0?rel=0"
                 title="Demonstração do Sistema ValidaImóvel"
@@ -913,7 +913,7 @@ export const LandingPage: React.FC = () => {
         <section id="oferta" className="py-12 sm:py-20 bg-background px-3 sm:px-6 lg:px-8 w-full">
           <div className="max-w-4xl mx-auto w-full">
             
-            <Card className="border-2 border-primary/60 p-4 sm:p-12 rounded-2xl sm:rounded-3xl shadow-medium space-y-6 sm:space-y-8 text-center relative overflow-hidden w-full bg-background">
+            <Card className="border-2 border-primary/30 p-4 sm:p-12 rounded-2xl sm:rounded-3xl shadow-medium space-y-6 sm:space-y-8 text-center relative overflow-hidden w-full bg-background">
               
               <div className="space-y-2 sm:space-y-3">
                 <Badge className="bg-primary text-white font-semibold text-xs sm:text-xs px-3 py-1 rounded-full mx-auto">
@@ -989,7 +989,7 @@ export const LandingPage: React.FC = () => {
                 <div
                   key={index}
                   onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                  className="p-4 sm:p-5 bg-background border border-border rounded-xl sm:rounded-2xl cursor-pointer hover:border-primary/40 transition-colors space-y-2 w-full"
+                  className="p-4 sm:p-5 bg-background border border-border rounded-xl sm:rounded-2xl cursor-pointer hover:border-primary/30 transition-colors space-y-2 w-full"
                 >
                   <div className="flex items-center justify-between font-semibold text-foreground text-xs sm:text-sm">
                     <span className="pr-2">{faq.q}</span>
@@ -1043,12 +1043,12 @@ export const LandingPage: React.FC = () => {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 pt-4 border-t border-border text-xs w-full">
               <Logo />
 
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-semibold text-xs sm:text-xs">
+              <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] text-muted-foreground [&>a]:py-3 [&>a]:inline-flex">
                 <a
                   href={COMPANY_CONFIG.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-destructive hover:text-destructive font-semibold transition-colors bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20"
+                  className="items-center gap-1.5 hover:text-foreground transition-colors"
                 >
                   <Instagram className="w-3.5 h-3.5" />
                   <span>{COMPANY_CONFIG.instagramHandle}</span>
@@ -1074,7 +1074,7 @@ export const LandingPage: React.FC = () => {
             <span className="text-xs font-semibold text-primary block truncate">R$ 49,90 • Acesso Ilimitado</span>
           </div>
           <Link to={user ? (user.hasSubscription ? "/app" : "/pagamento-pix") : "/auth?tab=register"} className="shrink-0">
-            <Button size="sm" className="bg-primary hover:bg-primary text-white font-semibold text-xs px-3 py-2 h-9">
+            <Button size="sm" className="bg-primary hover:bg-primary text-white font-semibold text-xs px-3 py-2">
               <span>{user ? (user.hasSubscription ? "Workspace" : "Garantir") : "Criar Conta"}</span>
               <ArrowRight className="ml-1 w-3 h-3" />
             </Button>

@@ -189,7 +189,7 @@ export const AuthPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
         <Card className="max-w-md w-full border-border bg-card/90 rounded-3xl p-6 text-center space-y-6 shadow-medium">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-success/20 border border-success/40 flex items-center justify-center text-success">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-success/20 border border-success/30 flex items-center justify-center text-success">
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <div className="space-y-2">
@@ -273,12 +273,7 @@ export const AuthPage: React.FC = () => {
       <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-14 max-w-md mx-auto w-full lg:max-w-none lg:mx-0">
         
         <div className="flex items-center justify-between lg:justify-end">
-          <Link to="/" className="lg:hidden flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <span className="font-semibold text-foreground">ValidaImóvel</span>
-          </Link>
+          <Logo className="lg:hidden" />
           <Link to="/">
             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-card text-xs gap-1.5 font-semibold">
               <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao site
@@ -401,7 +396,7 @@ export const AuthPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setShowResetForm(true)}
-                            className="text-xs text-primary hover:underline font-semibold"
+                            className="text-xs text-primary hover:underline font-semibold py-3 -my-3"
                           >
                             Esqueceu a senha?
                           </button>

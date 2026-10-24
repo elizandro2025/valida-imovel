@@ -121,8 +121,8 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
   const StepIcon = step.icon;
 
   return (
-    <div className="fixed inset-x-0 bottom-4 sm:bottom-6 z-50 flex justify-center px-3 sm:px-4 pointer-events-none animate-fade-in-up safe-area-bottom">
-      <Card className="max-w-2xl w-full bg-background/95 border-2 border-primary/80 text-foreground p-4 sm:p-6 rounded-3xl shadow-medium backdrop-blur-xl pointer-events-auto relative space-y-4">
+    <div className="fixed inset-x-0 bottom-4 sm:bottom-6 z-[60] flex justify-center px-3 sm:px-4 pointer-events-none animate-fade-in-up safe-area-bottom">
+      <Card className="max-w-2xl w-full bg-background/95 border-2 border-primary/30 text-foreground p-4 sm:p-6 rounded-3xl shadow-medium backdrop-blur-xl pointer-events-auto relative space-y-4">
         
         {/* Glow Background Indicator */}
         <div className="absolute -top-12 -left-12 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none hidden" />
@@ -130,7 +130,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-border pb-2.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 rounded-full">
+            <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs font-semibold px-3 py-1 rounded-full">
               <Sparkles className="w-3.5 h-3.5 mr-1 inline text-primary" /> {step.badge}
             </Badge>
           </div>
@@ -138,7 +138,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground hover:bg-muted h-9 w-9 p-0"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted w-9 p-0"
             title="Pular Tour Guiado"
           >
             <X className="w-4.5 h-4.5" />

@@ -22,11 +22,12 @@ const buttonVariants = cva(
         hero: "bg-primary text-primary-foreground hover:bg-primary/90",
         magnetic: "bg-primary text-primary-foreground hover:bg-primary/90",
       },
+      // Celular e tablet (toque): alvos de 44px, recomendação da Apple; no computador voltam ao tamanho compacto
       size: {
-        default: "h-10 px-5 py-2",
-        sm: "h-8 px-3.5 text-[13px]",
+        default: "h-11 lg:h-10 px-5 py-2",
+        sm: "h-10 lg:h-8 px-3.5 text-[13px]",
         lg: "h-12 px-7 text-base",
-        icon: "h-10 w-10",
+        icon: "h-11 w-11 lg:h-10 lg:w-10",
       },
     },
     defaultVariants: {

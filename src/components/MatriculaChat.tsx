@@ -254,7 +254,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
           <Button
             type="submit"
             disabled={!input.trim() || isTyping}
-            className="bg-primary hover:bg-primary text-white h-9 px-4 shrink-0"
+            className="bg-primary hover:bg-primary text-white px-4 shrink-0"
           >
             <Send className="w-3.5 h-3.5" />
           </Button>

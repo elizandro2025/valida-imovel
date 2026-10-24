@@ -49,7 +49,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
     return (
       <div className={`border border-border p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 bg-card ${className}`}>
         <div className="flex items-center gap-3 text-center sm:text-left">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-success/20 border border-success/40 text-success flex items-center justify-center shrink-0 shadow-inner">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-success/20 border border-success/30 text-success flex items-center justify-center shrink-0 shadow-inner">
             <Headphones className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
@@ -68,7 +68,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full sm:w-auto shrink-0 bg-success hover:bg-success/90 text-white font-medium text-[13px] px-5 py-2.5 rounded-full flex items-center justify-center gap-2 transition-colors"
+          className="w-full sm:w-auto shrink-0 bg-success hover:bg-success/90 text-white font-medium text-[13px] px-5 py-3 rounded-full flex items-center justify-center gap-2 transition-colors"
         >
           <MessageCircle className="w-4 h-4 fill-white" />
           <span>Falar no WhatsApp</span>
@@ -84,7 +84,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className={`inline-flex items-center gap-2 text-success hover:text-success font-semibold text-xs transition-colors ${className}`}
+        className={`inline-flex items-center gap-2 text-success hover:text-success font-semibold text-xs transition-colors py-3.5 -my-3.5 ${className}`}
       >
         <MessageCircle className="w-4 h-4 fill-success text-foreground" />
         <span>Suporte via WhatsApp</span>
@@ -111,7 +111,7 @@ export const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="hidden md:flex items-center gap-2 bg-card/95 border border-success/40 text-success font-semibold text-xs px-4 py-2.5 rounded-2xl shadow-medium backdrop-blur-md transition-all hover:border-success/30 hover:bg-muted"
+        className="hidden md:flex items-center gap-2 bg-card/95 border border-success/30 text-success font-semibold text-xs px-4 py-2.5 rounded-2xl shadow-medium backdrop-blur-md transition-all hover:border-success/30 hover:bg-muted"
       >
         <span className="relative flex h-2.5 w-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>

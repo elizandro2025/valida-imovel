@@ -27,7 +27,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
   const secondsLeft = Math.max(1, Math.ceil((100 - progress) / 12));
 
   return (
-    <Card className="max-w-3xl mx-auto border-primary/40 bg-card shadow-medium rounded-3xl overflow-hidden animate-fade-in text-foreground">
+    <Card className="max-w-3xl mx-auto border-primary/30 bg-card shadow-medium rounded-3xl overflow-hidden animate-fade-in text-foreground">
       {/* Accent line top */}
       <div className="h-2 bg-primary" />
       <CardContent className="p-6 sm:p-8 space-y-6">
@@ -42,7 +42,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                 <h3 className="text-base sm:text-lg font-semibold text-foreground">
                   Analisando Matrícula em Tempo Real
                 </h3>
-                <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 text-xs font-semibold shrink-0">
+                <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 text-xs font-semibold shrink-0">
                   Motor IA Ativo
                 </Badge>
               </div>
@@ -87,9 +87,9 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                 className={`
                   flex items-center gap-3 p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 min-w-0 w-full
                   ${isCompleted 
-                    ? 'bg-primary/60 border-primary/40 text-primary shadow-xs' 
+                    ? 'bg-primary/10 border-primary/30 text-primary shadow-xs' 
                     : isCurrent 
-                      ? 'bg-warning/60 border-warning/50 text-warning shadow-soft scale-[1.01]' 
+                      ? 'bg-warning/10 border-warning/30 text-warning shadow-soft scale-[1.01]' 
                       : 'bg-background/50 border-border text-muted-foreground'
                   }
                 `}
