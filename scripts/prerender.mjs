@@ -179,7 +179,13 @@ const htmlFile = route => (route === '/' ? 'index.html' : `${route.slice(1)}.htm
 for (const [route, data] of pages) {
   const file = path.join(DIST, htmlFile(route));
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, data.html.replaceAll(ORIGIN, SITE));
+  // <!--email_off-->: a Cloudflare (Email Obfuscation) troca e-mails do HTML por "[email protected]" e quebra a hidratação
+  // do React; os endereços do site são públicos, então o corpo da página fica fora dessa troca
+  const html = data.html.replaceAll(ORIGIN, SITE)
+    .replace(/<body([^>]*)>/, '<body$1><!--email_off-->')
+    .replace('</body>', '<!--/email_off--></body>');
+  if (!html.includes('<!--email_off-->') || !html.includes('<!--/email_off-->')) throw new Error(`Marcas email_off ausentes em ${route}`);
+  fs.writeFileSync(file, html);
 }
 
 // ─── 6. Sitemap ───────────────────────────────────────────────────────────────
