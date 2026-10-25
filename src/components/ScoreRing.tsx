@@ -43,7 +43,7 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({ score, level, size = 112, 
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
         <span className="font-semibold tracking-tight text-foreground tabular-nums" style={{ fontSize: size * 0.3 }}>
-          {score ?? '—'}
+          {score ?? '-'}
         </span>
         <span className={`mt-1 font-semibold uppercase tracking-wide ${COLORS[level]}`} style={{ fontSize: Math.max(10, size * 0.095) }}>
           {level === 'INDEFINIDO' ? 'sem nota' : level}

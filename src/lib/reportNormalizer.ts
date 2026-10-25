@@ -135,13 +135,13 @@ export function verifyAgainstSource(report: any, source: string): string[] {
 
   const matricula = report.identificacao_geral?.matricula;
   if (typeof matricula === 'string' && !numberAppearsIn(source, matricula)) {
-    warnings.push(`O número da matrícula (${matricula}) não foi localizado no texto lido — confira na certidão.`);
+    warnings.push(`O número da matrícula (${matricula}) não foi localizado no texto lido. Confira na certidão.`);
   }
 
   for (const owner of report.proprietarios_atuais ?? []) {
     if (typeof owner.cpf_cnpj === 'string' && owner.cpf_cnpj.replace(/\D/g, '').length >= 11 && !numberAppearsIn(source, owner.cpf_cnpj)) {
       owner._cpf_nao_confirmado = true;
-      warnings.push(`O CPF/CNPJ ${owner.cpf_cnpj} (${owner.nome ?? 'proprietário'}) não foi localizado no texto lido — confira na certidão.`);
+      warnings.push(`O CPF/CNPJ ${owner.cpf_cnpj} (${owner.nome ?? 'proprietário'}) não foi localizado no texto lido. Confira na certidão.`);
     }
   }
 
@@ -150,7 +150,7 @@ export function verifyAgainstSource(report: any, source: string): string[] {
     for (const item of report[key] ?? []) {
       if (typeof item.numero_ato === 'string' && !actAppearsIn(source, item.numero_ato)) {
         item._ato_nao_confirmado = true;
-        warnings.push(`O ato ${item.numero_ato} (${item.tipo ?? 'ônus'}) não foi localizado no texto lido — confira na certidão.`);
+        warnings.push(`O ato ${item.numero_ato} (${item.tipo ?? 'ônus'}) não foi localizado no texto lido. Confira na certidão.`);
       }
       if (typeof item.trecho_origem === 'string') item._trecho_confirmado = excerptAppearsIn(normalizedSource, item.trecho_origem);
     }
@@ -240,7 +240,7 @@ export function normalizeReport(input: NormalizeInput, meta: NormalizeMeta): Rec
   const indefinidos = [...report.onus_garantias_financeiras, ...report.indisponividades_e_penhoras]
     .filter((item: any) => item.status === 'INDEFINIDO');
   if (indefinidos.length > 0) {
-    pontos.push(`${indefinidos.length} ônus aparece(m) como cancelado(s), mas sem o ato de cancelamento identificado — confira na certidão.`);
+    pontos.push(`${indefinidos.length} ônus aparece(m) como cancelado(s), mas sem o ato de cancelamento identificado. Confira na certidão.`);
   }
   if (report.proprietarios_atuais.length === 0) pontos.push('Nenhum proprietário atual foi identificado na leitura.');
   if (!report.identificacao_geral.matricula) pontos.push('O número da matrícula não foi identificado na leitura.');

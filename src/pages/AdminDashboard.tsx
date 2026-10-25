@@ -165,19 +165,19 @@ export const AdminDashboard: React.FC = () => {
     { title: 'Usuários cadastrados', value: usersList.length.toString(), icon: Users, detail: `${activeCount} com acesso ativo` },
     {
       title: 'Análises (30 dias)',
-      value: metrics?.analyses ? metrics.analyses.last_30_days.toString() : '—',
+      value: metrics?.analyses ? metrics.analyses.last_30_days.toString() : '-',
       icon: FileText,
       detail: metrics?.analyses ? `${metrics.analyses.today} hoje • ${metrics.analyses.active_users_7_days} usuários em 7 dias` : pending,
     },
     {
       title: 'Receita (30 dias)',
-      value: metrics?.payments_last_30_days ? brl(metrics.payments_last_30_days.revenue) : '—',
+      value: metrics?.payments_last_30_days ? brl(metrics.payments_last_30_days.revenue) : '-',
       icon: CreditCard,
       detail: metrics?.payments_last_30_days ? `${metrics.payments_last_30_days.count} pagamento(s) • ${metrics.payments_last_30_days.refunds} estorno(s)` : pending,
     },
     {
       title: 'IA (24 horas)',
-      value: metrics?.ai_last_24h ? `${metrics.ai_last_24h.calls - metrics.ai_last_24h.failures}/${metrics.ai_last_24h.calls}` : '—',
+      value: metrics?.ai_last_24h ? `${metrics.ai_last_24h.calls - metrics.ai_last_24h.failures}/${metrics.ai_last_24h.calls}` : '-',
       icon: Activity,
       detail: metrics?.ai_last_24h ? `${metrics.ai_last_24h.failures} falha(s) • chamadas com sucesso/total` : pending,
     },

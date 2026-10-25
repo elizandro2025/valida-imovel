@@ -1,12 +1,15 @@
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import App, { preloadRoute } from './App.tsx'
 import './index.css'
 import { installGlobalErrorReporting } from './services/errorReporting'
 
 installGlobalErrorReporting();
 
-// Páginas pré-renderizadas já chegam com conteúdo: baixa o código da rota antes de montar o React,
-// para trocar o HTML estático pelo app sem mostrar o indicador de carregamento.
 const root = document.getElementById("root")!;
-const ready = root.hasChildNodes() ? preloadRoute(window.location.pathname).catch(() => undefined) : Promise.resolve();
-ready.then(() => createRoot(root).render(<App />));
+if (root.hasChildNodes()) {
+  // Página pré-renderizada: baixa o código da rota e o React aproveita o HTML que já está na tela,
+  // sem apagar e redesenhar a página (que atrasava o primeiro conteúdo e repetia todo o layout).
+  preloadRoute(window.location.pathname).catch(() => undefined).then(() => hydrateRoot(root, <App />));
+} else {
+  createRoot(root).render(<App />);
+}

@@ -112,7 +112,7 @@ const GuidePage: React.FC = () => {
         <aside className="mt-12 rounded-3xl bg-foreground text-background p-7 sm:p-10 space-y-4">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Tem uma matrícula para analisar?</h2>
           <p className="text-background/80 leading-relaxed">
-            Envie o PDF e veja em minutos o dono atual, os ônus ativos e a nota de risco — com o trecho da matrícula que comprova cada ponto.
+            Envie o PDF e veja em minutos o dono atual, os ônus ativos e a nota de risco, com o trecho da matrícula que comprova cada ponto.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link to="/app?sample=safe"><Button size="lg" className="w-full sm:w-auto bg-background text-foreground hover:bg-background/90">Ver exemplo grátis</Button></Link>

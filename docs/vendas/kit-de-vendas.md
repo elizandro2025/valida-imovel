@@ -1,4 +1,4 @@
-# Kit de vendas — ValidaImóvel
+# Kit de vendas do ValidaImóvel
 
 Guia prático para vender o plano mensal: para quem, com quais argumentos, com quais mensagens prontas e em que ordem.
 Tudo aqui descreve o produto como ele é hoje; se o produto mudar, atualize a seção 1 primeiro.
@@ -7,7 +7,7 @@ Tudo aqui descreve o produto como ele é hoje; se o produto mudar, atualize a se
 
 ## 1. O que você está vendendo
 
-**Em uma frase:** o ValidaImóvel lê a certidão de matrícula em PDF e, em poucos minutos, mostra quem é o dono hoje, se há hipoteca, alienação fiduciária, penhora ou indisponibilidade e qual o risco do negócio — com o trecho da matrícula que comprova cada ponto.
+**Em uma frase:** o ValidaImóvel lê a certidão de matrícula em PDF e, em poucos minutos, mostra quem é o dono hoje, se há hipoteca, alienação fiduciária, penhora ou indisponibilidade e qual o risco do negócio. Cada ponto vem com o trecho da matrícula que o comprova.
 
 **Fatos que você pode afirmar:**
 
@@ -19,13 +19,13 @@ Tudo aqui descreve o produto como ele é hoje; se o produto mudar, atualize a se
 | Documento | PDF digital ou escaneado, de qualquer cartório do Brasil, até 15 MB |
 | Entrega | Donos atuais, cadeia dominial, ônus ativos e cancelados, nota de risco de 0 a 100, trecho de cada risco, relatório em PDF, histórico na conta e assistente para perguntas |
 | Garantia | 7 dias para desistir com reembolso integral |
-| Teste grátis | Exemplos sem cadastro: `validaimovel.com/app?sample=safe` (imóvel sem ônus) e `validaimovel.com/app?sample=risk` (imóvel com penhora) |
+| Teste grátis | Exemplos sem cadastro: `validaimovel.com/app?sample=safe` (imóvel sem ônus) e `validaimovel.com/app?sample=risk` (sítio com hipoteca rural e embargo ambiental ativos) |
 
 **O que você NÃO pode afirmar** (gera reclamação, reembolso e risco legal):
 
-- ❌ "Consulta a CNIB / o cartório em tempo real" — o sistema lê **só o PDF enviado**; indisponibilidades aparecem quando estão averbadas na matrícula.
-- ❌ "Ilimitado" — o limite é de 30 análises por dia.
-- ❌ "Em 10 segundos" — leva de 1 a 4 minutos.
+- ❌ "Consulta a CNIB / o cartório em tempo real": o sistema lê **só o PDF enviado**; indisponibilidades aparecem quando estão averbadas na matrícula.
+- ❌ "Ilimitado": o limite é de 30 análises por dia.
+- ❌ "Em 10 segundos": leva de 1 a 4 minutos.
 - ❌ "Substitui o advogado", "risco zero", "100% de precisão", "carimbo/validade notarial".
 - ❌ Números de clientes, depoimentos ou "preço de" que não sejam reais.
 
@@ -60,7 +60,7 @@ O plano mensal vale a pena para quem analisa **várias matrículas por mês**. C
 **Leilão**
 - Dor: edital com 30 imóveis, pouco tempo, matrículas longas.
 - Ganho: em minutos, cada matrícula com ônus ativos, cancelados e "a conferir", nota de risco e o trecho de cada ponto.
-- Frase: *"Antes do lance, veja o que a matrícula diz — penhoras, hipotecas e indisponibilidades, com o ato de cada uma."*
+- Frase: *"Antes do lance, veja o que a matrícula diz: penhoras, hipotecas e indisponibilidades, com o ato de cada uma."*
 
 **Corretor**
 - Dor: descobrir pendência na véspera da escritura; cliente perde a confiança.
@@ -81,26 +81,26 @@ O plano mensal vale a pena para quem analisa **várias matrículas por mês**. C
 
 ## 4. Mensagens prontas (WhatsApp, Instagram, LinkedIn)
 
-**Regras:** uma pessoa por vez, com o nome dela e um detalhe do trabalho dela. **Nunca** dispare para listas compradas ou grupos em massa — o WhatsApp bloqueia o número e a LGPD exige base legal para contato. Se a pessoa disser que não tem interesse, agradeça e não insista.
+**Regras:** uma pessoa por vez, com o nome dela e um detalhe do trabalho dela. **Nunca** dispare para listas compradas ou grupos em massa: o WhatsApp bloqueia o número e a LGPD exige base legal para contato. Se a pessoa disser que não tem interesse, agradeça e não insista.
 
-**Primeira mensagem — corretor**
-> Oi, {nome}! Vi seus anúncios em {bairro/cidade}. Criei uma ferramenta que lê a matrícula do imóvel em PDF e mostra, em minutos, quem é o dono, se tem hipoteca, alienação ou penhora e o risco — com o trecho da matrícula de cada ponto. Tem um exemplo pronto, sem cadastro: validaimovel.com/app?sample=risk
+**Primeira mensagem para corretor**
+> Oi, {nome}! Vi seus anúncios em {bairro/cidade}. Criei uma ferramenta que lê a matrícula do imóvel em PDF e mostra, em minutos, quem é o dono, se tem hipoteca, alienação ou penhora e o risco, com o trecho da matrícula de cada ponto. Tem um exemplo pronto, sem cadastro: validaimovel.com/app?sample=risk
 > Se fizer sentido para as suas captações, te explico em 3 minutos.
 
-**Primeira mensagem — leilão**
-> Oi, {nome}! Você analisa muitas matrículas de edital, certo? O ValidaImóvel lê a matrícula em PDF e separa penhoras, hipotecas e indisponibilidades ativas das canceladas, com o ato e o trecho de cada uma, em poucos minutos. Veja um exemplo de imóvel com penhora: validaimovel.com/app?sample=risk
+**Primeira mensagem para leilão**
+> Oi, {nome}! Você analisa muitas matrículas de edital, certo? O ValidaImóvel lê a matrícula em PDF e separa penhoras, hipotecas e indisponibilidades ativas das canceladas, com o ato e o trecho de cada uma, em poucos minutos. Veja um exemplo de imóvel com hipoteca e embargo ativos: validaimovel.com/app?sample=risk
 
-**Primeira mensagem — advogado**
-> Dr(a). {nome}, tudo bem? Desenvolvi uma ferramenta de triagem de matrícula: a partir do PDF, ela monta a cadeia dominial, lista ônus ativos e cancelados com o ato e o trecho, e aponta o que conferir. Não substitui o parecer — adianta a leitura. Exemplo sem cadastro: validaimovel.com/app?sample=safe
+**Primeira mensagem para advogado**
+> Dr(a). {nome}, tudo bem? Desenvolvi uma ferramenta de triagem de matrícula: a partir do PDF, ela monta a cadeia dominial, lista ônus ativos e cancelados com o ato e o trecho, e aponta o que conferir. Não substitui o parecer: adianta a leitura. Exemplo sem cadastro: validaimovel.com/app?sample=safe
 
-**Lembrete — 2 dias depois, sem resposta**
+**Lembrete, 2 dias depois, sem resposta**
 > {nome}, conseguiu abrir o exemplo? Se tiver uma matrícula de um negócio atual, dá para testar com ela: são R$ 99,90 por 30 dias, sem renovação automática, e você tem 7 dias para desistir com reembolso.
 
-**Último lembrete — 5 dias depois**
+**Último lembrete, 5 dias depois**
 > Último recado para não te encher 🙂 Se em algum momento precisar ler uma matrícula com pressa, o link é validaimovel.com. Qualquer dúvida, estou por aqui.
 
 **Depois que a pessoa abriu o exemplo**
-> Viu que cada risco vem com o trecho da matrícula? É isso que te deixa conferir em segundos. Para usar com as suas matrículas: validaimovel.com/auth?tab=register — cria a conta e paga por Pix ou cartão; o acesso libera na hora.
+> Viu que cada risco vem com o trecho da matrícula? É isso que te deixa conferir em segundos. Para usar com as suas matrículas: validaimovel.com/auth?tab=register. Você cria a conta, paga por Pix ou cartão e o acesso libera na hora.
 
 ---
 
@@ -110,29 +110,29 @@ O plano mensal vale a pena para quem analisa **várias matrículas por mês**. C
 > Erra, por isso o sistema mostra o trecho da matrícula em cada risco e marca o que não conseguiu localizar. Um ônus só aparece como cancelado se a matrícula trouxer o ato de cancelamento; na dúvida, ele pede conferência. É uma triagem para você chegar rápido ao que importa, não um parecer.
 
 **"Já tenho advogado."**
-> Ótimo — continue com ele. A triagem chega antes: você manda ao advogado já sabendo os pontos críticos, e ele ganha tempo.
+> Ótimo, continue com ele. A triagem chega antes: você manda ao advogado já sabendo os pontos críticos, e ele ganha tempo.
 
 **"Está caro."**
 > São R$ 3,33 por dia. Se você analisar 10 matrículas no mês, sai a R$ 10 cada. Compare com uma comissão perdida ou um lance errado.
 
 **"Analiso poucas matrículas."**
-> Seja honesto: se for uma por mês, talvez não compense ainda. Uma saída é contratar no mês em que tiver vários negócios — não renova sozinho.
+> Seja honesto: se for uma por mês, talvez não compense ainda. Uma saída é contratar no mês em que tiver vários negócios, porque não renova sozinho.
 
 **"E o sigilo dos documentos?"**
 > A conexão é protegida e os detalhes de tratamento estão na Política de Privacidade (validaimovel.com/privacidade). O PDF é processado por IA do Google.
-> *Atenção:* hoje a IA roda no plano gratuito da API do Google, cuja política permite usar o conteúdo para melhorar os produtos deles, e a nossa Política de Privacidade diz isso. Para escritórios e imobiliárias, essa é a objeção mais séria — migrar para o plano pago da API resolve (ver seção 11).
+> *Atenção:* hoje a IA roda no plano gratuito da API do Google, cuja política permite usar o conteúdo para melhorar os produtos deles, e a nossa Política de Privacidade diz isso. Para escritórios e imobiliárias, essa é a objeção mais séria, e migrar para o plano pago da API resolve (ver seção 11).
 
 **"Não quero assinatura."**
 > Não é assinatura recorrente: é um pagamento único por 30 dias, sem renovação automática.
 
 **"Funciona com matrícula antiga ou escaneada?"**
-> Sim, digital ou escaneada, de qualquer cartório. Página muito apagada ou manuscrita ilegível pode falhar — por isso há 7 dias para desistir com reembolso.
+> Sim, digital ou escaneada, de qualquer cartório. Página muito apagada ou manuscrita ilegível pode falhar, e por isso há 7 dias para desistir com reembolso.
 
 ---
 
-## 6. Demonstração em 3 minutos (chamada ou vídeo)
+## 6. Demonstração em 3 minutos (chamada com tela compartilhada)
 
-1. Abra `validaimovel.com/app?sample=risk` (imóvel com penhora).
+1. Abra `validaimovel.com/app?sample=risk` (sítio com hipoteca rural e embargo ambiental ativos, nota 88).
 2. Mostre a nota de risco e o motivo dela.
 3. Clique num risco e mostre o **trecho da matrícula** que o embasa.
 4. Mostre a diferença entre ônus **ativo** e **cancelado** (e o ato de cancelamento).
@@ -155,18 +155,18 @@ Cada post termina com o link da bio (página inicial ou o guia do tema).
 | 4 | Reels | Penhora na matrícula: dá para comprar? | /guia/penhora-na-matricula |
 | 5 | Carrossel | Certidão de ônus reais: o que é e validade | /guia/certidao-de-onus-reais |
 | 6 | Carrossel | Checklist de documentos para comprar imóvel | /guia/documentos-para-comprar-imovel |
-| 7 | Reels (tela) | Demonstração do exemplo com penhora | /app?sample=risk |
+| 7 | Reels (tela) | Demonstração do exemplo com risco | /app?sample=risk |
 | 8 | Post | "Leilão: leia a matrícula antes do lance" | /app?sample=risk |
 
 **Legenda de exemplo (post 4):**
-> Penhora na matrícula não impede a venda, mas muda tudo: quem compra pode ver o imóvel responder pela dívida do vendedor. 📌 Antes de fechar, confira se a penhora está ativa ou cancelada — e qual ato cancelou.
+> Penhora na matrícula não impede a venda, mas muda tudo: quem compra pode ver o imóvel responder pela dívida do vendedor. 📌 Antes de fechar, confira se a penhora está ativa ou cancelada, e qual ato cancelou.
 > Explicamos passo a passo no guia (link na bio). E se quiser ver um exemplo real de leitura, o ValidaImóvel tem um relatório de demonstração gratuito.
 
 ---
 
 ## 8. Anúncios
 
-**Google Ads (pesquisa)** — comece pequeno e meça.
+**Google Ads (pesquisa):** comece pequeno e meça.
 
 - Palavras-chave (frase): "análise de matrícula de imóvel", "analisar matrícula de imóvel", "como ler matrícula de imóvel", "penhora na matrícula", "alienação fiduciária na matrícula", "certidão de ônus reais", "matrícula imóvel leilão".
 - Negativas: "emitir", "segunda via", "2ª via", "pedir certidão", "cartório online", "concurso", "curso", "vaga".
@@ -176,7 +176,7 @@ Cada post termina com o link da bio (página inicial ou o guia do tema).
   - "Até 30 análises por dia por R$ 99,90 no plano de 30 dias. Sem renovação automática."
 - Página de destino: `validaimovel.com` (ou o guia correspondente à palavra-chave).
 
-**Meta (Instagram/Facebook)** — público de corretores, imobiliárias e leilão de imóveis na sua região; criativo = reels da demonstração (post 7). Teste por 2 semanas com orçamento diário baixo antes de aumentar.
+**Meta (Instagram/Facebook):** público de corretores, imobiliárias e leilão de imóveis na sua região; criativo = reels da demonstração (post 7). Teste por 2 semanas com orçamento diário baixo antes de aumentar.
 
 ---
 
@@ -208,12 +208,12 @@ Cada post termina com o link da bio (página inicial ou o guia do tema).
 
 Em ordem de impacto (posso implementar qualquer um):
 
-1. **IA no plano pago do Google** — remove a objeção de sigilo mais séria para escritórios e imobiliárias (ação sua no Google Cloud + ajuste da Política de Privacidade).
-2. **Medir a origem das visitas** — hoje o site não registra de onde vem cada visita; sem isso não dá para saber qual canal vende. Uma medição simples e sem cookies (Cloudflare Web Analytics) resolve.
-3. **Análise avulsa** (R$ 29,90 a R$ 39,90 por matrícula) — atende quem vai comprar um imóvel só.
-4. **Cupom ou link de indicação** — para parcerias com cursos e associações.
-5. **Plano para equipes** — imobiliárias e escritórios com várias contas.
-6. **Depoimentos reais** — peça aos primeiros clientes (com autorização por escrito) e coloque no site.
+1. **IA no plano pago do Google:** remove a objeção de sigilo mais séria para escritórios e imobiliárias (ação sua no Google Cloud + ajuste da Política de Privacidade).
+2. **Medir a origem das visitas:** hoje o site não registra de onde vem cada visita; sem isso não dá para saber qual canal vende. Uma medição simples e sem cookies (Cloudflare Web Analytics) resolve.
+3. **Análise avulsa** (R$ 29,90 a R$ 39,90 por matrícula): atende quem vai comprar um imóvel só.
+4. **Cupom ou link de indicação:** para parcerias com cursos e associações.
+5. **Plano para equipes:** imobiliárias e escritórios com várias contas.
+6. **Depoimentos reais:** peça aos primeiros clientes (com autorização por escrito) e coloque no site.
 
 ---
 

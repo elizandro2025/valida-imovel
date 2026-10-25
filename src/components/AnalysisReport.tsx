@@ -52,7 +52,7 @@ const renderSafe = (value: any, fallback: string = NOT_FOUND): string => {
       .filter(([key]) => !key.startsWith('_'))
       .map(([, v]) => (typeof v === 'object' ? renderSafe(v, '') : String(v ?? '').trim()))
       .filter(v => v && v !== 'null' && v !== 'undefined');
-    return parts.length > 0 ? parts.join(' — ') : fallback;
+    return parts.length > 0 ? parts.join(' · ') : fallback;
   }
 
   return fallback;
@@ -191,7 +191,7 @@ const SourceExcerpt: React.FC<{ item: any }> = ({ item }) => {
     <div className="mt-1.5 p-2.5 rounded-lg bg-secondary text-xs text-muted-foreground space-y-1">
       <p className="flex gap-1.5 leading-relaxed"><Quote className="w-3 h-3 shrink-0 mt-0.5" /><span className="italic">{item.trecho_origem}</span></p>
       {confirmed === true && <p className="text-success font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Trecho localizado no documento</p>}
-      {confirmed === false && <p className="text-warning font-semibold flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Trecho não localizado no texto lido — confira na certidão</p>}
+      {confirmed === false && <p className="text-warning font-semibold flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Trecho não localizado no texto lido. Confira na certidão.</p>}
     </div>
   );
 };
@@ -247,7 +247,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
   const props = view.proprietarios;
   const usufruto = view.direitos;
   const scoreRisco = view.score;
-  const scoreLabel = scoreRisco === null ? '—' : String(scoreRisco);
+  const scoreLabel = scoreRisco === null ? '-' : String(scoreRisco);
   const nivelRisco = view.nivelRisco;
   const statusJuridico = view.statusJuridico;
   const riskBadge = RISK_STYLES[nivelRisco];
@@ -257,7 +257,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
     ? parecer.certidoes_complementares_recomendadas.filter((c: any) => c && typeof c.certidao === 'string')
     : [];
   const certidoesRecomendadas = certidoesIA.length > 0
-    ? certidoesIA.map((c: any) => ({ title: c.certidao, scope: renderSafe(c.orgao, '—'), purpose: renderSafe(c.motivo, '') }))
+    ? certidoesIA.map((c: any) => ({ title: c.certidao, scope: renderSafe(c.orgao, '-'), purpose: renderSafe(c.motivo, '') }))
     : DEFAULT_CERTIDOES;
 
   const onusResumo = onusTodos.length === 0
@@ -265,7 +265,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
     : `${onusAtivos.length} ativo(s) ou a conferir • ${onusTodos.length - onusAtivos.length} cancelado(s)`;
 
   const ownersLine = (p: any) =>
-    `${renderSafe(p.nome)} (${renderSafe(p.cpf_cnpj)}) — fração ${renderSafe(p.percentual_propriedade, 'não informada')}`;
+    `${renderSafe(p.nome)} (${renderSafe(p.cpf_cnpj)}), fração ${renderSafe(p.percentual_propriedade, 'não informada')}`;
 
   const requireSubscription = (feature: string) => {
     if (isSubscribed) return true;
@@ -281,7 +281,7 @@ const AnalysisReportContent: React.FC<AnalysisReportProps> = ({ report, autoStar
   const handleCopyAllFields = () => {
     if (!requireSubscription('Cópia dos dados')) return;
     const fullText = `
-=== DADOS EXTRAÍDOS — VALIDAIMÓVEL (análise automatizada) ===
+=== DADOS EXTRAÍDOS · VALIDAIMÓVEL (análise automatizada) ===
 MATRÍCULA: ${renderSafe(ident.matricula)}
 CARTÓRIO: ${renderSafe(ident.cartorio_ri)}
 COMARCA/UF: ${renderSafe(ident.comarca)}
@@ -322,9 +322,9 @@ Análise automatizada por IA. Não substitui a certidão atualizada nem a avalia
 
   // Resumo para WhatsApp
   const handleCopyWhatsApp = () => {
-    const waText = `*ValidaImóvel — resumo da matrícula*
-📌 *Matrícula:* ${renderSafe(ident.matricula)} — ${renderSafe(ident.cartorio_ri)} (${renderSafe(ident.comarca)})
-🛡️ *Nota de risco:* ${scoreLabel}/100 — *${nivelRisco}*
+    const waText = `*ValidaImóvel: resumo da matrícula*
+📌 *Matrícula:* ${renderSafe(ident.matricula)}, ${renderSafe(ident.cartorio_ri)} (${renderSafe(ident.comarca)})
+🛡️ *Nota de risco:* ${scoreLabel}/100, *${nivelRisco}*
 
 👥 *Proprietário(s):*
 ${props.map((p: any) => `• ${renderSafe(p.nome)}`).join('\n') || NOT_FOUND}
@@ -333,7 +333,7 @@ ${props.map((p: any) => `• ${renderSafe(p.nome)}`).join('\n') || NOT_FOUND}
 
 💡 *Recomendação:* ${renderSafe(parecer.recomendacao_final || parecer.conclusao_juridica)}
 
-_Análise automatizada por IA — confira na certidão atualizada._`;
+_Análise automatizada por IA. Confira na certidão atualizada._`;
 
     navigator.clipboard.writeText(waText);
     toast({ title: 'Resumo copiado', description: 'Pronto para colar no WhatsApp.' });
@@ -376,7 +376,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(8);
         pdf.setTextColor(255, 255, 255);
-        pdf.text(cleanTextForPDF(`VALIDAIMÓVEL — MATRÍCULA Nº ${renderSafe(ident.matricula)} — ${renderSafe(ident.cartorio_ri)}`).slice(0, 110), margin, 8);
+        pdf.text(cleanTextForPDF(`VALIDAIMÓVEL · MATRÍCULA Nº ${renderSafe(ident.matricula)} · ${renderSafe(ident.cartorio_ri)}`).slice(0, 110), margin, 8);
       };
 
       const checkPageBreak = (neededHeight: number) => {
@@ -490,7 +490,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
       pdf.text('ValidaImóvel', margin, 18);
       pdf.setFontSize(8.5);
       pdf.setTextColor(200, 200, 205);
-      pdf.text('RELATÓRIO DE ANÁLISE DE MATRÍCULA — GERADO POR INTELIGÊNCIA ARTIFICIAL', margin, 25);
+      pdf.text('RELATÓRIO DE ANÁLISE DE MATRÍCULA · GERADO POR INTELIGÊNCIA ARTIFICIAL', margin, 25);
       pdf.setFontSize(8);
       pdf.text(`Emissão: ${new Date().toLocaleDateString('pt-BR')} • Código do relatório: ${code}`, margin, 32);
 
@@ -591,7 +591,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
             ato.adquirentes ? `Adquirente: ${renderSafe(ato.adquirentes)}` : null,
             ato.valor_transacao ? `Valor declarado: ${renderSafe(ato.valor_transacao)}` : null,
           ].filter(Boolean).join(' | ');
-          drawCardBlock(`ATO ${renderSafe(ato.numero_ato, `#${idx + 1}`)} — ${renderSafe(ato.tipo_transmissao)}`, parts);
+          drawCardBlock(`ATO ${renderSafe(ato.numero_ato, `#${idx + 1}`)} · ${renderSafe(ato.tipo_transmissao)}`, parts);
         });
       }
 
@@ -600,7 +600,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
         drawEmptyState('Nenhuma garantia identificada na leitura.');
       } else {
         garantias.forEach((g: any, idx: number) => {
-          drawCardBlock(`${idx + 1}. [${renderSafe(g.numero_ato, 'ato não informado')}] ${renderSafe(g.tipo)} — ${statusOf(g)}`,
+          drawCardBlock(`${idx + 1}. [${renderSafe(g.numero_ato, 'ato não informado')}] ${renderSafe(g.tipo)} · ${statusOf(g)}`,
             `Credor: ${renderSafe(g.credor_banco)} | Valor: ${renderSafe(g.valor_garantia)}${g.ato_cancelamento ? ` | Cancelamento: ${renderSafe(g.ato_cancelamento)}` : ''}`,
             statusOf(g) !== 'CANCELADO');
         });
@@ -611,7 +611,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
         drawEmptyState('Nenhuma penhora ou indisponibilidade identificada na leitura.');
       } else {
         penhoras.forEach((p: any, idx: number) => {
-          drawCardBlock(`${idx + 1}. [${renderSafe(p.numero_ato, 'ato não informado')}] ${renderSafe(p.tipo)} — ${statusOf(p)}`,
+          drawCardBlock(`${idx + 1}. [${renderSafe(p.numero_ato, 'ato não informado')}] ${renderSafe(p.tipo)} · ${statusOf(p)}`,
             `Processo/vara: ${renderSafe(p.processo_vara)} | Autor: ${renderSafe(p.autor_exequente)}${p.ato_cancelamento ? ` | Cancelamento: ${renderSafe(p.ato_cancelamento)}` : ''}`,
             statusOf(p) !== 'CANCELADO');
         });
@@ -622,7 +622,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
         drawEmptyState('Nenhum usufruto, servidão ou cláusula restritiva identificado na leitura.');
       } else {
         usufruto.forEach((u: any, idx: number) => {
-          drawCardBlock(`${idx + 1}. [${renderSafe(u.numero_ato, 'ato não informado')}] ${renderSafe(u.tipo)} — ${statusOf(u)}`,
+          drawCardBlock(`${idx + 1}. [${renderSafe(u.numero_ato, 'ato não informado')}] ${renderSafe(u.tipo)} · ${statusOf(u)}`,
             `Beneficiários: ${renderSafe(u.beneficiarios)} | Cláusulas: ${renderSafe(u.clausulas_restritivas)}`);
         });
       }
@@ -645,7 +645,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(7.5);
         pdf.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
-        pdf.text(cleanTextForPDF(`ValidaImóvel — análise automatizada • Matrícula ${renderSafe(ident.matricula, 'S/N')}`), margin, pageHeight - 9);
+        pdf.text(cleanTextForPDF(`ValidaImóvel · análise automatizada · Matrícula ${renderSafe(ident.matricula, 'S/N')}`), margin, pageHeight - 9);
         pdf.text(`Código ${code} • Página ${i} de ${totalPages}`, pageWidth - margin, pageHeight - 9, { align: 'right' });
       }
 
@@ -672,7 +672,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
           <div className="min-w-0 flex-1 space-y-1.5">
             <p className="text-sm text-muted-foreground">Relatório da matrícula</p>
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
-              Matrícula nº {renderSafe(ident.matricula, '—')}
+              Matrícula nº {renderSafe(ident.matricula, '-')}
             </h2>
             <p className="text-sm text-muted-foreground">
               {renderSafe(ident.cartorio_ri, 'Cartório não identificado')}
@@ -829,7 +829,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                     <div className="p-3.5 bg-card border border-border rounded-xl space-y-1">
                       <span className="text-xs font-semibold text-muted-foreground block">Nível de risco</span>
                       <p className="text-xs text-foreground font-semibold truncate">
-                        {scoreRisco === null ? 'Não avaliado' : scoreRisco < 25 ? 'Baixo — sem restrições ativas identificadas' : scoreRisco < 50 ? 'Médio — há pendências a conferir' : 'Alto — exige análise jurídica'}
+                        {scoreRisco === null ? 'Não avaliado' : scoreRisco < 25 ? 'Baixo: sem restrições ativas identificadas' : scoreRisco < 50 ? 'Médio: há pendências a conferir' : 'Alto: exige análise jurídica'}
                       </p>
                     </div>
                   </div>
@@ -1106,10 +1106,10 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                                 <span className="block text-warning font-sans font-semibold">não localizado no texto lido</span>
                               )}
                             </td>
-                            <td className="px-4 py-3">{renderSafe(p?.estado_civil, '—')} {p?.regime_bens ? `(${renderSafe(p.regime_bens)})` : ''}</td>
+                            <td className="px-4 py-3">{renderSafe(p?.estado_civil, '-')} {p?.regime_bens ? `(${renderSafe(p.regime_bens)})` : ''}</td>
                             <td className="px-4 py-3 font-semibold text-foreground">{renderSafe(p?.percentual_propriedade, 'não informada')}</td>
-                            <td className="px-4 py-3">{renderSafe(p?.natureza_propriedade, '—')}</td>
-                            <td className="px-4 py-3 font-mono">{renderSafe(p?.ato_aquisicao, '—')}</td>
+                            <td className="px-4 py-3">{renderSafe(p?.natureza_propriedade, '-')}</td>
+                            <td className="px-4 py-3 font-mono">{renderSafe(p?.ato_aquisicao, '-')}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1235,7 +1235,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                         )}
                         {o?.ato_cancelamento && <p className="text-muted-foreground"><strong className="text-foreground">Cancelado por:</strong> {renderSafe(o.ato_cancelamento)}</p>}
                         {statusOf(o) === 'INDEFINIDO' && (
-                          <p className="text-warning font-semibold">Aparece como cancelado, mas o ato de cancelamento não foi identificado — confira na certidão.</p>
+                          <p className="text-warning font-semibold">Aparece como cancelado, mas o ato de cancelamento não foi identificado. Confira na certidão.</p>
                         )}
                         {o?._ato_nao_confirmado && <p className="text-warning font-semibold">Número do ato não localizado no texto lido.</p>}
                         {o?.detalhes && <p className="text-muted-foreground leading-relaxed">{renderSafe(o.detalhes)}</p>}
@@ -1259,7 +1259,7 @@ _Análise automatizada por IA — confira na certidão atualizada._`;
                   {averb.map((a: any, i: number) => (
                     <div key={i} className="p-3 bg-secondary rounded-xl text-xs space-y-1">
                       <div className="flex items-center justify-between gap-2 font-semibold text-foreground">
-                        <span>{renderSafe(a?.numero_averbacao, `#${i + 1}`)} — {renderSafe(a?.tipo, 'Averbação')}</span>
+                        <span>{renderSafe(a?.numero_averbacao, `#${i + 1}`)} · {renderSafe(a?.tipo, 'Averbação')}</span>
                         <span className="text-muted-foreground font-normal shrink-0">{renderSafe(a?.data, '')}</span>
                       </div>
                       <p className="text-muted-foreground">{renderSafe(a?.descricao || a?.observacoes)}</p>

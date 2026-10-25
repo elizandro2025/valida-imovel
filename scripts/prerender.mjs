@@ -111,15 +111,48 @@ while (queue.length > 0) {
   if (!ready) throw new Error(`A página ${route} não terminou de renderizar. Erros: ${errors.join(' | ')}`);
   await sleep(250);
 
-  const data = await evaluate(`(() => ({
-    html: '<!DOCTYPE html>\\n' + document.documentElement.outerHTML,
-    title: document.title,
-    description: document.querySelector('meta[name="description"]')?.content || '',
-    canonical: document.querySelector('link[rel="canonical"]')?.href || '',
-    robots: document.querySelector('meta[name="robots"]')?.content || '',
-    text: document.querySelector('main')?.innerText || '',
-    links: [...document.querySelectorAll('a[href]')].map(a => a.getAttribute('href')),
-  }))()`);
+  // Separa textos vizinhos com um comentário vazio, como o HTML que o React gera no servidor. Sem isso, "Texto {variável}"
+  // vira um nó só no HTML e o React não consegue reaproveitar a página ao abrir (main.tsx usa hydrateRoot).
+  await evaluate(`(() => {
+    const walker = document.createTreeWalker(document.getElementById('root'), NodeFilter.SHOW_TEXT);
+    const before = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (node.nextSibling && node.nextSibling.nodeType === Node.TEXT_NODE) before.push(node);
+    }
+    for (const node of before) node.parentNode.insertBefore(document.createComment(' '), node.nextSibling);
+  })()`);
+
+  // A página fica dentro do <Suspense> do App.tsx, que o React reconhece pelas marcas <!--$--> e <!--/$-->.
+  // Ela começa logo depois da área de notificações (Toaster), que fica fora do Suspense.
+  const marked = await evaluate(`(() => {
+    const root = document.getElementById('root');
+    const toaster = root.querySelector(':scope > [role="region"]');
+    if (!toaster) return false;
+    root.insertBefore(document.createComment('$'), toaster.nextSibling);
+    root.appendChild(document.createComment('/$'));
+    return true;
+  })()`);
+  if (!marked) throw new Error(`Estrutura do app mudou em ${route}: área de notificações não encontrada para marcar o Suspense (ver App.tsx).`);
+
+  const data = await evaluate(`(() => {
+    const html = '<!DOCTYPE html>\\n' + document.documentElement.outerHTML;
+    // Seções com content-visibility: auto (.cv-auto) ficam fora do innerText até serem desenhadas:
+    // mostra tudo só para ler o texto do llms-full.txt (o HTML acima já foi copiado sem esta regra)
+    const showAll = document.createElement('style');
+    showAll.textContent = '.cv-auto { content-visibility: visible !important; }';
+    document.head.appendChild(showAll);
+    const text = document.querySelector('main')?.innerText || '';
+    showAll.remove();
+    return {
+      html,
+      title: document.title,
+      description: document.querySelector('meta[name="description"]')?.content || '',
+      canonical: document.querySelector('link[rel="canonical"]')?.href || '',
+      robots: document.querySelector('meta[name="robots"]')?.content || '',
+      text,
+      links: [...document.querySelectorAll('a[href]')].map(a => a.getAttribute('href')),
+    };
+  })()`);
 
   if (errors.length > 0) throw new Error(`Erro de JavaScript em ${route}: ${errors.join(' | ')}`);
   if (/noindex/.test(data.robots)) throw new Error(`A página pública ${route} saiu com noindex.`);
@@ -205,7 +238,7 @@ fs.writeFileSync(path.join(DIST, 'llms.txt'), llms);
 
 const full = [...pages.entries()].map(([route, data]) =>
   `# ${data.title}\nURL: ${SITE}${route === '/' ? '/' : route}\n\n${data.text.replace(/\n{3,}/g, '\n\n').trim()}\n`).join('\n---\n\n');
-fs.writeFileSync(path.join(DIST, 'llms-full.txt'), `# ValidaImóvel — conteúdo das páginas públicas\n\n${facts.map(f => `- ${f}`).join('\n')}\n\n---\n\n${full}`);
+fs.writeFileSync(path.join(DIST, 'llms-full.txt'), `# ValidaImóvel: conteúdo das páginas públicas\n\n${facts.map(f => `- ${f}`).join('\n')}\n\n---\n\n${full}`);
 
 console.log(`\nPré-renderizadas ${pages.size} páginas; sitemap.xml, llms.txt e llms-full.txt gerados.`);
 process.exit(0);

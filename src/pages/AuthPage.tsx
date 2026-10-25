@@ -274,7 +274,7 @@ export const AuthPage: React.FC = () => {
           </div>
 
           <div className="text-xs text-muted-foreground font-medium">
-            © {new Date().getFullYear()} ValidaImóvel — Todos os direitos reservados.
+            © {new Date().getFullYear()} ValidaImóvel. Todos os direitos reservados.
           </div>
         </div>
       </div>

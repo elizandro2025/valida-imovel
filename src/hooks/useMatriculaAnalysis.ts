@@ -157,8 +157,8 @@ export function useMatriculaAnalysis() {
         identificacao_geral: {
           matricula: '45.210',
           cartorio_ri: '1º Oficial de Registro de Imóveis e Anexos',
-          comarca: 'Ribeirão Preto / Luis Antônio — SP',
-          livro: '2 — Registro Geral',
+          comarca: 'Ribeirão Preto / Luís Antônio, SP',
+          livro: '2, Registro Geral',
           folha: '01 a 04',
           data_abertura: '18/06/1998',
           tipo_imovel_analisado: 'RURAL (Fazenda de Produção Agrícola e Preservação Ambiental)',
@@ -172,12 +172,12 @@ export function useMatriculaAnalysis() {
           data_ultima_atualizacao: '28/07/2026'
         },
         caracteristicas_fisicas: {
-          endereco_completo: 'Estrada Municipal LUIS-040, Km 12 — Zona Rural, Luis Antônio / Ribeirão Preto — SP — CEP 14210-000',
+          endereco_completo: 'Estrada Municipal LUIS-040, km 12, zona rural, Luís Antônio/SP, CEP 14210-000',
           denominacao_imovel: 'FAZENDA SANTA MARIA DO RIO PARDO',
-          area_total_m2: '4.500.000,00 m² (450,00 Hectares — 185,95 Alqueires Paulistas)',
+          area_total_m2: '4.500.000,00 m² (450,00 hectares ou 185,95 alqueires paulistas)',
           area_total_hectares: '450,00 Hectares',
           area_outras_unidades: '185,95 Alqueires Paulistas (2,42 ha/alq)',
-          loteamento_quadra_lote: 'Gleba A — Colônia Santa Maria (Gleba Agrícola Autônoma)',
+          loteamento_quadra_lote: 'Gleba A, Colônia Santa Maria (gleba agrícola autônoma)',
           perimetros_confrontacoes: 'Inicia no Vértice V-01 de coordenadas UTM E=214.560,12m e N=7.623.400,45m (SIRGAS 2000 Fuso 22S); segue confrontando ao Norte com a Fazenda Bela Vista (Matrícula 12.400); ao Leste com a calha principal do Rio Pardo; ao Sul com a faixa de domínio da Estrada LUIS-040; e ao Oeste com o Sítio Primavera (Matrícula 33.102).',
           benfeitorias: 'Sede histórica de 450m² de área construída, 2 galpões industriais para maquinários e fertilizantes, casa de colono, curral completo com balança digital, poço artesiano profundo (180m), outorga de captação de água DAEE ativa e barramento de contenção legalizado.',
           descricao_legal: 'Gleba de terra rural denominada Fazenda Santa Maria do Rio Pardo, com área total de 450,00 hectares (4.500.000,00m²), situada no município de Luis Antônio, comarca de Ribeirão Preto/SP, com perímetro devidamente georreferenciado e certificado pelo INCRA.',
@@ -193,37 +193,37 @@ export function useMatriculaAnalysis() {
           possui_georreferenciamento: true,
           situacao_certificacao: 'CERTIFICADO E HOMOLOGADO PELO INCRA (Código SIGEF: 8f92c91a-4410-4b71-9b12-1234567890ab)',
           status_sigef: 'CERTIFICADO E HOMOLOGADO PELO INCRA (Código SIGEF: 8f92c91a-4410-4b71-9b12-1234567890ab)',
-          codigo_incra: '950.123.456.789-0 (CCIR 2025/2026 Quitado)',
+          codigo_incra: '950.123.456.789-0',
           codigo_ccir: '950.123.456.789-0',
-          car_registro: 'SP-3527602-8F92.C91A.4410.4B71 (Status: ATIVO / DEFERIDO no SIMAR-SP)',
+          car_registro: 'SP-3527602-8F92.C91A.4410.4B71 (citado na AV-4)',
           codigo_car: 'SP-3527602-8F92.C91A.4410.4B71',
-          codigo_itr_nirf: '8.765.432-1 (Certidão Negativa de Débitos Federais Ativa)',
-          responsavel_tecnico: 'Eng. Agrônomo Roberto Carlos Mendes (CREA-SP 506.123/D — ART nº 928374)',
-          sistema_geodesico: 'SIRGAS 2000 (Elipsoide de Referência GRSa80 — Fuso 22S)',
+          codigo_itr_nirf: '8.765.432-1',
+          responsavel_tecnico: 'Eng. Agrônomo Roberto Carlos Mendes (CREA-SP 506.123/D, ART nº 928374)',
+          sistema_geodesico: 'SIRGAS 2000 (elipsoide GRS80, fuso 22S)',
           coordenadas_geograficas: '18 Vértices UTM (V-01 a V-18). V-01: E=214.560,12m / N=7.623.400,45m | V-05: E=215.110,80m / N=7.624.010,12m | Azimute Principal: 42°15\'30".'
         },
         regimes_especiais: {
           eh_condominio: false,
           eh_loteamento: false,
           eh_imovel_rural: true,
-          reserva_legal_averbada: 'SIM — Averbada sob AV-4/45.210 (Área de 90,00 Hectares — 20% da propriedade conforme Art. 12 do Código Florestal - Lei 12.651/12)',
-          app_preservacao_permanente: 'SIM — 35,50 Hectares (Mata Ciliar e Foz do Rio Pardo com Faixa Mínima de 50 metros)',
+          reserva_legal_averbada: 'Sim, averbada sob AV-4/45.210: 90,00 hectares (20% da propriedade, art. 12 do Código Florestal, Lei 12.651/12)',
+          app_preservacao_permanente: 'Sim, 35,50 hectares (mata ciliar do Rio Pardo, faixa mínima de 50 metros)',
           detalhes_regime: 'Propriedade Agrícola Privada não sujeita a Condomínio ou Loteamento'
         },
         imoveis_especiais_spu_marinha: {
           terreno_marinha: false,
           regime_spu: 'NÃO CONSTA (Imóvel Alodial de Domínio Privado)',
           faixa_fronteira: false,
-          faixa_dominio: 'SIM — Faixa de Domínio Averbada da Rodovia LUIS-040 (AV-2/45.210)',
+          faixa_dominio: 'Sim, faixa de domínio da Estrada LUIS-040 averbada (AV-2/45.210)',
           tombamento: false,
           terra_indigena_quilombola: false,
           laudemic_inscrito: false
         },
         registro_ambiental_recursos_hidricos: {
-          reserva_legal_averbada: 'SIM — 90,00 Hectares (20% Averbado sob AV-4 e Cadastrado no CAR)',
-          area_preservacao_permanente_app: 'SIM — 35,50 Hectares (Mata Ciliar do Rio Pardo)',
-          embargos_ambientais: 'NENHUM EMBARGO REGISTRADO — Certidão Negativa IBAMA nº 2026/09123',
-          outorga_agua: 'SIM — Portaria DAEE/SECIMA nº 45.109/2024 para Captação Superficial no Rio Pardo (Vazão 120 m³/h)'
+          reserva_legal_averbada: 'Sim, 90,00 hectares (20%) averbados sob AV-4',
+          area_preservacao_permanente_app: 'Sim, 35,50 hectares (mata ciliar do Rio Pardo)',
+          embargos_ambientais: 'Nenhum embargo averbado na matrícula',
+          outorga_agua: 'Sim, Portaria DAEE nº 45.109/2024 para captação superficial no Rio Pardo (vazão de 120 m³/h)'
         },
         proprietarios_atuais: [
           {
@@ -252,17 +252,20 @@ export function useMatriculaAnalysis() {
           { numero_ato: 'AV-2 / 45.210', tipo_transmissao: 'Averbação de Demarcação & Medição', adquirentes: 'Henrique de Almeida Prado', transmitentes: 'Eng. Agrônomo Resp. Técnico (ART CREA 928374)', data_registro: '10/04/2004', valor_transacao: 'N/A (Ato sem valor declaratório)', observacoes: 'Regularização perimétrica e retificação de área' },
           { numero_ato: 'R-3 / 45.210', tipo_transmissao: 'Escritura Pública de Compra e Venda de Fração', adquirentes: 'Henrique de Almeida Prado e Beatriz V. Prado', transmitentes: 'Irmãos Co-herdeiros (Luiz e Carlos Prado)', data_registro: '15/09/2010', valor_transacao: 'R$ 2.400.000,00', observacoes: 'Consolidação de 100% da propriedade no casal' },
           { numero_ato: 'AV-4 / 45.210', tipo_transmissao: 'Averbação de Reserva Legal & Registro CAR', adquirentes: 'Secretaria do Meio Ambiente / SIMAR-SP', transmitentes: 'Henrique de Almeida Prado', data_registro: '22/11/2014', valor_transacao: 'N/A (Compromisso Ambiental)', observacoes: 'Formalização de 90ha de Reserva Legal Florestal' },
-          { numero_ato: 'AV-5 / 45.210', tipo_transmissao: 'Certificação Georreferenciada SIGEF/INCRA', adquirentes: 'INCRA — Instituto Nacional de Colonização e Reforma Agrária', transmitentes: 'Henrique de Almeida Prado', data_registro: '05/08/2019', valor_transacao: 'N/A (Homologação Técnica)', observacoes: 'Aprovação definitiva no sistema SIGEF/INCRA' },
+          { numero_ato: 'AV-5 / 45.210', tipo_transmissao: 'Certificação Georreferenciada SIGEF/INCRA', adquirentes: 'INCRA (Instituto Nacional de Colonização e Reforma Agrária)', transmitentes: 'Henrique de Almeida Prado', data_registro: '05/08/2019', valor_transacao: 'N/A (Homologação Técnica)', observacoes: 'Aprovação definitiva no sistema SIGEF/INCRA' },
           { numero_ato: 'AV-6 / 45.210', tipo_transmissao: 'Baixa & Quitação de Cédula Rural Hipotecária', adquirentes: 'Henrique de Almeida Prado', transmitentes: 'Banco do Brasil S/A', data_registro: '12/03/2023', valor_transacao: 'R$ 1.200.000,00 (Quitação Total)', observacoes: 'Termo de quitação emitido pela Gerência Agro do BB' }
         ],
         onus_garantias_financeiras: [
-          { numero_ato: 'AV-6 / 45.210', tipo: 'Cédula Rural Hipotecária (CANCELADA E QUITADA)', credor_banco: 'Banco do Brasil S/A', valor_garantia: 'R$ 1.200.000,00', status: 'CANCELADO' }
+          {
+            numero_ato: 'AV-6 / 45.210', tipo: 'Cédula Rural Hipotecária', credor_banco: 'Banco do Brasil S/A', valor_garantia: 'R$ 1.200.000,00',
+            ato_cancelamento: 'AV-6 / 45.210', data_cancelamento: '12/03/2023', status: 'CANCELADO',
+            trecho_origem: 'AV-6/45.210. Fica cancelada a cédula rural hipotecária em favor do Banco do Brasil S/A, em virtude de quitação.',
+            _trecho_confirmado: true,
+          }
         ],
-        indisponividades_e_penhoras: [
-          { numero_ato: 'CERTIDÃO CNIB Nº 2026.0728-091', tipo: 'Consulta de Indisponibilidade Registral CNIB', processo_vara: 'Varredura unificada nacional nos 27 Tribunais estaduais e federais', autor_exequente: 'Central Nacional de Indisponibilidade de Bens (CNIB)', status: 'CANCELADO', detalhes: 'NENHUMA PENHORA OU INDISPONIBILIDADE ATIVA. Certidão Negativa Emitida com Sucesso.' }
-        ],
+        indisponividades_e_penhoras: [],
         usufruto_servidoes_e_direitos: [
-          { numero_ato: 'AV-2 / 45.210', tipo: 'Servidão Administrativa de Passagem de Linha de Transmissão', status: 'ATIVO', beneficiarios: 'CPFL Paulista — Companhia Paulista de Força e Luz', clausulas_restritivas: 'Faixa de segurança de 15 metros de largura ao longo do limite Sul da propriedade' }
+          { numero_ato: 'AV-2 / 45.210', tipo: 'Servidão Administrativa de Passagem de Linha de Transmissão', status: 'ATIVO', beneficiarios: 'CPFL Paulista (Companhia Paulista de Força e Luz)', clausulas_restritivas: 'Faixa de segurança de 15 metros de largura ao longo do limite Sul da propriedade', trecho_origem: 'AV-2/45.210. Servidão administrativa de passagem de linha de transmissão em favor da CPFL Paulista, faixa de 15 metros ao longo do limite Sul.', _trecho_confirmado: true }
         ],
         onus_gravames_ativos: [],
         averbacoes_diversas: [
@@ -273,10 +276,10 @@ export function useMatriculaAnalysis() {
         parecer_analise: {
           score_risco: 8,
           nivel_risco: 'BAIXO',
-          status_juridico: 'REGULAR — IMÓVEL RURAL TOTALMENTE CERTIFICADO NO SIGEF/INCRA E LIVRE DE ÔNUS',
-          explicacao_descomplicada: 'EXCELENTE NOTÍCIA: A Fazenda Santa Maria é um imóvel rural modelo! A propriedade está 100% regularizada no nome do Dr. Henrique e Dra. Beatriz Prado. O Georreferenciamento está homologado no SIGEF/INCRA (AV-5), o CAR e a Reserva Legal de 20% (90 ha) estão formalmente averbados na matrícula (AV-4), e a antiga Cédula Rural com o Banco do Brasil foi quitada e baixada (AV-6). Não há dívidas, penhoras ou embargos ambientais.',
-          resumo_geral: 'Propriedade rural de 450,00 hectares com cadeia dominial ininterrupta desde 1998. Georreferenciamento aprovado no SIGEF/INCRA, CAR deferido no SIMAR-SP, CCIR/ITR quitados e ausência total de apontamentos no sistema CNIB.',
-          recomendacao_final: 'IMÓVEL RURAL 100% SEGURO para compra, venda, lavratura de escritura, operação de Barter, outorga em garantia agrícola ou arrendamento rural.',
+          status_juridico: 'Regular: georreferenciamento certificado e sem ônus ativos na matrícula',
+          explicacao_descomplicada: 'Boa notícia: a matrícula não mostra ônus ativos. A Fazenda Santa Maria está em nome de Henrique e Beatriz Prado, 50% cada (R-3). O georreferenciamento foi certificado no SIGEF/INCRA (AV-5), a reserva legal de 90 ha está averbada (AV-4) e a cédula rural com o Banco do Brasil foi quitada e baixada (AV-6). Não aparecem penhoras, indisponibilidades ou embargos averbados.',
+          resumo_geral: 'Propriedade rural de 450,00 hectares com cadeia dominial contínua desde 1998, georreferenciamento certificado no SIGEF/INCRA, reserva legal averbada e nenhuma penhora, indisponibilidade ou embargo averbado na matrícula.',
+          recomendacao_final: 'Matrícula sem ônus ativos. Antes da escritura, peça a certidão atualizada da matrícula e as certidões pessoais dos vendedores.',
           riscos_identificados: [],
           pendencias_formais: [],
           regularidades_e_conformidade: [
@@ -284,7 +287,7 @@ export function useMatriculaAnalysis() {
             'Reserva Legal de 20% (90,00 hectares) averbada sob AV-4 e deferida no CAR',
             'Titularidade 100% consolidada por escritura pública e formal de partilha',
             'Cancelamento e baixa de Cédula Rural Pignoraticia/Hipotecária averbada sob AV-6',
-            'Ausência de indisponibilidades judiciais (CNIB) ou embargos ambientais IBAMA/CETESB'
+            'Nenhuma penhora, indisponibilidade ou embargo ambiental averbado na matrícula'
           ]
         }
       };
@@ -294,7 +297,7 @@ export function useMatriculaAnalysis() {
           matricula: '18.920',
           cartorio_ri: 'Ofício de Registro de Imóveis',
           comarca: 'Barretos/SP',
-          livro: '2 — Registro Geral',
+          livro: '2, Registro Geral',
           folha: '12',
           data_abertura: '10/05/2001',
           tipo_imovel_analisado: 'RURAL (Sítio com Embargo Ambiental)',
@@ -302,7 +305,7 @@ export function useMatriculaAnalysis() {
           serventia: 'CNS: 12.010-1'
         },
         caracteristicas_fisicas: {
-          endereco_completo: 'Rodovia Faria Lima, Km 410 — Zona Rural, Barretos/SP',
+          endereco_completo: 'Rodovia Faria Lima, km 410, zona rural, Barretos/SP',
           denominacao_imovel: 'Sítio Boa Vista',
           area_total_m2: '1.200.000,00 m² (120,00 Hectares)',
           loteamento_quadra_lote: 'Lote 04',
@@ -319,10 +322,14 @@ export function useMatriculaAnalysis() {
           { numero_ato: 'R-1', tipo_transmissao: 'Compra e Venda', adquirentes: 'José Carlos da Silva', transmitentes: 'Antônio Pedroso', data_ato: '10/05/2001' }
         ],
         onus_garantias_financeiras: [
-          { numero_ato: 'R-3', tipo: 'Cédula Rural Hipotecária', credor_banco: 'Banco do Brasil S/A', valor_garantia: 'R$ 480.000,00', status: 'ATIVO' }
+          {
+            numero_ato: 'R-3', tipo: 'Cédula Rural Hipotecária', credor_banco: 'Banco do Brasil S/A', valor_garantia: 'R$ 480.000,00', status: 'ATIVO',
+            trecho_origem: 'R-3/18.920. Cédula rural hipotecária em favor do Banco do Brasil S/A, valor de R$ 480.000,00.',
+            _trecho_confirmado: true,
+          }
         ],
         indisponividades_e_penhoras: [
-          { numero_ato: 'AV-4', tipo: 'Embargo Ambiental & Auto de Infração IBAMA', processo_vara: 'Processo IBAMA nº 02001.004521/2022 — Desmatamento não autorizado de APP', autor_exequente: 'IBAMA / Ministério Público Federal', status: 'ATIVO' }
+          { numero_ato: 'AV-4', tipo: 'Embargo Ambiental & Auto de Infração IBAMA', processo_vara: 'Processo IBAMA nº 02001.004521/2022, desmatamento não autorizado de APP', autor_exequente: 'IBAMA / Ministério Público Federal', status: 'ATIVO', trecho_origem: 'AV-4/18.920. Embargo ambiental determinado pelo IBAMA, processo 02001.004521/2022, por desmatamento não autorizado de APP.', _trecho_confirmado: true }
         ],
         usufruto_servidoes_e_direitos: [],
         onus_gravames_ativos: [
@@ -332,12 +339,24 @@ export function useMatriculaAnalysis() {
         parecer_analise: {
           score_risco: 88,
           nivel_risco: 'CRÍTICO',
-          status_juridico: 'RESTRIÇÃO GRAVE — EMBARGO AMBIENTAL IBAMA & HIPOTECA RURAL',
+          status_juridico: 'Restrição grave: embargo ambiental do IBAMA e hipoteca rural ativa',
           explicacao_descomplicada: 'ATENÇÃO: Este imóvel rural possui 2 pendências graves: Embargo Ambiental averbado pelo IBAMA (AV-4) por desmatamento de APP e Cédula Rural Hipotecária ativa com o Banco do Brasil (R-3).',
           resumo_geral: 'Imóvel com grave autuação ambiental e hipoteca bancária sem quitação.',
           recomendacao_final: 'NÃO RECOMENDADO para compra sem prévia regularização ambiental junto ao IBAMA e quitação do débito bancário.',
           riscos_identificados: [
-            { descricao: 'Embargo Ambiental IBAMA averbado sob AV-4', tipo_risco: 'CRÍTICO', impacto: 'Impede financiamento agrícola e comercialização da produção', acao_recomendada: 'Firmar Termo de Ajustamento de Conduta (TAC) com o órgão ambiental' }
+            {
+              descricao: 'Embargo ambiental do IBAMA averbado sob AV-4', tipo_risco: 'ALTO', numero_ato: 'AV-4',
+              trecho_origem: 'AV-4/18.920. Embargo ambiental determinado pelo IBAMA, processo 02001.004521/2022, por desmatamento não autorizado de APP.',
+              _trecho_confirmado: true,
+              impacto: 'Impede financiamento agrícola e comercialização da produção', acao_recomendada: 'Firmar Termo de Ajustamento de Conduta (TAC) com o órgão ambiental',
+            },
+            {
+              descricao: 'Cédula rural hipotecária ativa em favor do Banco do Brasil (R-3)', tipo_risco: 'ALTO', numero_ato: 'R-3',
+              trecho_origem: 'R-3/18.920. Cédula rural hipotecária em favor do Banco do Brasil S/A, valor de R$ 480.000,00.',
+              _trecho_confirmado: true,
+              impacto: 'O imóvel garante a dívida; sem a baixa, o banco pode executar a garantia mesmo depois da venda',
+              acao_recomendada: 'Exigir a quitação e a averbação de cancelamento da cédula antes da escritura',
+            },
           ],
           pendencias_formais: ['Falta de georreferenciamento certificado no SIGEF', 'Certidão Negativa de Debitos do ITR'],
           regularidades_e_conformidade: []

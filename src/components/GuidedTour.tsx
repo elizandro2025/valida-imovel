@@ -53,7 +53,7 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     target: 'step-4',
-    title: 'Ônus Reais, Penhoras & Restrições Judiciais (CNIB)',
+    title: 'Ônus reais, penhoras e indisponibilidades averbadas',
     badge: 'Passo 4 de 6 • Módulos 9, 10 e 11',
     icon: AlertTriangle,
     tabValue: 'onus',

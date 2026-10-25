@@ -407,7 +407,7 @@ export const PixPaymentPage: React.FC = () => {
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
                           </span>
                           <span className="text-foreground/80">
-                            {pixPayment ? 'Aguardando o pagamento — o acesso é liberado automaticamente.' : 'Preencha o CPF para gerar o Pix.'}
+                            {pixPayment ? 'Aguardando o pagamento. O acesso é liberado automaticamente.' : 'Preencha o CPF para gerar o Pix.'}
                           </span>
                         </div>
                       </div>
@@ -474,7 +474,7 @@ export const PixPaymentPage: React.FC = () => {
                           onClick={handleGeneratePixPayment}
                           className="w-full bg-primary hover:bg-primary text-white font-semibold text-sm gap-2 transition-all"
                         >
-                          <QrCode className="w-4 h-4" /> Gerar Chave Pix — {offer.priceFormatted}
+                          <QrCode className="w-4 h-4" /> Gerar Pix de {offer.priceFormatted}
                         </Button>
                       )}
 

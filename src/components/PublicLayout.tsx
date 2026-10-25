@@ -8,7 +8,7 @@ import { COMPANY_CONFIG } from '@/config/companyConfig';
 
 // Rodapé das páginas públicas: liga todos os guias e páginas legais (ajuda buscadores a descobrir o conteúdo)
 export const SiteFooter: React.FC = () => (
-  <footer className="bg-background border-t border-border px-4 sm:px-6 lg:px-8 pt-12 pb-24 sm:pb-12 text-sm">
+  <footer className="cv-auto bg-background border-t border-border px-4 sm:px-6 lg:px-8 pt-12 pb-24 sm:pb-12 text-sm">
     <div className="max-w-6xl mx-auto space-y-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2 md:col-span-1 space-y-3">

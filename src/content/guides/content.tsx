@@ -30,7 +30,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
     summary:
       'A matrícula é a ficha oficial do imóvel no Cartório de Registro de Imóveis. Para lê-la, comece pela descrição do imóvel, ' +
       'identifique o dono atual no último registro de transmissão e procure, ato por ato, hipotecas, alienações fiduciárias, penhoras ' +
-      'e indisponibilidades — conferindo se cada uma foi cancelada por uma averbação posterior.',
+      'e indisponibilidades, conferindo se cada uma foi cancelada por uma averbação posterior.',
     sections: [
       {
         id: 'o-que-e',
@@ -39,7 +39,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
           <>
             <p>
               Cada imóvel tem uma matrícula própria, com número único no cartório da região onde ele fica. Tudo o que acontece com ele
-              juridicamente — vendas, heranças, financiamentos, penhoras — é anotado ali, em ordem cronológica (Lei 6.015/73, art. 176).
+              juridicamente (vendas, heranças, financiamentos, penhoras) é anotado ali, em ordem cronológica (Lei 6.015/73, art. 176).
             </p>
             <p>
               A certidão de matrícula é a cópia dessa ficha emitida pelo cartório. Pode ser pedida no balcão ou pela internet, no
@@ -96,7 +96,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
             <p>São os pontos que mais pesam numa compra:</p>
             <List>
               <li><B>Hipoteca:</B> o imóvel garante uma dívida; sem pagamento, o credor pode levá-lo a leilão.</li>
-              <li><B>Alienação fiduciária:</B> comum em financiamentos — até a quitação, a propriedade fica com o banco. <GuideLink to="/guia/alienacao-fiduciaria-na-matricula">Entenda</GuideLink>.</li>
+              <li><B>Alienação fiduciária:</B> comum em financiamentos. Até a quitação, a propriedade fica com o banco. <GuideLink to="/guia/alienacao-fiduciaria-na-matricula">Entenda</GuideLink>.</li>
               <li><B>Penhora, arresto e indisponibilidade:</B> bloqueios determinados pela Justiça ou por órgãos públicos. <GuideLink to="/guia/penhora-na-matricula">Veja os riscos</GuideLink>.</li>
               <li><B>Usufruto e cláusulas:</B> usufruto, inalienabilidade e impenhorabilidade limitam o uso ou a venda.</li>
             </List>
@@ -119,7 +119,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
       },
     ],
     faq: [
-      { q: 'Onde fica o nome do dono na matrícula?', a: 'No último registro (R) de transmissão que não foi cancelado depois — compra e venda, doação, partilha ou adjudicação. O nome no cabeçalho é o do proprietário na abertura da matrícula, que pode já ter vendido o imóvel.' },
+      { q: 'Onde fica o nome do dono na matrícula?', a: 'No último registro (R) de transmissão que não foi cancelado depois: compra e venda, doação, partilha ou adjudicação. O nome no cabeçalho é o do proprietário na abertura da matrícula, que pode já ter vendido o imóvel.' },
       { q: 'Como saber se uma hipoteca foi cancelada?', a: 'Procure uma averbação posterior que mencione o cancelamento, a baixa ou a quitação daquela hipoteca, citando o número do registro. Sem essa averbação, a hipoteca continua valendo.' },
       { q: 'A matrícula mostra dívidas de IPTU ou condomínio?', a: 'Normalmente não. Débitos de IPTU e de condomínio são conferidos em certidões da prefeitura e declaração do condomínio; só aparecem na matrícula se virarem penhora averbada.' },
     ],
@@ -172,7 +172,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
           <p>
             Cada lançamento recebe a letra R (registro) ou AV (averbação), seguida de um número de ordem e do número da matrícula
             (Lei 6.015/73, art. 232). A ordem é única para os dois tipos, por isso é comum ver R-1, AV-2, AV-3, R-4. Uma averbação
-            de cancelamento sempre cita o número do ato que cancela — é assim que se confirma que um ônus foi baixado.
+            de cancelamento sempre cita o número do ato que cancela. É assim que se confirma que um ônus foi baixado.
           </p>
         ),
       },
@@ -182,7 +182,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
         body: (
           <p>
             A propriedade só se transfere com o <B>registro</B> do título no Registro de Imóveis (Código Civil, art. 1.245). Enquanto a
-            escritura não é registrada, o vendedor continua sendo o dono perante todos — e dívidas dele podem atingir o imóvel. Por isso,
+            escritura não é registrada, o vendedor continua sendo o dono perante todos, e dívidas dele podem atingir o imóvel. Por isso,
             depois de assinar, registre a escritura o quanto antes.
           </p>
         ),
@@ -231,7 +231,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
           <p>
             Pago o financiamento, o credor tem 30 dias para entregar o termo de quitação, e o cartório cancela o registro da propriedade
             fiduciária à vista desse documento (Lei 9.514/97, art. 25). Se a matrícula não traz a averbação de cancelamento, a garantia
-            ainda vale — mesmo que o vendedor diga que já pagou. Peça o termo de quitação e a certidão atualizada.
+            ainda vale, mesmo que o vendedor diga que já pagou. Peça o termo de quitação e a certidão atualizada.
           </p>
         ),
       },
@@ -338,7 +338,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
         title: 'Ônus reais ou inteiro teor?',
         body: (
           <List>
-            <li><B>Inteiro teor:</B> cópia completa da matrícula, com todo o histórico — ideal para entender a cadeia de proprietários.</li>
+            <li><B>Inteiro teor:</B> cópia completa da matrícula, com todo o histórico. Ideal para entender a cadeia de proprietários.</li>
             <li><B>Ônus reais:</B> foca nas restrições vigentes. Em muitos cartórios, a certidão de inteiro teor já informa os ônus.</li>
           </List>
         ),
@@ -349,7 +349,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
         body: (
           <p>
             Para a escritura, a certidão precisa ter sido emitida há no máximo 30 dias (Decreto 93.240/86, art. 1º, IV). Para analisar
-            um imóvel antes de fazer proposta, uma certidão um pouco mais antiga serve, mas peça uma nova antes de assinar — uma penhora
+            um imóvel antes de fazer proposta, uma certidão um pouco mais antiga serve, mas peça uma nova antes de assinar, porque uma penhora
             pode ser averbada a qualquer momento.
           </p>
         ),
@@ -385,9 +385,9 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
         title: 'Certidões do imóvel',
         body: (
           <List>
-            <li><B>Matrícula atualizada com ônus reais</B> — no máximo 30 dias para a escritura (<GuideLink to="/guia/certidao-de-onus-reais">veja como pedir</GuideLink>);</li>
+            <li><B>Matrícula atualizada com ônus reais</B>, emitida há no máximo 30 dias para a escritura (<GuideLink to="/guia/certidao-de-onus-reais">veja como pedir</GuideLink>);</li>
             <li><B>Certidão negativa de débitos de IPTU</B> (prefeitura) ou, se rural, certidão do ITR e o CCIR;</li>
-            <li><B>Declaração de quitação do condomínio</B>, assinada pelo síndico — as dívidas de condomínio acompanham o imóvel (Código Civil, art. 1.345);</li>
+            <li><B>Declaração de quitação do condomínio</B>, assinada pelo síndico, porque as dívidas de condomínio acompanham o imóvel (Código Civil, art. 1.345);</li>
             <li>em imóveis rurais, também o CAR e, quando exigido, o georreferenciamento certificado no SIGEF.</li>
           </List>
         ),
@@ -425,7 +425,7 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
             <li>Peça as certidões do imóvel e dos vendedores.</li>
             <li>Resolva pendências antes de pagar: quitação de financiamento, cancelamento de penhoras, débitos de IPTU e condomínio.</li>
             <li>Assine a escritura (ou o contrato com força de escritura, nos financiamentos) com certidão de ônus de até 30 dias.</li>
-            <li>Registre o título na matrícula o quanto antes — só o registro transfere a propriedade.</li>
+            <li>Registre o título na matrícula o quanto antes: só o registro transfere a propriedade.</li>
           </ol>
         ),
       },

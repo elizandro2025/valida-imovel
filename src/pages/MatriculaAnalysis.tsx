@@ -87,7 +87,7 @@ const MatriculaAnalysis: React.FC = () => {
                   </Badge>
                 ) : (
                   <Link to="/pagamento">
-                    <Button size="sm" className="font-semibold">Assinar — {COMPANY_CONFIG.offer.priceFormatted}</Button>
+                    <Button size="sm" className="font-semibold">Assinar por {COMPANY_CONFIG.offer.priceFormatted}</Button>
                   </Link>
                 )}
                 <span className="text-xs text-muted-foreground hidden md:block truncate max-w-[180px] font-medium">{user.email}</span>
@@ -102,7 +102,7 @@ const MatriculaAnalysis: React.FC = () => {
               <Link to="/auth?tab=register">
                 <Button size="sm" className="font-semibold">
                   <span className="sm:hidden">Assinar</span>
-                  <span className="hidden sm:inline">Criar conta — {COMPANY_CONFIG.offer.priceFormatted}</span>
+                  <span className="hidden sm:inline">Criar conta · {COMPANY_CONFIG.offer.priceFormatted}</span>
                 </Button>
               </Link>
             )}

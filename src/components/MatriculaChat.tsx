@@ -61,7 +61,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
     {
       id: '1',
       sender: 'assistant',
-      text: 'Olá! Posso responder dúvidas sobre esta matrícula com base no relatório gerado: titulares, valores, hipotecas, penhoras, áreas e certidões recomendadas. As respostas são automáticas — confira os pontos decisivos na certidão.',
+      text: 'Olá! Posso responder dúvidas sobre esta matrícula com base no relatório gerado: titulares, valores, hipotecas, penhoras, áreas e certidões recomendadas. As respostas são automáticas: confira os pontos decisivos na certidão.',
       timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     }
   ]);
