@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
 import {
   ArrowRight, Ban, BookOpen, Brain, Building2, Check, CheckCircle2, ChevronRight, Compass, FileCode, FileSearch, Gauge, Gavel,
-  Landmark, LogOut, Quote, Scale, Search, ShieldCheck, TrendingUp, Users, XCircle,
+  Landmark, LogOut, Quote, Scale, ShieldCheck, TrendingUp, Users, XCircle,
 } from 'lucide-react';
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { Logo } from '@/components/Logo';
@@ -126,7 +126,7 @@ const FAQS = [
   },
   {
     q: 'Como meus documentos são tratados?',
-    a: 'O PDF é enviado por conexão segura e lido pela API de inteligência artificial do Google. O arquivo não fica guardado nos nossos servidores; o relatório fica salvo na sua conta, em "Minhas análises", e pode ser apagado quando você quiser.',
+    a: 'O PDF é enviado por conexão segura e lido pela API de inteligência artificial do Google. Nem o PDF nem o relatório ficam guardados: a análise aparece só na sua tela e, se quiser guardar, você exporta o relatório em PDF.',
   },
 ];
 
@@ -149,8 +149,8 @@ export const LandingPage: React.FC = () => {
   };
 
   const ctaPath = user ? (user.hasSubscription ? '/app' : '/pagamento') : '/auth?tab=register';
-  const ctaLabel = user ? (user.hasSubscription ? 'Minhas análises' : 'Assinar') : 'Criar conta';
-  const buyLabel = user?.hasSubscription ? 'Ir para minhas análises' : `Assinar por ${offer.priceFormatted}`;
+  const ctaLabel = user ? (user.hasSubscription ? 'Analisar matrícula' : 'Assinar') : 'Criar conta';
+  const buyLabel = user?.hasSubscription ? 'Analisar uma matrícula' : `Assinar por ${offer.priceFormatted}`;
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-white pb-16 sm:pb-0 overflow-x-hidden w-full">
@@ -365,6 +365,7 @@ export const LandingPage: React.FC = () => {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Não consulta cartórios em tempo real, não emite certidões e não substitui a certidão atualizada nem a orientação de um
                   advogado. Ele lê o PDF que você envia e organiza o que está escrito ali, para você decidir mais rápido e saber exatamente o que conferir.
+                  E não guarda nada: nem o PDF nem o relatório ficam salvos depois da análise.
                 </p>
               </div>
             </div>
@@ -461,7 +462,7 @@ export const LandingPage: React.FC = () => {
                     'Ônus ativos, cancelados e a conferir',
                     'Cadeia dominial e proprietários atuais',
                     'Assistente para perguntas sobre a matrícula',
-                    'Relatório em PDF e histórico na conta',
+                    'Relatório em PDF para baixar',
                     'Suporte pelo WhatsApp',
                   ].map(item => (
                     <li key={item} className="flex items-start gap-2"><Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> {item}</li>
@@ -469,7 +470,7 @@ export const LandingPage: React.FC = () => {
                 </ul>
                 <div className="space-y-3 max-w-sm mx-auto">
                   <Link to={ctaPath} className="block">
-                    <Button size="lg" className="w-full gap-2">{user ? (user.hasSubscription ? 'Ir para minhas análises' : 'Assinar agora') : 'Criar conta e assinar'} <ArrowRight className="w-4 h-4" /></Button>
+                    <Button size="lg" className="w-full gap-2">{user ? (user.hasSubscription ? 'Analisar uma matrícula' : 'Assinar agora') : 'Criar conta e assinar'} <ArrowRight className="w-4 h-4" /></Button>
                   </Link>
                   <p className="text-xs text-muted-foreground">Liberação automática após o pagamento · Sem renovação automática</p>
                 </div>

@@ -18,7 +18,8 @@ export type AnalysisProgressCallback = (step: string, progress: number) => void;
 
 const GEO_HINT = /georreferenc|SIGEF|SIRGAS|UTM|v[ée]rtice/i;
 
-// Última leitura do PDF: se a análise falhar depois do OCR, a nova tentativa não lê (nem conta) o arquivo de novo
+// Última leitura do PDF, só na memória desta aba (some ao recarregar): se a análise falhar depois do OCR,
+// a nova tentativa não lê (nem conta) o arquivo de novo
 let lastOcr: { hash: string; text: string; model: string | null; cut: boolean } | null = null;
 
 // A IA às vezes omite uma seção do JSON ou corta a resposta: repete a etapa uma vez antes de mostrar o erro
@@ -37,10 +38,6 @@ async function runTask(task: AnalysisTask, text: string, keys: string[]) {
 export async function analyzeMatricula(file: File, onProgress?: AnalysisProgressCallback): Promise<MatriculaReport> {
   if (isOwnReportPdf(new Uint8Array(await file.arrayBuffer()))) throw new AIServiceError(OWN_REPORT_MESSAGE);
   const hash = await ocrCacheService.computeHash(file);
-
-  // Matrícula já analisada neste navegador: não gasta a cota da IA de novo
-  const cachedReport = ocrCacheService.getCachedReport(hash);
-  if (cachedReport) return cachedReport;
 
   try {
     let ocr = lastOcr?.hash === hash ? lastOcr : null;
@@ -76,7 +73,7 @@ export async function analyzeMatricula(file: File, onProgress?: AnalysisProgress
       },
     );
 
-    ocrCacheService.setCachedReport(hash, report);
+    // O relatório não é guardado em lugar nenhum: só volta para a tela
     lastOcr = null;
     onProgress?.('Análise concluída.', 100);
     return report;

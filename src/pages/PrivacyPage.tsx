@@ -78,7 +78,7 @@ export const PrivacyPage: React.FC = () => {
               )}
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <span>O relatório gerado (não o PDF) fica salvo na sua conta, em "Minhas análises", para você abrir e exportar de novo. Você pode apagar cada análise a qualquer momento; ao excluir a conta, todas são apagadas. Uma cópia temporária também fica no seu navegador e é removida quando você sai da conta.</span>
+                <span>As análises não são guardadas. O relatório aparece apenas na sua tela, durante o uso, e não fica salvo nos nossos servidores nem no seu navegador. Para guardar uma análise, exporte o relatório em PDF.</span>
               </li>
             </ul>
           </section>
@@ -97,7 +97,7 @@ export const PrivacyPage: React.FC = () => {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <span><strong className="text-foreground">Supabase:</strong> armazenamento da conta, da assinatura, do histórico de análises e de pagamentos.</span>
+                <span><strong className="text-foreground">Supabase:</strong> armazenamento da conta, da assinatura, dos pagamentos e do registro de uso para o limite diário (data e tipo de cada uso, sem o conteúdo da matrícula ou do relatório).</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />

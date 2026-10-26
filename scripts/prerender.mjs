@@ -209,7 +209,8 @@ const facts = [
   'Uso justo: até 30 análises por dia por conta, sem cobrança por documento.',
   'Aceita: certidão de matrícula em PDF de qualquer cartório do Brasil, digital ou escaneada, com até 15 MB.',
   'Tempo: em geral de 1 a 4 minutos por análise.',
-  'Entrega: proprietários atuais, cadeia dominial, hipotecas, alienação fiduciária, penhoras e indisponibilidades (ativas, canceladas ou a conferir), nota de risco de 0 a 100, trecho da matrícula que embasa cada risco, relatório em PDF e histórico na conta.',
+  'Entrega: proprietários atuais, cadeia dominial, hipotecas, alienação fiduciária, penhoras e indisponibilidades (ativas, canceladas ou a conferir), nota de risco de 0 a 100, trecho da matrícula que embasa cada risco e relatório em PDF para baixar.',
+  'Privacidade: nem o PDF nem o relatório ficam guardados; a análise aparece só na tela de quem a fez.',
   'Limites: análise automatizada por IA a partir do PDF enviado; não consulta cartórios em tempo real, não emite certidões e não substitui a certidão atualizada nem a orientação de um advogado.',
   `Exemplos gratuitos, sem cadastro: ${SITE}/app?sample=safe e ${SITE}/app?sample=risk`,
 ];

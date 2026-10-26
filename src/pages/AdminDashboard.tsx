@@ -529,7 +529,7 @@ export const AdminDashboard: React.FC = () => {
               {(metrics
                 ? [
                   { label: 'Banco de dados (Supabase)', status: metrics.services.database ? 'Respondendo' : 'Sem resposta', ok: metrics.services.database },
-                  { label: 'Tabelas de histórico, uso e pagamentos', status: metrics.tables_ready ? 'Criadas' : 'Rodar a migração', ok: metrics.tables_ready },
+                  { label: 'Tabelas de uso e pagamentos', status: metrics.tables_ready ? 'Criadas' : 'Rodar a migração', ok: metrics.tables_ready },
                   { label: 'Chave da IA (Gemini)', status: metrics.services.ai_key_configured ? 'Configurada' : 'Ausente', ok: metrics.services.ai_key_configured },
                   {
                     label: 'IA nas últimas 24 h',

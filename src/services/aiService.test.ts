@@ -10,7 +10,7 @@ vi.mock('./aiClient', () => ({
 }));
 // O nome do arquivo serve de hash: cada teste começa sem leitura guardada
 vi.mock('./ocrCacheService', () => ({
-  ocrCacheService: { computeHash: async (file: File) => file.name, getCachedReport: () => null, setCachedReport: () => undefined },
+  ocrCacheService: { computeHash: async (file: File) => file.name },
 }));
 vi.mock('./georreferenciamentoService', () => ({ georreferenciamentoService: { analyzeGeoreferencing: async () => null } }));
 

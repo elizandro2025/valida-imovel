@@ -303,7 +303,7 @@ export const PixPaymentPage: React.FC = () => {
                   'Relatório nos 12 módulos registrais, com nota de risco',
                   'Cadeia dominial e proprietários atuais',
                   'Hipotecas, penhoras e indisponibilidades, com o trecho do documento',
-                  'Relatório em PDF e histórico das suas análises',
+                  'Relatório em PDF para baixar (as análises não ficam guardadas)',
                   'Liberação automática após a confirmação do pagamento',
                 ].map((b) => (
                   <div key={b} className="flex items-start gap-2.5 text-sm text-foreground/80">

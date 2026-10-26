@@ -302,7 +302,7 @@ export const AuthPage: React.FC = () => {
                   ? 'Digite seu e-mail para receber as instruções de recuperação.'
                   : showNewPasswordForm
                   ? 'Digite sua nova senha de acesso.'
-                  : activeTab === 'signup' ? 'Crie sua conta para analisar matrículas e guardar o histórico.' : 'Use seu e-mail e senha do ValidaImóvel.'}
+                  : activeTab === 'signup' ? 'Crie sua conta para analisar matrículas.' : 'Use seu e-mail e senha do ValidaImóvel.'}
               </CardDescription>
             </CardHeader>
 

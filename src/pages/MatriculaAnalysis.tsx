@@ -1,8 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { FileUpload } from '@/components/FileUpload';
 import { AnalysisProgress } from '@/components/AnalysisProgress';
 import { AnalysisReport } from '@/components/AnalysisReport';
-import { AnalysisHistory } from '@/components/AnalysisHistory';
 import { AccountPanel, daysLeft } from '@/components/AccountPanel';
 import { ErrorModal } from '@/components/ErrorModal';
 import { useMatriculaAnalysis, MAX_PDF_BYTES } from '@/hooks/useMatriculaAnalysis';
@@ -23,7 +22,6 @@ const MatriculaAnalysis: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [historyKey, setHistoryKey] = useState(0);
 
   const sampleParam = new URLSearchParams(location.search).get('sample');
   const sampleType = sampleParam === 'risk' ? 'risk' : sampleParam === 'safe' || sampleParam === 'true' ? 'safe' : null;
@@ -38,12 +36,17 @@ const MatriculaAnalysis: React.FC = () => {
 
   const { processFile } = analysis;
   const startAnalysis = useCallback((file: File) => {
-    processFile(file, {
-      hasSubscription: user?.hasSubscription,
-      userId: user?.id,
-      onSaved: () => setHistoryKey(k => k + 1),
-    });
-  }, [processFile, user?.hasSubscription, user?.id]);
+    processFile(file, { hasSubscription: user?.hasSubscription });
+  }, [processFile, user?.hasSubscription]);
+
+  // O relatório não fica salvo: avisa antes de fechar ou recarregar a aba com uma análise real na tela
+  const hasUnsavedReport = Boolean(analysis.report) && !isSampleDemo;
+  React.useEffect(() => {
+    if (!hasUnsavedReport) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [hasUnsavedReport]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (accepted: File[]) => { if (accepted.length > 0) startAnalysis(accepted[0]); },
@@ -185,9 +188,7 @@ const MatriculaAnalysis: React.FC = () => {
                   <Button variant="ghost" size="sm" onClick={analysis.clearFile} className="gap-1.5 -ml-2">
                     <ArrowLeft className="w-4 h-4" /> Nova análise
                   </Button>
-                  {analysis.historyId && (
-                    <span className="text-xs text-muted-foreground">Salva em "Minhas análises"</span>
-                  )}
+                  <span className="text-xs text-muted-foreground">Esta análise não fica salva. Exporte o PDF para guardar.</span>
                 </div>
               )}
               <AnalysisReport
@@ -199,13 +200,8 @@ const MatriculaAnalysis: React.FC = () => {
           )}
 
           {showWorkspaceHome && user && (
-            <div className="max-w-2xl mx-auto flex flex-col md:flex-row gap-4">
-              <div className="md:flex-[3] min-w-0 empty:hidden">
-                <AnalysisHistory refreshKey={historyKey} onOpen={analysis.openFromHistory} />
-              </div>
-              <div className="md:flex-[2] min-w-0">
-                <AccountPanel />
-              </div>
+            <div className="max-w-2xl mx-auto">
+              <AccountPanel />
             </div>
           )}
 
@@ -214,7 +210,7 @@ const MatriculaAnalysis: React.FC = () => {
               {[
                 { icon: Upload, title: 'Envie o PDF', desc: 'Por conexão segura. O arquivo não fica guardado nos nossos servidores.' },
                 { icon: Brain, title: 'A IA analisa', desc: 'Proprietários, ônus e penhoras, conferidos no texto lido.' },
-                { icon: FileCheck, title: 'Receba o relatório', desc: 'Nota de risco e PDF, salvos em "Minhas análises".' },
+                { icon: FileCheck, title: 'Receba o relatório', desc: 'Nota de risco e relatório em PDF para baixar. A análise não fica guardada.' },
               ].map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="space-y-1.5">
                   <Icon className="w-5 h-5 text-primary mx-auto sm:mx-0" />

@@ -1,9 +1,7 @@
-// Relatórios já analisados neste navegador, por SHA-256 do PDF e pela versão da análise
-/* eslint-disable @typescript-eslint/no-explicit-any -- o relatório vem da IA e tem forma livre */
-import { PIPELINE_VERSION } from '@/lib/reportNormalizer';
+// Identificação do PDF (SHA-256) e limpeza de relatórios que versões anteriores guardavam no navegador.
+// As análises não são guardadas: nem no servidor nem no navegador.
 
 const PREFIX = 'valida_cache_';
-const versionedKey = (hash: string) => `${PREFIX}v${PIPELINE_VERSION}_${hash}`;
 
 export const ocrCacheService = {
   async computeHash(file: File): Promise<string> {
@@ -16,27 +14,7 @@ export const ocrCacheService = {
     }
   },
 
-  getCachedReport(hash: string): any | null {
-    try {
-      const cached = localStorage.getItem(versionedKey(hash));
-      return cached ? JSON.parse(cached) : null;
-    } catch {
-      return null;
-    }
-  },
-
-  // Guarda o novo e descarta relatórios de versões anteriores da análise (regras e prompts mudaram)
-  setCachedReport(hash: string, report: any): void {
-    try {
-      Object.keys(localStorage)
-        .filter(k => k.startsWith(PREFIX) && !k.startsWith(`${PREFIX}v${PIPELINE_VERSION}_`))
-        .forEach(k => localStorage.removeItem(k));
-      localStorage.setItem(versionedKey(hash), JSON.stringify(report));
-    } catch (e) {
-      console.warn('Relatório não guardado no navegador (espaço insuficiente):', e);
-    }
-  },
-
+  // Apaga relatórios guardados no navegador por versões anteriores do site (chamado ao abrir o site e ao sair da conta)
   clearCache(): void {
     try {
       Object.keys(localStorage).filter(k => k.startsWith(PREFIX)).forEach(k => localStorage.removeItem(k));

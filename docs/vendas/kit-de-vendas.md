@@ -17,7 +17,8 @@ Tudo aqui descreve o produto como ele é hoje; se o produto mudar, atualize a se
 | Uso | Até 30 análises por dia, sem cobrança por documento |
 | Tempo | Em geral de 1 a 4 minutos por matrícula |
 | Documento | PDF digital ou escaneado, de qualquer cartório do Brasil, até 15 MB |
-| Entrega | Donos atuais, cadeia dominial, ônus ativos e cancelados, nota de risco de 0 a 100, trecho de cada risco, relatório em PDF, histórico na conta e assistente para perguntas |
+| Entrega | Donos atuais, cadeia dominial, ônus ativos e cancelados, nota de risco de 0 a 100, trecho de cada risco, relatório em PDF e assistente para perguntas |
+| Privacidade | Nem o PDF nem o relatório ficam guardados: a análise aparece só na tela; para guardar, exporta-se o PDF |
 | Garantia | 7 dias para desistir com reembolso integral |
 | Teste grátis | Exemplos sem cadastro: `validaimovel.com/app?sample=safe` (imóvel sem ônus) e `validaimovel.com/app?sample=risk` (sítio com hipoteca rural e embargo ambiental ativos) |
 
@@ -119,7 +120,7 @@ O plano mensal vale a pena para quem analisa **várias matrículas por mês**. C
 > Seja honesto: se for uma por mês, talvez não compense ainda. Uma saída é contratar no mês em que tiver vários negócios, porque não renova sozinho.
 
 **"E o sigilo dos documentos?"**
-> A conexão é protegida e os detalhes de tratamento estão na Política de Privacidade (validaimovel.com/privacidade). O PDF é processado por IA do Google.
+> A conexão é protegida e nem o PDF nem o relatório ficam guardados: a análise aparece só na sua tela. Os detalhes estão na Política de Privacidade (validaimovel.com/privacidade). O PDF é processado por IA do Google.
 > *Atenção:* hoje a IA roda no plano gratuito da API do Google, cuja política permite usar o conteúdo para melhorar os produtos deles, e a nossa Política de Privacidade diz isso. Para escritórios e imobiliárias, essa é a objeção mais séria, e migrar para o plano pago da API resolve (ver seção 11).
 
 **"Não quero assinatura."**
@@ -138,7 +139,7 @@ O plano mensal vale a pena para quem analisa **várias matrículas por mês**. C
 4. Mostre a diferença entre ônus **ativo** e **cancelado** (e o ato de cancelamento).
 5. Mostre a cadeia dominial e os proprietários atuais.
 6. Mostre o "Resumo p/ WhatsApp" e o "Tour guiado".
-7. Conte o que vem no plano e não aparece no exemplo: relatório em PDF, cópia dos dados, assistente para perguntas ("quem precisa assinar a escritura?") e histórico na conta. Se você tiver assinatura, mostre esses recursos na sua conta.
+7. Conte o que vem no plano e não aparece no exemplo: relatório em PDF, cópia dos dados, assistente para perguntas ("quem precisa assinar a escritura?"). Lembre que nada fica guardado: o cliente exporta o PDF. Se você tiver assinatura, mostre esses recursos na sua conta.
 8. Feche: *"Quer testar com uma matrícula sua? R$ 99,90 por 30 dias, 7 dias para desistir."*
 
 ---

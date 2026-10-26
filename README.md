@@ -8,7 +8,7 @@ Site: https://validaimovel.com
 
 ```
 Navegador (React + Vite, Cloudflare Pages)
-   │  login e dados da conta ─────────────► Supabase (Auth, profiles, valida_analyses, valida_payments)
+   │  login e dados da conta ─────────────► Supabase (Auth, profiles, valida_payments)
    │  PDF, etapas da análise, pagamentos ──► API — Cloudflare Worker em api.validaimovel.com
    │                                            ├─ Gemini (OCR e análise; prompts e chave só no servidor)
    │                                            ├─ Asaas (Pix e cartão; webhook ativa, renova e estorna)
@@ -25,6 +25,7 @@ Navegador (React + Vite, Cloudflare Pages)
 - **API** (`workers/payment-api`): rotas fixas de IA (`/api/ai/ocr`, `/task`, `/chat`), limite diário de uso justo,
   webhook do Asaas, painel admin e registro de erros do site (Workers Logs).
 - **Banco**: a migração em `supabase/migrations` cria a trava dos campos de assinatura e as tabelas `valida_*`.
+  As análises não são guardadas (nem no banco nem no navegador): a tabela `valida_analyses` não é mais usada pelo site.
   O projeto Supabase é compartilhado com o app BUPi — tudo do ValidaImóvel usa o prefixo `valida_`.
 
 ## Desenvolvimento
@@ -67,10 +68,10 @@ em cache a conta antiga da Cloudflare.
 
 ```
 src/
-├── components/   relatório, histórico, conta, chat, upload
+├── components/   relatório, conta, chat, upload
 ├── lib/          reportNormalizer (regras de segurança), reportView (leitura do relatório) + testes
 ├── pages/        landing, app, auth, pagamento, admin, termos, privacidade, guia
-├── services/     aiClient/aiService (IA), historyService, paymentService, adminService, errorReporting
+├── services/     aiClient/aiService (IA), historyService (comprovantes), paymentService, adminService, errorReporting
 workers/payment-api/
 ├── src/index.ts  rotas da API          ├── src/prompts.ts  prompts da análise
 └── test/         testes com Asaas, Supabase e Gemini simulados

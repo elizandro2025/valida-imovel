@@ -1,21 +1,8 @@
 /**
- * "Minhas análises" e comprovantes — tabelas valida_analyses e valida_payments no Supabase.
- * As permissões (RLS) deixam cada pessoa ver só os próprios registros. Se as tabelas ainda não existirem,
- * as funções devolvem null/false e a tela simplesmente esconde a seção.
+ * Comprovantes de pagamento: tabela valida_payments no Supabase (cada pessoa vê só os próprios, por RLS).
+ * As análises não são guardadas: o relatório existe só na tela, e quem quiser guardar exporta o PDF.
  */
 import { supabase } from '@/integrations/supabase/client';
-import type { MatriculaReport } from './aiService';
-import { getReportView } from '@/lib/reportView';
-
-export interface AnalysisSummary {
-  id: string;
-  file_name: string | null;
-  matricula: string | null;
-  cartorio: string | null;
-  score_risco: number | null;
-  nivel_risco: string | null;
-  created_at: string;
-}
 
 export interface PaymentRecord {
   payment_id: string;
@@ -29,58 +16,6 @@ export interface PaymentRecord {
 }
 
 export const historyService = {
-  async list(): Promise<AnalysisSummary[] | null> {
-    const { data, error } = await supabase
-      .from('valida_analyses')
-      .select('id,file_name,matricula,cartorio,score_risco,nivel_risco,created_at')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (error) {
-      console.warn('Histórico indisponível:', error.message);
-      return null;
-    }
-    return data as AnalysisSummary[];
-  },
-
-  // O mesmo PDF reenviado (relatório vindo do cache do navegador) não vira uma segunda linha no histórico
-  async save(userId: string, fileName: string, fileHash: string, report: MatriculaReport): Promise<string | null> {
-    const existing = await supabase.from('valida_analyses').select('id').eq('file_hash', fileHash).limit(1);
-    if (existing.error) return null;
-    if (existing.data.length > 0) return existing.data[0].id as string;
-
-    const view = getReportView(report);
-    const { data, error } = await supabase
-      .from('valida_analyses')
-      .insert({
-        user_id: userId,
-        file_name: fileName,
-        file_hash: fileHash,
-        matricula: typeof view.ident.matricula === 'string' ? view.ident.matricula : null,
-        cartorio: typeof view.ident.cartorio_ri === 'string' ? view.ident.cartorio_ri : null,
-        score_risco: view.score,
-        nivel_risco: view.nivelRisco,
-        report,
-      })
-      .select('id')
-      .single();
-    if (error) {
-      console.warn('Análise não salva no histórico:', error.message);
-      return null;
-    }
-    return data.id as string;
-  },
-
-  async get(id: string): Promise<MatriculaReport | null> {
-    const { data, error } = await supabase.from('valida_analyses').select('report').eq('id', id).single();
-    if (error) return null;
-    return data.report as MatriculaReport;
-  },
-
-  async remove(id: string): Promise<boolean> {
-    const { error } = await supabase.from('valida_analyses').delete().eq('id', id);
-    return !error;
-  },
-
   async payments(): Promise<PaymentRecord[] | null> {
     const { data, error } = await supabase
       .from('valida_payments')
