@@ -3,16 +3,19 @@
  * Centraliza os dados corporativos para exibição nos Termos, Privacidade e Rodapé.
  */
 
+// Único e-mail que recebe mensagens (o domínio validaimovel.com não tem caixa de entrada)
+const EMAIL = "validaimovel@gmail.com";
+
 export const COMPANY_CONFIG = {
   name: "ValidaImóvel",
   legalName: "ValidaImóvel Tecnologia e Inteligência Registral",
   tagline: "Copiloto de análise registral e due diligence imobiliária com inteligência artificial",
-  contactEmail: "contato@validaimovel.com",
-  supportEmail: "suporte@validaimovel.com",
+  contactEmail: EMAIL,
+  supportEmail: EMAIL,
   domain: "validaimovel.com",
   canonicalUrl: "https://validaimovel.com/",
   // Data da última revisão dos Termos e da Política de Privacidade (atualizar ao mudar o texto)
-  legalUpdatedAt: "25/10/2026",
+  legalUpdatedAt: "26/10/2026",
   instagramUrl: "https://www.instagram.com/valida.imovel/",
   instagramHandle: "@valida.imovel",
   
@@ -35,6 +38,6 @@ export const COMPANY_CONFIG = {
     // Plano gratuito da API Gemini: o Google pode usar o conteúdo enviado para melhorar seus produtos.
     // Ao migrar para o plano pago da API, trocar para false e ajustar o texto da Política de Privacidade.
     aiProviderMayUseContent: true,
-    deletionRequest: "A solicitação de exclusão definitiva dos seus dados pode ser enviada a qualquer momento para suporte@validaimovel.com ou via WhatsApp de suporte.",
+    deletionRequest: `A solicitação de exclusão definitiva dos seus dados pode ser enviada a qualquer momento para ${EMAIL} ou via WhatsApp de suporte.`,
   }
 };
