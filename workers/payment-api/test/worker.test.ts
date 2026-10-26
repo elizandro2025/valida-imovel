@@ -59,6 +59,48 @@ const patches = () => calls.filter(c => c.init.method === 'PATCH' && c.url.pathn
 beforeEach(() => { waits.length = 0; });
 afterEach(() => { globalThis.fetch = realFetch; });
 
+describe('cadastro sem confirmação por e-mail', () => {
+  const signup = (body: object, env: object = baseEnv) => call('/api/auth/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://validaimovel.com' },
+    body: JSON.stringify(body),
+  }, env);
+  const created = () => calls.filter(c => c.init.method === 'POST' && c.url.pathname === '/auth/v1/admin/users');
+
+  it('cria a conta já confirmada', async () => {
+    mockFetch([[/POST https:\/\/sb\.test\/auth\/v1\/admin\/users/, () => json({ id: USER_ID }, 200)]]);
+    const res = await signup({ email: ' Novo@Cliente.com ', password: 'segredo1', name: 'Novo Cliente' });
+    expect(res.status).toBe(201);
+    expect(JSON.parse(String(created()[0].init.body))).toEqual({
+      email: 'novo@cliente.com', password: 'segredo1', email_confirm: true, user_metadata: { full_name: 'Novo Cliente' },
+    });
+  });
+
+  it('e-mail que já tem conta devolve 409, sem trocar a senha', async () => {
+    mockFetch([[/POST https:\/\/sb\.test\/auth\/v1\/admin\/users/, () => json({ msg: 'A user with this email address has already been registered' }, 422)]]);
+    const res = await signup({ email: 'existe@cliente.com', password: 'qualquer1' });
+    expect(res.status).toBe(409);
+    expect(await res.json()).toMatchObject({ code: 'exists' });
+    expect(calls.some(c => c.init.method === 'PUT' || c.init.method === 'PATCH')).toBe(false);
+  });
+
+  it('primeiro acesso pela tela de login só vale para e-mails liberados', async () => {
+    mockFetch([[/POST https:\/\/sb\.test\/auth\/v1\/admin\/users/, () => json({ id: USER_ID }, 200)]]);
+    const env = { ...baseEnv, FIRST_ACCESS_EMAILS: 'liberado@cliente.com, outro@cliente.com' };
+    expect((await signup({ email: 'estranho@cliente.com', password: 'qualquer1', firstAccess: true }, env)).status).toBe(403);
+    expect(created()).toHaveLength(0);
+    expect((await signup({ email: 'LIBERADO@cliente.com', password: 'qualquer1', firstAccess: true }, env)).status).toBe(201);
+    expect(created()).toHaveLength(1);
+  });
+
+  it('recusa e-mail inválido e senha curta sem chamar o Supabase', async () => {
+    mockFetch([]);
+    expect((await signup({ email: 'sem-arroba', password: 'segredo1' })).status).toBe(400);
+    expect((await signup({ email: 'a@b.com', password: '123' })).status).toBe(400);
+    expect(calls).toHaveLength(0);
+  });
+});
+
 describe('cobrança', () => {
   it('cria o Pix com o preço do servidor (R$ 99,90), ignorando o valor enviado pelo navegador', async () => {
     mockFetch([

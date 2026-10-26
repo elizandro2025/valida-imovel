@@ -2,6 +2,7 @@
  * Cloudflare Worker — ValidaImovel API (pagamentos Asaas, IA Gemini e admin)
  *
  * Rotas:
+ *   POST /api/auth/signup         — Cria a conta já confirmada (sem e-mail de confirmação); primeiro acesso liberado
  *   POST /api/create-payment      — Cria cobrança Pix no Asaas e devolve o QR Code
  *   POST /api/create-preference   — Cria cobrança no cartão e devolve o link da fatura Asaas
  *   GET  /api/payment-status/:id  — Consulta status de uma cobrança
@@ -32,6 +33,7 @@ export interface Env {
   ADMIN_EMAILS: string; // e-mails separados por vírgula
   ENVIRONMENT: string;
   SELFTEST_TOKEN?: string; // só no sandbox, durante testes automatizados
+  FIRST_ACCESS_EMAILS?: string; // segredo: e-mails cujo primeiro login cria a conta com a senha digitada
   AI_LIMITER: RateLimiter;
   PAYMENT_LIMITER: RateLimiter;
   ERROR_LIMITER: RateLimiter;
@@ -843,6 +845,52 @@ async function handleAdminSubscription(request: Request, env: Env): Promise<Resp
   return jsonResponse({ user: rows[0] });
 }
 
+// ─── POST /api/auth/signup ───────────────────────────────────────────────────
+// Cadastro sem confirmação por e-mail: a conta é criada já confirmada pela API administrativa do Supabase.
+// O projeto Supabase é compartilhado com o app BUPi, por isso a confirmação continua ligada no painel e só o
+// ValidaImóvel a dispensa. Com firstAccess, vem da tela de login: só para e-mails em FIRST_ACCESS_EMAILS e só se a
+// conta ainda não existe (nunca troca a senha de uma conta existente).
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+async function handleSignup(request: Request, env: Env): Promise<Response> {
+  let body: { email?: string; password?: unknown; name?: unknown; firstAccess?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ error: 'JSON inválido no corpo da requisição' }, 400);
+  }
+
+  const email = (body.email || '').trim().toLowerCase();
+  const password = typeof body.password === 'string' ? body.password : '';
+  if (!EMAIL_RE.test(email) || email.length > 254) return jsonResponse({ error: 'E-mail inválido. Verifique o endereço digitado.' }, 400);
+  // 72 é o limite do bcrypt usado pelo Supabase
+  if (password.length < 6 || password.length > 72) return jsonResponse({ error: 'A senha deve ter entre 6 e 72 caracteres.' }, 400);
+
+  const firstAccess = body.firstAccess === true;
+  if (firstAccess) {
+    const allowed = (env.FIRST_ACCESS_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+    if (!allowed.includes(email)) return jsonResponse({ error: 'Primeiro acesso não liberado para este e-mail.', code: 'not_allowed' }, 403);
+  }
+
+  const name = typeof body.name === 'string' && body.name.trim() ? body.name.trim().slice(0, 120) : email.split('@')[0];
+  const response = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users`, {
+    method: 'POST',
+    headers: supabaseHeaders(env),
+    body: JSON.stringify({ email, password, email_confirm: true, user_metadata: { full_name: name } }),
+  });
+  if (response.ok) {
+    console.log(`👤 Conta criada sem confirmação de e-mail${firstAccess ? ' (primeiro acesso liberado)' : ''}`);
+    return jsonResponse({ created: true }, 201);
+  }
+
+  const detail = await response.text();
+  if (response.status === 422 || /already been registered|already registered|email_exists|user_already_exists/i.test(detail)) {
+    return jsonResponse({ error: 'Este e-mail já tem conta. Entre com sua senha.', code: 'exists' }, 409);
+  }
+  console.error(`Erro ao criar conta (Supabase ${response.status}): ${detail.slice(0, 300)}`);
+  return jsonResponse({ error: 'Não foi possível criar a conta agora. Tente novamente em instantes.' }, 502);
+}
+
 // ─── POST /api/client-error ──────────────────────────────────────────────────
 async function handleClientError(request: Request, env: Env): Promise<Response> {
   const ip = request.headers.get('CF-Connecting-IP') || 'desconhecido';
@@ -866,6 +914,14 @@ async function route(request: Request, env: Env, ctx: ExecutionContext, path: st
       return jsonResponse({ success: false, error: 'Muitas tentativas seguidas. Aguarde 1 minuto e tente novamente.' }, 429);
     }
     return path === '/api/create-payment' ? handleCreatePayment(request, env) : handleCreatePreference(request, env);
+  }
+
+  // Cadastro (sem confirmação por e-mail): limite por IP contra criação de contas em massa
+  if (path === '/api/auth/signup' && method === 'POST') {
+    const ip = request.headers.get('CF-Connecting-IP') || 'desconhecido';
+    const { success } = await env.PAYMENT_LIMITER.limit({ key: `signup:${ip}` });
+    if (!success) return jsonResponse({ error: 'Muitas tentativas seguidas. Aguarde 1 minuto e tente novamente.' }, 429);
+    return handleSignup(request, env);
   }
 
   // Consultar status de cobrança

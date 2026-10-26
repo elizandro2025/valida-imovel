@@ -107,14 +107,9 @@ export const AuthPage: React.FC = () => {
     }
     setFormLoading(true);
     try {
-      const { error, needsConfirmation } = await signUp(email, password, name);
-      if (!error && needsConfirmation) {
-        toast({
-          title: 'Confirme seu e-mail',
-          description: 'Enviamos um link de confirmação para o seu e-mail. Clique nele e depois entre com sua senha.',
-        });
-        setActiveTab('signin');
-      } else if (error) {
+      // Sem confirmação por e-mail: a conta já sai pronta e a pessoa entra direto
+      const { error } = await signUp(email, password, name);
+      if (error) {
         let msg = error.message || 'Erro ao criar conta. Tente novamente.';
         const lower = (error.message || '').toLowerCase();
         if (lower.includes('already registered') || lower.includes('already exists') || lower.includes('user_already_exists') || lower.includes('registered')) {

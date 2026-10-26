@@ -3,6 +3,23 @@ import { supabase } from '@/integrations/supabase/client';
 import { AuthError, Session } from '@supabase/supabase-js';
 import { isSubscriptionActive } from '@/services/subscriptionService';
 import { ocrCacheService } from '@/services/ocrCacheService';
+import { API_BASE_URL } from '@/services/apiClient';
+
+// Cadastro pelo servidor do ValidaImóvel: a conta já nasce confirmada, sem e-mail de confirmação.
+// firstAccess: vindo da tela de login, só funciona para e-mails liberados pelo admin e se a conta ainda não existe.
+async function createAccount(email: string, password: string, name?: string, firstAccess = false): Promise<{ ok: boolean; status: number; message?: string }> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name, firstAccess }),
+    });
+    const data = await response.json().catch(() => ({})) as { error?: string };
+    return { ok: response.ok, status: response.status, message: data.error };
+  } catch {
+    return { ok: false, status: 0, message: 'Falha de conexão. Verifique sua internet e tente novamente.' };
+  }
+}
 
 export type UserRole = 'admin' | 'user';
 
@@ -22,7 +39,7 @@ interface AuthContextType {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
-  signUp: (email: string, password: string, name?: string) => Promise<{ error: AuthError | null; needsConfirmation?: boolean }>;
+  signUp: (email: string, password: string, name?: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   updatePassword: (newPassword: string) => Promise<{ error: AuthError | null }>;
@@ -118,10 +135,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [applySession]);
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
-      password,
-    });
+    const cleanEmail = email.trim().toLowerCase();
+    let { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
+    // Primeiro acesso liberado pelo admin: se a conta ainda não existe, a senha digitada cria a conta (o servidor decide)
+    if (error && /invalid login credentials|invalid_credentials/i.test(error.message)) {
+      const firstAccess = await createAccount(cleanEmail, password, undefined, true);
+      if (firstAccess.ok) ({ data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password }));
+    }
     if (error) return { error };
     await applySession(data.session);
     return { error: null };
@@ -137,23 +157,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  // Sem confirmação por e-mail: o servidor cria a conta já confirmada e o login acontece em seguida
   const signUp = async (email: string, password: string, name?: string) => {
     const cleanEmail = email.trim().toLowerCase();
-    const { data, error } = await supabase.auth.signUp({
-      email: cleanEmail,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth?tab=login`,
-        data: { full_name: name || cleanEmail.split('@')[0] },
-      },
-    });
-    if (error) return { error };
-
-    // Com confirmação de e-mail ativa o Supabase não devolve sessão: o usuário precisa clicar no link
-    if (!data.session) return { error: null, needsConfirmation: true };
-
-    await applySession(data.session);
-    return { error: null, needsConfirmation: false };
+    const created = await createAccount(cleanEmail, password, name);
+    if (!created.ok) {
+      const message = created.status === 409 ? 'User already registered' : created.message || 'Erro ao criar conta. Tente novamente.';
+      return { error: new AuthError(message, created.status || undefined) };
+    }
+    return signIn(cleanEmail, password);
   };
 
   const resetPassword = async (email: string) => {
