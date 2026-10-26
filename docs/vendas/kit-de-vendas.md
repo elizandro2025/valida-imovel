@@ -120,8 +120,7 @@ O plano mensal vale a pena para quem analisa **várias matrículas por mês**. C
 > Seja honesto: se for uma por mês, talvez não compense ainda. Uma saída é contratar no mês em que tiver vários negócios, porque não renova sozinho.
 
 **"E o sigilo dos documentos?"**
-> A conexão é protegida e nem o PDF nem o relatório ficam guardados: a análise aparece só na sua tela. Os detalhes estão na Política de Privacidade (validaimovel.com/privacidade). O PDF é processado por IA do Google.
-> *Atenção:* hoje a IA roda no plano gratuito da API do Google, cuja política permite usar o conteúdo para melhorar os produtos deles, e a nossa Política de Privacidade diz isso. Para escritórios e imobiliárias, essa é a objeção mais séria, e migrar para o plano pago da API resolve (ver seção 11).
+> A conexão é protegida e nem o PDF nem o relatório ficam guardados: a análise aparece só na sua tela. O PDF é processado pela IA do Google no plano pago da API, em que o Google não usa os documentos para treinar a IA. Os detalhes estão na Política de Privacidade (validaimovel.com/privacidade).
 
 **"Não quero assinatura."**
 > Não é assinatura recorrente: é um pagamento único por 30 dias, sem renovação automática.
@@ -209,12 +208,11 @@ Cada post termina com o link da bio (página inicial ou o guia do tema).
 
 Em ordem de impacto (posso implementar qualquer um):
 
-1. **IA no plano pago do Google:** remove a objeção de sigilo mais séria para escritórios e imobiliárias (ação sua no Google Cloud + ajuste da Política de Privacidade).
-2. **Medir a origem das visitas:** hoje o site não registra de onde vem cada visita; sem isso não dá para saber qual canal vende. Uma medição simples e sem cookies (Cloudflare Web Analytics) resolve.
-3. **Análise avulsa** (R$ 29,90 a R$ 39,90 por matrícula): atende quem vai comprar um imóvel só.
-4. **Cupom ou link de indicação:** para parcerias com cursos e associações.
-5. **Plano para equipes:** imobiliárias e escritórios com várias contas.
-6. **Depoimentos reais:** peça aos primeiros clientes (com autorização por escrito) e coloque no site.
+1. **Medir a origem das visitas:** hoje o site não registra de onde vem cada visita; sem isso não dá para saber qual canal vende. Uma medição simples e sem cookies (Cloudflare Web Analytics) resolve.
+2. **Análise avulsa** (R$ 29,90 a R$ 39,90 por matrícula): atende quem vai comprar um imóvel só.
+3. **Cupom ou link de indicação:** para parcerias com cursos e associações.
+4. **Plano para equipes:** imobiliárias e escritórios com várias contas.
+5. **Depoimentos reais:** peça aos primeiros clientes (com autorização por escrito) e coloque no site.
 
 ---
 

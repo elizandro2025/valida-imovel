@@ -126,7 +126,7 @@ const FAQS = [
   },
   {
     q: 'Como meus documentos são tratados?',
-    a: 'O PDF é enviado por conexão segura e lido pela API de inteligência artificial do Google. Nem o PDF nem o relatório ficam guardados: a análise aparece só na sua tela e, se quiser guardar, você exporta o relatório em PDF.',
+    a: `O PDF é enviado por conexão segura e lido pela API de inteligência artificial do Google${COMPANY_CONFIG.dataPolicy.aiProviderMayUseContent ? '' : ', no plano pago, em que o Google não usa seus documentos para treinar a IA'}. Nem o PDF nem o relatório ficam guardados: a análise aparece só na sua tela e, se quiser guardar, você exporta o relatório em PDF.`,
   },
 ];
 

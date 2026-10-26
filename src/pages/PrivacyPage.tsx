@@ -70,12 +70,14 @@ export const PrivacyPage: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>O PDF é enviado por conexão segura (HTTPS/TLS) e lido por inteligência artificial do Google (API Gemini). O {COMPANY_CONFIG.name} não armazena o arquivo em seus servidores.</span>
               </li>
-              {COMPANY_CONFIG.dataPolicy.aiProviderMayUseContent && (
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                {COMPANY_CONFIG.dataPolicy.aiProviderMayUseContent ? (
                   <span>Conforme os termos da API Gemini, o Google pode reter o conteúdo enviado e utilizá-lo para melhorar seus produtos e serviços. O processamento pode ocorrer em servidores fora do Brasil.</span>
-                </li>
-              )}
+                ) : (
+                  <span>Usamos o plano pago da API Gemini. Conforme os termos dessa API, o Google não usa o conteúdo enviado nem as respostas para treinar ou melhorar seus produtos; ele mantém registros por tempo limitado, apenas para detectar abusos e cumprir obrigações legais. O processamento pode ocorrer em servidores fora do Brasil.</span>
+                )}
+              </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>As análises não são guardadas. O relatório aparece apenas na sua tela, durante o uso, e não fica salvo nos nossos servidores nem no seu navegador. Para guardar uma análise, exporte o relatório em PDF.</span>

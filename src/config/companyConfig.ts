@@ -35,9 +35,9 @@ export const COMPANY_CONFIG = {
   // Políticas de Retenção e Segurança de Dados
   dataPolicy: {
     securityStatement: "Conexão protegida por HTTPS/TLS e tratamento dos documentos conforme as práticas descritas na Política de Privacidade.",
-    // Plano gratuito da API Gemini: o Google pode usar o conteúdo enviado para melhorar seus produtos.
-    // Ao migrar para o plano pago da API, trocar para false e ajustar o texto da Política de Privacidade.
-    aiProviderMayUseContent: true,
+    // false = plano pago da API Gemini (projeto com faturamento): o Google não usa o conteúdo para melhorar seus produtos.
+    // Voltar para true se a chave do servidor passar a ser de um projeto sem faturamento (plano gratuito).
+    aiProviderMayUseContent: false,
     deletionRequest: `A solicitação de exclusão definitiva dos seus dados pode ser enviada a qualquer momento para ${EMAIL} ou via WhatsApp de suporte.`,
   }
 };
