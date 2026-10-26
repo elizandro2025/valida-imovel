@@ -6,6 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 
 workers_dev = true
 
+# Mantém as variáveis criadas no painel (ex.: FIRST_ACCESS_EMAILS, que fica fora do repositório público)
+keep_vars = true
+
 routes = [
   { pattern = "api.validaimovel.com", custom_domain = true }
 ]
