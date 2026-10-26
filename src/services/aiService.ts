@@ -12,6 +12,9 @@ import { OWN_REPORT_MESSAGE, isOwnReportPdf, isOwnReportText } from '@/lib/uploa
 
 export { AIServiceError };
 
+// O PDF não é a certidão (ex.: o relatório exportado pelo próprio ValidaImóvel): a tela volta para a escolha do arquivo
+export class WrongDocumentError extends AIServiceError {}
+
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any -- o relatório vem da IA e tem forma livre */
 export type MatriculaReport = Record<string, any>;
 export type AnalysisProgressCallback = (step: string, progress: number) => void;
@@ -36,7 +39,7 @@ async function runTask(task: AnalysisTask, text: string, keys: string[]) {
 }
 
 export async function analyzeMatricula(file: File, onProgress?: AnalysisProgressCallback): Promise<MatriculaReport> {
-  if (isOwnReportPdf(new Uint8Array(await file.arrayBuffer()))) throw new AIServiceError(OWN_REPORT_MESSAGE);
+  if (isOwnReportPdf(new Uint8Array(await file.arrayBuffer()))) throw new WrongDocumentError(OWN_REPORT_MESSAGE);
   const hash = await ocrCacheService.computeHash(file);
 
   try {
@@ -47,7 +50,7 @@ export async function analyzeMatricula(file: File, onProgress?: AnalysisProgress
       if (result.text.trim().length < 100) {
         throw new AIServiceError('Não foi possível ler texto suficiente no PDF. Verifique se é a certidão completa e legível.');
       }
-      if (isOwnReportText(result.text)) throw new AIServiceError(OWN_REPORT_MESSAGE);
+      if (isOwnReportText(result.text)) throw new WrongDocumentError(OWN_REPORT_MESSAGE);
       ocr = { hash, text: result.text, model: result.model, cut: result.finishReason === 'MAX_TOKENS' };
       lastOcr = ocr;
     }

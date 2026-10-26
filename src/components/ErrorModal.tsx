@@ -15,36 +15,36 @@ interface ErrorModalProps {
   onClose: () => void;
   title?: string;
   message: string;
+  // Botão principal: por padrão só fecha; pode levar direto à próxima ação (ex.: escolher outro arquivo)
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 export const ErrorModal: React.FC<ErrorModalProps> = ({
   isOpen,
   onClose,
   title = "Erro",
-  message
+  message,
+  actionLabel = "Fechar",
+  onAction,
 }) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-gradient-surface border-destructive/20">
-        <AlertDialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-destructive/10 rounded-lg">
-              <AlertTriangle className="w-6 h-6 text-destructive" />
-            </div>
-            <AlertDialogTitle className="text-destructive">
-              {title}
-            </AlertDialogTitle>
+      <AlertDialogContent className="bg-card text-foreground border-border sm:rounded-3xl rounded-3xl shadow-hard max-w-md">
+        <AlertDialogHeader className="space-y-3 text-left">
+          <div className="w-12 h-12 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6" />
           </div>
-          <AlertDialogDescription className="text-card-foreground">
+          <AlertDialogTitle className="text-lg font-semibold tracking-tight text-foreground">
+            {title}
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-[15px] leading-relaxed text-muted-foreground">
             {message}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction 
-            onClick={onClose}
-            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-          >
-            Fechar
+          <AlertDialogAction onClick={onAction ?? onClose} className="rounded-full w-full sm:w-auto">
+            {actionLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

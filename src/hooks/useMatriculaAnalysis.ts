@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { analyzeMatricula, MatriculaReport, AnalysisProgressCallback } from '@/services/aiService';
+import { analyzeMatricula, MatriculaReport, AnalysisProgressCallback, WrongDocumentError } from '@/services/aiService';
 
 // O servidor aceita até 20 MB em base64, o que equivale a cerca de 15 MB de PDF
 export const MAX_PDF_BYTES = 15 * 1024 * 1024;
@@ -11,6 +11,7 @@ export interface AnalysisState {
   currentStep: string;
   report: MatriculaReport | null;
   error: string | null;
+  wrongDocument?: boolean;    // o PDF enviado não é a certidão (o arquivo é descartado para escolher outro)
   fileName?: string | null;   // nome do PDF analisado
   isSample?: boolean;         // relatório de demonstração (sem conta)
 }
@@ -79,9 +80,13 @@ export function useMatriculaAnalysis() {
         report,
       }));
     } catch (err) {
-      console.error('Erro na análise da matrícula:', err);
+      const wrongDocument = err instanceof WrongDocumentError;
+      if (!wrongDocument) console.error('Erro na análise da matrícula:', err);
       setState(prev => ({
         ...prev,
+        // Arquivo errado: descarta para a tela voltar à escolha do PDF
+        ...(wrongDocument && { file: null, fileName: null }),
+        wrongDocument,
         isProcessing: false,
         progress: 0,
         currentStep: '',
@@ -366,7 +371,7 @@ export function useMatriculaAnalysis() {
   }, []);
 
   const closeError = useCallback(() => {
-    setState(prev => ({ ...prev, error: null }));
+    setState(prev => ({ ...prev, error: null, wrongDocument: false }));
   }, []);
 
   const showError = useCallback((message: string) => {

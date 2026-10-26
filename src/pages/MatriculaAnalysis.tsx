@@ -48,7 +48,7 @@ const MatriculaAnalysis: React.FC = () => {
     return () => window.removeEventListener('beforeunload', warn);
   }, [hasUnsavedReport]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open: openFilePicker } = useDropzone({
     onDrop: (accepted: File[]) => { if (accepted.length > 0) startAnalysis(accepted[0]); },
     accept: { 'application/pdf': ['.pdf'] },
     multiple: false,
@@ -226,8 +226,10 @@ const MatriculaAnalysis: React.FC = () => {
       <ErrorModal
         isOpen={!!analysis.error}
         onClose={analysis.closeError}
-        title="Não foi possível analisar"
+        title={analysis.wrongDocument ? 'Este PDF não é a certidão da matrícula' : 'Não foi possível analisar'}
         message={analysis.error || ''}
+        actionLabel={analysis.wrongDocument ? 'Escolher a certidão' : 'Fechar'}
+        onAction={analysis.wrongDocument ? () => { analysis.closeError(); openFilePicker(); } : undefined}
       />
 
       <WhatsAppSupport variant="floating" />

@@ -649,7 +649,8 @@ _Análise automatizada por IA. Confira na certidão atualizada._`;
         pdf.text(`Código ${code} • Página ${i} de ${totalPages}`, pageWidth - margin, pageHeight - 9, { align: 'right' });
       }
 
-      const filename = `Analise_Matricula_${renderSafe(ident.matricula, 'Imovel').replace(/[^\w.-]+/g, '_')}.pdf`;
+      // Nome que não se confunde com a certidão do cartório (que costuma se chamar "Matricula 12345...")
+      const filename = `ValidaImovel-relatorio-matricula-${renderSafe(ident.matricula, 'imovel').replace(/[^\w.-]+/g, '_')}.pdf`;
       pdf.save(filename);
       toast({ title: 'PDF exportado', description: `Relatório salvo como ${filename}` });
     } catch (err) {

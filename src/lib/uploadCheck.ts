@@ -4,8 +4,8 @@
  * da certidão; a IA não encontra os atos do cartório e a análise falha com uma mensagem que não explica o motivo.
  */
 export const OWN_REPORT_MESSAGE =
-  'Este PDF é um relatório gerado pelo ValidaImóvel, não a certidão da matrícula. ' +
-  'Envie a certidão emitida pelo cartório de registro de imóveis (a matrícula em PDF).';
+  'Este arquivo é um relatório gerado pelo ValidaImóvel (o PDF exportado de uma análise), não a certidão da matrícula. ' +
+  'Escolha o PDF da certidão emitida pelo cartório de registro de imóveis.';
 
 // O relatório exportado é gerado pelo jsPDF e traz "ValidaImóvel" no cabeçalho e no rodapé de cada página
 export function isOwnReportPdf(bytes: Uint8Array): boolean {

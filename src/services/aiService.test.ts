@@ -14,7 +14,7 @@ vi.mock('./ocrCacheService', () => ({
 }));
 vi.mock('./georreferenciamentoService', () => ({ georreferenciamentoService: { analyzeGeoreferencing: async () => null } }));
 
-const { analyzeMatricula, AIServiceError } = await import('./aiService');
+const { analyzeMatricula, AIServiceError, WrongDocumentError } = await import('./aiService');
 
 const CERTIDAO = `--- Página 1 ---
 MATRÍCULA 19.028 — 1º Cartório de Registro de Imóveis
@@ -63,7 +63,9 @@ describe('analyzeMatricula', () => {
   it('recusa o relatório exportado pelo ValidaImóvel antes de gastar a leitura por IA', async () => {
     const report = pdf('Analise_Matricula_19028.pdf', '%PDF-1.3\nBT (ValidaIm\\363vel) Tj ET\n/Producer (jsPDF 4.2.1)\n%%EOF');
 
-    await expect(analyzeMatricula(report)).rejects.toThrow(/relatório gerado pelo ValidaImóvel/);
+    const failure = analyzeMatricula(report);
+    await expect(failure).rejects.toThrow(/relatório gerado pelo ValidaImóvel/);
+    await expect(failure).rejects.toBeInstanceOf(WrongDocumentError);
     expect(ai.ocr).not.toHaveBeenCalled();
   });
 
@@ -72,7 +74,7 @@ describe('analyzeMatricula', () => {
       text: `--- Página 1 ---\nValidaImóvel — análise automatizada • Matrícula 19.028\n${CERTIDAO}`, model: 'gemini-flash-latest', finishReason: 'STOP',
     });
 
-    await expect(analyzeMatricula(pdf('escaneado.pdf'))).rejects.toThrow(/relatório gerado pelo ValidaImóvel/);
+    await expect(analyzeMatricula(pdf('escaneado.pdf'))).rejects.toBeInstanceOf(WrongDocumentError);
     expect(ai.task).not.toHaveBeenCalled();
   });
 });
