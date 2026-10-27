@@ -7,6 +7,9 @@ import { COMPANY_CONFIG } from '@/config/companyConfig';
 
 const { offer } = COMPANY_CONFIG;
 
+// Mesma chave do botão "Continuar com Google" (AuthPage): sem ela, a página não cita o login com Google
+export const LOGIN_OPTIONS = import.meta.env.VITE_GOOGLE_LOGIN === 'true' ? 'com e-mail e senha ou com a conta Google' : 'com e-mail e senha';
+
 export type Tone = 'ok' | 'warn' | 'bad' | 'neutral';
 export type ModuleId = 'matricula' | 'projeto';
 
@@ -423,7 +426,7 @@ export const FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'Como acesso depois de pagar?',
-    a: 'O acesso é liberado automaticamente quando o pagamento é confirmado. Entre com e-mail e senha ou com a conta Google e envie o primeiro documento.',
+    a: `O acesso é liberado automaticamente quando o pagamento é confirmado. Entre ${LOGIN_OPTIONS} e envie o primeiro documento.`,
   },
   {
     q: 'Posso ver como funciona antes de pagar?',

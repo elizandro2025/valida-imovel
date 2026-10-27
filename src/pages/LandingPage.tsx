@@ -18,7 +18,7 @@ import { AudiencePicker } from '@/components/landing/AudiencePicker';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { SectionHeader, StatusChip } from '@/components/landing/LandingPrimitives';
 import {
-  BEFORE_AFTER, FAQS, LANDING_PROCEDURES, METHOD_LABELS, PLAN_INCLUDES, PRICE_FACTS, VERIFICATION_GROUPS,
+  BEFORE_AFTER, FAQS, LANDING_PROCEDURES, LOGIN_OPTIONS, METHOD_LABELS, PLAN_INCLUDES, PRICE_FACTS, VERIFICATION_GROUPS,
 } from '@/content/landing';
 import type { Method, ModuleId } from '@/content/landing';
 import { GUIDES } from '@/content/guides';
@@ -108,7 +108,7 @@ const TRUST_COLUMNS = [
 ];
 
 const HOW_TO_START = [
-  { title: 'Crie a conta', text: 'Com e-mail e senha ou com a conta Google.' },
+  { title: 'Crie a conta', text: `${LOGIN_OPTIONS.charAt(0).toUpperCase()}${LOGIN_OPTIONS.slice(1)}.` },
   { title: 'Pague por Pix ou cartão', text: 'O acesso é liberado assim que o pagamento é confirmado.' },
   { title: 'Envie o primeiro documento', text: 'A matrícula ou os documentos do projeto.' },
 ];

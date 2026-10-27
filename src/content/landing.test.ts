@@ -65,4 +65,9 @@ describe('página inicial: só o que o sistema faz', () => {
     expect(allText).toContain(`até ${offer.fairUseDailyLimit} análises de matrícula por dia`);
     expect(allText).not.toMatch(/ilimitad|gr[áa]tis por|teste gr[áa]tis|49,90/i);
   });
+
+  it('só cita o login com Google quando o botão está ligado', () => {
+    const google = import.meta.env.VITE_GOOGLE_LOGIN === 'true';
+    expect(/conta Google/.test(allText)).toBe(google);
+  });
 });
