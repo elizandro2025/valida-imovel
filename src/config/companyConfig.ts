@@ -15,7 +15,7 @@ export const COMPANY_CONFIG = {
   domain: "validaimovel.com",
   canonicalUrl: "https://validaimovel.com/",
   // Data da última revisão dos Termos e da Política de Privacidade (atualizar ao mudar o texto)
-  legalUpdatedAt: "26/10/2026",
+  legalUpdatedAt: "27/10/2026",
   instagramUrl: "https://www.instagram.com/valida.imovel/",
   instagramHandle: "@valida.imovel",
   

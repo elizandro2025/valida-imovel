@@ -89,14 +89,14 @@ const TWO_PILLARS = [
     id: 'projetos',
     title: 'Hub de Procedimentos & Projetos',
     eyebrow: 'Engenharia notarial contra notas devolutivas',
-    description: 'Valide desdobros, usucapião e retificações antes de protocolar no Cartório de Registro de Imóveis.',
+    description: 'Confira desdobros, retificações e unificações antes de protocolar no Cartório de Registro de Imóveis.',
     items: [
       'Confronto automático entre Planta Topográfica e Memorial Descritivo',
-      'Cálculo de erro de fechamento perimétrico de Gauss em segundos',
+      'Área e perímetro calculados pelas coordenadas (fórmula de Gauss) e comparados com os declarados',
       'Mapeamento de confrontantes vizinhos e gestão de cartas de anuência',
       'Checklist automatizado da Lei 6.015/73 e normas da Corregedoria',
       'Detecção de divergências de medidas que causariam nota devolutiva',
-      'Minuta do laudo técnico pericial pronta para validação de RT em Word e PDF',
+      'Relatório de conferência para o responsável técnico revisar, em Word ou impressão',
     ],
     ctaText: 'Conhecer o Hub de Procedimentos',
     ctaLink: '/app',
@@ -106,22 +106,23 @@ const TWO_PILLARS = [
 
 const DEVOLUTIVA_CAUSES = [
   {
-    stat: '1º Lugar',
+    // Numeração, não ranking: não há estatística publicada da frequência de cada causa
+    stat: '01',
     title: 'Divergência entre Planta e Memorial',
     desc: 'Um azimute ou distância com diferença de centímetros entre o desenho técnico e o texto do memorial gera devolução imediata pelo registrador.',
   },
   {
-    stat: '2º Lugar',
-    title: 'Erro de Fechamento Perimétrico',
-    desc: 'Polígonos com erro linear superior à tolerância cartorial ou do INCRA. O ValidaImóvel calcula o fechamento de Gauss automaticamente.',
+    stat: '02',
+    title: 'Área ou Perímetro que Não Batem',
+    desc: 'Área e perímetro declarados diferentes dos que resultam das coordenadas. O ValidaImóvel calcula os dois pelas coordenadas e compara com a planta e o memorial.',
   },
   {
-    stat: '3º Lugar',
+    stat: '03',
     title: 'Confrontante Omitido ou Sem Anuência',
     desc: 'Falta de qualificação completa ou falta de assinatura do vizinho confrontante (ou seus herdeiros) trava a retificação ou desdobro.',
   },
   {
-    stat: '4º Lugar',
+    stat: '04',
     title: 'Gravame Esquecido na Matrícula Mãe',
     desc: 'Indisponibilidade ou alienação ativa na matrícula mãe impede o registro do procedimento até a devida baixa ou anuência do credor.',
   },
@@ -165,11 +166,11 @@ const STEPS = [
   },
   {
     title: '3. A IA e os cálculos conferem',
-    text: 'Extração dos 12 módulos registrais, confronto de medidas perimétricas e cálculo de fechamento de Gauss em segundos.',
+    text: 'Extração dos 12 módulos registrais da matrícula; nos projetos, confronto de medidas e cálculo de área e perímetro pelas coordenadas.',
   },
   {
-    title: '4. Decida com o laudo completo',
-    text: 'Nota de risco fundamentada, apontamento de divergências impeditivas e laudo pericial pronto para exportar em Word e PDF.',
+    title: '4. Decida com o relatório completo',
+    text: 'Nota de risco fundamentada, divergências apontadas e relatório para exportar: PDF na análise de matrícula, Word na conferência de projetos.',
   },
 ];
 
@@ -183,13 +184,13 @@ const TRUST = [
   { icon: Quote, title: 'O trecho em cada risco', text: 'Cada risco vem com o texto original da matrícula, marcado como localizado ou não no documento.' },
   { icon: FileSearch, title: 'CPFs e atos conferidos', text: 'CPFs, CNPJs e números de atos (R- e AV-) citados no relatório são procurados no texto lido do PDF.' },
   { icon: XCircle, title: 'Cancelado só com prova', text: 'Um ônus só aparece como cancelado se a matrícula trouxer o ato de cancelamento. Na dúvida, o relatório pede conferência.' },
-  { icon: Gauge, title: 'Cálculos matemáticos exatos', text: 'Fechamento perimétrico de Gauss e confronto métrico calculados rigorosamente pelas fórmulas topográficas oficiais.' },
+  { icon: Gauge, title: 'Cálculos matemáticos exatos', text: 'Área e perímetro pela fórmula de Gauss e confronto das medidas lado a lado, calculados pelo sistema, não pela IA.' },
 ];
 
 const AUDIENCES = [
   { icon: TrendingUp, title: 'Investidores e leilões', text: 'Antes do lance, veja penhoras, hipotecas e indisponibilidades de cada imóvel do edital em minutos.' },
   { icon: Building2, title: 'Corretores e imobiliárias', text: 'Leia a matrícula na captação, não na véspera da escritura. Saiba quem precisa assinar e evite cancelamentos.' },
-  { icon: Compass, title: 'Engenheiros e agrimensores', text: 'Confronte planta × memorial descritivo, calcule o fechamento de Gauss e evite notas devolutivas no cartório.' },
+  { icon: Compass, title: 'Engenheiros e agrimensores', text: 'Confronte planta × memorial descritivo, calcule área e perímetro pelas coordenadas e corrija antes de protocolar.' },
   { icon: Scale, title: 'Advogados imobiliários', text: 'Comece a due diligence ou a petição de usucapião com a cadeia dominial e o quadro de confrontantes organizados.' },
   { icon: Landmark, title: 'Crédito e financiamento', text: 'Descubra alienação fiduciária ou hipoteca ativa antes de abrir o processo de financiamento bancário.' },
   { icon: FileCode, title: 'Regularizadores e despachantes', text: 'Monte processos de desdobro, REURB e unificação com checklist cartorial e cartas de anuência prontas.' },
@@ -198,11 +199,11 @@ const AUDIENCES = [
 const FAQS = [
   {
     q: 'O ValidaImóvel faz apenas análise de certidões ou também confere projetos?',
-    a: 'O ValidaImóvel é uma plataforma completa que reúne os dois módulos: (1) Leitura e auditoria de certidões de matrícula em PDF com IA, e (2) Hub de Procedimentos e Conferência de Projetos Técnicos, que cruza plantas topográficas com memoriais descritivos para desdobros, usucapião, retificações de área e unificações.',
+    a: 'O ValidaImóvel é uma plataforma completa que reúne os dois módulos: (1) Leitura e auditoria de certidões de matrícula em PDF com IA, e (2) Hub de Procedimentos e Conferência de Projetos Técnicos, que cruza plantas topográficas com memoriais descritivos e confere os itens de seis procedimentos: desdobro, retificação de área, unificação, estremação, divisão e REURB.',
   },
   {
     q: 'O que é o confronto entre planta e memorial descritivo?',
-    a: 'É a conferência automatizada de cada vértice, distância métrica e azimute desenhados na planta contra o texto redigido no memorial descritivo. O sistema aponta em segundos se há discrepância de medidas (por exemplo, 28,10 m na planta vs 28,50 m no memorial) e calcula o erro de fechamento perimétrico de Gauss.',
+    a: 'É a conferência automatizada de cada vértice, distância métrica e azimute desenhados na planta contra o texto redigido no memorial descritivo. O sistema aponta se há discrepância de medidas (por exemplo, 28,10 m na planta e 28,50 m no memorial) e calcula área e perímetro pelas coordenadas para comparar com os valores declarados.',
   },
   {
     q: 'Como saber se um imóvel tem penhora, hipoteca ou alienação fiduciária?',
@@ -210,7 +211,7 @@ const FAQS = [
   },
   {
     q: 'O ValidaImóvel substitui o Responsável Técnico (RT) ou o advogado?',
-    a: 'Não. O ValidaImóvel atua como uma ferramenta avançada de pré-auditoria e inteligência. Ele elimina o trabalho braçal de cálculo e conferência de centenas de atos, entregando a minuta do laudo e a matriz de divergências pronta para que o engenheiro, agrimensor, corretor ou advogado faça a validação final e assine.',
+    a: 'Não. O ValidaImóvel atua como uma ferramenta avançada de pré-auditoria e inteligência. Ele faz o trabalho braçal de leitura, cálculo e conferência e entrega o relatório com as divergências para que o engenheiro, agrimensor, corretor ou advogado faça a validação final e assine.',
   },
   {
     q: 'Quais documentos e certidões são aceitos?',
@@ -218,11 +219,11 @@ const FAQS = [
   },
   {
     q: 'Quanto tempo leva uma análise?',
-    a: 'A leitura da matrícula leva em geral de 1 a 4 minutos. O confronto de medidas perimétricas entre planta e memorial descritivo e o cálculo de Gauss são executados em poucos segundos.',
+    a: 'A leitura da matrícula leva em geral de 1 a 4 minutos. Na conferência de projetos, a leitura dos documentos pela IA leva alguns minutos; os cálculos e o confronto de medidas aparecem na hora.',
   },
   {
     q: 'Como funciona o pagamento e o acesso?',
-    a: `Pagamento único de ${offer.priceFormatted} por ${offer.period} de acesso, via Pix ou cartão, sem renovação automática. O plano dá acesso ilimitado ao Hub de Procedimentos e permite até ${offer.fairUseDailyLimit} análises de matrícula por dia. Você tem ${offer.guaranteeDays} dias para desistir com reembolso integral.`,
+    a: `Pagamento único de ${offer.priceFormatted} por ${offer.period} de acesso, via Pix ou cartão, sem renovação automática. O plano dá acesso à análise de matrículas (até ${offer.fairUseDailyLimit} por dia) e à conferência de projetos, com limite diário de uso justo. Você tem ${offer.guaranteeDays} dias para desistir com reembolso integral.`,
   },
   {
     q: 'Como meus documentos são tratados?',
@@ -380,7 +381,7 @@ export const LandingPage: React.FC = () => {
             <SectionHeader
               eyebrow="Ecossistema Completo"
               title="Dois grandes pilares em uma única assinatura."
-              subtitle="Tudo o que você precisa para auditar imóveis e aprovar projetos no cartório, sem pagar ferramentas separadas."
+              subtitle="Leia matrículas e confira projetos antes de levar ao cartório, no mesmo plano."
             />
             <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
               {TWO_PILLARS.map(p => (
@@ -455,7 +456,7 @@ export const LandingPage: React.FC = () => {
             <SectionHeader
               eyebrow="Segurança Registral"
               title="Por que o cartório devolve o seu projeto?"
-              subtitle="Mais de 60% dos pedidos de desdobro, usucapião e retificação recebem notas devolutivas por falhas que poderiam ter sido evitadas em segundos."
+              subtitle="Muitos pedidos de desdobro e retificação voltam com nota devolutiva por falhas que dava para ver antes do protocolo: medidas diferentes entre planta e memorial, anuências faltando, documentos vencidos."
             />
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {DEVOLUTIVA_CAUSES.map(cause => (
@@ -475,7 +476,7 @@ export const LandingPage: React.FC = () => {
               <div className="space-y-1 flex-1">
                 <h4 className="text-base font-semibold text-foreground">Auditoria prévia antes do protocolo</h4>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Com o ValidaImóvel, você envia os documentos técnicos, descobre qualquer divergência de medidas em segundos e gera a minuta com as cartas de anuência prontas.
+                  Com o ValidaImóvel, você envia os documentos técnicos, vê as divergências de medidas e de confrontantes antes do protocolo e exporta o relatório com o que corrigir em cada documento.
                 </p>
               </div>
             </div>
@@ -509,7 +510,7 @@ export const LandingPage: React.FC = () => {
         {/* COMO FUNCIONA */}
         <section id="como-funciona" className="cv-auto py-16 sm:py-28 bg-background px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto space-y-10 sm:space-y-14">
-            <SectionHeader eyebrow="Como funciona" title="Da entrada do documento ao laudo conclusivo." />
+            <SectionHeader eyebrow="Como funciona" title="Da entrada do documento ao relatório final." />
             <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {STEPS.map((step, i) => (
                 <li key={step.title} className="reveal space-y-3 text-center sm:text-left">
@@ -577,15 +578,15 @@ export const LandingPage: React.FC = () => {
                   <div>
                     <span className="text-[11px] font-semibold text-primary uppercase tracking-wider block">Área Rural (Interior)</span>
                     <h3 className="text-lg font-semibold tracking-tight text-foreground">Sítio Bela Vista</h3>
-                    <p className="text-xs text-muted-foreground">48,50 ha · Piracicaba/SP</p>
+                    <p className="text-xs text-muted-foreground">38,93 ha · Piracicaba/SP · dados fictícios</p>
                   </div>
                 </div>
                 <ul className="space-y-2.5 text-xs sm:text-sm text-foreground/85 flex-1">
-                  <li className="flex gap-2"><Check className="w-4 h-4 text-success shrink-0 mt-0.5" /> Fechamento de Gauss com precisão 1:46.125 (INCRA)</li>
+                  <li className="flex gap-2"><Check className="w-4 h-4 text-success shrink-0 mt-0.5" /> Área de 38,9313 ha conferida pelas coordenadas</li>
                   <li className="flex gap-2"><AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" /> Divergência de 40 cm no M-02 a M-03 (Planta × Memorial)</li>
-                  <li className="flex gap-2"><Check className="w-4 h-4 text-success shrink-0 mt-0.5" /> CCIR, CAR e Minuta do Laudo pronta para RT em Word e PDF</li>
+                  <li className="flex gap-2"><AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" /> Falta a anuência do cônjuge de um confrontante</li>
                 </ul>
-                <Link to="/app?sample=desdobro"><Button variant="outline" className="w-full text-xs">Abrir projeto rural de Piracicaba/SP</Button></Link>
+                <Link to="/app?sample=desdobro"><Button variant="outline" className="w-full text-xs">Abrir o projeto de exemplo</Button></Link>
               </div>
             </div>
           </div>
@@ -648,7 +649,7 @@ export const LandingPage: React.FC = () => {
             <SectionHeader
               eyebrow="Retorno Sobre o Investimento"
               title="Faça a conta com os seus números."
-              subtitle="Quantas horas voltam para a sua rotina e como uma única nota devolutiva evitada já paga a plataforma por anos."
+              subtitle="Quantas horas voltam para a sua rotina e quanto custa uma nota devolutiva que dava para evitar."
             />
             <RoiCalculator />
           </div>
@@ -724,12 +725,12 @@ export const LandingPage: React.FC = () => {
                     `Até ${offer.fairUseDailyLimit} análises de matrícula por dia`,
                     'Hub Central com 6 procedimentos cartoriais',
                     'Confronto automático Planta × Memorial',
-                    'Cálculo de fechamento perimétrico de Gauss',
+                    'Cálculo de área e perímetro pelas coordenadas',
                     'Mapeamento de confrontantes e cartas de anuência',
                     'Checklist da Lei 6.015/73 e CNJ',
                     'Relatório nos 12 módulos registrais',
                     'Assistente de IA para perguntas do imóvel',
-                    'Exportação de laudos em PDF e Word (.docx)',
+                    'Relatórios em PDF (matrícula) e Word (projetos)',
                     'Suporte prioritário pelo WhatsApp',
                   ].map(item => (
                     <li key={item} className="flex items-start gap-2"><Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> {item}</li>
@@ -747,9 +748,9 @@ export const LandingPage: React.FC = () => {
               <div className="bg-secondary px-6 py-6 sm:px-14 sm:py-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left border-t border-border">
                 <div className="w-14 h-14 rounded-2xl bg-success/10 text-success flex items-center justify-center shrink-0"><ShieldCheck className="w-7 h-7" /></div>
                 <div className="space-y-1">
-                  <h3 className="text-lg font-semibold tracking-tight text-foreground">Garantia incondicional de {offer.guaranteeDays} dias</h3>
+                  <h3 className="text-lg font-semibold tracking-tight text-foreground">{offer.guaranteeDays} dias para desistir</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Teste com as suas matrículas e projetos. Se a plataforma não atender às suas necessidades, solicite o reembolso em até {offer.guaranteeDays} dias e receba 100% do seu dinheiro de volta. Sem perguntas.
+                    Teste com as suas matrículas e projetos. Se não atender, peça o reembolso integral em até {offer.guaranteeDays} dias pelo WhatsApp de suporte ou por e-mail (direito de arrependimento, art. 49 do CDC).
                   </p>
                 </div>
               </div>
@@ -805,7 +806,7 @@ export const LandingPage: React.FC = () => {
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-[32px] leading-[1.1] sm:text-6xl font-semibold tracking-tight">Tem um imóvel ou projeto para validar agora?</h2>
             <p className="text-lg sm:text-xl text-white/75 leading-relaxed">
-              Evite riscos de fraude, penhoras ocultas e notas devolutivas no cartório. Em poucos minutos você audita a matrícula e confere o projeto com total segurança.
+              Evite riscos de fraude, penhoras ocultas e notas devolutivas no cartório. Em poucos minutos você lê a matrícula e confere o projeto antes de seguir adiante.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link to={ctaPath} className="w-full sm:w-auto">

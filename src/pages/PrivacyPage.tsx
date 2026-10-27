@@ -82,6 +82,10 @@ export const PrivacyPage: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>As análises não são guardadas. O relatório aparece apenas na sua tela, durante o uso, e não fica salvo nos nossos servidores nem no seu navegador. Para guardar uma análise, exporte o relatório em PDF.</span>
               </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span>Na conferência de projetos, plantas, memoriais, matrículas e demais documentos enviados são lidos da mesma forma, pela IA do Google, e não ficam guardados nos nossos servidores. O projeto fica só na memória da aba aberta: some ao recarregar a página, ao fechar a aba ou ao sair da conta, e não é salvo no seu navegador. Para guardá-lo, exporte o relatório (Word) ou o arquivo do projeto.</span>
+              </li>
             </ul>
           </section>
 

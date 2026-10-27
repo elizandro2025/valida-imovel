@@ -35,6 +35,8 @@ export const TermsPage: React.FC = () => {
             </p>
             <div className="p-4 bg-warning/10 border border-warning/30 rounded-2xl text-warning text-xs space-y-1">
               <strong>AVISO IMPORTANTE:</strong> A análise automatizada gerada pelo sistema é um parecer de apoio à triagem documental e não substitui a certidão de inteiro teor atualizada emitida pelo Cartório de Registro de Imóveis competente, pareceres jurídicos formais ou consultoria profissional especializada.
+              <br />
+              A conferência de projetos é uma verificação pré-cartorária de apoio: não substitui a responsabilidade técnica do profissional que assina o trabalho (ART/RRT/TRT) nem a qualificação feita pelo Oficial de Registro de Imóveis.
             </div>
           </section>
 
@@ -47,7 +49,7 @@ export const TermsPage: React.FC = () => {
               Planos contratados até 24/10/2026 (R$ 49,90 por 90 dias), inclusive cobranças geradas até essa data e pagas depois, mantêm o prazo de 90 dias pago.
             </p>
             <p>
-              <strong className="text-foreground">Uso justo:</strong> para manter o serviço estável para todos, cada conta pode realizar até {COMPANY_CONFIG.offer.fairUseDailyLimit} análises por dia (o limite renova à meia-noite, horário de Brasília). A conta é pessoal; o compartilhamento de acesso pode levar à suspensão.
+              <strong className="text-foreground">Uso justo:</strong> para manter o serviço estável para todos, cada conta pode realizar até {COMPANY_CONFIG.offer.fairUseDailyLimit} análises de matrícula por dia; a leitura de documentos na conferência de projetos e as demais etapas de processamento também têm limite diário (os limites renovam à meia-noite, horário de Brasília). A conta é pessoal; o compartilhamento de acesso pode levar à suspensão.
             </p>
             <p>
               Não existem cobranças recorrentes nem renovação automática. Se o usuário renovar antes do fim do período, os dias restantes são somados ao novo período.
