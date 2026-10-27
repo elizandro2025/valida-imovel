@@ -17,7 +17,7 @@
  *
  * Cron diário: consulta o Supabase para o projeto gratuito não ser pausado por inatividade.
  */
-import { ANALYSIS_TASKS, AnalysisTask, MAX_TASK_TEXT, buildChatRequest, buildOcrRequestParts, buildTaskRequest } from './prompts';
+import { ANALYSIS_TASKS, AnalysisTask, MAX_TASK_TEXT, buildChatRequest, buildOcrRequestParts, buildTaskRequest, detectMime } from './prompts';
 
 interface RateLimiter {
   limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -636,21 +636,23 @@ async function geminiResponse(
   });
 }
 
-// POST /api/ai/ocr — corpo: o PDF em base64 (texto puro)
+// POST /api/ai/ocr — corpo: o PDF em base64 (texto puro). Com ?kind=projeto aceita também PNG/JPEG e usa o OCR de projetos
 async function handleAiOcr(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-  const auth = await aiGuard(request, env, 'analise');
+  const isProjeto = new URL(request.url).searchParams.get('kind') === 'projeto';
+  const auth = await aiGuard(request, env, isProjeto ? 'tarefa' : 'analise');
   if (auth instanceof Response) return auth;
 
   const data = new Uint8Array(await request.arrayBuffer());
   if (data.byteLength > MAX_PDF_BASE64_BYTES) return jsonResponse({ error: 'Arquivo grande demais para análise (máximo de 15 MB).' }, 413);
-  // "JVBER" é "%PDF" em base64; aspas ou barra invertida não existem em base64 e quebrariam o JSON
+  // "JVBER" é "%PDF" em base64 (PNG: "iVBOR", JPEG: "/9j/"); aspas ou barra invertida não existem em base64 e quebrariam o JSON
   const header = new TextDecoder().decode(data.subarray(0, 5));
-  if (data.byteLength < 100 || header !== 'JVBER' || data.indexOf(0x22) !== -1 || data.indexOf(0x5c) !== -1) {
-    return jsonResponse({ error: 'O arquivo enviado não é um PDF válido.' }, 400);
+  const mime = isProjeto ? detectMime(header) : header === 'JVBER' ? 'application/pdf' : null;
+  if (data.byteLength < 100 || !mime || data.indexOf(0x22) !== -1 || data.indexOf(0x5c) !== -1) {
+    return jsonResponse({ error: isProjeto ? 'O arquivo enviado não é um PDF, PNG ou JPEG válido.' : 'O arquivo enviado não é um PDF válido.' }, 400);
   }
 
-  const { prefix, suffix } = buildOcrRequestParts();
-  return geminiResponse(env, ctx, auth, 'analise', new Blob([prefix, data, suffix], { type: 'application/json' }));
+  const { prefix, suffix } = buildOcrRequestParts(isProjeto ? 'projeto' : 'matricula', mime);
+  return geminiResponse(env, ctx, auth, isProjeto ? 'tarefa' : 'analise', new Blob([prefix, data, suffix], { type: 'application/json' }));
 }
 
 // POST /api/ai/task — { task, text }
@@ -679,7 +681,7 @@ async function handleAiChat(request: Request, env: Env, ctx: ExecutionContext): 
   const auth = await aiGuard(request, env, 'chat');
   if (auth instanceof Response) return auth;
 
-  let payload: { question?: unknown; context?: unknown };
+  let payload: { question?: unknown; context?: unknown; scope?: unknown };
   try {
     payload = await request.json();
   } catch {
@@ -691,7 +693,8 @@ async function handleAiChat(request: Request, env: Env, ctx: ExecutionContext): 
   if (!question || question.length > 2000) return jsonResponse({ error: 'Escreva uma pergunta de até 2.000 caracteres.' }, 400);
   if (!context || context.length > MAX_CHAT_CONTEXT) return jsonResponse({ error: 'Relatório ausente ou grande demais.' }, 400);
 
-  return geminiResponse(env, ctx, auth, 'chat', JSON.stringify(buildChatRequest(question, context)));
+  const scope = payload.scope === 'projeto' ? 'projeto' : 'matricula';
+  return geminiResponse(env, ctx, auth, 'chat', JSON.stringify(buildChatRequest(question, context, scope)));
 }
 
 // ─── Admin ───────────────────────────────────────────────────────────────────

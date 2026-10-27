@@ -33,16 +33,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   if (selectedFile) {
     return (
-      <div className="glass-card p-4 sm:p-6 animate-scale-in hover-lift">
+      <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 shadow-soft transition-all">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-            <div className="p-2 sm:p-3 bg-gradient-primary rounded-xl sm:rounded-2xl shadow-medium flex-shrink-0">
-              <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-primary-foreground animate-float" />
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0">
+              <FileText className="w-6 h-6 stroke-[1.8]" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-card-foreground text-sm sm:text-lg truncate">{selectedFile.name}</p>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • PDF Document
+              <p className="font-semibold text-foreground text-sm sm:text-base truncate">{selectedFile.name}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB · Arquivo PDF da Matrícula
               </p>
             </div>
           </div>
@@ -51,9 +51,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               variant="outline" 
               size="sm" 
               onClick={onClearFile}
-              className="hover:bg-destructive hover:text-destructive-foreground transition-all duration-300 flex-shrink-0"
+              className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 shrink-0 gap-1.5"
             >
               <X className="w-4 h-4" />
+              <span>Remover</span>
             </Button>
           )}
         </div>
@@ -62,54 +63,32 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   }
 
   return (
-    <div className="relative overflow-hidden">
-      <div className="glass-card border-dashed border-2 hover:border-primary/30 transition-all duration-500 hover:shadow-medium">
-        <div
-          {...getRootProps()}
-          className={`p-6 sm:p-8 lg:p-10 text-center cursor-pointer transition-all duration-500 ${
-            isDragActive 
-              ? 'bg-primary/10 border-primary scale-105 shadow-medium' 
-              : 'hover:bg-primary/5'
-          }`}
-        >
-          <input {...getInputProps()} />
-          <div className="flex flex-col items-center gap-4 sm:gap-6">
-            <div className="relative">
-              <div className="p-4 sm:p-6 rounded-3xl bg-gradient-primary/20 backdrop-blur-sm">
-                <Upload className={`w-8 h-8 sm:w-12 sm:h-12 text-primary ${
-                  isDragActive ? 'animate-bounce' : 'animate-float'
-                }`} />
-              </div>
-              {isDragActive && (
-                <div className="absolute inset-0 rounded-3xl bg-gradient-primary/30 animate-pulse" />
-              )}
-            </div>
-            <div className="space-y-2 sm:space-y-3">
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-card-foreground">
-                {isDragActive 
-                  ? 'Solte o arquivo aqui' 
-                  : 'Selecione a Matrícula'
-                }
-              </h3>
-              <p className="text-muted-foreground text-sm sm:text-base lg:text-lg">
-                {isDragActive 
-                  ? 'Iniciando processamento profissional...' 
-                  : 'Arraste o arquivo PDF ou clique para selecionar'
-                }
-              </p>
-              <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                <FileText className="w-4 h-4" />
-                <span>Apenas arquivos PDF são aceitos</span>
-              </div>
-            </div>
+    <div className="relative">
+      <div
+        {...getRootProps()}
+        className={`border-2 border-dashed rounded-2xl p-6 sm:p-10 text-center cursor-pointer transition-colors duration-200 ${
+          isDragActive 
+            ? 'border-primary bg-primary/5' 
+            : 'border-border hover:border-primary/40 hover:bg-secondary/60'
+        }`}
+      >
+        <input {...getInputProps()} />
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+            <Upload className="w-7 h-7 stroke-[1.8]" />
           </div>
+          <div className="space-y-1">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">
+              {isDragActive ? 'Solte a matrícula aqui' : 'Arraste a certidão em PDF'}
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Digital ou escaneada de qualquer cartório do Brasil, até 15 MB
+            </p>
+          </div>
+          <Button variant="outline" size="sm" type="button" className="mt-1">
+            Escolher arquivo
+          </Button>
         </div>
-      </div>
-      
-      {/* Simplified background animation for better performance */}
-      <div className="absolute inset-0 -z-10 opacity-20">
-        <div className="absolute top-4 left-4 w-2 h-2 bg-primary rounded-full animate-ping" />
-        <div className="absolute bottom-4 right-4 w-3 h-3 bg-accent rounded-full animate-ping" style={{ animationDelay: '1s' }} />
       </div>
     </div>
   );

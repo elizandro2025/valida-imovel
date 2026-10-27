@@ -210,33 +210,34 @@ export const PixPaymentPage: React.FC = () => {
 
       {/* Header Slim & Seguro */}
       <header className="sticky top-0 z-50 glass border-x-0 border-t-0">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <Logo />
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground">
-              <ShieldCheck className="w-3.5 h-3.5" /> Pagamento processado pelo Asaas
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Pagamento 100% seguro via Asaas
             </span>
             {user && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-muted-foreground hover:text-destructive hover:bg-muted text-xs gap-1.5 font-semibold"
+                className="text-muted-foreground hover:text-foreground text-xs gap-1.5 font-medium"
                 title="Sair ou entrar com outra conta"
               >
-                <LogOut className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
+                <LogOut className="w-3.5 h-3.5" />
                 <span className="hidden xs:inline">Trocar conta</span>
                 <span className="xs:hidden">Sair</span>
               </Button>
             )}
-            <Link to="/" aria-label="Voltar ao site">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-muted text-xs gap-1.5 font-semibold">
-                <ArrowLeft className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Voltar ao site</span>
+            <Link to="/" aria-label="Voltar ao início">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-xs gap-1.5 font-medium">
+                <ArrowLeft className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Voltar ao início</span>
               </Button>
             </Link>
           </div>
         </div>
       </header>
+
 
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8">
 
@@ -330,28 +331,29 @@ export const PixPaymentPage: React.FC = () => {
               <Card className="border-0 ring-1 ring-black/5 bg-card text-foreground rounded-3xl shadow-medium overflow-hidden">
                 
                 {/* Selector de Pagamento */}
-                <div className="grid grid-cols-2 p-1 m-4 mb-0 bg-muted/70 rounded-xl">
+                <div className="grid grid-cols-2 p-1.5 m-5 mb-0 bg-secondary rounded-2xl border border-border">
                   <button
                     onClick={() => setActiveTab('pix')}
-                    className={`py-2 min-h-[40px] text-[13px] sm:text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors touch-target ${
+                    className={`py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
                       activeTab === 'pix'
-                        ? 'bg-card text-foreground shadow-soft'
+                        ? 'bg-card text-foreground shadow-soft border border-border'
                         : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <QrCode className="w-4 h-4" /> Pix
+                    <QrCode className="w-4 h-4 text-primary" /> Pix Instantâneo
                   </button>
                   <button
                     onClick={() => setActiveTab('card')}
-                    className={`py-2 min-h-[40px] text-[13px] sm:text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors touch-target ${
+                    className={`py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-all ${
                       activeTab === 'card'
-                        ? 'bg-card text-foreground shadow-soft'
+                        ? 'bg-card text-foreground shadow-soft border border-border'
                         : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <CreditCard className="w-4 h-4" /> Cartão de crédito
+                    <CreditCard className="w-4 h-4 text-primary" /> Cartão de crédito
                   </button>
                 </div>
+
 
                 <CardContent className="p-5 sm:p-8 space-y-6">
 

@@ -7,7 +7,7 @@ import { authorizedFetch, SessionExpiredError } from './apiClient';
 // Erros de disponibilidade da IA (cota, sobrecarga, sessão) — exibidos ao usuário em vez de um relatório vazio
 export class AIServiceError extends Error {}
 
-export type AnalysisTask = 'extracao' | 'parecer' | 'geo';
+export type AnalysisTask = 'extracao' | 'parecer' | 'geo' | 'projeto';
 
 export interface AIResult {
   text: string;
@@ -67,9 +67,11 @@ async function callAI(path: string, body: string, contentType: string, timeoutMs
 
 export const aiClient = {
   // Corpo = PDF em base64 (o servidor monta o pedido em volta dele sem copiá-lo)
-  ocr: (pdfBase64: string) => callAI('/api/ai/ocr', pdfBase64, 'text/plain'),
+  ocr: (pdfBase64: string, kind: 'matricula' | 'projeto' = 'matricula') =>
+    callAI(kind === 'projeto' ? '/api/ai/ocr?kind=projeto' : '/api/ai/ocr', pdfBase64, 'text/plain'),
   task: (task: AnalysisTask, text: string) => callAI('/api/ai/task', JSON.stringify({ task, text }), 'application/json'),
-  chat: (question: string, context: string) => callAI('/api/ai/chat', JSON.stringify({ question, context }), 'application/json', 120_000),
+  chat: (question: string, context: string, scope: 'matricula' | 'projeto' = 'matricula') =>
+    callAI('/api/ai/chat', JSON.stringify({ question, context, scope }), 'application/json', 120_000),
 };
 
 export function fileToBase64(file: File): Promise<string> {

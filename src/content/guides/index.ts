@@ -61,6 +61,30 @@ export const GUIDES: GuideMeta[] = [
     updated: '2026-10-24',
     readingMinutes: 6,
   },
+  {
+    slug: 'desdobro-de-lote',
+    title: 'Como fazer desdobro e desmembramento de lote sem cair em exigência',
+    shortTitle: 'Desdobro de lote',
+    description: 'Guia prático para desdobro e desmembramento: requisitos da Lei 6.766, frente mínima, documentos e como evitar exigências no cartório.',
+    updated: '2026-10-26',
+    readingMinutes: 5,
+  },
+  {
+    slug: 'retificacao-de-area',
+    title: 'Retificação de área de imóvel pela Lei 6.015/73: passo a passo',
+    shortTitle: 'Retificação de área',
+    description: 'Como fazer a retificação de área amigável no Cartório de Registro de Imóveis: planta, memorial descritivo, anuência de confrontantes e prazos.',
+    updated: '2026-10-26',
+    readingMinutes: 6,
+  },
+  {
+    slug: 'usucapiao-extrajudicial',
+    title: 'Usucapião extrajudicial em cartório: documentos, prazos e regras',
+    shortTitle: 'Usucapião em cartório',
+    description: 'Entenda o passo a passo da usucapião extrajudicial pelo Provimento 65 do CNJ: ata notarial, planta, confrontantes e quando vale a pena fazer.',
+    updated: '2026-10-26',
+    readingMinutes: 6,
+  },
 ];
 
 export const findGuide = (slug: string | undefined) => GUIDES.find(g => g.slug === slug);

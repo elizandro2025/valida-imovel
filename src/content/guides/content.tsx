@@ -437,4 +437,192 @@ export const GUIDE_CONTENT: Record<string, GuideContent> = {
     ],
     related: ['certidao-de-onus-reais', 'como-ler-matricula', 'penhora-na-matricula'],
   },
+  'desdobro-de-lote': {
+    summary:
+      'O desdobro é a divisão de um lote urbano em dois ou mais novos lotes com aproveitamento do sistema viário existente, sem abertura de novas ruas. ' +
+      'Para ser aprovado pela prefeitura e registrado no cartório de imóveis, cada lote resultante deve respeitar a área e a frente mínimas da lei municipal (Lei 6.766/79), ' +
+      'acompanhado de planta topográfica, memorial descritivo e ART ou RRT do responsável técnico.',
+    sections: [
+      {
+        id: 'diferenca-desdobro-desmembramento',
+        title: 'Diferença entre desdobro e desmembramento',
+        body: (
+          <>
+            <p>
+              Embora usados no dia a dia como sinônimos, na técnica registral o <B>desdobro</B> é a divisão de um lote já resultante de loteamento aprovado em duas ou mais frações autônomas.
+              Já o <B>desmembramento</B> (Lei 6.766/79, art. 2º, § 2º) é a divisão de gleba em lotes destinados à edificação, com aproveitamento do sistema de vias existente, sem abertura de novas ruas ou praças.
+            </p>
+            <p>
+              Em ambos os casos, a exigência fundamental é não alterar o sistema viário público nem invadir áreas públicas ou de preservação.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'requisitos-prefeitura',
+        title: 'Requisitos municipais e frente mínima',
+        body: (
+          <>
+            <p>
+              A Lei Federal 6.766/79 estipula área mínima de 125 m² e frente mínima de 5 metros para lotes urbanos, salvo legislações municipais de interesse social ou planos diretores mais restritivos (que frequentemente exigem 150 m², 250 m² ou frentes de 8 a 10 metros).
+            </p>
+            <List>
+              <li>Certidão de diretrizes ou certidão de desdobro emitida pela Prefeitura Municipal;</li>
+              <li>Planta do imóvel contendo a situação atual (lote original) e a situação proposta (lotes 1 e 2);</li>
+              <li>Anotação de Responsabilidade Técnica (ART/CREA) ou Registro de Responsabilidade Técnica (RRT/CAU).</li>
+            </List>
+          </>
+        ),
+      },
+      {
+        id: 'documentos-cartorio',
+        title: 'Documentos exigidos pelo Cartório de Registro de Imóveis',
+        body: (
+          <p>
+            Para averbar o desdobro e abrir as novas matrículas, o cartório exige o requerimento com firma reconhecida dos proprietários, o ato formal de aprovação da Prefeitura, a planta aprovada, os memoriais descritivos individualizados de cada lote resultante e a certidão negativa de tributos municipais.
+          </p>
+        ),
+      },
+      {
+        id: 'como-evitar-devolutiva',
+        title: 'Como evitar nota devolutiva no desdobro',
+        body: (
+          <p>
+            O erro mais comum que gera exigência cartorial é a divergência entre a planta e o memorial descritivo (uma medida de 14,20 m na planta redigida como 14,25 m no texto) ou a soma das áreas resultantes não fechar exatamente com a área da matrícula original. Conferir o fechamento perimétrico e cruzar o texto do memorial com o desenho evita semanas de atraso.
+          </p>
+        ),
+      },
+    ],
+    faq: [
+      { q: 'Qual a área mínima para desdobrar um terreno?', a: 'A regra geral federal (Lei 6.766/79) é de 125 m² de área e 5 metros de testada (frente), mas a lei de zoneamento do município onde o imóvel está localizado pode exigir medidas maiores.' },
+      { q: 'Precisa da assinatura dos vizinhos no desdobro?', a: 'Em regra, o desdobro de lote urbano aprovado pela prefeitura não exige anuência dos confrontantes, desde que as divisas externas do lote original não sejam alteradas.' },
+      { q: 'O que acontece com a matrícula original após o desdobro?', a: 'O cartório averba o desdobro na matrícula original, encerra-a e abre uma nova matrícula para cada um dos lotes resultantes (lote A, lote B, etc.).' },
+    ],
+    related: ['retificacao-de-area', 'como-ler-matricula', 'documentos-para-comprar-imovel'],
+  },
+  'retificacao-de-area': {
+    summary:
+      'A retificação de área no Cartório de Registro de Imóveis (Art. 213 da Lei 6.015/73) serve para corrigir medidas perimétricas, ângulos ou área que estejam em desacordo com a realidade do terreno. ' +
+      'O procedimento extrajudicial é mais rápido que uma ação judicial e exige planta assinada por profissional habilitado com ART ou RRT, memorial descritivo e anuência expressa de todos os vizinhos confrontantes.',
+    sections: [
+      {
+        id: 'quando-e-necessaria',
+        title: 'Quando a retificação de área é necessária',
+        body: (
+          <>
+            <p>
+              Muitas matrículas antigas trazem descrições imprecisas (como &quot;da cerca de arame até a porteira de pau a pique&quot;) ou omitem azimutes e coordenadas georreferenciadas.
+              A retificação de área (Art. 213, II, da Lei de Registros Públicos) é necessária quando há inserção ou alteração de medidas perimétricas que resultem ou não em alteração da área total registrada.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'procedimento-cartorio',
+        title: 'Procedimento consensual no cartório de registro',
+        body: (
+          <>
+            <p>
+              O procedimento é conduzido diretamente pelo oficial do Registro de Imóveis competente, sem intervenção do juiz, desde que preenchidos os requisitos formais e não haja litígio ou sobreposição em imóveis vizinhos.
+            </p>
+            <List>
+              <li>Requerimento assinado pelo proprietário e pelo responsável técnico;</li>
+              <li>Planta e memorial descritivo contendo coordenadas UTM e fechamento perimétrico;</li>
+              <li>ART (CREA) ou RRT (CAU) devidamente quitada;</li>
+              <li>Anuência expressa de todos os confrontantes tabulares e de fato.</li>
+            </List>
+          </>
+        ),
+      },
+      {
+        id: 'confrontantes-e-anuencia',
+        title: 'Vizinhos confrontantes e cartas de anuência',
+        body: (
+          <p>
+            Todos os vizinhos que fazem divisa com o imóvel (frente, fundos, laterais direita e esquerda) devem anuir com a nova descrição. Se algum confrontante não assinar a planta, o oficial do cartório fará a notificação pessoal. Se o confrontante notificado não apresentar impugnação fundamentada em até 15 dias, seu silêncio é considerado como concordância tácita (art. 213, § 2º a 4º).
+          </p>
+        ),
+      },
+      {
+        id: 'confronto-planta-memorial',
+        title: 'Rigor técnico entre planta e memorial descritivo',
+        body: (
+          <p>
+            O memorial e a planta devem ser matematicamente idênticos. O cálculo de erro linear de fechamento perimétrico (fórmula de Gauss) precisa atender aos padrões da Corregedoria Geral de Justiça e do INCRA/SIGEF para imóveis rurais. Qualquer divergência entre rumos, distâncias ou coordenadas enseja nota devolutiva imediata.
+          </p>
+        ),
+      },
+    ],
+    faq: [
+      { q: 'Quanto tempo demora uma retificação de área amigável?', a: 'Se todos os vizinhos assinarem a planta e a documentação estiver regular, o procedimento no cartório costuma levar entre 30 e 90 dias.' },
+      { q: 'O que fazer se um confrontante se recusar a assinar?', a: 'O cartório fará a notificação formal. Se o confrontante apresentar impugnação sem fundamento plausível, o registrador tentará a conciliação; persistindo a controvérsia infundada, o caso poderá ser remetido ao juiz corregedor.' },
+      { q: 'Retificação de área aumenta o valor venal do IPTU?', a: 'Se a retificação constatar que a área real do terreno é maior do que a averbada originalmente, a prefeitura atualizará o cadastro fiscal e o carnê de IPTU passará a refletir a metragem correta.' },
+    ],
+    related: ['desdobro-de-lote', 'como-ler-matricula', 'certidao-de-onus-reais'],
+  },
+  'usucapiao-extrajudicial': {
+    summary:
+      'A usucapião extrajudicial permite reconhecer a propriedade de um imóvel diretamente no Cartório de Registro de Imóveis, sem necessidade de processo judicial (Art. 216-A da Lei 6.015/73 e Provimento 65 do CNJ). ' +
+      'O procedimento exige a participação obrigatória de um advogado, ata notarial de constatação lavrada em cartório de notas, planta com memorial descritivo e certidões negativas vintenárias.',
+    sections: [
+      {
+        id: 'o-que-e',
+        title: 'O que é a usucapião extrajudicial',
+        body: (
+          <>
+            <p>
+              Criada pelo Código de Processo Civil de 2015 e regulamentada pelo Provimento 65/2017 do Conselho Nacional de Justiça (CNJ), a usucapião extrajudicial é uma modalidade administrativa mais célere para regularizar imóveis quando o possuidor preenche os requisitos temporais e de posse mansa e pacífica.
+            </p>
+            <p>
+              Ao contrário da via judicial, que pode durar de 5 a 10 anos, a via em cartório pode ser concluída em poucos meses se não houver contestação.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'requisitos-prazos',
+        title: 'Requisitos e prazos de posse',
+        body: (
+          <>
+            <p>Os prazos de posse variam conforme a espécie de usucapião:</p>
+            <List>
+              <li><B>Usucapião Extraordinária:</B> 15 anos de posse ininterrupta (ou 10 anos se estabeleceu moradia habitual ou realizou obras/serviços produtivos), independente de justo título e boa-fé;</li>
+              <li><B>Usucapião Ordinária:</B> 10 anos com justo título e boa-fé (ou 5 anos se adquirido onerosamente com registro cancelado e residência/investimento);</li>
+              <li><B>Usucapião Especial Urbana/Rural:</B> 5 anos para áreas até 250 m² (urbana) ou 50 hectares (rural), para moradia própria, sem possuir outro imóvel.</li>
+            </List>
+          </>
+        ),
+      },
+      {
+        id: 'documentos-necessarios',
+        title: 'Documentos obrigatórios e ata notarial',
+        body: (
+          <>
+            <p>A petição deve ser instruída com:</p>
+            <List>
+              <li>Ata notarial lavrada pelo Tabelião de Notas atestando o tempo de posse e a ausência de litígio;</li>
+              <li>Planta e memorial descritivo assinados por profissional habilitado (ART/RRT) e pelos confrontantes;</li>
+              <li>Certidões negativas dos distribuidores forenses da comarca e da Justiça Federal;</li>
+              <li>Justo título ou quaisquer documentos que demonstrem a continuidade e a boa-fé da posse (contas de luz, IPTU, contratos).</li>
+            </List>
+          </>
+        ),
+      },
+      {
+        id: 'confrontantes-notificacao',
+        title: 'Notificação dos confrontantes e entes públicos',
+        body: (
+          <p>
+            O oficial de registro notificará os entes públicos (União, Estado e Município) para que se manifestem sobre interesse no imóvel em 15 dias, bem como eventuais titulares registrais e confrontantes que não tenham assinado previamente a documentação.
+          </p>
+        ),
+      },
+    ],
+    faq: [
+      { q: 'É obrigatório ter advogado na usucapião extrajudicial?', a: 'Sim. A legislação brasileira exige a representação por advogado ou defensor público em todas as fases do procedimento perante o cartório.' },
+      { q: 'Quanto custa fazer usucapião em cartório?', a: 'Os custos envolvem os emolumentos da ata notarial no cartório de notas, os emolumentos de registro no cartório de imóveis (tabelados por lei estadual), os honorários do responsável técnico pela planta e os honorários advocatícios.' },
+      { q: 'O que acontece se alguém contestar a usucapião no cartório?', a: 'Havendo impugnação fundamentada que não seja sanada por conciliação entre as partes, o registrador encerra a via extrajudicial e remete os autos ao juízo competente.' },
+    ],
+    related: ['retificacao-de-area', 'como-ler-matricula', 'documentos-para-comprar-imovel'],
+  },
 };
