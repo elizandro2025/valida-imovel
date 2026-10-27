@@ -36,8 +36,9 @@ export const COMPANY_CONFIG = {
   dataPolicy: {
     securityStatement: "Conexão protegida por HTTPS/TLS e tratamento dos documentos conforme as práticas descritas na Política de Privacidade.",
     // false = plano pago da API Gemini (projeto com faturamento): o Google não usa o conteúdo para melhorar seus produtos.
-    // Voltar para true se a chave do servidor passar a ser de um projeto sem faturamento (plano gratuito).
-    aiProviderMayUseContent: false,
+    // Fica true (texto cauteloso) até o dono confirmar: projeto pago no AI Studio, chave nova em GEMINI_API_KEY na
+    // Cloudflare e uma análise feita com ela. Prometer menos proteção do que existe não engana; o contrário, sim.
+    aiProviderMayUseContent: true,
     deletionRequest: `A solicitação de exclusão definitiva dos seus dados pode ser enviada a qualquer momento para ${EMAIL} ou via WhatsApp de suporte.`,
   }
 };
