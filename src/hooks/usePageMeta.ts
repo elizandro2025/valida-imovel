@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
 export const SITE_URL = 'https://validaimovel.com';
-export const DEFAULT_TITLE = 'Análise de matrícula de imóvel com IA | ValidaImóvel';
+export const DEFAULT_TITLE = 'Análise de matrícula e conferência de projetos com IA | ValidaImóvel';
 export const DEFAULT_DESCRIPTION =
-  'Envie a certidão de matrícula em PDF e veja em minutos o dono atual, hipotecas, alienação fiduciária, penhoras e a nota de risco do imóvel. Exemplo grátis.';
+  'Envie a matrícula em PDF e veja donos, hipotecas, penhoras e a nota de risco. Confira planta, memorial, área e vizinhos do projeto antes do cartório.';
 
 interface PageMetaOptions {
   type?: 'website' | 'article';

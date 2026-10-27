@@ -14,7 +14,7 @@ export const SiteFooter: React.FC = () => (
         <div className="col-span-2 md:col-span-1 space-y-3">
           <Logo />
           <p className="text-muted-foreground text-xs leading-relaxed max-w-xs">
-            Análise de matrícula de imóvel com inteligência artificial: dono atual, ônus, penhoras e nota de risco, com o trecho que comprova cada ponto.
+            Análise de matrícula e conferência de projetos com inteligência artificial: donos, ônus e nota de risco; planta, memorial, área e vizinhos conferidos antes do cartório.
           </p>
         </div>
         <nav aria-label="Guias" className="space-y-2">
@@ -30,6 +30,7 @@ export const SiteFooter: React.FC = () => (
           <ul className="text-xs text-muted-foreground">
             <li><Link to="/app?sample=safe" className="hover:text-foreground inline-block py-2.5">Exemplo de relatório</Link></li>
             <li><Link to="/app?sample=risk" className="hover:text-foreground inline-block py-2.5">Exemplo com risco</Link></li>
+            <li><Link to="/app?sample=desdobro" className="hover:text-foreground inline-block py-2.5">Exemplo de projeto</Link></li>
             <li><Link to="/#preco" className="hover:text-foreground inline-block py-2.5">Preço</Link></li>
             <li><Link to="/auth?tab=register" className="hover:text-foreground inline-block py-2.5">Criar conta</Link></li>
             <li><Link to="/auth?tab=login" className="hover:text-foreground inline-block py-2.5">Entrar</Link></li>
@@ -47,8 +48,8 @@ export const SiteFooter: React.FC = () => (
       </div>
       <div className="border-t border-border pt-6 text-xs text-muted-foreground space-y-2">
         <p>
-          Análise automatizada a partir do PDF enviado pelo usuário. O {COMPANY_CONFIG.name} não consulta cartórios em tempo real, não emite
-          certidões e não substitui a certidão atualizada nem a orientação de um advogado.
+          Análise automatizada a partir dos documentos enviados pelo usuário. O {COMPANY_CONFIG.name} não consulta cartórios em tempo real, não emite
+          certidões e não substitui a certidão atualizada, o responsável técnico nem a orientação de um advogado.
         </p>
         <p>© {new Date().getFullYear()} {COMPANY_CONFIG.legalName}.</p>
       </div>
