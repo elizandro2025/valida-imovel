@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FileUpload } from '@/components/FileUpload';
 import { AnalysisProgress } from '@/components/AnalysisProgress';
 import { AnalysisReport } from '@/components/AnalysisReport';
@@ -100,8 +100,17 @@ const MatriculaAnalysis: React.FC = () => {
     processFile(file, { hasSubscription: user?.hasSubscription });
   }, [processFile, user?.hasSubscription]);
 
+  // Depois de uma falha o arquivo continua escolhido: a nova tentativa reaproveita o texto já lido (não conta outra análise)
+  const retryFile = !analysis.wrongDocument && !analysis.isProcessing && !analysis.report ? analysis.file : null;
+  const retryAnalysis = () => {
+    if (!retryFile) return;
+    analysis.closeError();
+    startAnalysis(retryFile);
+  };
+
   // O relatório não fica salvo: avisa antes de fechar ou recarregar a aba com uma análise real na tela
   const hasUnsavedReport = Boolean(analysis.report) && !isSampleDemo;
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   React.useEffect(() => {
     if (!hasUnsavedReport) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
@@ -413,12 +422,20 @@ const MatriculaAnalysis: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <FileUpload
-                      onFileSelect={startAnalysis}
-                      selectedFile={analysis.file}
-                      onClearFile={analysis.clearFile}
-                      isProcessing={analysis.isProcessing}
-                    />
+                    <div className="space-y-4">
+                      <FileUpload
+                        onFileSelect={startAnalysis}
+                        selectedFile={analysis.file}
+                        onClearFile={analysis.clearFile}
+                        isProcessing={analysis.isProcessing}
+                      />
+                      {retryFile && !analysis.error && (
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          <p className="text-xs text-muted-foreground">A análise deste arquivo não terminou.</p>
+                          <Button onClick={retryAnalysis} className="w-full sm:w-auto">Tentar de novo</Button>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -434,7 +451,7 @@ const MatriculaAnalysis: React.FC = () => {
               <section className="animate-fade-in-up space-y-4">
                 {!isSampleDemo && (
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Button variant="ghost" size="sm" onClick={analysis.clearFile} className="gap-1.5 -ml-2">
+                    <Button variant="ghost" size="sm" onClick={() => setConfirmDiscard(true)} className="gap-1.5 -ml-2">
                       <ArrowLeft className="w-4 h-4" /> Nova análise
                     </Button>
                     <span className="text-xs text-muted-foreground">Esta análise não fica salva. Exporte o PDF para guardar.</span>
@@ -478,8 +495,19 @@ const MatriculaAnalysis: React.FC = () => {
         onClose={analysis.closeError}
         title={analysis.wrongDocument ? 'Este PDF não é a certidão da matrícula' : 'Não foi possível analisar'}
         message={analysis.error || ''}
-        actionLabel={analysis.wrongDocument ? 'Escolher a certidão' : 'Fechar'}
-        onAction={analysis.wrongDocument ? () => { analysis.closeError(); openFilePicker(); } : undefined}
+        actionLabel={analysis.wrongDocument ? 'Escolher a certidão' : retryFile ? 'Tentar de novo' : 'Fechar'}
+        onAction={analysis.wrongDocument ? () => { analysis.closeError(); openFilePicker(); } : retryFile ? retryAnalysis : undefined}
+        cancelLabel={!analysis.wrongDocument && retryFile ? 'Fechar' : undefined}
+      />
+
+      <ErrorModal
+        isOpen={confirmDiscard}
+        onClose={() => setConfirmDiscard(false)}
+        title="Começar uma nova análise?"
+        message="O relatório atual não fica salvo e vai sair da tela. Se quiser guardá-lo, exporte o PDF antes."
+        actionLabel="Começar nova análise"
+        onAction={() => { setConfirmDiscard(false); analysis.clearFile(); }}
+        cancelLabel="Voltar ao relatório"
       />
 
       <WhatsAppSupport variant="floating" />

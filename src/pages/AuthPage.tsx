@@ -50,7 +50,8 @@ export const AuthPage: React.FC = () => {
     setFormLoading(true);
     const { error } = await signInWithGoogle();
     if (error) {
-      toast({ title: 'Não foi possível entrar com Google', description: error.message, variant: 'destructive' });
+      console.warn('Login com Google:', error);
+      toast({ title: 'Não foi possível entrar com Google', description: 'Tente novamente em instantes ou entre com e-mail e senha.', variant: 'destructive' });
       setFormLoading(false);
     }
   };
@@ -72,14 +73,17 @@ export const AuthPage: React.FC = () => {
     try {
       const { error } = await signIn(email, password);
       if (error) {
-        let msg = error.message || 'Erro no login. Verifique suas credenciais.';
+        // As mensagens do Supabase vêm em inglês: as conhecidas são traduzidas, as demais viram um aviso genérico
+        let msg = 'Não foi possível entrar agora. Verifique sua conexão e tente novamente em instantes.';
         const lower = (error.message || '').toLowerCase();
         if (lower.includes('invalid login credentials') || lower.includes('invalid_credentials')) {
           msg = 'E-mail ou senha incorretos.';
         } else if (lower.includes('email not confirmed')) {
           msg = 'Por favor, confirme seu e-mail para acessar.';
-        } else if (lower.includes('too many requests')) {
+        } else if (lower.includes('too many requests') || lower.includes('rate limit')) {
           msg = 'Muitas tentativas. Tente novamente em alguns minutos.';
+        } else {
+          console.warn('Erro no login:', error);
         }
         toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
       } else {
@@ -88,7 +92,7 @@ export const AuthPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Erro no handleSignIn:', err);
-      toast({ title: 'Erro no login', description: err instanceof Error && err.message ? err.message : 'Verifique suas credenciais e tente novamente.', variant: 'destructive' });
+      toast({ title: 'Erro no login', description: 'Não foi possível entrar agora. Verifique sua conexão e tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
@@ -123,7 +127,8 @@ export const AuthPage: React.FC = () => {
         navigate('/pagamento-pix');
       }
     } catch (err) {
-      toast({ title: 'Erro inesperado', description: err instanceof Error && err.message ? err.message : 'Ocorreu um erro ao criar conta.', variant: 'destructive' });
+      console.error('Erro no handleSignUp:', err);
+      toast({ title: 'Erro inesperado', description: 'Não foi possível criar a conta agora. Verifique sua conexão e tente novamente.', variant: 'destructive' });
     } finally {
       setFormLoading(false);
     }
@@ -214,7 +219,7 @@ export const AuthPage: React.FC = () => {
           </div>
           <div className="space-y-3 pt-2">
             <Link to="/app" className="block">
-              <Button className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs gap-2">
+              <Button className="w-full font-semibold text-xs gap-2">
                 Ir para o Workspace de Auditoria <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -305,10 +310,11 @@ export const AuthPage: React.FC = () => {
               {showResetForm ? (
                 <form onSubmit={handleResetPassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-muted-foreground">E-mail</Label>
+                    <Label htmlFor="reset-email" className="text-xs font-semibold text-muted-foreground">E-mail</Label>
                     <div className="relative">
                       <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                       <Input
+                        id="reset-email"
                         type="email"
                         autoComplete="email"
                         placeholder="seu.email@exemplo.com"
@@ -322,7 +328,7 @@ export const AuthPage: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
+                    className="w-full font-semibold text-xs h-11 gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar Instruções'}
                   </Button>
@@ -338,8 +344,9 @@ export const AuthPage: React.FC = () => {
               ) : showNewPasswordForm ? (
                 <form onSubmit={handleUpdatePassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-muted-foreground">Nova Senha</Label>
+                    <Label htmlFor="new-password" className="text-xs font-semibold text-muted-foreground">Nova Senha</Label>
                     <Input
+                      id="new-password"
                       type="password"
                       autoComplete="new-password"
                       placeholder="Mínimo 6 caracteres"
@@ -350,8 +357,9 @@ export const AuthPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-muted-foreground">Confirmar Nova Senha</Label>
+                    <Label htmlFor="confirm-password" className="text-xs font-semibold text-muted-foreground">Confirmar Nova Senha</Label>
                     <Input
+                      id="confirm-password"
                       type="password"
                       autoComplete="new-password"
                       placeholder="Repita a nova senha"
@@ -364,7 +372,7 @@ export const AuthPage: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
+                    className="w-full font-semibold text-xs h-11 gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar nova senha'}
                   </Button>
@@ -401,10 +409,11 @@ export const AuthPage: React.FC = () => {
                   <TabsContent value="signin" className="space-y-4 mt-0">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-xs font-semibold text-muted-foreground">E-mail</Label>
+                        <Label htmlFor="login-email" className="text-xs font-semibold text-muted-foreground">E-mail</Label>
                         <div className="relative">
                           <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
+                            id="login-email"
                             type="email"
                             autoComplete="email"
                             placeholder="seu.email@exemplo.com"
@@ -418,7 +427,7 @@ export const AuthPage: React.FC = () => {
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <Label className="text-xs font-semibold text-muted-foreground">Senha</Label>
+                          <Label htmlFor="login-password" className="text-xs font-semibold text-muted-foreground">Senha</Label>
                           <button
                             type="button"
                             onClick={() => setShowResetForm(true)}
@@ -430,6 +439,7 @@ export const AuthPage: React.FC = () => {
                         <div className="relative">
                           <Lock className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
+                            id="login-password"
                             type="password"
                             autoComplete="current-password"
                             placeholder="Sua senha"
@@ -444,7 +454,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
+                        className="w-full font-semibold text-xs h-11 gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
@@ -456,8 +466,9 @@ export const AuthPage: React.FC = () => {
                   <TabsContent value="signup" className="space-y-4 mt-0">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-xs font-semibold text-muted-foreground">Nome Completo</Label>
+                        <Label htmlFor="signup-name" className="text-xs font-semibold text-muted-foreground">Nome Completo</Label>
                         <Input
+                          id="signup-name"
                           type="text"
                           autoComplete="name"
                           placeholder="Seu nome"
@@ -468,10 +479,11 @@ export const AuthPage: React.FC = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-xs font-semibold text-muted-foreground">E-mail</Label>
+                        <Label htmlFor="signup-email" className="text-xs font-semibold text-muted-foreground">E-mail</Label>
                         <div className="relative">
                           <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
+                            id="signup-email"
                             type="email"
                             autoComplete="email"
                             placeholder="seu.email@exemplo.com"
@@ -484,10 +496,11 @@ export const AuthPage: React.FC = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-xs font-semibold text-muted-foreground">Senha (mínimo 6 caracteres)</Label>
+                        <Label htmlFor="signup-password" className="text-xs font-semibold text-muted-foreground">Senha (mínimo 6 caracteres)</Label>
                         <div className="relative">
                           <Lock className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                           <Input
+                            id="signup-password"
                             type="password"
                             autoComplete="new-password"
                             placeholder="Crie uma senha forte"
@@ -502,7 +515,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
+                        className="w-full font-semibold text-xs h-11 gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar conta'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}

@@ -274,7 +274,7 @@ export const LandingPage: React.FC = () => {
             <a href="#preco" className="hidden md:inline-flex text-[13px] text-foreground/80 hover:text-foreground px-3 py-3">Preço</a>
             <Link to="/guia" className="hidden lg:inline-flex text-[13px] text-foreground/80 hover:text-foreground px-3 py-3">Guias</Link>
             {user ? (
-              <button onClick={handleSignOut} className="text-[13px] text-foreground/80 hover:text-foreground px-3 py-3 inline-flex items-center gap-1.5" title={`Sair (${user.email})`}>
+              <button onClick={handleSignOut} className="text-[13px] text-foreground/80 hover:text-foreground px-3 py-3 inline-flex items-center gap-1.5" title={`Sair (${user.email})`} aria-label="Sair da conta">
                 <LogOut className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Sair</span>
               </button>
             ) : (

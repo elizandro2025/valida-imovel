@@ -130,7 +130,9 @@ async function asaasRequest<T>(env: Env, path: string, method = 'GET', body?: ob
 
   const data = await response.json().catch(() => ({})) as { errors?: Array<{ description?: string }> };
   if (!response.ok) {
-    const message = data.errors?.map(e => e.description).filter(Boolean).join('; ') || `HTTP ${response.status}`;
+    // A mensagem chega à tela de pagamento: o Asaas descreve o erro em português; sem descrição, uma orientação
+    const message = data.errors?.map(e => e.description).filter(Boolean).join('; ')
+      || `O serviço de pagamento não respondeu (erro ${response.status}). Tente novamente em instantes.`;
     throw new AsaasError(message, response.status);
   }
   return data as T;
@@ -328,6 +330,16 @@ function activeFields(base: number, paymentId: string, plan: Plan) {
   };
 }
 
+// Cobrança já aplicada a alguém: o histórico (valida_payments) é gravado logo depois de cada ativação.
+// Sem a tabela (migração pendente), devolve false e vale só a conferência pelo perfil.
+async function alreadyApplied(env: Env, paymentId: string): Promise<boolean> {
+  const rows = await supabaseSelect<{ user_id: string | null; status: string }>(
+    env, `valida_payments?payment_id=eq.${encodeURIComponent(paymentId)}&select=user_id,status&limit=1`,
+  );
+  const row = rows?.[0];
+  return Boolean(row?.user_id && row.status === 'pago');
+}
+
 async function customerEmail(env: Env, customerId: string): Promise<string | null> {
   const customer = await asaasRequest<{ email?: string }>(env, `/customers/${customerId}`);
   return customer.email?.trim().toLowerCase() || null;
@@ -347,8 +359,9 @@ async function activateSubscription(env: Env, payment: AsaasPayment, plan: Plan)
   }
 
   if (profile) {
-    // O Asaas manda mais de um evento por cobrança (ex.: CONFIRMED e depois RECEIVED): aplica uma vez só
-    if (profile.payment_id === payment.id) return profile.id;
+    // O Asaas manda mais de um evento por cobrança (CONFIRMED e depois RECEIVED): aplica uma vez só. No cartão, o
+    // RECEIVED chega na liquidação, semanas depois; se o cliente renovou nesse meio-tempo, o perfil já tem outra cobrança
+    if (profile.payment_id === payment.id || await alreadyApplied(env, payment.id)) return profile.id;
     await supabasePatchProfiles(env, `id=eq.${profile.id}`, activeFields(renewalBase(profile), payment.id, plan));
     return profile.id;
   }
@@ -484,6 +497,10 @@ interface AuthUser {
   selftest?: boolean;
 }
 
+function adminEmails(env: Env): string[] {
+  return (env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+}
+
 // Admin vem só da lista do servidor (ADMIN_EMAILS), nunca de um campo que o usuário possa editar
 async function authenticate(request: Request, env: Env): Promise<AuthUser | Response> {
   const token = request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
@@ -500,8 +517,7 @@ async function authenticate(request: Request, env: Env): Promise<AuthUser | Resp
   ))?.[0] ?? null;
 
   const email = (user.email || '').toLowerCase();
-  const adminEmails = (env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
-  return { userId: user.id, email, isAdmin: adminEmails.includes(email), profile };
+  return { userId: user.id, email, isAdmin: adminEmails(env).includes(email), profile };
 }
 
 function hasActiveSubscription(profile: ProfileRow | null): boolean {
@@ -868,6 +884,10 @@ async function handleSignup(request: Request, env: Env): Promise<Response> {
   if (!EMAIL_RE.test(email) || email.length > 254) return jsonResponse({ error: 'E-mail inválido. Verifique o endereço digitado.' }, 400);
   // 72 é o limite do bcrypt usado pelo Supabase
   if (password.length < 6 || password.length > 72) return jsonResponse({ error: 'A senha deve ter entre 6 e 72 caracteres.' }, 400);
+  // Sem confirmação por e-mail, quem cadastrasse primeiro um e-mail de ADMIN_EMAILS que ainda não tem conta viraria administrador
+  if (adminEmails(env).includes(email)) {
+    return jsonResponse({ error: 'Este e-mail não pode ser cadastrado por aqui. Fale com o suporte.', code: 'reserved' }, 403);
+  }
 
   const firstAccess = body.firstAccess === true;
   if (firstAccess) {

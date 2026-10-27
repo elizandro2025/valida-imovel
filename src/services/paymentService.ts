@@ -105,7 +105,10 @@ export const paymentService = {
         qr_code_base64: null,
         ticket_url: null,
         amount: COMPANY_CONFIG.offer.priceValue,
-        error: err instanceof Error ? err.message : 'Erro de conexão com o servidor de pagamento',
+        // Falha de rede ("Failed to fetch") ou resposta ilegível chegam em inglês: a pessoa recebe uma orientação
+        error: err instanceof TypeError || err instanceof SyntaxError || !(err instanceof Error)
+          ? 'Falha de conexão com o servidor de pagamento. Verifique sua internet e tente novamente.'
+          : err.message,
       };
     }
   },

@@ -26,6 +26,17 @@ interface GeminiResponse {
   error?: string | { message?: string };
 }
 
+// Motivos técnicos do Gemini para uma resposta vazia, em palavras que orientam a próxima ação
+const BLOCKED = 'O serviço de IA recusou processar este documento. Tente novamente; se continuar, fale com o suporte.';
+const EMPTY_REPLY_MESSAGES: Record<string, string> = {
+  SAFETY: BLOCKED,
+  PROHIBITED_CONTENT: BLOCKED,
+  BLOCKLIST: BLOCKED,
+  SPII: BLOCKED,
+  RECITATION: BLOCKED,
+  MAX_TOKENS: 'A resposta da IA foi interrompida por ser longa demais. Tente novamente.',
+};
+
 async function callAI(path: string, body: string, contentType: string, timeoutMs = 300_000): Promise<AIResult> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -40,15 +51,19 @@ async function callAI(path: string, body: string, contentType: string, timeoutMs
 
     const data: GeminiResponse = await response.json().catch(() => ({}));
     if (!response.ok) {
-      // Erros da própria API vêm como texto; erros repassados do Gemini vêm como objeto
-      const message = typeof data.error === 'string' ? data.error : data.error?.message;
-      throw new AIServiceError(message || `Erro na IA (${response.status}).`);
+      // Erros da própria API vêm como texto, já em português; erros repassados do Gemini vêm como objeto, em inglês,
+      // e ficam só no console (a pessoa recebe uma orientação)
+      if (typeof data.error === 'string' && data.error) throw new AIServiceError(data.error);
+      console.warn(`Erro da IA (${response.status}):`, data.error);
+      throw new AIServiceError(`Não foi possível concluir a análise agora (erro ${response.status}). Tente novamente em alguns minutos; se continuar, fale com o suporte.`);
     }
 
     const candidate = data.candidates?.[0];
     const text = (candidate?.content?.parts || []).filter(p => !p.thought).map(p => p.text || '').join('');
     if (!text.trim()) {
-      throw new AIServiceError(`A IA não retornou conteúdo (${candidate?.finishReason || data.promptFeedback?.blockReason || 'motivo desconhecido'}).`);
+      const reason = candidate?.finishReason || data.promptFeedback?.blockReason || 'desconhecido';
+      console.warn('A IA não retornou conteúdo:', reason);
+      throw new AIServiceError(EMPTY_REPLY_MESSAGES[reason] ?? 'A IA não devolveu resposta desta vez. Tente novamente em alguns minutos.');
     }
     return { text, model: response.headers.get('X-AI-Model'), finishReason: candidate?.finishReason ?? null };
   } catch (error) {

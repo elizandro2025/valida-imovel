@@ -140,6 +140,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground hover:bg-muted w-9 p-0"
             title="Pular Tour Guiado"
+            aria-label="Pular o tour guiado"
           >
             <X className="w-4.5 h-4.5" />
           </Button>
@@ -191,7 +192,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
             <Button
               size="sm"
               onClick={handleNext}
-              className="bg-primary hover:bg-primary text-white font-semibold text-xs h-10 px-4 sm:px-5 gap-1.5 touch-target"
+              className="font-semibold text-xs h-10 px-4 sm:px-5 gap-1.5 touch-target"
             >
               {currentStepIndex === TOUR_STEPS.length - 1 ? (
                 <>Concluir Tour <CheckCircle2 className="w-4 h-4" /></>

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -18,6 +19,8 @@ interface ErrorModalProps {
   // Botão principal: por padrão só fecha; pode levar direto à próxima ação (ex.: escolher outro arquivo)
   actionLabel?: string;
   onAction?: () => void;
+  // Botão secundário que só fecha (ex.: "Fechar" ao lado de "Tentar de novo")
+  cancelLabel?: string;
 }
 
 export const ErrorModal: React.FC<ErrorModalProps> = ({
@@ -27,6 +30,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
   message,
   actionLabel = "Fechar",
   onAction,
+  cancelLabel,
 }) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -43,6 +47,9 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
+          {cancelLabel && (
+            <AlertDialogCancel className="rounded-full w-full sm:w-auto">{cancelLabel}</AlertDialogCancel>
+          )}
           <AlertDialogAction onClick={onAction ?? onClose} className="rounded-full w-full sm:w-auto">
             {actionLabel}
           </AlertDialogAction>

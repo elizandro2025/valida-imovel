@@ -99,6 +99,14 @@ describe('cadastro sem confirmação por e-mail', () => {
     expect((await signup({ email: 'a@b.com', password: '123' })).status).toBe(400);
     expect(calls).toHaveLength(0);
   });
+
+  it('e-mail de administrador não é cadastrado pelo site (nem no primeiro acesso)', async () => {
+    mockFetch([]);
+    const env = { ...baseEnv, FIRST_ACCESS_EMAILS: 'admin@validaimovel.com' };
+    expect((await signup({ email: 'Admin@ValidaImovel.com', password: 'segredo1' })).status).toBe(403);
+    expect((await signup({ email: 'admin@validaimovel.com', password: 'segredo1', firstAccess: true }, env)).status).toBe(403);
+    expect(calls).toHaveLength(0);
+  });
 });
 
 describe('cobrança', () => {
@@ -151,7 +159,7 @@ describe('webhook do Asaas', () => {
     expect(patch.subscription_plan).toBe('Plano Mensal');
     expect(Math.abs(Date.parse(patch.subscription_expires_at) - (expires + 30 * DAY))).toBeLessThan(60_000);
 
-    const record = calls.find(c => c.url.pathname === '/rest/v1/valida_payments');
+    const record = calls.find(c => c.init.method === 'POST' && c.url.pathname === '/rest/v1/valida_payments');
     expect(JSON.parse(String(record?.init.body))).toMatchObject({ payment_id: 'pay_1', user_id: USER_ID, status: 'pago', receipt_url: 'https://asaas.test/comprovante/1' });
   });
 
@@ -199,6 +207,31 @@ describe('webhook do Asaas', () => {
     const res = await webhook('PAYMENT_RECEIVED');
     expect(res.status).toBe(200);
     expect(patches()).toHaveLength(0);
+  });
+
+  // Cartão: CONFIRMED na aprovação e RECEIVED na liquidação, semanas depois. Se o cliente renovou nesse meio-tempo,
+  // o perfil aponta para a cobrança nova e só o histórico mostra que a antiga já foi aplicada.
+  const settledAfterRenewal = (history: unknown[]) => mockFetch([
+    [/GET https:\/\/asaas\.test\/v3\/payments\/pay_1/, () => payment('RECEIVED')],
+    [/GET https:\/\/sb\.test\/rest\/v1\/profiles\?id=eq\./, () => json([{
+      id: USER_ID, has_subscription: true, subscription_expires_at: new Date(Date.now() + 40 * DAY).toISOString(), payment_id: 'pay_2',
+    }])],
+    [/GET https:\/\/sb\.test\/rest\/v1\/valida_payments\?payment_id=eq\.pay_1/, () => json(history)],
+    [/PATCH https:\/\/sb\.test\/rest\/v1\/profiles/, () => json([{ id: USER_ID }])],
+    [/POST https:\/\/sb\.test\/rest\/v1\/valida_payments/, () => new Response(null, { status: 201 })],
+  ]);
+
+  it('cartão: o RECEIVED que chega depois de uma renovação não soma os dias de novo', async () => {
+    settledAfterRenewal([{ user_id: USER_ID, status: 'pago' }]);
+    const res = await webhook('PAYMENT_RECEIVED');
+    expect(res.status).toBe(200);
+    expect(patches()).toHaveLength(0);
+  });
+
+  it('cobrança paga que ficou sem usuário é aplicada quando o perfil aparece', async () => {
+    settledAfterRenewal([{ user_id: null, status: 'pago' }]);
+    await webhook('PAYMENT_RECEIVED');
+    expect(patches()).toHaveLength(1);
   });
 
   const refund = (value: number, daysLeft: number) => mockFetch([

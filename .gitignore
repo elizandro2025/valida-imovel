@@ -10,6 +10,8 @@ node_modules
 dist
 dist-ssr
 *.local
+# Cópia temporária da configuração que o Vite deixa quando o processo é interrompido
+vite.config.*.timestamp-*
 .env
 .env.local
 

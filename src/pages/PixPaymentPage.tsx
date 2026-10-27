@@ -362,37 +362,53 @@ export const PixPaymentPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-semibold text-foreground">Dados do titular</Label>
                     </div>
+                    {/* Rótulo visível em cada campo: o texto de exemplo some quando a pessoa começa a digitar */}
                     <div className="grid sm:grid-cols-2 gap-3">
-                      <div className="relative">
-                        <User className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
-                        <Input
-                          type="text"
-                          placeholder="Nome completo"
-                          value={payerName}
-                          onChange={(e) => setPayerName(e.target.value)}
-                          className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
-                        />
+                      <div className="space-y-1.5">
+                        <Label htmlFor="payer-name" className="text-xs font-semibold text-muted-foreground">Nome completo</Label>
+                        <div className="relative">
+                          <User className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
+                          <Input
+                            id="payer-name"
+                            type="text"
+                            autoComplete="name"
+                            placeholder="Como está no documento"
+                            value={payerName}
+                            onChange={(e) => setPayerName(e.target.value)}
+                            className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
+                          />
+                        </div>
                       </div>
-                      <div className="relative">
-                        <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
-                        <Input
-                          type="email"
-                          placeholder="E-mail"
-                          value={payerEmail}
-                          onChange={(e) => setPayerEmail(e.target.value)}
-                          className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
-                        />
+                      <div className="space-y-1.5">
+                        <Label htmlFor="payer-email" className="text-xs font-semibold text-muted-foreground">E-mail</Label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
+                          <Input
+                            id="payer-email"
+                            type="email"
+                            autoComplete="email"
+                            placeholder="seu.email@exemplo.com"
+                            value={payerEmail}
+                            onChange={(e) => setPayerEmail(e.target.value)}
+                            className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
+                          />
+                        </div>
                       </div>
-                      <div className="relative sm:col-span-2">
-                        <FileCheck className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
-                        <Input
-                          type="text"
-                          inputMode="numeric"
-                          placeholder="CPF (000.000.000-00)"
-                          value={payerCpf}
-                          onChange={(e) => setPayerCpf(formatCpf(e.target.value))}
-                          className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
-                        />
+                      <div className="space-y-1.5 sm:col-span-2">
+                        <Label htmlFor="payer-cpf" className="text-xs font-semibold text-muted-foreground">CPF do titular</Label>
+                        <div className="relative">
+                          <FileCheck className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
+                          <Input
+                            id="payer-cpf"
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="off"
+                            placeholder="000.000.000-00"
+                            value={payerCpf}
+                            onChange={(e) => setPayerCpf(formatCpf(e.target.value))}
+                            className="bg-background border-border text-foreground pl-9 text-xs sm:text-sm h-11 rounded-xl focus:border-primary/30"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -402,7 +418,7 @@ export const PixPaymentPage: React.FC = () => {
                     <div className="space-y-5">
                       
                       {/* Indicador de Status em Tempo Real */}
-                      <div className="p-3.5 bg-secondary rounded-2xl flex items-center text-xs">
+                      <div role="status" aria-live="polite" className="p-3.5 bg-secondary rounded-2xl flex items-center text-xs">
                         <div className="flex items-center gap-2.5">
                           <span className="relative flex h-2.5 w-2.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -444,9 +460,10 @@ export const PixPaymentPage: React.FC = () => {
                       {/* Chave Pix Copia e Cola */}
                       {!isGenerating && pixPayment?.qr_code && (
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold text-muted-foreground">Chave Pix Copia e Cola</Label>
+                          <Label htmlFor="pix-copia-cola" className="text-xs font-semibold text-muted-foreground">Chave Pix Copia e Cola</Label>
                           <div className="flex gap-2">
                             <Input
+                              id="pix-copia-cola"
                               readOnly
                               value={pixPayment.qr_code}
                               className="bg-background border-border text-muted-foreground font-mono text-xs h-11 rounded-xl truncate"
@@ -474,7 +491,7 @@ export const PixPaymentPage: React.FC = () => {
                       {!isGenerating && (!pixPayment || generateError) && (
                         <Button
                           onClick={handleGeneratePixPayment}
-                          className="w-full bg-primary hover:bg-primary text-white font-semibold text-sm gap-2 transition-all"
+                          className="w-full font-semibold text-sm gap-2 transition-all"
                         >
                           <QrCode className="w-4 h-4" /> Gerar Pix de {offer.priceFormatted}
                         </Button>
@@ -500,7 +517,7 @@ export const PixPaymentPage: React.FC = () => {
 
                       {cardInitPoint ? (
                         <a href={cardInitPoint} target="_blank" rel="noopener noreferrer">
-                          <Button className="bg-primary hover:bg-primary text-white font-semibold text-xs px-8 gap-2">
+                          <Button className="font-semibold text-xs px-8 gap-2">
                             Pagar no Cartão de Crédito <ExternalLink className="w-4 h-4" />
                           </Button>
                         </a>
@@ -508,7 +525,7 @@ export const PixPaymentPage: React.FC = () => {
                         <Button
                           onClick={handleGenerateCardPayment}
                           disabled={isGeneratingCard}
-                          className="bg-primary hover:bg-primary text-white font-semibold text-xs px-8 gap-2"
+                          className="font-semibold text-xs px-8 gap-2"
                         >
                           {isGeneratingCard ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> Conectando ao checkout...</>

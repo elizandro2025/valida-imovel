@@ -224,6 +224,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
           className="flex items-center gap-2"
         >
           <Input
+            aria-label="Sua pergunta sobre o relatório"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Pergunte sobre os proprietários, valores, penhoras, áreas..."
@@ -233,7 +234,8 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
           <Button
             type="submit"
             disabled={!input.trim() || isTyping}
-            className="bg-primary hover:bg-primary text-white px-4 shrink-0"
+            aria-label="Enviar pergunta"
+            className="px-4 shrink-0"
           >
             <Send className="w-3.5 h-3.5" />
           </Button>
