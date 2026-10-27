@@ -62,7 +62,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
           <div className="flex flex-col sm:flex-row justify-between text-xs text-muted-foreground font-semibold gap-1 pt-1">
             <span className="flex items-center gap-1.5 text-primary">
               <Loader2 className="w-3.5 h-3.5 text-primary animate-spin shrink-0" />
-              <span className="truncate">{currentStep || 'Processando...'}</span>
+              <span role="status" aria-live="polite" className="truncate">{currentStep || 'Processando...'}</span>
             </span>
           </div>
         </div>

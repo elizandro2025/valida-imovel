@@ -130,7 +130,9 @@ async function asaasRequest<T>(env: Env, path: string, method = 'GET', body?: ob
 
   const data = await response.json().catch(() => ({})) as { errors?: Array<{ description?: string }> };
   if (!response.ok) {
-    const message = data.errors?.map(e => e.description).filter(Boolean).join('; ') || `HTTP ${response.status}`;
+    // A mensagem chega à tela de pagamento: o Asaas descreve o erro em português; sem descrição, uma orientação
+    const message = data.errors?.map(e => e.description).filter(Boolean).join('; ')
+      || `O serviço de pagamento não respondeu (erro ${response.status}). Tente novamente em instantes.`;
     throw new AsaasError(message, response.status);
   }
   return data as T;

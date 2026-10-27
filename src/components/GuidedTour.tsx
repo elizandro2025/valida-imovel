@@ -140,6 +140,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground hover:bg-muted w-9 p-0"
             title="Pular Tour Guiado"
+            aria-label="Pular o tour guiado"
           >
             <X className="w-4.5 h-4.5" />
           </Button>
