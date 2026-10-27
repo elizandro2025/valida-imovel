@@ -260,7 +260,7 @@ export const LandingPage: React.FC = () => {
 
       {/* Top Banner de Oferta */}
       <div className="w-full bg-card border-b border-border text-center text-[13px] leading-snug text-foreground py-2.5 px-4">
-        Plataforma Completa: <strong className="font-semibold">{offer.priceFormatted}</strong> por {offer.period} · Matrículas + Projetos Técnicos · {offer.guaranteeDays} dias de garantia
+        <strong className="font-semibold">{offer.priceFormatted}</strong> por {offer.period} · matrículas e projetos · {offer.guaranteeDays} dias para desistir
         <Link to="/app?sample=risk" className="text-primary underline underline-offset-2 ml-2 whitespace-nowrap">Ver demonstração ›</Link>
       </div>
 
@@ -297,14 +297,14 @@ export const LandingPage: React.FC = () => {
             <div className="text-center space-y-4 max-w-4xl mx-auto">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium bg-white/10 text-white/90 border border-white/15 backdrop-blur-md mb-2">
                 <Sparkles className="w-3.5 h-3.5 text-[#6cb4ff]" />
-                Auditoria de Matrículas & Engenharia Notarial
+                Matrículas e projetos conferidos com IA
               </div>
               <h1 className="text-[36px] leading-[1.08] sm:text-6xl lg:text-7xl font-semibold tracking-tight">
                 <span className="block text-white/55">Segurança jurídica e técnica:</span>
                 da certidão de matrícula à conferência do projeto.
               </h1>
               <p className="text-lg sm:text-2xl text-white/75 leading-snug max-w-3xl mx-auto">
-                Descubra penhoras, hipotecas e proprietários em certidões de qualquer cartório do Brasil e faça o confronto automático entre planta e memorial descritivo. Elimine o risco de fraudes e notas devolutivas.
+                Descubra penhoras, hipotecas e proprietários em certidões de qualquer cartório do Brasil e faça o confronto automático entre planta e memorial descritivo. Reduza o risco de fraudes e de notas devolutivas.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <Link to={ctaPath} className="w-full sm:w-auto">
@@ -350,7 +350,7 @@ export const LandingPage: React.FC = () => {
                         : 'text-white/70 hover:text-white'
                     }`}
                   >
-                    2. Conferência de Projetos (Engenharia Notarial)
+                    2. Conferência de projetos
                   </button>
                 </div>
               </div>
@@ -827,7 +827,7 @@ export const LandingPage: React.FC = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 glass border-x-0 border-b-0 px-4 py-2.5 sm:hidden flex items-center justify-between gap-3">
         <div className="min-w-0 leading-tight">
           <span className="text-sm font-semibold text-foreground block truncate">{offer.priceFormatted}</span>
-          <span className="text-xs text-muted-foreground block truncate">{offer.period} · {offer.guaranteeDays} dias de garantia</span>
+          <span className="text-xs text-muted-foreground block truncate">{offer.period} · {offer.guaranteeDays} dias para desistir</span>
         </div>
         <Link to={ctaPath} className="shrink-0"><Button size="sm">{ctaLabel}</Button></Link>
       </div>

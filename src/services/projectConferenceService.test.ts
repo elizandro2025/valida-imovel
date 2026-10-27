@@ -61,6 +61,12 @@ describe('relatório em Word', () => {
 });
 
 describe('projeto aberto', () => {
+  it('o título padrão escolhido no Hub não faz o projeto vazio parecer "em andamento"', () => {
+    const blank = createEmptyProject();
+    expect(projectHasContent({ ...blank, info: { ...blank.info, nome: 'Conferência de Retificação de Área (LRP)' } })).toBe(false);
+    expect(projectHasContent({ ...blank, info: { ...blank.info, nome: 'Lote 5 da Rua A' } })).toBe(true);
+  });
+
   it('fica só na memória da aba e sai ao limpar (ao sair da conta)', () => {
     expect(projectHasContent(loadCurrentProject())).toBe(false);
     keepCurrentProject({ ...createEmptyProject(), info: { ...createEmptyProject().info, nome: 'Lote 5' } });

@@ -89,13 +89,13 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
       <div className="text-center space-y-3 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
           <Sparkles className="w-3.5 h-3.5 text-primary" />
-          <span>Plataforma Inteligente de Auditoria Imobiliária & Cartorária</span>
+          <span>Matrículas e projetos imobiliários</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
           {userName ? `Olá, ${userName.split(' ')[0]}. ` : ''}O que você precisa fazer?
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-          Selecione o procedimento desejado. O sistema conduz você passo a passo do envio das peças até o laudo conclusivo, com validações automáticas contra notas devolutivas.
+          Escolha uma opção abaixo. Em cada etapa o sistema mostra o que fazer a seguir, até o relatório final.
         </p>
       </div>
 
@@ -117,7 +117,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             <h3 className="text-sm sm:text-base font-bold text-foreground">
               {isDragActive
                 ? 'Solte o arquivo aqui...'
-                : 'Não sabe por onde começar? Arraste seu documento aqui'}
+                : 'Não sabe por onde começar? Envie seu documento aqui'}
             </h3>
             <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed">
               Pelo nome do arquivo, o sistema escolhe o caminho: a certidão da matrícula abre a análise de matrícula; planta,
@@ -146,7 +146,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
               className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors py-1.5 px-3.5 rounded-full bg-primary/5 hover:bg-primary/10 border border-primary/20"
             >
               <HelpCircle className="w-3.5 h-3.5" />
-              <span>Dúvida sobre qual procedimento escolher? Clique para o Guia de Decisão</span>
+              <span>Não sabe qual escolher? Veja um guia rápido</span>
             </button>
           </div>
         ) : (
@@ -261,7 +261,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             size="sm"
             className="shrink-0 gap-1.5 font-semibold text-xs shadow-xs bg-primary hover:bg-primary/90 text-primary-foreground h-9 px-4"
           >
-            <span>Retomar Trabalho</span>
+            <span>Continuar projeto</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
         </div>
@@ -286,21 +286,21 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
 
             <div>
               <h2 className="text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                Auditar Matrícula de Imóvel
+                Analisar a matrícula de um imóvel
               </h2>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Análise preventiva de riscos contratuais em certidões imobiliárias (PDF). Identifica automaticamente penhoras, gravames, usufruto, indisponibilidades e a cadeia de titularidade.
+                Envie a certidão em PDF e veja quem são os donos, se há dívidas, penhoras ou bloqueios e o nível de risco, antes de comprar, vender ou financiar.
               </p>
             </div>
 
             <div className="pt-2 border-t border-border/40 space-y-1.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Nota de risco global e 12 módulos de checagem</span>
+                <span>Nota de risco e resumo em palavras simples</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Chat com IA para esclarecer cláusulas e averbações</span>
+                <span>Pergunte à IA sobre qualquer ponto da certidão</span>
               </div>
             </div>
           </div>
@@ -309,7 +309,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             size="sm"
             className="w-full gap-2 font-semibold text-xs h-9 bg-primary group-hover:bg-primary/95 text-primary-foreground shadow-xs"
           >
-            <span>Iniciar Análise de Matrícula</span>
+            <span>Analisar matrícula</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Button>
         </div>
@@ -325,27 +325,27 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
                 <Scissors className="w-6 h-6" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-                Fracionamento
+                Dividir lote
               </span>
             </div>
 
             <div>
               <h2 className="text-base sm:text-lg font-bold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                Conferência de Desdobro de Lote
+                Desdobro de lote
               </h2>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Auditoria de divisão e fracionamento de lote urbano segundo a Lei nº 6.766/79 e parâmetros municipais da Prefeitura (PMSP).
+                Dividir um lote urbano em dois ou mais: confere medidas, documentos e regras do município antes de protocolar (Lei 6.766/79).
               </p>
             </div>
 
             <div className="pt-2 border-t border-border/40 space-y-1.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Verificação de lote mínimo e testada municipal</span>
+                <span>Tamanho mínimo do lote e da frente</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Confronto Planta × Memorial e alvará SEHAB</span>
+                <span>Planta comparada com o memorial descritivo</span>
               </div>
             </div>
           </div>
@@ -355,7 +355,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             size="sm"
             className="w-full gap-2 font-semibold text-xs h-9 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10 group-hover:border-indigo-500 shadow-2xs"
           >
-            <span>Conferir Desdobro</span>
+            <span>Conferir desdobro</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Button>
         </div>
@@ -371,27 +371,27 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
                 <Compass className="w-6 h-6" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                Topometria & LRP
+                Corrigir área
               </span>
             </div>
 
             <div>
               <h2 className="text-base sm:text-lg font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                Retificação de Área Intra-muros
+                Retificação de área
               </h2>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Adequação geométrica consensual (Art. 213, II da Lei 6.015/73) e ABNT NBR 17047/2022. Valida cálculo de Gauss, fechamento perimétrico e termos de anuência.
+                Corrigir medidas ou a área registrada na matrícula: confere planta, memorial, cálculos e as assinaturas dos vizinhos (art. 213 da Lei 6.015/73).
               </p>
             </div>
 
             <div className="pt-2 border-t border-border/40 space-y-1.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Fechamento geodésico analítico em UTM SIRGAS 2000</span>
+                <span>Área e perímetro calculados pelas coordenadas</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Checagem de outorga uxória e títulos confinantes</span>
+                <span>Assinaturas dos vizinhos e dos cônjuges (anuências)</span>
               </div>
             </div>
           </div>
@@ -401,7 +401,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             size="sm"
             className="w-full gap-2 font-semibold text-xs h-9 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 group-hover:border-emerald-500 shadow-2xs"
           >
-            <span>Conferir Retificação</span>
+            <span>Conferir retificação</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Button>
         </div>
@@ -412,14 +412,14 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-3">
           <div>
             <span className="text-xs font-bold text-foreground block">
-              Outros Procedimentos Normativos Suportados
+              Outros procedimentos
             </span>
             <p className="text-[11px] text-muted-foreground">
-              Auditorias parametrizadas segundo o Código de Normas da Corregedoria Geral da Justiça e legislação federal.
+              Também com checklist próprio e conferência dos documentos:
             </p>
           </div>
           <span className="text-[10px] text-muted-foreground font-mono">
-            Parametrização automática
+            Checklist próprio
           </span>
         </div>
 
@@ -479,10 +479,10 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
         <div className="space-y-0.5">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Deseja testar a plataforma com casos reais de São Paulo?</span>
+            <span>Quer ver como funciona antes de usar?</span>
           </div>
           <p className="text-[11px] text-muted-foreground">
-            Carregue instantaneamente dossiês periciais simulados para conhecer o fluxo completo sem precisar de arquivos próprios.
+            Abra um exemplo pronto, com dados fictícios. Não usa a IA nem o seu limite diário.
           </p>
         </div>
 
@@ -495,7 +495,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             title="Abrir um projeto de exemplo, com dados fictícios"
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>Simular Caso SP (Desdobro & Retificação)</span>
+            <span>Ver exemplo de projeto</span>
           </Button>
 
           <Button
@@ -506,7 +506,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             title="Carregar certidão com penhora e indisponibilidade"
           >
             <AlertTriangle className="w-3.5 h-3.5" />
-            <span>Simular Matrícula com Risco</span>
+            <span>Ver exemplo de matrícula</span>
           </Button>
         </div>
       </div>

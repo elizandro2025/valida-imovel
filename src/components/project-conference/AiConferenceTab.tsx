@@ -308,7 +308,7 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
             )}
           </div>
           <Button variant="outline" onClick={onFinished} className="gap-2">
-            Ver parecer e correções <ArrowRight className="w-4 h-4" />
+            Continuar a conferência <ArrowRight className="w-4 h-4" />
           </Button>
         </section>
       )}

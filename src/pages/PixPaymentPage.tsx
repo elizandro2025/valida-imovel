@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ import { paymentService, PixPaymentResult, isValidCpf, formatCpf } from '@/servi
 import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { Logo } from '@/components/Logo';
 import { COMPANY_CONFIG } from '@/config/companyConfig';
+import { WHATSAPP_NUMBER, getWhatsAppLink } from '@/utils/whatsappUtils';
 
 const { offer } = COMPANY_CONFIG;
 // "R$ 99,90" → "R$ 99" e "90" (centavos em tamanho menor)
@@ -32,7 +33,10 @@ export const PixPaymentPage: React.FC = () => {
 
   // Renovação: quem já tem plano ativo pode pagar de novo; os dias restantes são somados no servidor
   const isRenewal = searchParams.get('renovar') === '1';
-  const [initialExpiry] = useState<string | null>(() => user?.subscriptionExpiresAt ?? null);
+  // Vencimento de antes do pagamento, lido quando o usuário termina de carregar (ao recarregar a página ele ainda é
+  // nulo no primeiro render, e a renovação pareceria aplicada só porque o banco aprovou)
+  const initialExpiryRef = useRef<string | null | undefined>(undefined);
+  if (initialExpiryRef.current === undefined && user) initialExpiryRef.current = user.subscriptionExpiresAt ?? null;
 
   const handleSignOut = async () => {
     await signOut();
@@ -60,6 +64,14 @@ export const PixPaymentPage: React.FC = () => {
   const [payerName, setPayerName] = useState(user?.name || '');
   const [payerEmail, setPayerEmail] = useState(user?.email || '');
   const [payerCpf, setPayerCpf] = useState('');
+
+  // Ao recarregar a página, o usuário ainda não carregou no primeiro render: preenche nome e e-mail quando ele chega,
+  // sem apagar o que a pessoa já digitou (sem e-mail, o Pix não é gerado sozinho depois do CPF)
+  useEffect(() => {
+    if (!user) return;
+    setPayerName(prev => prev || user.name || '');
+    setPayerEmail(prev => prev || user.email || '');
+  }, [user]);
   const [activeTab, setActiveTab] = useState<'pix' | 'card'>('pix');
   const [copied, setCopied] = useState(false);
 
@@ -73,35 +85,42 @@ export const PixPaymentPage: React.FC = () => {
   const [cardPaymentId, setCardPaymentId] = useState<string | null>(null);
   const [isGeneratingCard, setIsGeneratingCard] = useState(false);
 
-  // Status de confirmação
+  // Pagamento recebido pelo banco (o Asaas avisou) — o acesso ainda pode não estar liberado
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  // A liberação passou de ~2 min: a tela oferece "Verificar de novo" e o suporte, sem gerar outra cobrança
+  const [liberationSlow, setLiberationSlow] = useState(false);
+  const waitingRef = useRef(false);
 
   // Chamado pelo Supabase Realtime ou pela consulta de status. O acesso é liberado pelo webhook no
-  // servidor; aqui só esperamos o perfil refletir isso (na renovação, o vencimento novo).
+  // servidor; aqui só esperamos o perfil refletir isso (na renovação, o vencimento novo). A tela só diz
+  // "liberado" e só leva ao app depois disso: antes, o app devolveria a pessoa para o pagamento.
   const handlePaymentActivated = useCallback(async () => {
+    if (waitingRef.current) return;
+    waitingRef.current = true;
     setPaymentConfirmed(true);
+    setLiberationSlow(false);
 
-    for (let attempt = 0; attempt < 10; attempt++) {
+    // 10 consultas a cada 3 s e depois 9 a cada 10 s: cerca de 2 minutos
+    for (let attempt = 0; attempt < 19; attempt++) {
       const refreshed = await refreshUser();
       const applied = isRenewal
-        ? Boolean(refreshed?.subscriptionExpiresAt && refreshed.subscriptionExpiresAt !== initialExpiry)
+        ? Boolean(refreshed?.subscriptionExpiresAt && refreshed.subscriptionExpiresAt !== initialExpiryRef.current)
         : Boolean(refreshed?.hasSubscription);
       if (applied) {
+        waitingRef.current = false;
         toast({
-          title: 'Pagamento confirmado',
+          title: 'Acesso liberado',
           description: isRenewal ? 'Seu acesso foi renovado.' : `Seu acesso de ${offer.period} foi liberado.`,
         });
         navigate('/app', { replace: true });
         return;
       }
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, attempt < 10 ? 3000 : 10000));
     }
 
-    toast({
-      title: 'Pagamento recebido',
-      description: 'Estamos concluindo a liberação do seu acesso. Recarregue a página em instantes ou fale com o suporte.',
-    });
-  }, [toast, refreshUser, navigate, isRenewal, initialExpiry]);
+    waitingRef.current = false;
+    setLiberationSlow(true);
+  }, [toast, refreshUser, navigate, isRenewal]);
 
   // Supabase Realtime: na renovação, só reage à cobrança gerada nesta página
   useEffect(() => {
@@ -241,29 +260,42 @@ export const PixPaymentPage: React.FC = () => {
 
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8">
 
-        {/* Estado: Pagamento Confirmado (Comemoração) */}
+        {/* Estado: pagamento recebido, acesso sendo liberado (a tela só leva ao app quando o acesso estiver valendo) */}
         {paymentConfirmed ? (
-          <Card className="border-0 ring-1 ring-black/5 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium bg-card">
+          <Card role="status" aria-live="polite" className="border-0 ring-1 ring-black/5 p-8 sm:p-12 rounded-3xl text-center space-y-6 shadow-medium bg-card">
             <div className="w-20 h-20 mx-auto rounded-full bg-success text-white flex items-center justify-center shadow-soft">
               <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
             </div>
             <div className="space-y-2">
               <Badge variant="outline" className="border-success/30 bg-success/10 text-success text-xs font-semibold px-4 py-1.5 rounded-full">
-                Pagamento confirmado
+                Pagamento recebido
               </Badge>
               <h2 className="text-3xl font-semibold tracking-tight pt-2 text-foreground">
-                {isRenewal ? 'Acesso renovado!' : 'Bem-vindo ao ValidaImóvel!'}
+                {liberationSlow ? 'Seu pagamento foi recebido' : isRenewal ? 'Renovando o seu acesso…' : 'Liberando o seu acesso…'}
               </h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-                Estamos liberando o seu acesso e levando você para a área de análises...
+                {liberationSlow
+                  ? 'A liberação está demorando mais que o normal. Toque em "Verificar de novo". Se continuar assim, fale com o suporte pelo WhatsApp: o pagamento não se perde e você não precisa pagar outra vez.'
+                  : 'O banco confirmou o pagamento. Em alguns segundos você será levado para a sua área. Não feche esta página e não pague de novo.'}
               </p>
             </div>
-            <div className="pt-4">
-              <Link to="/app">
-                <Button size="lg" className="gap-2">
-                  Ir para as análises <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              {liberationSlow ? (
+                <>
+                  <Button size="lg" className="gap-2" onClick={() => handlePaymentActivated()}>
+                    Verificar de novo <ArrowRight className="w-5 h-5" />
+                  </Button>
+                  <Button asChild size="lg" variant="outline">
+                    <a href={getWhatsAppLink(WHATSAPP_NUMBER, 'Olá! Paguei o ValidaImóvel e o acesso ainda não foi liberado.')} target="_blank" rel="noopener noreferrer">
+                      Falar com o suporte
+                    </a>
+                  </Button>
+                </>
+              ) : (
+                <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" /> Confirmando a liberação…
+                </span>
+              )}
             </div>
           </Card>
         ) : (

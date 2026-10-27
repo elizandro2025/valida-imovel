@@ -5,6 +5,7 @@ import {
   loadCurrentProject,
   keepCurrentProject,
   projectHasContent,
+  PROCEDURE_DEFAULT_TITLES,
   consolidateIssues,
   computeAutomaticOpinion,
 } from '../../services/projectConferenceService';
@@ -94,7 +95,8 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     keepCurrentProject(initial);
     return initial;
   });
-  const [activeTab, setActiveTab] = useState<WorkspaceTab>(startWithSample ? 'parecer' : 'info');
+  // Projeto novo começa pela leitura automática dos documentos (o formulário manual fica ao lado, na mesma etapa)
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>(startWithSample ? 'parecer' : 'ia');
   const [wizardStep, setWizardStep] = useState<WizardStep>(startWithSample ? 4 : 1);
   const [viewMode, setViewMode] = useState<'wizard' | 'expert'>('wizard');
   // Ações que tiram da tela um projeto real (não salvo): o exemplo ou um projeto novo
@@ -129,14 +131,7 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
           return prev;
         }
 
-        const procedureNames: Record<string, string> = {
-          desdobro: 'Conferência de Desdobro de Lote Urbano',
-          retificacao: 'Conferência de Retificação de Área (LRP)',
-          unificacao: 'Conferência de Unificação de Lotes',
-          estremacao: 'Conferência de Estremação de Parcela (Prov. CNJ 149)',
-          divisao: 'Conferência de Divisão e Extinção de Condomínio',
-          reurb: 'Conferência de Regularização Fundiária (REURB-S)',
-        };
+        const procedureNames = PROCEDURE_DEFAULT_TITLES;
 
         const defaultTitle = procedureNames[initialProcedure] || 'Conferência Pericial Técnica';
         const isDefaultOrEmptyTitle = !prev.info.nome || Object.values(procedureNames).includes(prev.info.nome);
@@ -160,6 +155,8 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     ['Ausente', 'Ilegível', 'Incompleto'].includes(d.status)
   ).length;
   const { opinion } = computeAutomaticOpinion(project);
+  // Projeto ainda vazio: mostra "Projeto novo" em vez de um parecer "incompleto" antes de a pessoa começar
+  const isNewProject = !projectHasContent(project);
   const totalChecklistItems = PROCEDURE_CHECKLISTS
     .filter((p) => project.info.procedimentos.includes(p.key))
     .reduce((acc, p) => acc + p.items.length, 0);
@@ -297,28 +294,28 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
   const WIZARD_STEPS_CONFIG = [
     {
       step: 1 as WizardStep,
-      title: 'Documentos do Trabalho',
-      description: 'Identificação do imóvel e envio das peças do projeto',
+      title: 'Documentos',
+      description: 'Envie planta, memorial e matrículas: a leitura automática preenche os dados',
       icon: FolderKanban,
-      defaultTab: 'info' as WorkspaceTab,
-      allowedTabs: ['info'] as WorkspaceTab[],
+      defaultTab: 'ia' as WorkspaceTab,
+      allowedTabs: ['ia', 'info'] as WorkspaceTab[],
       badge: missingDocsCount > 0 ? `${missingDocsCount} pendente(s)` : 'Documentos OK',
       isComplete: Boolean(project.info.nome && project.info.matricula),
     },
     {
       step: 2 as WizardStep,
-      title: 'Conferência de Medidas e Áreas',
-      description: 'Cálculo perimétrico e confronto entre Planta e Memorial',
+      title: 'Medidas e áreas',
+      description: 'Área e perímetro calculados e planta comparada com o memorial',
       icon: Pentagon,
-      defaultTab: 'ia' as WorkspaceTab,
-      allowedTabs: ['ia', 'poligonal', 'planta_memorial'] as WorkspaceTab[],
+      defaultTab: 'poligonal' as WorkspaceTab,
+      allowedTabs: ['poligonal', 'planta_memorial'] as WorkspaceTab[],
       badge: project.polygon.rawCoords.trim() ? 'Medidas Validadas' : 'Aguardando Medidas',
       isComplete: Boolean(project.polygon.rawCoords.trim()),
     },
     {
       step: 3 as WizardStep,
-      title: 'Vizinhos e Diferenças Encontradas',
-      description: 'Divisas limítrofes, anuências e prevenção de notas devolutivas',
+      title: 'Vizinhos e diferenças',
+      description: 'Confrontantes, assinaturas e o que precisa ser corrigido',
       icon: Compass,
       defaultTab: 'confrontantes' as WorkspaceTab,
       allowedTabs: ['confrontantes', 'inconsistencias', 'checklists', 'amarracao'] as WorkspaceTab[],
@@ -327,13 +324,13 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     },
     {
       step: 4 as WizardStep,
-      title: 'Resultado da Análise & Laudo',
-      description: 'Parecer conclusivo e emissão de relatório em Word e PDF',
+      title: 'Resultado e relatório',
+      description: 'Parecer e relatório para exportar (Word ou impressão)',
       icon: Award,
       defaultTab: 'parecer' as WorkspaceTab,
       allowedTabs: ['parecer', 'analises'] as WorkspaceTab[],
-      badge: opinion,
-      isComplete: Boolean(project.parecer?.final || opinion),
+      badge: isNewProject ? 'Projeto novo' : opinion,
+      isComplete: !isNewProject && Boolean(project.parecer?.final || opinion),
     },
   ];
 
@@ -369,8 +366,8 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     {
       id: 'geometria',
       number: '01',
-      title: 'Peças & Geometria',
-      subtitle: 'Dossiê técnico, serventia e malha Gauss',
+      title: 'Documentos e medidas',
+      subtitle: 'Documentos, cartório e cálculo da área',
       icon: Pentagon,
       tabs: ['info', 'poligonal'],
       statusBadge:
@@ -383,8 +380,8 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     {
       id: 'confronto',
       number: '02',
-      title: 'Auditoria & Matriz 7D',
-      subtitle: 'Planta × Memorial, divisas e quesitos CGJ',
+      title: 'Conferência',
+      subtitle: 'Planta × memorial, vizinhos e checklists',
       icon: Compass,
       tabs: ['planta_memorial', 'confrontantes', 'amarracao', 'checklists'],
       statusBadge:
@@ -395,8 +392,8 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     {
       id: 'laudo',
       number: '03',
-      title: 'Riscos, IA & Laudo',
-      subtitle: 'Auditor IA, não-conformidades e minuta',
+      title: 'Resultado',
+      subtitle: 'Leitura com IA, diferenças e relatório',
       icon: Award,
       tabs: ['ia', 'inconsistencias', 'analises', 'parecer'],
       statusBadge:
@@ -435,13 +432,13 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
             className="flex items-center gap-1.5 text-indigo-200 hover:text-white font-semibold transition-colors mr-2 pr-2 border-r border-indigo-800"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Hub de Procedimentos</span>
+            <span>Início</span>
           </button>
           <span className="font-semibold tracking-wide hidden sm:inline">
-            ValidaImóvel PRO: Auditoria Pericial & Notarial
+            Conferência de projeto
           </span>
           <span className="hidden md:inline text-indigo-300">
-            • ABNT NBR 17047 / Lei 6.015/73 / NSCGJ-SP
+            • planta, memorial e documentos conferidos antes do cartório
           </span>
         </div>
 
@@ -458,7 +455,7 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
               }`}
             >
               <RouteIcon className="w-3 h-3" />
-              <span>Fluxo Guiado</span>
+              <span>Passo a passo</span>
             </button>
             <button
               type="button"
@@ -470,7 +467,7 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
               }`}
             >
               <LayoutGrid className="w-3 h-3" />
-              <span>Grade Técnica (10 Abas)</span>
+              <span>Todas as abas</span>
             </button>
           </div>
 
@@ -612,6 +609,12 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
 
                 {/* Banner resumo rápido de conformidade */}
                 <div className="flex items-center gap-2 text-xs">
+                  {isNewProject ? (
+                    <div className="px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20">
+                      <FileCheck2 className="w-3.5 h-3.5" />
+                      <span>Projeto novo: comece enviando os documentos</span>
+                    </div>
+                  ) : (
                   <div className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 ${
                     opinion === 'DOCUMENTAÇÃO COMPATÍVEL'
                       ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
@@ -628,6 +631,7 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
                     )}
                     <span>{opinion}</span>
                   </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -670,8 +674,9 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
                   data={project}
                   onUpdate={handleProjectUpdate}
                   onFinished={() => {
-                    setWizardStep(3);
-                    setActiveTab('confrontantes');
+                    // Depois da leitura, a próxima etapa é conferir as medidas (passo 2)
+                    setWizardStep(2);
+                    setActiveTab('poligonal');
                   }}
                 />
               )}
@@ -701,7 +706,7 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
                     className="gap-2 text-xs text-muted-foreground"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Voltar ao Hub de Procedimentos</span>
+                    <span>Voltar ao início</span>
                   </Button>
                 )}
               </div>

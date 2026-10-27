@@ -63,7 +63,7 @@ export const TOUR_STEPS: TourStep[] = [
   {
     target: 'step-5',
     title: 'A mesma matrícula, para cada perfil',
-    badge: 'Passo 5 de 6 • Visão por perfil',
+    badge: 'Passo 5 de 6 • Para cada perfil',
     icon: Bot,
     tabValue: 'perfil',
     description: 'Explicações para comprador, corretor, banco, engenheiro e advogado. Assinantes também podem tirar dúvidas no botão "Perguntar à IA", no canto inferior direito.',

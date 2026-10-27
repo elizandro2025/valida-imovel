@@ -225,7 +225,7 @@ const MatriculaAnalysis: React.FC = () => {
           <div className="flex items-center gap-2.5 shrink-0">
             <Logo />
             <span className="text-[13px] text-muted-foreground hidden lg:inline">
-              {isSampleDemo ? 'Demonstração' : 'Workspace'}
+              {isSampleDemo ? 'Demonstração' : 'Sua área'}
             </span>
           </div>
 
@@ -241,7 +241,7 @@ const MatriculaAnalysis: React.FC = () => {
               }`}
             >
               <Home className="w-3.5 h-3.5 text-primary" />
-              <span>Hub Central</span>
+              <span>Início</span>
             </button>
             <button
               type="button"
@@ -316,7 +316,7 @@ const MatriculaAnalysis: React.FC = () => {
           }`}
         >
           <Home className="w-3.5 h-3.5" />
-          Hub
+          Início
         </button>
         <button
           type="button"
@@ -371,7 +371,7 @@ const MatriculaAnalysis: React.FC = () => {
                   onClick={() => setModule('hub')} disabled={analysis.isProcessing}
                   className="hover:text-foreground inline-flex items-center gap-1 py-1"
                 >
-                  <Home className="w-3 h-3 text-primary" /> Hub Central
+                  <Home className="w-3 h-3 text-primary" /> Início
                 </button>
               </li>
               <li aria-hidden="true">›</li>
@@ -383,7 +383,7 @@ const MatriculaAnalysis: React.FC = () => {
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-semibold transition-colors py-1 px-2.5 rounded-lg hover:bg-secondary"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Voltar ao Hub</span>
+              <span>Voltar ao início</span>
             </button>
           </nav>
 
@@ -404,7 +404,8 @@ const MatriculaAnalysis: React.FC = () => {
                 Análise de matrícula
               </h1>
               <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Envie a certidão de matrícula em PDF. Em poucos minutos você recebe a nota de risco, os ônus, a cadeia dominial e o parecer dos 12 módulos.
+                Envie a certidão de matrícula em PDF. Em poucos minutos você vê quem são os donos, se há dívidas, penhoras
+                ou bloqueios sobre o imóvel e o nível de risco do negócio.
               </p>
             </div>
           )}
@@ -427,9 +428,11 @@ const MatriculaAnalysis: React.FC = () => {
                         </div>
                         <div className="space-y-1">
                           <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">
-                            {isDragActive ? 'Solte a matrícula aqui' : 'Arraste a certidão em PDF'}
+                            {isDragActive ? 'Solte a matrícula aqui' : 'Escolha a certidão em PDF'}
                           </h3>
-                          <p className="text-sm text-muted-foreground">Digital ou escaneada, até 15 MB</p>
+                          <p className="text-sm text-muted-foreground">
+                            Digital ou escaneada, até 15 MB<span className="hidden sm:inline"> · ou arraste o arquivo para cá</span>
+                          </p>
                         </div>
                         <Button disabled={analysis.isProcessing}>
                           Escolher arquivo
@@ -456,6 +459,18 @@ const MatriculaAnalysis: React.FC = () => {
               </Card>
             )}
 
+            {showWorkspaceHome && (
+              <p className="max-w-2xl mx-auto text-center text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                <strong className="font-semibold text-foreground">Ainda não tem a certidão?</strong> Peça a certidão de matrícula
+                atualizada ao cartório de registro de imóveis da cidade do imóvel, no balcão ou pela internet em{' '}
+                <a href="https://registradores.onr.org.br" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  registradores.onr.org.br
+                </a>
+                . O cartório envia o PDF, que você envia aqui.{' '}
+                <Link to="/guia/certidao-de-onus-reais" className="text-primary underline underline-offset-2">Saiba mais</Link>
+              </p>
+            )}
+
             {analysis.isProcessing && (
               <section className="animate-fade-in-up">
                 <AnalysisProgress progress={analysis.progress} currentStep={analysis.currentStep} />
@@ -464,6 +479,27 @@ const MatriculaAnalysis: React.FC = () => {
 
             {analysis.report && !analysis.isProcessing && (
               <section className="animate-fade-in-up space-y-4">
+                {isSampleDemo && (
+                  <div role="note" className="rounded-2xl border border-warning/30 bg-warning/10 px-4 py-3 text-xs sm:text-sm text-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <span>
+                      <strong className="font-semibold">Exemplo com dados fictícios.</strong> É assim que fica o relatório; nenhuma
+                      certidão real foi analisada.
+                    </span>
+                    {user?.hasSubscription ? (
+                      <Button
+                        size="sm"
+                        className="shrink-0"
+                        onClick={() => { analysis.clearFile(); navigate({ search: '?modulo=matricula' }, { replace: true }); }}
+                      >
+                        Analisar a minha certidão
+                      </Button>
+                    ) : (
+                      <Button asChild size="sm" className="shrink-0">
+                        <Link to={user ? '/pagamento' : '/auth?tab=register'}>Analisar a minha certidão</Link>
+                      </Button>
+                    )}
+                  </div>
+                )}
                 {!isSampleDemo && (
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <Button variant="ghost" size="sm" onClick={() => setConfirmDiscard(true)} className="gap-1.5 -ml-2">

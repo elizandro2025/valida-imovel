@@ -74,8 +74,8 @@ const DOC_TYPES = [
 ];
 
 const SUGGESTED_TITLES = [
-  'Retificação de Área Intra Muros — Cerqueira César / Jardins, São Paulo - SP',
-  'Desdobro de Lote Urbano — PMSP / Lote 08, Quadra 12',
+  'Retificação de área — Lote 5, Quadra 12',
+  'Desdobro de lote — Lote 8, Quadra 12',
   'Unificação de Glebas Urbanas — Comarca da Capital (SP)',
   'Estremação de Fração Ideal em Condomínio Pró-Diviso (Prov. CNJ 149)',
   'Regularização Fundiária Urbana — REURB-S (PMSP / SEHAB)',
@@ -272,20 +272,20 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
                 <Building className="w-5 h-5" />
               </span>
               <h2 className="text-base font-bold text-foreground tracking-tight">
-                Passaporte Imobiliário & Qualificação Dominial
+                Dados do imóvel e do trabalho
               </h2>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                Ofício Notarial Vinculado
+                Preencha ou deixe a leitura automática preencher
               </span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
-              Identificação pericial do fólio real, ofício imobiliário competente, ritos normativos aplicáveis e dados do responsável técnico.
+              Matrícula, cartório, cidade e responsável técnico. Se você enviou os documentos na leitura automática, confira o que foi preenchido.
             </p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-xs text-muted-foreground hidden sm:inline">
-              Rigor Registral:
+              Conferência:
             </span>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-xl flex items-center gap-1.5 ${
               data.info.modoMax
@@ -293,7 +293,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
                 : 'bg-muted text-muted-foreground'
             }`}>
               <ShieldAlert className="w-3.5 h-3.5" />
-              {data.info.modoMax ? 'Tolerância Zero Ativada' : 'Rigor Notarial Padrão'}
+              {data.info.modoMax ? 'Rigorosa (aponta até pequenos erros)' : 'Padrão'}
             </span>
           </div>
         </div>
@@ -304,13 +304,13 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
           <div className="bg-background border border-border/70 rounded-xl p-4 space-y-3">
             <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wide border-b border-border/50 pb-2">
               <FileCheck className="w-4 h-4" />
-              <span>1. Identificação Dominial</span>
+              <span>1. Imóvel</span>
             </div>
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground flex items-center justify-between">
-                <span>Matrícula Imobiliária (Nº):</span>
-                <span className="text-[10px] font-mono text-muted-foreground">Fólio Real</span>
+                <span>Número da matrícula:</span>
+                <span className="text-[10px] font-mono text-muted-foreground">Fólio real</span>
               </label>
               <Input
                 type="text"
@@ -323,11 +323,11 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground block">
-                Denominação da Operação Pericial:
+                Nome do trabalho:
               </label>
               <Input
                 type="text"
-                placeholder="Ex: Retificação de Área Intra Muros e Desdobro — Cerqueira César / Jardins"
+                placeholder="Ex: Desdobro do Lote 8, Quadra 12"
                 value={data.info.nome}
                 onChange={e => updateInfo('nome', e.target.value)}
                 className="h-9 text-xs bg-card font-medium"
@@ -348,7 +348,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground block">
-                Interessado(s) / Requerente(s):
+                Proprietário(s) ou requerente(s):
               </label>
               <Input
                 type="text"
@@ -364,16 +364,16 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
           <div className="bg-background border border-border/70 rounded-xl p-4 space-y-3">
             <div className="flex items-center gap-2 text-indigo-500 font-bold text-xs uppercase tracking-wide border-b border-border/50 pb-2">
               <Building className="w-4 h-4" />
-              <span>2. Ofício Registral & Comarca</span>
+              <span>2. Cartório e cidade</span>
             </div>
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground block">
-                Ofício de Registro de Imóveis (Cartório / CNS):
+                Cartório de registro de imóveis:
               </label>
               <Input
                 type="text"
-                placeholder="Ex: 14º Oficial de Registro de Imóveis da Capital - SP (CNS: 11.134-4)"
+                placeholder="Ex: 1º Registro de Imóveis de Campinas"
                 value={data.info.cartorio}
                 onChange={e => updateInfo('cartorio', e.target.value)}
                 className="h-9 text-xs bg-card"
@@ -425,7 +425,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
 
               <div className="space-y-1">
                 <label className="text-[11px] font-semibold text-foreground block">
-                  Regime Territorial:
+                  Tipo de imóvel:
                 </label>
                 <div className="flex items-center bg-muted/60 p-0.5 rounded-lg border border-border/60 h-9">
                   <button
@@ -459,12 +459,12 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
           <div className="bg-background border border-border/70 rounded-xl p-4 space-y-3">
             <div className="flex items-center gap-2 text-emerald-500 font-bold text-xs uppercase tracking-wide border-b border-border/50 pb-2">
               <User className="w-4 h-4" />
-              <span>3. Responsabilidade Técnica & Perícia</span>
+              <span>3. Responsável técnico</span>
             </div>
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground block">
-                Profissional Responsável Técnico (RT):
+                Responsável técnico (quem assina a planta):
               </label>
               <Input
                 type="text"
@@ -477,7 +477,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground block">
-                Perito / Auditor Responsável:
+                Quem está conferindo:
               </label>
               <Input
                 type="text"
@@ -490,7 +490,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
 
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-foreground flex items-center justify-between">
-                <span>Data da Auditoria / Vistoria:</span>
+                <span>Data da conferência:</span>
                 <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
               </label>
               <Input
@@ -508,10 +508,10 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <span className="text-xs font-bold text-foreground block">
-                Enquadramento do Procedimento Registral (Rito Operacional)
+                Qual é o procedimento?
               </span>
               <p className="text-[11px] text-muted-foreground">
-                Selecione os ritos aplicáveis para parametrizar automaticamente os quesitos e documentos exigidos.
+                Marque um ou mais. O sistema monta a lista de documentos e os itens a conferir de cada procedimento.
               </p>
             </div>
             <span className="text-[10px] font-mono text-muted-foreground">
@@ -596,7 +596,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
               </div>
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                  Protocolo de Tolerância Zero Notarial (ABNT NBR 17047 / Normas CGJ)
+                  Conferência rigorosa
                   {data.info.modoMax && (
                     <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-rose-500 text-white uppercase">
                       Ativo
@@ -604,7 +604,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
                   )}
                 </span>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Apontamento rigoroso de pequenas divergências ortográficas, patronímicos abreviados, discrepâncias milimétricas e certidões com prazo superior a 30 dias para evitar emissão de Nota Devolutiva.
+                  Aponta também pequenos erros que costumam gerar exigência no cartório: grafia de nomes, abreviações, diferenças de milímetros e certidões com mais de 30 dias.
                 </p>
               </div>
             </div>
@@ -631,7 +631,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
               Cofre de Peças Técnicas & Inventário Probatório
             </h3>
             <p className="text-xs text-muted-foreground">
-              Mapeamento de higidez probatória, legibilidade e autenticidade das peças e certidões apresentadas.
+              Lista dos documentos do trabalho: o que já foi recebido, o que falta e o que precisa ser refeito.
             </p>
           </div>
 
@@ -643,7 +643,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
               className="text-xs h-8 gap-1.5 border-border/80 hover:bg-muted font-medium"
             >
               <Sparkles className="w-3.5 h-3.5 text-primary" />
-              Auto-Carregar Peças Obrigatórias do Rito
+              Listar os documentos exigidos
             </Button>
             <Button
               size="sm"
@@ -762,7 +762,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
               Nenhuma peça técnica listada para o filtro atual.
             </p>
             <Button size="sm" variant="outline" onClick={handleAddExpectedDocs} className="text-xs gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-primary" /> Carregar Peças Obrigatórias do Rito
+              <Sparkles className="w-3.5 h-3.5 text-primary" /> Listar os documentos exigidos
             </Button>
           </div>
         ) : (
@@ -829,7 +829,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
                   {/* Segmented Status Pill Selector de 1 Clique */}
                   <div className="space-y-1.5">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block">
-                      Situação Probatória:
+                      Situação do documento:
                     </span>
                     <div className="grid grid-cols-4 gap-1">
                       {DOC_STATUS_OPTIONS.map(st => {
@@ -862,7 +862,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
                       type="text"
                       value={doc.obs}
                       onChange={e => handleUpdateDoc(doc.id, 'obs', e.target.value)}
-                      placeholder="Ex: Certidão com negativa de ônus expedida há menos de 30 dias pelo 14º RI da Capital, sem gravames pendentes."
+                      placeholder="Ex: Certidão emitida há menos de 30 dias, sem ônus."
                       className="h-7 text-[11px] bg-card text-muted-foreground"
                     />
                   </div>

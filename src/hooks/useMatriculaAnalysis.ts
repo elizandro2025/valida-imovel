@@ -106,30 +106,17 @@ export function useMatriculaAnalysis() {
 
     const mockFile = new File(['mock content'], fileName, { type: 'application/pdf' });
 
-    // Inicia a simulação animada de auditoria da IA
+    // O exemplo é um relatório pronto, com dados fictícios: abre na hora, sem simular uma análise de IA que não acontece
     setState({
       file: mockFile,
       fileName,
       isSample: true,
       isProcessing: true,
-      progress: 10,
-      currentStep: '⚡ Lendo certidão de imóvel rural em formato PDF digital...',
+      progress: 60,
+      currentStep: 'Abrindo o exemplo (dados fictícios)...',
       report: null,
       error: null,
     });
-
-    // Animação de varredura dos Módulos Registrais Rurais
-    setTimeout(() => {
-      setState(prev => ({ ...prev, progress: 35, currentStep: '🔍 Consultando Livro 2, Código INCRA e Inscrição ITR/NIRF...' }));
-    }, 500);
-
-    setTimeout(() => {
-      setState(prev => ({ ...prev, progress: 65, currentStep: '🌿 Mapeando CAR, Reserva Legal (20%), APP e Certificação SIGEF/INCRA...' }));
-    }, 1100);
-
-    setTimeout(() => {
-      setState(prev => ({ ...prev, progress: 90, currentStep: '📜 Rastreando Cadeia Dominial Cronológica e baixas de Cédulas Rurais...' }));
-    }, 1700);
 
     setTimeout(() => {
       // RELATÓRIO RURAL ULTRA-DETALHADO E NUTRIDO (100% DOS CAMPOS PREENCHIDOS)
@@ -355,7 +342,7 @@ export function useMatriculaAnalysis() {
         report: targetReport,
         error: null,
       });
-    }, 2300);
+    }, 300);
   }, []);
 
   const clearFile = useCallback(() => {

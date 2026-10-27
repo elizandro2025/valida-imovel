@@ -12,9 +12,9 @@ interface AnalysisProgressProps {
 
 // Mesmas etapas de src/services/aiService.ts (15% leitura, 45% análise, 85% conferência)
 const DEFAULT_STEPS = [
-  'Leitura do PDF por IA (OCR)',
-  'Extração dos dados da matrícula',
-  'Parecer e nota de risco',
+  'Leitura do documento',
+  'Busca de donos, dívidas e restrições',
+  'Avaliação do risco',
   'Conferência com o texto do documento'
 ];
 
@@ -41,7 +41,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground font-medium leading-tight mt-0.5">
-                Costuma levar de 1 a 4 minutos. Você pode deixar esta aba aberta.
+                Costuma levar de 1 a 4 minutos. Não feche nem recarregue esta aba até terminar.
               </p>
             </div>
           </div>
@@ -82,7 +82,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                   ${isCompleted 
                     ? 'bg-primary/10 border-primary/30 text-primary shadow-xs' 
                     : isCurrent 
-                      ? 'bg-warning/10 border-warning/30 text-warning shadow-soft scale-[1.01]' 
+                      ? 'bg-primary/5 border-primary/40 text-foreground shadow-soft scale-[1.01]'
                       : 'bg-background/50 border-border text-muted-foreground'
                   }
                 `}
@@ -90,7 +90,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                 {isCompleted ? (
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0 stroke-[2.5]" />
                 ) : isCurrent ? (
-                  <Loader2 className="w-4 h-4 text-warning animate-spin shrink-0" />
+                  <Loader2 className="w-4 h-4 text-primary animate-spin shrink-0" />
                 ) : (
                   <div className="w-4 h-4 rounded-full border-2 border-border shrink-0" />
                 )}

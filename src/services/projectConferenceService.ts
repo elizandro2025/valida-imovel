@@ -12,6 +12,16 @@ import { PROCEDURE_CHECKLISTS, ChecklistAnswer } from './projectChecklists';
 import { projectMemory } from './projectMemory';
 import { parseBrNumber } from '@/lib/brNumber';
 
+// Título que o projeto recebe ao escolher o procedimento no Hub (não conta como dado digitado)
+export const PROCEDURE_DEFAULT_TITLES: Record<string, string> = {
+  desdobro: 'Conferência de Desdobro de Lote Urbano',
+  retificacao: 'Conferência de Retificação de Área (LRP)',
+  unificacao: 'Conferência de Unificação de Lotes',
+  estremacao: 'Conferência de Estremação de Parcela (Prov. CNJ 149)',
+  divisao: 'Conferência de Divisão e Extinção de Condomínio',
+  reurb: 'Conferência de Regularização Fundiária (REURB-S)',
+};
+
 const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export interface ProjectInfo {
@@ -248,10 +258,13 @@ export const projectConferenceService = {
     };
   },
 
-  // Projeto com algum dado digitado ou lido (o Hub oferece retomar; trocar pelo exemplo pede confirmação)
+  // Projeto com algum dado digitado ou lido (o Hub oferece retomar; trocar pelo exemplo pede confirmação).
+  // O título padrão que o Hub preenche ao escolher o procedimento não conta como dado.
   hasContent(data: ProjectData): boolean {
+    const nome = data.info.nome.trim();
+    const typedName = Boolean(nome) && !Object.values(PROCEDURE_DEFAULT_TITLES).includes(nome);
     return Boolean(
-      data.info.nome.trim() || data.info.matricula.trim() || data.polygon.rawCoords.trim() ||
+      typedName || data.info.matricula.trim() || data.polygon.rawCoords.trim() ||
       data.neighbors.length > 0 || data.docs.length > 0 || data.ai,
     );
   },

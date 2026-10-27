@@ -734,8 +734,8 @@ _Análise automatizada por IA. Confira na certidão atualizada._`;
       <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {[
           { label: 'Proprietários', value: String(props.length), detail: props.length > 0 ? renderSafe(props[0]?.nome) : 'Nenhum identificado na leitura', tone: 'text-foreground' },
-          { label: 'Ônus ativos', value: String(onusAtivos.length), detail: onusResumo, tone: onusAtivos.length > 0 ? 'text-warning' : 'text-foreground' },
-          { label: 'Transmissões', value: String(cadeia.length), detail: cadeia.length > 0 ? 'na cadeia dominial' : 'Nenhuma identificada na leitura', tone: 'text-foreground' },
+          { label: 'Dívidas e restrições (ônus)', value: String(onusAtivos.length), detail: onusResumo, tone: onusAtivos.length > 0 ? 'text-warning' : 'text-foreground' },
+          { label: 'Mudanças de dono', value: String(cadeia.length), detail: cadeia.length > 0 ? 'no histórico do imóvel (cadeia dominial)' : 'Nenhuma identificada na leitura', tone: 'text-foreground' },
         ].map(({ label, value, detail, tone }) => (
           <div key={label} className="bg-card rounded-2xl shadow-soft ring-1 ring-black/5 p-3.5 sm:p-5 min-w-0">
             <p className="text-xs sm:text-sm text-muted-foreground truncate">{label}</p>
@@ -751,27 +751,27 @@ _Análise automatizada por IA. Confira na certidão atualizada._`;
             <TabsList className="w-full min-w-max lg:min-w-0 flex lg:grid lg:grid-cols-6 gap-1.5 bg-transparent h-auto p-0 border-0">
               <TabsTrigger value="parecer" className={tabTriggerClass}>
                 <ShieldCheck className="w-4 h-4 shrink-0 text-primary" />
-                <span className="whitespace-nowrap">Parecer e risco</span>
+                <span className="whitespace-nowrap">Resumo e risco</span>
               </TabsTrigger>
               <TabsTrigger value="imovel" className={tabTriggerClass}>
                 <Building2 className="w-4 h-4 shrink-0 text-primary" />
-                <span className="whitespace-nowrap">Imóvel e geo</span>
+                <span className="whitespace-nowrap">Imóvel</span>
               </TabsTrigger>
               <TabsTrigger value="especiais" className={tabTriggerClass}>
                 <Landmark className="w-4 h-4 shrink-0 text-primary" />
-                <span className="whitespace-nowrap">Regimes e direitos</span>
+                <span className="whitespace-nowrap">Direitos sobre o imóvel</span>
               </TabsTrigger>
               <TabsTrigger value="proprietarios" className={tabTriggerClass}>
                 <Users className="w-4 h-4 shrink-0 text-primary" />
-                <span className="whitespace-nowrap">Donos e cadeia</span>
+                <span className="whitespace-nowrap">Donos e histórico</span>
               </TabsTrigger>
               <TabsTrigger value="onus" className={tabTriggerClass}>
                 <AlertTriangle className="w-4 h-4 shrink-0 text-warning" />
-                <span className="whitespace-nowrap">Ônus e penhoras</span>
+                <span className="whitespace-nowrap">Dívidas e penhoras</span>
               </TabsTrigger>
               <TabsTrigger value="perfil" className={tabTriggerClass}>
                 <Bot className="w-4 h-4 shrink-0 text-primary" />
-                <span className="whitespace-nowrap">Visão por perfil</span>
+                <span className="whitespace-nowrap">Para cada perfil</span>
               </TabsTrigger>
             </TabsList>
           </div>

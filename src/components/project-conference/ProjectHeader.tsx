@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProjectData, computeAutomaticOpinion, createEmptyProject } from '@/services/projectConferenceService';
+import { ProjectData, computeAutomaticOpinion, createEmptyProject, projectHasContent } from '@/services/projectConferenceService';
 import {
   Compass,
   FolderOpen,
@@ -79,6 +79,8 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
   };
 
   const { opinion } = computeAutomaticOpinion(data);
+  // Projeto vazio ainda não tem parecer: mostra "Projeto novo" em vez de "incompleto"
+  const isNewProject = !projectHasContent(data);
 
   return (
     <div className="bg-card border border-border/80 rounded-2xl p-4 sm:p-5 shadow-xs transition-colors">
@@ -91,7 +93,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="text-base sm:text-lg font-bold tracking-tight text-foreground flex items-center gap-2 truncate">
-                <span>ValidaImóvel Pericial</span>
+                <span>Conferência de projeto</span>
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 border border-blue-500/20">
                   {data.isSample ? 'Exemplo' : 'Conferência assistida'}
                 </span>
@@ -100,7 +102,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
             <p className="text-xs text-muted-foreground truncate">
               {data.info.nome
                 ? `${data.info.nome} · Matr. ${data.info.matricula || 'S/N'}`
-                : 'Auditoria Técnica, Geodésica & Registral Integrada · ABNT NBR 17047 & Normas CGJ'}
+                : 'Planta, memorial e documentos conferidos antes do cartório'}
             </p>
           </div>
         </div>
@@ -110,7 +112,9 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
           {/* Status Badge Dinâmico */}
           <div
             className={`hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-              opinion === 'DOCUMENTAÇÃO COMPATÍVEL'
+              isNewProject
+                ? 'bg-primary/10 text-primary border-primary/20'
+                : opinion === 'DOCUMENTAÇÃO COMPATÍVEL'
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
                 : opinion === 'DOCUMENTAÇÃO COM DIVERGÊNCIAS'
                 ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
@@ -124,7 +128,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
             ) : (
               <FileCheck2 className="w-3.5 h-3.5" />
             )}
-            <span>{opinion}</span>
+            <span>{isNewProject ? 'Projeto novo' : opinion}</span>
           </div>
 
           {/* Botão de Demonstração Pericial */}
@@ -148,10 +152,10 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
             size="sm"
             onClick={() => navigate('/app')}
             className="text-xs h-8 gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-            title="Voltar ao portal principal"
+            title="Voltar ao início"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Portal</span>
+            <span>Início</span>
           </Button>
 
           {/* Botão Novo */}
