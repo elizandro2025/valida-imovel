@@ -7,7 +7,8 @@ import {
 import { projectMemory } from '@/services/projectMemory';
 import { PROCEDURE_CHECKLISTS } from '@/services/projectChecklists';
 import {
-  PROJECT_DOC_TYPES, PROJECT_LIMITS, ProjectUploadFile, askAboutProject, guessDocType, runProjectConference, validateProjectFile,
+  PROJECT_DOC_TYPES, PROJECT_LIMITS, ProjectUploadFile, appendUploadFiles, askAboutProject, runProjectConference,
+  validateProjectFile,
 } from '@/services/projectAiService';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,8 +20,6 @@ interface AiConferenceTabProps {
   onUpdate: (updater: (prev: ProjectData) => ProjectData) => void;
   onFinished: () => void;
 }
-
-let fileCounter = 0;
 
 export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate, onFinished }) => {
   // A lista fica na memória da aba: sobrevive à troca de aba e recebe o arquivo solto no Hub
@@ -39,27 +38,17 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
   const [asking, setAsking] = useState(false);
 
   const addFiles = useCallback((accepted: File[]) => {
-    setError(null);
-    const problems: string[] = [];
-    const valid: ProjectUploadFile[] = [];
-    accepted.forEach(file => {
-      const problem = validateProjectFile(file);
-      if (problem) problems.push(problem);
-      else valid.push({ id: `up-${++fileCounter}`, file, tipo: guessDocType(file.name) });
-    });
-    setFiles(prev => {
-      const merged = [...prev, ...valid];
-      if (merged.length > PROJECT_LIMITS.maxFiles) {
-        problems.push(`Limite de ${PROJECT_LIMITS.maxFiles} arquivos por conferência.`);
-        return merged.slice(0, PROJECT_LIMITS.maxFiles);
-      }
-      return merged;
-    });
-    if (problems.length) setError(problems.join(' '));
-  }, []);
+    const { files: next, problems } = appendUploadFiles(files, accepted);
+    setFiles(next);
+    setError(problems.length ? problems.join(' ') : null);
+  }, [files]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: addFiles,
+    // Formatos fora da lista não chegam ao onDrop: explica o motivo em vez de ignorar o arquivo em silêncio
+    onDropRejected: rejections => setError(
+      rejections.map(r => validateProjectFile(r.file) || `"${r.file.name}": formato não aceito.`).join(' '),
+    ),
     accept: {
       'application/pdf': ['.pdf'], 'image/png': ['.png'], 'image/jpeg': ['.jpg', '.jpeg'],
       'text/plain': ['.txt', '.csv', '.tsv', '.kml', '.dxf', '.xml'], 'text/csv': ['.csv'],

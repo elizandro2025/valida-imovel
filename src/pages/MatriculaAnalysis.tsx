@@ -26,7 +26,7 @@ import {
   consolidateIssues,
 } from '@/services/projectConferenceService';
 import { SAMPLE_PROJECT_DATA } from '@/services/projectSampleData';
-import { guessDocType } from '@/services/projectAiService';
+import { appendUploadFiles } from '@/services/projectAiService';
 import { projectMemory } from '@/services/projectMemory';
 
 const MatriculaAnalysis: React.FC = () => {
@@ -203,10 +203,7 @@ const MatriculaAnalysis: React.FC = () => {
       if (/retific/i.test(nameLower)) proc = 'retificacao';
       else if (/unific/i.test(nameLower)) proc = 'unificacao';
 
-      projectMemory.setFiles([
-        ...projectMemory.getFiles(),
-        { id: `hub-${Date.now()}`, file, tipo: guessDocType(file.name) },
-      ]);
+      projectMemory.setFiles(appendUploadFiles(projectMemory.getFiles(), [file]).files);
       handleSelectProcedure(proc);
     } else {
       setModule('matricula');

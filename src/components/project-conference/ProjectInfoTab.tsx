@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ProjectData, projectConferenceService, ProjectDocItem } from '@/services/projectConferenceService';
 import { PROCEDURE_CHECKLISTS } from '@/services/projectChecklists';
-import { PROJECT_LIMITS, guessDocType, validateProjectFile } from '@/services/projectAiService';
+import { appendUploadFiles, guessDocType } from '@/services/projectAiService';
 import { projectMemory } from '@/services/projectMemory';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -187,10 +187,7 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
     if (acceptedFiles.length === 0) return;
 
     // Esta lista só registra o que foi recebido; quem lê o conteúdo é a Leitura com IA, que já recebe os arquivos
-    const readable = acceptedFiles
-      .filter(file => !validateProjectFile(file))
-      .map((file, i) => ({ id: `doc-up-${Date.now()}-${i}`, file, tipo: guessDocType(file.name) }));
-    projectMemory.setFiles([...projectMemory.getFiles(), ...readable].slice(0, PROJECT_LIMITS.maxFiles));
+    projectMemory.setFiles(appendUploadFiles(projectMemory.getFiles(), acceptedFiles).files);
 
     onUpdate(prev => {
       const newDocs: ProjectDocItem[] = acceptedFiles.map(file => {

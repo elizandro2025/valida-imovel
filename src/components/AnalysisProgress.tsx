@@ -8,6 +8,10 @@ interface AnalysisProgressProps {
   progress: number;
   currentStep: string;
   steps?: string[];
+  // Usado também pela conferência de projetos, com título e prazo próprios
+  title?: string;
+  hint?: string;
+  eta?: string;
 }
 
 // Mesmas etapas de src/services/aiService.ts (15% leitura, 45% análise, 85% conferência)
@@ -21,7 +25,10 @@ const DEFAULT_STEPS = [
 export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
   progress,
   currentStep,
-  steps = DEFAULT_STEPS
+  steps = DEFAULT_STEPS,
+  title = 'Analisando a matrícula',
+  hint = 'Costuma levar de 1 a 4 minutos. Não feche nem recarregue esta aba até terminar.',
+  eta = '1 a 4 min',
 }) => {
   const safeSteps = Array.isArray(steps) && steps.length > 0 ? steps : DEFAULT_STEPS;
 
@@ -37,11 +44,11 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                  Analisando a matrícula
+                  {title}
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground font-medium leading-tight mt-0.5">
-                Costuma levar de 1 a 4 minutos. Não feche nem recarregue esta aba até terminar.
+                {hint}
               </p>
             </div>
           </div>
@@ -51,7 +58,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
               {Math.round(progress)}%
             </div>
             <Badge className="bg-background text-primary border border-primary/30 text-xs font-semibold gap-1 px-2.5 py-0.5 sm:mt-1 rounded-full shrink-0">
-              <Timer className="w-3 h-3 text-primary" /> 1 a 4 min
+              <Timer className="w-3 h-3 text-primary" /> {eta}
             </Badge>
           </div>
         </div>

@@ -69,6 +69,26 @@ const isTextFile = (file: File) => /\.(txt|csv|tsv|kml|dxf|xml)$/i.test(file.nam
 
 export const PROJECT_LIMITS = { maxFiles: MAX_FILES };
 
+let uploadCounter = 0;
+
+// Junta arquivos à lista da leitura com IA (tela de envio, aba de leitura, aba de documentos e Hub): valida formato e
+// tamanho, sugere o tipo pelo nome e respeita o limite de arquivos. Os problemas voltam em português para a tela.
+export function appendUploadFiles(current: ProjectUploadFile[], incoming: File[]): { files: ProjectUploadFile[]; problems: string[] } {
+  const problems: string[] = [];
+  const added: ProjectUploadFile[] = [];
+  incoming.forEach(file => {
+    const problem = validateProjectFile(file);
+    if (problem) problems.push(problem);
+    else added.push({ id: `up-${Date.now()}-${++uploadCounter}`, file, tipo: guessDocType(file.name) });
+  });
+  let files = [...current, ...added];
+  if (files.length > MAX_FILES) {
+    problems.push(`Limite de ${MAX_FILES} arquivos por conferência.`);
+    files = files.slice(0, MAX_FILES);
+  }
+  return { files, problems };
+}
+
 const ocrCache = new Map<string, { text: string; model: string | null }>();
 
 async function ocrFile(file: File): Promise<{ text: string; model: string | null }> {

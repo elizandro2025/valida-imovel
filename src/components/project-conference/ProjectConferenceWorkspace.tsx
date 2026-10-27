@@ -53,6 +53,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ErrorModal } from '@/components/ErrorModal';
+import { ProjectQuickStart } from './ProjectQuickStart';
+import { ProjectResultSummary } from './ProjectResultSummary';
 
 export type WorkspaceTab =
   | 'info'
@@ -99,6 +101,10 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(startWithSample ? 'parecer' : 'ia');
   const [wizardStep, setWizardStep] = useState<WizardStep>(startWithSample ? 4 : 1);
   const [viewMode, setViewMode] = useState<'wizard' | 'expert'>('wizard');
+  // Mesmo fluxo da análise de matrícula: enviar documentos → resultado; o passo a passo e todas as abas ficam em "Detalhes".
+  // Projeto vazio abre no envio; com leitura feita (ou o exemplo), no resultado; preenchido à mão, nos detalhes.
+  const [view, setView] = useState<'inicio' | 'resultado' | 'detalhes'>(() =>
+    startWithSample || project.ai ? 'resultado' : projectHasContent(project) ? 'detalhes' : 'inicio');
   // Ações que tiram da tela um projeto real (não salvo): o exemplo ou um projeto novo
   const [confirmAction, setConfirmAction] = useState<null | 'sample' | 'reset'>(null);
 
@@ -165,12 +171,14 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     handleProjectUpdate(() => SAMPLE_PROJECT_DATA);
     setActiveTab('parecer');
     setWizardStep(4);
+    setView('resultado');
   }, [handleProjectUpdate]);
 
   const resetProject = useCallback(() => {
     handleProjectUpdate(() => createEmptyProject());
     setWizardStep(1);
-    setActiveTab('info');
+    setActiveTab('ia');
+    setView('inicio');
   }, [handleProjectUpdate]);
 
   // O exemplo e o projeto novo substituem o projeto aberto: com dados reais na tela, pede confirmação antes
@@ -443,7 +451,29 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
         </div>
 
         <div className="flex items-center gap-3 text-[11px] text-indigo-200">
-          {/* Seletor de Modo: Fluxo Guiado vs Modo Especialista */}
+          {/* Telas da conferência: envio → resultado → detalhes (passo a passo / todas as abas) */}
+          <nav aria-label="Telas da conferência" className="flex items-center bg-indigo-950/80 p-0.5 rounded-lg border border-indigo-800/80">
+            {([
+              ['inicio', 'Enviar documentos'],
+              ['resultado', 'Resultado'],
+              ['detalhes', 'Detalhes'],
+            ] as const).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                aria-current={view === key ? 'page' : undefined}
+                onClick={() => setView(key)}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                  view === key ? 'bg-white text-blue-950 shadow-2xs font-bold' : 'text-indigo-200 hover:text-white'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+
+          {/* Dentro de "Detalhes": passo a passo ou todas as abas */}
+          {view === 'detalhes' && (
           <div className="flex items-center bg-indigo-950/80 p-0.5 rounded-lg border border-indigo-800/80">
             <button
               type="button"
@@ -470,6 +500,7 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
               <span>Todas as abas</span>
             </button>
           </div>
+          )}
 
           <span className="hidden sm:inline" title="O projeto não é guardado: some ao recarregar ou fechar a aba. Exporte o laudo ou o arquivo do projeto para guardar.">
             Fica só nesta aba · exporte para guardar
@@ -499,7 +530,21 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
         {/* ------------------------------------------------------------- */}
         {/* EXPERIÊNCIA 1: FLUXO GUIADO PASSO A PASSO (WIZARD RECOMENDADO) */}
         {/* ------------------------------------------------------------- */}
-        {viewMode === 'wizard' ? (
+        {view === 'inicio' ? (
+          <ProjectQuickStart
+            data={project}
+            onUpdate={handleProjectUpdate}
+            onFinished={() => { setView('resultado'); window.scrollTo({ top: 0 }); }}
+            onLoadSample={handleLoadSample}
+            onOpenDetails={() => { setView('detalhes'); setViewMode('wizard'); handleSelectTabInWizard('info'); }}
+          />
+        ) : view === 'resultado' ? (
+          <ProjectResultSummary
+            data={project}
+            onOpenDetails={(tab) => { setView('detalhes'); setViewMode('wizard'); handleSelectTabInWizard(tab); window.scrollTo({ top: 0 }); }}
+            onSendMore={() => setView('inicio')}
+          />
+        ) : viewMode === 'wizard' ? (
           <div className="space-y-6">
             {/* Stepper Superior dos 4 Passos com Indicador Visual */}
             <div className="bg-card border border-border/80 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">

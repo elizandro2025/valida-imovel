@@ -6,7 +6,7 @@ vi.mock('./aiClient', () => ({
   fileToBase64: async () => 'JVBERi0xLjc=',
 }));
 
-const { buildBundle, guessDocType, mergeAiResult } = await import('./projectAiService');
+const { appendUploadFiles, buildBundle, guessDocType, mergeAiResult } = await import('./projectAiService');
 const { projectConferenceService, computeAutomaticOpinion, consolidateIssues } = await import('./projectConferenceService');
 
 const PLANTA = `--- Página 1 ---
@@ -47,6 +47,24 @@ describe('guessDocType', () => {
     expect(guessDocType('matricula confrontante norte.pdf')).toBe('Matrículas Confrontantes');
     expect(guessDocType('ART quitada.pdf')).toBe('Responsabilidade Técnica');
     expect(guessDocType('xyz.pdf')).toBe('Outro');
+  });
+});
+
+describe('appendUploadFiles', () => {
+  const file = (name: string, size = 10) => new File(['x'.repeat(size)], name);
+
+  it('aceita os formatos lidos, sugere o tipo pelo nome e explica os recusados', () => {
+    const { files, problems } = appendUploadFiles([], [file('planta_lote8.pdf'), file('memorial.pdf'), file('contrato.docx')]);
+    expect(files.map(f => f.tipo)).toEqual(['Planta', 'Memorial']);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(/contrato\.docx.*PDF/);
+  });
+
+  it('respeita o limite de arquivos por conferência', () => {
+    const many = Array.from({ length: 14 }, (_, i) => file(`doc${i}.pdf`));
+    const { files, problems } = appendUploadFiles([], many);
+    expect(files).toHaveLength(12);
+    expect(problems.some(p => /Limite de 12/.test(p))).toBe(true);
   });
 });
 
