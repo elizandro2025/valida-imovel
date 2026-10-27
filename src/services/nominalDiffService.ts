@@ -78,6 +78,27 @@ export const nominalDiffService = {
     return nominalDiffService.normalizeSpace(s).split(' ').filter(Boolean);
   },
 
+  /**
+   * Forma usada na comparação: sem pontuação solta e sem a ligação entre a designação e o nome.
+   * "Lote 9 - PEDRO", "Lote 9, de PEDRO" e "Lote 9, de propriedade de PEDRO" viram "Lote 9 PEDRO".
+   * Só cai a ligação logo depois de um número ou de pontuação: "ANA DA SILVA" e "Ana da Silva" continuam inteiros.
+   */
+  comparableName(s?: string | null): string {
+    const out: string[] = [];
+    let afterBreak = false;
+    for (const tok of nominalDiffService.tokens(s || '')) {
+      if (/^[-–—:,;/]+$/.test(tok)) {
+        afterBreak = true;
+        continue;
+      }
+      const word = tok.replace(/[,;:]+$/, '');
+      if (afterBreak && (/^(de|do|da|dos|das|propriedade|pertencente)$/i.test(word) || /^(a|ao|aos|à|às)$/.test(word))) continue;
+      out.push(word);
+      afterBreak = word !== tok || /\d$/.test(word);
+    }
+    return out.join(' ');
+  },
+
   classifyCell(val?: string | null): 'vazio' | 'naoapres' | 'ausente' | 'ilegivel' | 'naoloc' | 'na' | 'nome' {
     const s = nominalDiffService.normalizeSpace(val);
     if (!s) return 'vazio';
@@ -114,6 +135,15 @@ export const nominalDiffService = {
 
     if (miss.length > 0) parts.push(`${xName} omite ${miss.map(t => `"${t}"`).join(', ')}`);
     if (extra.length > 0) parts.push(`${xName} acrescenta ${extra.map(t => `"${t}"`).join(', ')}`);
+    if (miss.length > 0 || extra.length > 0) {
+      // Palavras presentes nos dois, mas com acento diferente ("FICTÍCIA" × "FICTICIA")
+      const bare = (t: string) => t.toLowerCase().replace(/[.,;]$/, '');
+      const accents = A.flatMap((t, i) => {
+        const j = kB.indexOf(kA[i]);
+        return j >= 0 && bare(B[j]) !== bare(t) ? [`"${t}" × "${B[j]}"`] : [];
+      });
+      if (accents.length > 0) parts.push(`acentuação diferente: ${accents.join(', ')}`);
+    }
 
     if (miss.length === 0 && extra.length === 0) {
       parts.push(kA.join(' ') === kB.join(' ') ? 'Acentuação divergente' : 'Ordem dos nomes/sobrenomes invertida');
@@ -126,11 +156,16 @@ export const nominalDiffService = {
   },
 
   /**
-   * Compara uma linha da matriz de confrontantes
+   * Compara uma linha da matriz de confrontantes.
+   * Com allRows, as tabelas opcionais (quadro da planta, tabela do memorial) que não existem em nenhuma linha
+   * não viram "campo não preenchido": o documento simplesmente não tem essa tabela.
    */
-  compareRow(row: NeighborRow): NeighborComparisonResult {
+  compareRow(row: NeighborRow, allRows?: NeighborRow[]): NeighborComparisonResult {
     const out: NeighborComparisonResult = { level: 'ok', issues: [], notes: [] };
     const isImovel = !row.tipo || row.tipo === 'imovel';
+    const absentTable = (colKey: keyof NeighborRow) =>
+      Boolean(allRows) && (colKey === 'quadro' || colKey === 'memTabela') &&
+      !allRows!.some(r => nominalDiffService.classifyCell(r[colKey] as string) === 'nome');
 
     const names = CONF_COLUMNS.filter(([colKey]) => {
       const val = row[colKey];
@@ -150,6 +185,7 @@ export const nominalDiffService = {
     }
     const refName = CONF_COLUMNS.find(c => c[0] === refCol)?.[1] || 'Referência';
     const refVal = nominalDiffService.normalizeSpace(row[refCol]);
+    const refCmp = nominalDiffService.comparableName(refVal);
 
     for (const [colKey, colLabel] of CONF_COLUMNS) {
       if (colKey === refCol) continue;
@@ -159,14 +195,19 @@ export const nominalDiffService = {
       if (kind === 'nome') {
         const valClean = nominalDiffService.normalizeSpace(rawVal);
         if (refVal === valClean) continue;
-        if (refVal.toLowerCase() === valClean.toLowerCase()) {
+        const valCmp = nominalDiffService.comparableName(valClean);
+        if (refCmp === valCmp) {
+          out.notes.push(`Mesmo nome em ${colLabel}, escrito com outra pontuação ou ligação ("de", "do")`);
+          continue;
+        }
+        if (refCmp.toLowerCase() === valCmp.toLowerCase()) {
           out.notes.push(`Diferença de maiúsculas/minúsculas em ${colLabel}`);
           continue;
         }
         out.level = 'err';
         out.issues.push({
           level: 'err',
-          message: `${colLabel}: "${valClean}" — ${nominalDiffService.describeDiff(refVal, valClean, refName, colLabel)}`,
+          message: `${colLabel}: "${valClean}" — ${nominalDiffService.describeDiff(refCmp, valCmp, refName, colLabel)}`,
           column: colKey,
         });
       } else if (kind === 'ausente') {
@@ -191,6 +232,7 @@ export const nominalDiffService = {
         });
       } else if (kind === 'vazio') {
         if (!isImovel && (colKey === 'matConf' || colKey === 'assin' || colKey === 'matPrinc')) continue;
+        if (absentTable(colKey)) continue;
         if (out.level !== 'err') out.level = 'warn';
         out.issues.push({ level: 'warn', message: `${colLabel}: campo não preenchido`, column: colKey });
       }
@@ -223,7 +265,7 @@ export const nominalDiffService = {
     const hasName = (r: NeighborRow, k: keyof NeighborRow) =>
       nominalDiffService.classifyCell(typeof r[k] === 'string' ? r[k] : '') === 'nome';
 
-    const evaluated = rows.map(r => nominalDiffService.compareRow(r));
+    const evaluated = rows.map(r => nominalDiffService.compareRow(r, rows));
     const uniquePersons = new Set(
       rows
         .map(r => nominalDiffService.normalizeSpace(r.matConf || r.planta || r.memTexto).toLowerCase())
@@ -259,10 +301,16 @@ export const nominalDiffService = {
 
   /**
    * Segunda Passagem (Sentido Inverso):
-   * Analisa partindo das fontes registrais e das anuências em direção à planta gráfica
+   * Analisa partindo das fontes registrais e das anuências em direção à planta gráfica.
+   * requireNeighborTitles = false quando o procedimento não exige matrícula/anuência dos vizinhos.
    */
-  runSecondPass(rows: NeighborRow[]): string[] {
+  runSecondPass(rows: NeighborRow[], options: { requireNeighborTitles?: boolean } = {}): string[] {
     const alerts: string[] = [];
+    const requireNeighborTitles = options.requireNeighborTitles ?? true;
+    // Texto corrido x tabela do memorial só se compara quando o memorial tem as duas formas
+    const hasSource = (k: keyof NeighborRow) => rows.some(r => nominalDiffService.classifyCell(r[k] as string) === 'nome');
+    const memHasText = hasSource('memTexto');
+    const memHasTable = hasSource('memTabela');
 
     rows.forEach(r => {
       const label = `${r.trecho || 'Trecho sem identificação'} (${r.lado || 'lado ?'}): "${nominalDiffService.normalizeSpace(r.matConf || r.planta || r.memTexto)}"`;
@@ -281,6 +329,7 @@ export const nominalDiffService = {
       }
 
       if (
+        memHasText &&
         nominalDiffService.classifyCell(r.memTabela) === 'nome' &&
         nominalDiffService.classifyCell(r.memTexto) !== 'nome'
       ) {
@@ -288,6 +337,7 @@ export const nominalDiffService = {
       }
 
       if (
+        memHasTable &&
         nominalDiffService.classifyCell(r.memTexto) === 'nome' &&
         nominalDiffService.classifyCell(r.memTabela) !== 'nome'
       ) {
@@ -305,7 +355,7 @@ export const nominalDiffService = {
         );
       }
 
-      if ((!r.tipo || r.tipo === 'imovel') && nominalDiffService.classifyCell(r.matConf) !== 'nome') {
+      if (requireNeighborTitles && (!r.tipo || r.tipo === 'imovel') && nominalDiffService.classifyCell(r.matConf) !== 'nome') {
         alerts.push(`⚠ ${label}: confrontante indicado sem certidão de matrícula apresentada.`);
       }
     });

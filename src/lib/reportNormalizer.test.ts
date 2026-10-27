@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  IncompleteAnalysisError, normalizeReport, parseAIJson, prepareText, resolveLienStatus, riskFloor, verifyAgainstSource,
+  IncompleteAnalysisError, normalizeReport, numberAppearsIn, parseAIJson, prepareText, resolveLienStatus, riskFloor, verifyAgainstSource,
 } from './reportNormalizer';
 
 const SOURCE = `--- Página 1 ---
@@ -103,6 +103,17 @@ describe('riskFloor', () => {
   });
 });
 
+describe('numberAppearsIn', () => {
+  it('acha números com vírgula decimal, ponto de milhar e CPF formatado', () => {
+    const source = 'Área total: 600,00 m². Perímetro: 100,40 m. Matrícula 12.345. CPF 016.765.718-68.';
+    expect(numberAppearsIn(source, '100,40 m')).toBe(true);
+    expect(numberAppearsIn(source, '600,00 m²')).toBe(true);
+    expect(numberAppearsIn(source, '12345')).toBe(true);
+    expect(numberAppearsIn(source, '016.765.718-68')).toBe(true);
+    expect(numberAppearsIn(source, '100,04 m')).toBe(false);
+  });
+});
+
 describe('verifyAgainstSource', () => {
   it('confirma CPF e ato presentes no texto e sinaliza os ausentes', () => {
     const report = {
@@ -158,5 +169,22 @@ describe('normalizeReport', () => {
     expect(report.onus_garantias_financeiras[0].status).toBe('ATIVO');
     expect(report.parecer_analise.score_risco).toBe(50);
     expect(report.detector_inconsistencias).toContain('Nenhum proprietário atual foi identificado na leitura.');
+  });
+
+  it('regressão: arquivo que não é matrícula fica "sem nota", nem "regular" nem "restrição grave"', () => {
+    // No teste com a IA real (27/10/2026), um contrato de aluguel recebeu nota 0 numa leitura e 100 na outra
+    const extracao = { ...baseExtraction(), identificacao_geral: { total_registros: 0, total_averbacoes: 0 }, proprietarios_atuais: [] };
+    [0, 100].forEach(score_risco => {
+      const report = normalizeReport({ extracao, parecer: { parecer_analise: { score_risco } } }, meta);
+      expect(report.parecer_analise.score_risco).toBeNull();
+      expect(report.parecer_analise.nivel_risco).toBe('INDEFINIDO');
+      expect(report.parecer_analise.status_juridico).toBe('NÃO AVALIADO');
+      expect(report.detector_inconsistencias[0]).toMatch(/Não encontramos os dados de uma certidão de matrícula/);
+    });
+  });
+
+  it('matrícula sem atos, mas com número ou proprietário, continua com nota', () => {
+    const semAtos = normalizeReport({ extracao: baseExtraction(), parecer: { parecer_analise: { score_risco: 3 } } }, meta);
+    expect(semAtos.parecer_analise.score_risco).toBe(3);
   });
 });

@@ -180,14 +180,21 @@ export const geodesyService = {
 
     let autoInverted = 0;
 
+    // Número inteiro, com ponto ou com vírgula decimal ("288000,00", "7.481.200,320"), sem vírgula sobrando no fim
+    const cleanNumber = /^[-+]?\d[\d.]*(,\d+)?$/;
+
     lines.forEach((lineStr, lineIdx) => {
+      const bySpace = lineStr.split(/\s+/).filter(Boolean);
       let tokens: string[] = [];
       if (/[;\t]/.test(lineStr)) {
         tokens = lineStr.split(/[;\t]+/).map(t => t.trim()).filter(Boolean);
+      } else if (bySpace.filter(t => cleanNumber.test(t)).length >= 2) {
+        // "P1 288000,00 7464000,00": separadas por espaço, a vírgula é a casa decimal
+        tokens = bySpace;
       } else if (/,\s/.test(lineStr) || (lineStr.match(/,/g) || []).length >= 2) {
         tokens = lineStr.split(/,\s*|\s+/).filter(Boolean);
       } else {
-        tokens = lineStr.trim().split(/\s+/).filter(Boolean);
+        tokens = bySpace;
       }
 
       if (tokens.length < 2) return;
@@ -200,6 +207,28 @@ export const geodesyService = {
         const v = isGeo ? geodesyService.parseDMS(x) : parseBrNumber(x);
         return isFinite(v);
       };
+
+      // Rótulos dos eixos ("P1 E 288000,00 N 7464000,00", "N=7464000 E=288000"): o rótulo diz qual é o eixo
+      if (!isGeo) {
+        const parts = tokens.flatMap(t => {
+          const m = t.match(/^([ENXY])[:=](.+)$/i);
+          return m ? [m[1], m[2]] : [t];
+        });
+        const labelAt = (re: RegExp) =>
+          parts.findIndex((t, i) => re.test(t) && i + 1 < parts.length && cleanNumber.test(parts[i + 1]));
+        const iE = labelAt(/^(e|x|este|leste)[:=]?$/i);
+        const iN = labelAt(/^(n|y|norte)[:=]?$/i);
+        if (iE >= 0 && iN >= 0 && iE !== iN) {
+          const first = Math.min(iE, iN);
+          vertices.push({
+            id: first > 0 && !isNumericToken(parts[0]) ? parts[0] : `V${String(vertices.length + 1).padStart(2, '0')}`,
+            E: parseBrNumber(parts[iE + 1]),
+            N: parseBrNumber(parts[iN + 1]),
+            line: lineIdx + 1,
+          });
+          return;
+        }
+      }
 
       if (tokens.length >= 3 && !isNumericToken(tokens[0])) {
         id = tokens[0];

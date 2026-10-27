@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildProjectSummary, recommendedDocTypes } from './projectSummary';
 import { SAMPLE_PROJECT_DATA } from './projectSampleData';
-import { createEmptyProject } from './projectConferenceService';
+import { ProjectData, createEmptyProject } from './projectConferenceService';
+import { REAL_AI_COORDS, REAL_AI_NEIGHBORS } from './realAiDesdobro.fixture';
 
 describe('o que enviar em cada procedimento', () => {
   it('planta, memorial e matrícula são sempre obrigatórios', () => {
@@ -48,5 +49,44 @@ describe('resultado da conferência', () => {
     expect(blank.missing.map(m => m.tipo)).toEqual(['Planta', 'Memorial', 'Matrícula Principal']);
     expect(blank.measures.hasCoords).toBe(false);
     expect(blank.nextSteps.some(s => /coordenadas/.test(s))).toBe(true);
+  });
+});
+
+describe('desdobro lido pela IA real (arquivos fictícios de teste, 27/10/2026)', () => {
+  const base = createEmptyProject();
+  const project: ProjectData = {
+    ...base,
+    info: { ...base.info, procedimentos: ['desdobro'], natureza: 'urbano' },
+    neighbors: REAL_AI_NEIGHBORS,
+    polygon: {
+      ...base.polygon,
+      rawCoords: REAL_AI_COORDS,
+      areaPlanta: '600,00 m²', areaMemorial: '600,00 m²', perimPlanta: '100,00 m', perimMemorial: '100,40 m',
+      declaredSegments: {
+        'P1>P2': { distPlanta: 20, distMemorial: 20 }, 'P2>P3': { distPlanta: 30, distMemorial: 30.4 },
+        'P3>P4': { distPlanta: 20, distMemorial: 20 }, 'P4>P1': { distPlanta: 30, distMemorial: 30 },
+      },
+    },
+  };
+  const summary = buildProjectSummary(project);
+  const titles = summary.attention.map(a => a.titulo).join('\n');
+
+  it('calcula área e perímetro pelas coordenadas', () => {
+    expect(summary.measures.hasCoords).toBe(true);
+    expect(summary.measures.areaM2).toBeCloseTo(600, 2);
+    expect(summary.measures.perimeter).toBeCloseTo(100, 2);
+  });
+
+  it('aponta os três erros plantados: lado P2-P3, perímetro do memorial e nome da vizinha', () => {
+    expect(summary.tone).toBe('bad');
+    expect(titles).toMatch(/P2.{0,3}P3/);
+    expect(titles).toMatch(/Perímetro do memorial: declarado 100,4 m, calculado 100 m/);
+    expect(titles).toMatch(/SOUZA/);
+  });
+
+  it('não gera alarme falso por pontuação, por tabela que o memorial não tem, nem cobra documentos de vizinhos no desdobro', () => {
+    expect(titles).not.toMatch(/PEDRO TESTE FICTÍCIO" —/);
+    expect(titles).not.toMatch(/ausente na tabela técnica/);
+    expect(titles).not.toMatch(/sem certidão de matrícula|Matrícula do confrontante/);
   });
 });

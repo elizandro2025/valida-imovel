@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ProjectData } from '@/services/projectConferenceService';
+import { ProjectData, requiresNeighborTitles } from '@/services/projectConferenceService';
 import {
   NeighborRow,
   nominalDiffService,
@@ -47,8 +47,8 @@ export const ConfrontantesTab: React.FC<ConfrontantesTabProps> = ({ data, onUpda
 
   const stats = useMemo(() => nominalDiffService.calculateStats(data.neighbors), [data.neighbors]);
   const secondPassAlerts = useMemo(
-    () => nominalDiffService.runSecondPass(data.neighbors),
-    [data.neighbors]
+    () => nominalDiffService.runSecondPass(data.neighbors, { requireNeighborTitles: requiresNeighborTitles(data.info.procedimentos) }),
+    [data.neighbors, data.info.procedimentos]
   );
   const petitionText = useMemo(
     () => nominalDiffService.generateRegistryPetition(data.neighbors),
@@ -230,7 +230,7 @@ export const ConfrontantesTab: React.FC<ConfrontantesTabProps> = ({ data, onUpda
             </div>
           ) : (
             data.neighbors.map((row, idx) => {
-              const evalRes = nominalDiffService.compareRow(row);
+              const evalRes = nominalDiffService.compareRow(row, data.neighbors);
               const isErr = evalRes.level === 'err';
               const isOk = evalRes.level === 'ok';
               const evalLabel = isOk ? 'Congruente 7D' : isErr ? 'Divergência Nominal' : 'Pendente de Certidão';

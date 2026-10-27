@@ -22,6 +22,12 @@ export const PROCEDURE_DEFAULT_TITLES: Record<string, string> = {
   reurb: 'Conferência de Regularização Fundiária (REURB-S)',
 };
 
+// Procedimentos cujo checklist cobra matrícula e anuência dos vizinhos (os demais não citam confrontantes).
+// Sem procedimento marcado, vale a regra mais rigorosa.
+const NEIGHBOR_TITLE_PROCEDURES = ['retificacao', 'estremacao'];
+export const requiresNeighborTitles = (procedimentos: string[]) =>
+  procedimentos.length === 0 || procedimentos.some(p => NEIGHBOR_TITLE_PROCEDURES.includes(p));
+
 const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export interface ProjectInfo {
@@ -298,14 +304,15 @@ export const projectConferenceService = {
         paginas: '',
         obs: 'Emitida em até 30 dias para comprovação de titularidade e gravames.',
       },
-      {
+      // Só nos procedimentos que exigem a matrícula dos vizinhos
+      ...(requiresNeighborTitles(procedimentos) ? [{
         id: 'doc-4',
         nome: 'Certidões de matrícula de todos os confrontantes',
         tipo: 'Matrículas Confrontantes',
-        status: 'Ausente',
+        status: 'Ausente' as const,
         paginas: '',
         obs: 'Uma para cada confrontante tabular para atestar a titularidade atual.',
-      },
+      }] : []),
       {
         id: 'doc-5',
         nome: 'ART / RRT / TRT quitada com comprovante',
@@ -501,9 +508,12 @@ export const projectConferenceService = {
         providencia: 'Inventariar todos os confrontantes por trecho',
       });
     } else {
+      const needTitles = requiresNeighborTitles(data.info.procedimentos);
       data.neighbors.forEach(n => {
-        const res = nominalDiffService.compareRow(n);
+        const res = nominalDiffService.compareRow(n, data.neighbors);
         res.issues.forEach(iss => {
+          // Matrícula e anuência do vizinho que faltam só pesam onde o procedimento as exige
+          if (!needTitles && iss.level === 'warn' && (iss.column === 'matConf' || iss.column === 'assin')) return;
           list.push({
             origem: 'Confrontantes',
             tipo: iss.level === 'err' ? 'div' : 'pend',
@@ -514,13 +524,13 @@ export const projectConferenceService = {
             prioridade: iss.level === 'err' ? 'Alta' : 'Média',
             providencia:
               iss.level === 'err'
-                ? 'Ajustar a grafia para coincidir exatamente com o titular da matrícula.'
+                ? 'Deixar o nome igual em todos os documentos, com a grafia exata da matrícula do vizinho.'
                 : 'Apresentar certidão de matrícula ou recolher assinatura de anuência.',
           });
         });
       });
 
-      const secondPassAlerts = nominalDiffService.runSecondPass(data.neighbors);
+      const secondPassAlerts = nominalDiffService.runSecondPass(data.neighbors, { requireNeighborTitles: needTitles });
       secondPassAlerts.forEach(alertText => {
         list.push({
           origem: 'Confrontantes',
@@ -725,7 +735,9 @@ export const projectConferenceService = {
     const issues = projectConferenceService.consolidateIssues(data);
     const finalOpinion = projectConferenceService.finalOpinion(data);
     const stats = nominalDiffService.calculateStats(data.neighbors);
-    const petitionText = nominalDiffService.generateRegistryPetition(data.neighbors);
+    const petitionText = requiresNeighborTitles(data.info.procedimentos)
+      ? nominalDiffService.generateRegistryPetition(data.neighbors)
+      : '';
 
     const procsText = data.info.procedimentos
       .map(k => PROCEDURE_CHECKLISTS.find(c => c.key === k)?.name || k)

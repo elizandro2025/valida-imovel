@@ -107,8 +107,9 @@ export function resolveLienStatus(item: any): LienStatus {
 const normalizeText = (s: string) =>
   s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
+// Entre os dígitos pode haver espaço, ponto, vírgula decimal, hífen ou barra ("100,40", "12.345", "016.765.718-68")
 function digitsPattern(digits: string): RegExp {
-  return new RegExp(digits.split('').join('[\\s.\\-/]*'));
+  return new RegExp(digits.split('').join('[\\s.,\\-/]*'));
 }
 
 export function numberAppearsIn(source: string, value: string): boolean {
@@ -242,8 +243,21 @@ export function normalizeReport(input: NormalizeInput, meta: NormalizeMeta): Rec
   if (indefinidos.length > 0) {
     pontos.push(`${indefinidos.length} ônus aparece(m) como cancelado(s), mas sem o ato de cancelamento identificado. Confira na certidão.`);
   }
-  if (report.proprietarios_atuais.length === 0) pontos.push('Nenhum proprietário atual foi identificado na leitura.');
-  if (!report.identificacao_geral.matricula) pontos.push('O número da matrícula não foi identificado na leitura.');
+  // Sem número, proprietário, registro, averbação ou ônus, o arquivo não traz uma matrícula legível: em vez de uma nota
+  // que pareceria resultado (a IA já deu 0 e 100 ao mesmo contrato de aluguel), o relatório fica "sem nota"
+  const semDadosDeMatricula = !report.identificacao_geral.matricula && ['proprietarios_atuais', 'cadeia_dominial',
+    'onus_garantias_financeiras', 'indisponividades_e_penhoras', 'usufruto_servidoes_e_direitos', 'averbacoes_diversas']
+    .every(key => report[key].length === 0);
+  if (semDadosDeMatricula) {
+    parecer.score_risco = null;
+    parecer.nivel_risco = 'INDEFINIDO';
+    parecer.status_juridico = LEGAL_STATUS_BY_LEVEL.INDEFINIDO;
+    pontos.unshift('Não encontramos os dados de uma certidão de matrícula neste arquivo (número, proprietários, registros ou averbações). '
+      + 'Confira se enviou o documento certo e se o PDF está legível. Sem esses dados, não há nota de risco.');
+  } else {
+    if (report.proprietarios_atuais.length === 0) pontos.push('Nenhum proprietário atual foi identificado na leitura.');
+    if (!report.identificacao_geral.matricula) pontos.push('O número da matrícula não foi identificado na leitura.');
+  }
   if (meta.truncated || meta.ocrCut) {
     pontos.push('O documento é muito longo: parte do texto não foi analisada. Confira os atos diretamente na certidão.');
   }

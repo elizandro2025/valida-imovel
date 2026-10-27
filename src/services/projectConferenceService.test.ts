@@ -88,4 +88,40 @@ describe('coordenadas', () => {
     expect(vertices[0].E).toBeCloseTo(225410.15);
     expect(vertices[0].N).toBeCloseTo(7481200.32);
   });
+
+  it('separadas por espaço, a vírgula é a casa decimal', () => {
+    const { vertices, errors } = geodesyService.parseVertices('P1 288000,00 7464000,50\nP2 288020,00 7464000,00');
+    expect(errors).toEqual([]);
+    expect(vertices[0]).toMatchObject({ id: 'P1', E: 288000, N: 7464000.5 });
+  });
+
+  it('separadas por vírgula continuam aceitas', () => {
+    const { vertices } = geodesyService.parseVertices('V01,288000.00,7464000.00\nV02, 288020.5, 7464000');
+    expect(vertices[0]).toMatchObject({ id: 'V01', E: 288000, N: 7464000 });
+    expect(vertices[1]).toMatchObject({ id: 'V02', E: 288020.5, N: 7464000 });
+  });
+
+  it('entende os rótulos dos eixos, como a IA às vezes escreve', () => {
+    // Formato real devolvido pela leitura automática no teste com a IA (27/10/2026)
+    const raw = 'P1 E 288000,00 N 7464000,00\nP2 E 288020,00 N 7464000,00\nP3 E 288020,00 N 7464030,00\nP4 E 288000,00 N 7464030,00';
+    const { vertices, errors } = geodesyService.parseVertices(raw);
+    expect(errors).toEqual([]);
+    expect(vertices.map(v => [v.id, v.E, v.N])).toEqual([
+      ['P1', 288000, 7464000], ['P2', 288020, 7464000], ['P3', 288020, 7464030], ['P4', 288000, 7464030],
+    ]);
+    const calc = geodesyService.calculatePolygon(vertices);
+    expect(calc.areaM2).toBeCloseTo(600, 2);
+    expect(calc.perimeter).toBeCloseTo(100, 2);
+  });
+
+  it('com rótulos, a ordem N antes de E é respeitada', () => {
+    const { vertices } = geodesyService.parseVertices('V1 N=7464000,00 E=288000,00\nV2 N: 7464010 E: 288005');
+    expect(vertices[0]).toMatchObject({ id: 'V1', E: 288000, N: 7464000 });
+    expect(vertices[1]).toMatchObject({ id: 'V2', E: 288005, N: 7464010 });
+  });
+
+  it('um vértice chamado "E" não é confundido com rótulo', () => {
+    const { vertices } = geodesyService.parseVertices('E 288000,00 7464000,00');
+    expect(vertices[0]).toMatchObject({ id: 'E', E: 288000, N: 7464000 });
+  });
 });
