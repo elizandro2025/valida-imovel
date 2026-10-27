@@ -219,7 +219,7 @@ export const AuthPage: React.FC = () => {
           </div>
           <div className="space-y-3 pt-2">
             <Link to="/app" className="block">
-              <Button className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs gap-2">
+              <Button className="w-full font-semibold text-xs gap-2">
                 Ir para o Workspace de Auditoria <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -328,7 +328,7 @@ export const AuthPage: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
+                    className="w-full font-semibold text-xs h-11 gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar Instruções'}
                   </Button>
@@ -372,7 +372,7 @@ export const AuthPage: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={formLoading}
-                    className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2"
+                    className="w-full font-semibold text-xs h-11 gap-2"
                   >
                     {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar nova senha'}
                   </Button>
@@ -454,7 +454,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
+                        className="w-full font-semibold text-xs h-11 gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Entrar'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}
@@ -515,7 +515,7 @@ export const AuthPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={formLoading}
-                        className="w-full bg-primary hover:bg-primary text-white font-semibold text-xs h-11 gap-2 mt-2"
+                        className="w-full font-semibold text-xs h-11 gap-2 mt-2"
                       >
                         {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Criar conta'}
                         {!formLoading && <ArrowRight className="w-4 h-4" />}

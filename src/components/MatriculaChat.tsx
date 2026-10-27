@@ -235,7 +235,7 @@ export const MatriculaChat: React.FC<MatriculaChatProps> = ({ report, initialQue
             type="submit"
             disabled={!input.trim() || isTyping}
             aria-label="Enviar pergunta"
-            className="bg-primary hover:bg-primary text-white px-4 shrink-0"
+            className="px-4 shrink-0"
           >
             <Send className="w-3.5 h-3.5" />
           </Button>

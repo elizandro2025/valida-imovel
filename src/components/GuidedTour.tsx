@@ -192,7 +192,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({ isOpen, onClose, onSelec
             <Button
               size="sm"
               onClick={handleNext}
-              className="bg-primary hover:bg-primary text-white font-semibold text-xs h-10 px-4 sm:px-5 gap-1.5 touch-target"
+              className="font-semibold text-xs h-10 px-4 sm:px-5 gap-1.5 touch-target"
             >
               {currentStepIndex === TOUR_STEPS.length - 1 ? (
                 <>Concluir Tour <CheckCircle2 className="w-4 h-4" /></>

@@ -489,7 +489,7 @@ export const PixPaymentPage: React.FC = () => {
                       {!isGenerating && (!pixPayment || generateError) && (
                         <Button
                           onClick={handleGeneratePixPayment}
-                          className="w-full bg-primary hover:bg-primary text-white font-semibold text-sm gap-2 transition-all"
+                          className="w-full font-semibold text-sm gap-2 transition-all"
                         >
                           <QrCode className="w-4 h-4" /> Gerar Pix de {offer.priceFormatted}
                         </Button>
@@ -515,7 +515,7 @@ export const PixPaymentPage: React.FC = () => {
 
                       {cardInitPoint ? (
                         <a href={cardInitPoint} target="_blank" rel="noopener noreferrer">
-                          <Button className="bg-primary hover:bg-primary text-white font-semibold text-xs px-8 gap-2">
+                          <Button className="font-semibold text-xs px-8 gap-2">
                             Pagar no Cartão de Crédito <ExternalLink className="w-4 h-4" />
                           </Button>
                         </a>
@@ -523,7 +523,7 @@ export const PixPaymentPage: React.FC = () => {
                         <Button
                           onClick={handleGenerateCardPayment}
                           disabled={isGeneratingCard}
-                          className="bg-primary hover:bg-primary text-white font-semibold text-xs px-8 gap-2"
+                          className="font-semibold text-xs px-8 gap-2"
                         >
                           {isGeneratingCard ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> Conectando ao checkout...</>
