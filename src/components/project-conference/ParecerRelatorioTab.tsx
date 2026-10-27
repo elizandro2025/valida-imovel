@@ -5,6 +5,7 @@ import {
   consolidateIssues,
   generateReportMarkdown,
   exportToWord,
+  finalOpinion,
 } from '../../services/projectConferenceService';
 import {
   Download,
@@ -28,11 +29,12 @@ export const ParecerRelatorioTab: React.FC<ParecerRelatorioTabProps> = ({
   const [hasGeneratedReport, setHasGeneratedReport] = useState(false);
   const [activeView, setActiveView] = useState<'preview' | 'markdown'>('preview');
 
-  const { opinion, divCount, pendCount } = computeAutomaticOpinion(data);
+  const { divCount, pendCount, blocked } = computeAutomaticOpinion(data);
   const allIssues = consolidateIssues(data);
   const reportMarkdown = generateReportMarkdown(data);
 
-  const currentOpinion = data.parecer?.final || opinion;
+  // Com divergências ou pendências o parecer não pode ser "compatível", mesmo que tenha sido escolhido antes
+  const currentOpinion = finalOpinion(data);
 
   const handleCopy = async () => {
     try {
@@ -52,7 +54,7 @@ export const ParecerRelatorioTab: React.FC<ParecerRelatorioTabProps> = ({
     exportToWord(data);
   };
 
-  const updateParecerField = (field: keyof ProjectData['parecer'], val: any) => {
+  const updateParecerField = <K extends keyof ProjectData['parecer']>(field: K, val: ProjectData['parecer'][K]) => {
     onUpdate(prev => ({
       ...prev,
       parecer: {
@@ -100,15 +102,18 @@ export const ParecerRelatorioTab: React.FC<ParecerRelatorioTabProps> = ({
 
         {/* Parecer final select */}
         <div className="space-y-1.5 pt-1">
-          <label className="block text-xs font-semibold text-foreground">
+          <label htmlFor="parecer-final" className="block text-xs font-semibold text-foreground">
             Parecer final
           </label>
           <select
+            id="parecer-final"
             value={currentOpinion}
             onChange={e => updateParecerField('final', e.target.value)}
             className="w-full max-w-xl px-3.5 py-2 rounded-xl border border-input bg-background text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
           >
-            <option value="DOCUMENTAÇÃO COMPATÍVEL">DOCUMENTAÇÃO COMPATÍVEL</option>
+            <option value="DOCUMENTAÇÃO COMPATÍVEL" disabled={blocked}>
+              DOCUMENTAÇÃO COMPATÍVEL{blocked ? ' (indisponível: há divergências ou pendências)' : ''}
+            </option>
             <option value="DOCUMENTAÇÃO COM DIVERGÊNCIAS">DOCUMENTAÇÃO COM DIVERGÊNCIAS</option>
             <option value="DOCUMENTAÇÃO INCOMPLETA PARA CONFERÊNCIA">DOCUMENTAÇÃO INCOMPLETA PARA CONFERÊNCIA</option>
           </select>

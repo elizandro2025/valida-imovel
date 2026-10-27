@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ProjectData,
   createEmptyProject,
-  loadProjectFromStorage,
-  saveProjectToStorage,
+  loadCurrentProject,
+  keepCurrentProject,
+  projectHasContent,
   consolidateIssues,
   computeAutomaticOpinion,
 } from '../../services/projectConferenceService';
@@ -50,6 +51,7 @@ import {
   Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ErrorModal } from '@/components/ErrorModal';
 
 export type WorkspaceTab =
   | 'info'
@@ -77,34 +79,47 @@ interface TabConfig {
 interface ProjectConferenceWorkspaceProps {
   onBackToHub?: () => void;
   initialProcedure?: string;
+  /** Abre direto no projeto de exemplo (link ?sample=desdobro da página inicial) */
+  startWithSample?: boolean;
 }
 
 export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProps> = ({
   onBackToHub,
   initialProcedure,
+  startWithSample = false,
 }) => {
   const navigate = useNavigate();
-  const [project, setProject] = useState<ProjectData>(() => loadProjectFromStorage());
-  const [activeTab, setActiveTab] = useState<WorkspaceTab>('info');
-  const [wizardStep, setWizardStep] = useState<WizardStep>(1);
+  const [project, setProject] = useState<ProjectData>(() => {
+    const initial = startWithSample ? SAMPLE_PROJECT_DATA : loadCurrentProject();
+    keepCurrentProject(initial);
+    return initial;
+  });
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>(startWithSample ? 'parecer' : 'info');
+  const [wizardStep, setWizardStep] = useState<WizardStep>(startWithSample ? 4 : 1);
   const [viewMode, setViewMode] = useState<'wizard' | 'expert'>('wizard');
-  const [lastSaved, setLastSaved] = useState<Date>(new Date());
-  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving'>('saved');
+  // Ações que tiram da tela um projeto real (não salvo): o exemplo ou um projeto novo
+  const [confirmAction, setConfirmAction] = useState<null | 'sample' | 'reset'>(null);
 
-  // Autosave to localStorage on project state change
+  // O projeto fica só na memória desta aba (não é guardado no navegador nem no servidor)
   const handleProjectUpdate = useCallback(
     (updater: (prev: ProjectData) => ProjectData) => {
-      setSaveStatus('saving');
       setProject((prev) => {
         const next = updater(prev);
-        saveProjectToStorage(next);
+        keepCurrentProject(next);
         return next;
       });
-      setLastSaved(new Date());
-      setTimeout(() => setSaveStatus('saved'), 350);
     },
     []
   );
+
+  // Como na análise de matrícula: avisa antes de fechar ou recarregar a aba com um projeto real em andamento
+  const hasUnsavedProject = !project.isSample && projectHasContent(project);
+  useEffect(() => {
+    if (!hasUnsavedProject) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [hasUnsavedProject]);
 
   // Se houver procedimento inicial solicitado via Hub, parametriza se o projeto estiver novo
   useEffect(() => {
@@ -138,18 +153,6 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     }
   }, [initialProcedure, handleProjectUpdate]);
 
-  // Periodic visual clock for "salvo há X minutos/segundos"
-  const [timeAgoText, setTimeAgoText] = useState('agora mesmo');
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const diffSec = Math.floor((Date.now() - lastSaved.getTime()) / 1000);
-      if (diffSec < 5) setTimeAgoText('agora mesmo');
-      else if (diffSec < 60) setTimeAgoText(`há ${diffSec}s`);
-      else setTimeAgoText(`há ${Math.floor(diffSec / 60)}min`);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [lastSaved]);
-
   // Derived metrics for tabs badges
   const allIssues = consolidateIssues(project);
   const criticalCount = allIssues.filter((i) => i.tipo === 'div').length;
@@ -161,11 +164,27 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
     .filter((p) => project.info.procedimentos.includes(p.key))
     .reduce((acc, p) => acc + p.items.length, 0);
 
-  const handleLoadSample = useCallback(() => {
+  const loadSample = useCallback(() => {
     handleProjectUpdate(() => SAMPLE_PROJECT_DATA);
     setActiveTab('parecer');
     setWizardStep(4);
   }, [handleProjectUpdate]);
+
+  const resetProject = useCallback(() => {
+    handleProjectUpdate(() => createEmptyProject());
+    setWizardStep(1);
+    setActiveTab('info');
+  }, [handleProjectUpdate]);
+
+  // O exemplo e o projeto novo substituem o projeto aberto: com dados reais na tela, pede confirmação antes
+  const handleLoadSample = useCallback(() => {
+    if (hasUnsavedProject) setConfirmAction('sample');
+    else loadSample();
+  }, [hasUnsavedProject, loadSample]);
+  const handleReset = useCallback(() => {
+    if (hasUnsavedProject) setConfirmAction('reset');
+    else resetProject();
+  }, [hasUnsavedProject, resetProject]);
 
   const tabConfigs: Record<WorkspaceTab, TabConfig> = useMemo(() => ({
     ia: {
@@ -455,12 +474,8 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
             </button>
           </div>
 
-          <span className="hidden sm:inline">
-            {saveStatus === 'saving' ? (
-              <span className="text-amber-300 font-semibold animate-pulse">Salvando...</span>
-            ) : (
-              <span>Salvo {timeAgoText}</span>
-            )}
+          <span className="hidden sm:inline" title="O projeto não é guardado: some ao recarregar ou fechar a aba. Exporte o laudo ou o arquivo do projeto para guardar.">
+            Fica só nesta aba · exporte para guardar
           </span>
         </div>
       </div>
@@ -471,15 +486,18 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
         <ProjectHeader
           data={project}
           onUpdate={handleProjectUpdate}
-          onReset={() => {
-            const empty = createEmptyProject();
-            handleProjectUpdate(() => empty);
-            setWizardStep(1);
-            setActiveTab('info');
-          }}
+          onReset={handleReset}
           onLoadSample={handleLoadSample}
-          lastSavedText={timeAgoText}
         />
+
+        {project.isSample && (
+          <div role="note" className="rounded-2xl border border-warning/30 bg-warning/10 px-4 py-3 text-xs sm:text-sm text-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span>
+              <strong className="font-semibold">Exemplo com dados fictícios.</strong> Pessoas, documentos e registros não existem, e o
+              resultado não foi gerado por IA: serve para conhecer a conferência. Para conferir um projeto real, comece um novo.
+            </span>
+          </div>
+        )}
 
         {/* ------------------------------------------------------------- */}
         {/* EXPERIÊNCIA 1: FLUXO GUIADO PASSO A PASSO (WIZARD RECOMENDADO) */}
@@ -901,6 +919,21 @@ export const ProjectConferenceWorkspace: React.FC<ProjectConferenceWorkspaceProp
           </div>
         )}
       </div>
+
+      <ErrorModal
+        isOpen={confirmAction !== null}
+        onClose={() => setConfirmAction(null)}
+        title={confirmAction === 'sample' ? 'Abrir o exemplo no lugar deste projeto?' : 'Começar um projeto novo?'}
+        message="O projeto aberto não fica salvo e vai sair da tela. Se quiser guardá-lo, use Exportar antes."
+        actionLabel={confirmAction === 'sample' ? 'Abrir o exemplo' : 'Começar projeto novo'}
+        onAction={() => {
+          const action = confirmAction;
+          setConfirmAction(null);
+          if (action === 'sample') loadSample();
+          else resetProject();
+        }}
+        cancelLabel="Continuar no meu projeto"
+      />
     </div>
   );
 };

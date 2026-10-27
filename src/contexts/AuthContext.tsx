@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AuthError, Session } from '@supabase/supabase-js';
 import { isSubscriptionActive } from '@/services/subscriptionService';
 import { ocrCacheService } from '@/services/ocrCacheService';
+import { projectMemory } from '@/services/projectMemory';
 import { API_BASE_URL } from '@/services/apiClient';
 
 // Cadastro pelo servidor do ValidaImóvel: a conta já nasce confirmada, sem e-mail de confirmação.
@@ -188,6 +189,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       // Relatórios guardados no navegador contêm nomes e CPFs: apaga ao sair
       ocrCacheService.clearCache();
+      // A conferência de projeto aberta (só na memória da aba) também sai com a conta
+      projectMemory.clear();
       LEGACY_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
       setUser(null);
       setSession(null);

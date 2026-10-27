@@ -2,13 +2,8 @@ import React, { useState } from 'react';
 import { ANALISES_SECTIONS, ProjectData } from '@/services/projectConferenceService';
 import {
   NotebookPen,
-  Sparkles,
   Copy,
   Check,
-  FileText,
-  ShieldCheck,
-  BookOpen,
-  Award,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -17,23 +12,25 @@ interface AnalisesTabProps {
   onUpdate: (updater: (prev: ProjectData) => ProjectData) => void;
 }
 
+// Modelos de texto que a pessoa escolhe inserir e revisa (chaves de ANALISES_SECTIONS). Há modelos para o caso
+// regular e para o caso com problema: nenhum é inserido sem um clique.
 const PRESET_CLAUSES: Record<string, string[]> = {
-  pm: [
+  a3: [
     'Constatada correspondência plena entre os dados tabulares da planta e do memorial descritivo, respeitando a NBR 17047/2022.',
     'Apontada discrepância na descrição perimétrica entre planta e memorial descritivo, exigindo aditamento antes da qualificação notarial.',
     'Os elementos de área e perímetro mostram conformidade estrita com a certidão imobiliária, sem vestígios de ampliação territorial.',
   ],
-  confrontantes: [
+  a9: [
     'Todas as divisas limítrofes contam com indicação de matrículas atualizadas e qualificação de titulares tabulares em conformidade com o art. 213 da LRP.',
     'Exige-se a notificação registral ou coleta de anuência expressa dos confinantes cujos títulos divergem da indicação técnica.',
     'Divisas confrontantes com vias públicas dispensam anuência particular, bastando certidão de alinhamento expedida pelo Município.',
   ],
-  poligonal: [
+  a12: [
     'A malha de coordenadas geodésicas atinge fechamento linear rigoroso em UTM SIRGAS 2000, com erro inferior à tolerância milimétrica da ABNT.',
     'Poligonal calculada com sentido de percurso horário regular e coordenadas atestadas por responsável técnico devidamente habilitado.',
     'Ausência de sobreposição gráfica ou invasão de faixas de domínio público ou cursos hídricos protegidos.',
   ],
-  conclusao: [
+  aH: [
     'Opina-se pelo deferimento do registro imobiliário do rito em exame, em virtude do integral saneamento das exigências documentais e técnicas.',
     'Sugere-se a emissão de nota devolutiva saneadora com as providências pontuais assinaladas no quadro de não-conformidades.',
     'Procedimento apto à averiguação do Oficial de Registro de Imóveis, acompanhado de toda a documentação probatória exigida pelo Provimento CNJ 149/2023.',
@@ -54,27 +51,6 @@ export const AnalisesTab: React.FC<AnalisesTabProps> = ({ data, onUpdate }) => {
     const current = data.analises?.[key] || '';
     const updated = current ? `${current}\n\n${clause}` : clause;
     handleUpdateSection(key, updated);
-  };
-
-  const handleFillAllDrafts = () => {
-    const nome = data.info.nome || 'o imóvel auditado';
-    const mat = data.info.matricula || 'da serventia';
-    const comarca = data.info.comarca || data.info.municipio || 'competente';
-
-    const drafts: Record<string, string> = {
-      pm: `O exame técnico de correspondência entre a Planta Topográfica e o Memorial Descritivo referente a ${nome} (Matrícula nº ${mat}) evidenciou regularidade formal e observância às diretrizes da ABNT NBR 17047/2022 e do art. 225 da Lei nº 6.015/73. As grandezas métricas de área superficial e extensão perimétrica guardam relação de coerência entre os instrumentos gráficos e textuais.`,
-      confrontantes: `A malha de confinantes foi confrontada em 7 dimensões probatórias (Planta, Memorial Texto, Memorial Tabela, Certidões dos Confinantes, Matrícula Matriz, Qualificação Civil e Termos de Anuência). Os proprietários tabulares encontram-se devidamente identificados junto à circunscrição imobiliária da Comarca de ${comarca}.`,
-      poligonal: `A poligonal geodésica processada sob o referencial geocêntrico SIRGAS 2000 obteve fechamento analítico rigoroso através do algoritmo de Gauss (Shoelace). O erro linear relativo constatado situa-se amplamente abaixo do limite de tolerância regulamentar, atestando a exatidão cartográfica e a estabilidade dimensional do imóvel.`,
-      conclusao: `Ante o conjunto probatório analisado e as verificações executadas sob o protocolo de auditoria pericial, conclui-se pela viabilidade notarial do procedimento, ressalvadas exclusivamente as recomendações de instrução documental formal consignadas no Quadro Consolidado de Não-Conformidades.`,
-    };
-
-    onUpdate(prev => ({
-      ...prev,
-      analises: {
-        ...prev.analises,
-        ...drafts,
-      },
-    }));
   };
 
   const handleCopyText = async (key: string, text: string) => {
@@ -105,20 +81,9 @@ export const AnalisesTab: React.FC<AnalisesTabProps> = ({ data, onUpdate }) => {
               </h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
-              Elaboração dos tópicos analíticos que compõem o corpo do Laudo Pericial Oficial e a exportação em formato Word (.docx).
-              Utilize as minutas técnicas automatizadas para fundamentação jurídica sólida.
+              Textos que entram no relatório exportado (Word .doc e impressão). Escreva cada seção com base no que foi
+              conferido; os modelos abaixo são pontos de partida e precisam ser revisados.
             </p>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="sm"
-              onClick={handleFillAllDrafts}
-              className="text-xs h-8 gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-xs"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              Auto-Gerar Minutas Sugeridas com IA
-            </Button>
           </div>
         </div>
 
@@ -128,13 +93,9 @@ export const AnalisesTab: React.FC<AnalisesTabProps> = ({ data, onUpdate }) => {
             <span>
               Volume Textual: <strong className="text-foreground">{totalChars}</strong> caracteres redigidos
             </span>
-            <span>•</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> Vinculado ao Provimento CNJ nº 149/2023
-            </span>
           </div>
           <span className="text-[11px] font-mono">
-            4 seções periciais integradas
+            {ANALISES_SECTIONS.length} seções
           </span>
         </div>
       </div>
@@ -188,7 +149,7 @@ export const AnalisesTab: React.FC<AnalisesTabProps> = ({ data, onUpdate }) => {
               {presets.length > 0 && (
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block">
-                    Inserir Fundamentação Jurídico-Pericial Sugerida:
+                    Modelos de texto (escolha o que corresponde ao caso e revise):
                   </span>
                   <div className="flex flex-col gap-1.5">
                     {presets.map((preset, pIdx) => (

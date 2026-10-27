@@ -58,6 +58,18 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
   userName,
 }) => {
   const [showAssistant, setShowAssistant] = React.useState(false);
+  // Os cartões grandes são <div> clicáveis: Enter e espaço também abrem o procedimento (acesso pelo teclado)
+  const cardProps = (proc: ProcedureType) => ({
+    role: 'button' as const,
+    tabIndex: 0,
+    onClick: () => onSelectProcedure(proc),
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onSelectProcedure(proc);
+      }
+    },
+  });
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (accepted: File[]) => {
       if (accepted.length > 0 && onDropFile) {
@@ -104,11 +116,12 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
           <div className="space-y-1">
             <h3 className="text-sm sm:text-base font-bold text-foreground">
               {isDragActive
-                ? 'Solte o arquivo para identificação automática...'
-                : 'Não sabe qual procedimento escolher? Arraste seu documento aqui'}
+                ? 'Solte o arquivo aqui...'
+                : 'Não sabe por onde começar? Arraste seu documento aqui'}
             </h3>
             <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed">
-              Envie a certidão (PDF) ou as peças técnicas do imóvel (Planta, Memorial, KML). A IA reconhece o tipo de documento e inicia o procedimento correto automaticamente.
+              Pelo nome do arquivo, o sistema escolhe o caminho: a certidão da matrícula abre a análise de matrícula; planta,
+              memorial e arquivos de coordenadas (KML, DXF, TXT) abrem a conferência de projetos, já com o arquivo na lista.
             </p>
           </div>
           <Button
@@ -118,7 +131,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             className="text-xs h-8 font-semibold gap-1.5 border-primary/30 text-primary hover:bg-primary/5 pointer-events-none"
           >
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Identificar Documento Automaticamente</span>
+            <span>Escolher arquivo</span>
           </Button>
         </div>
       </div>
@@ -258,8 +271,8 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Procedimento 1: Auditoria de Matrícula */}
         <div
-          onClick={() => onSelectProcedure('matricula')}
-          className="group relative cursor-pointer bg-card hover:bg-card/90 border border-border/80 hover:border-primary/50 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5"
+          {...cardProps('matricula')}
+          className="group relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary bg-card hover:bg-card/90 border border-border/80 hover:border-primary/50 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5"
         >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -303,8 +316,8 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
 
         {/* Procedimento 2: Conferência de Desdobro */}
         <div
-          onClick={() => onSelectProcedure('desdobro')}
-          className="group relative cursor-pointer bg-card hover:bg-card/90 border border-border/80 hover:border-indigo-500/50 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5"
+          {...cardProps('desdobro')}
+          className="group relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary bg-card hover:bg-card/90 border border-border/80 hover:border-indigo-500/50 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5"
         >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -349,8 +362,8 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
 
         {/* Procedimento 3: Conferência de Retificação de Área */}
         <div
-          onClick={() => onSelectProcedure('retificacao')}
-          className="group relative cursor-pointer bg-card hover:bg-card/90 border border-border/80 hover:border-emerald-500/50 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5"
+          {...cardProps('retificacao')}
+          className="group relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary bg-card hover:bg-card/90 border border-border/80 hover:border-emerald-500/50 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between space-y-5"
         >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -479,7 +492,7 @@ export const ProcedureLauncherHub: React.FC<ProcedureLauncherHubProps> = ({
             size="sm"
             onClick={onLoadSampleProject}
             className="text-xs h-8 gap-1.5 border-primary/30 text-primary hover:bg-primary/5 hover:text-primary font-semibold shadow-2xs"
-            title="Carregar caso pericial completo da Rua Oscar Freire (14º RI de SP)"
+            title="Abrir um projeto de exemplo, com dados fictícios"
           >
             <Compass className="w-3.5 h-3.5" />
             <span>Simular Caso SP (Desdobro & Retificação)</span>

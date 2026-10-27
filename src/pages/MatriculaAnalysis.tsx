@@ -20,11 +20,14 @@ import { ProjectConferenceWorkspace } from '@/components/project-conference/Proj
 import { FileSearch, Compass, Home } from 'lucide-react';
 import { ProcedureLauncherHub, ProcedureType } from '@/components/hub/ProcedureLauncherHub';
 import {
-  loadProjectFromStorage,
-  saveProjectToStorage,
+  loadCurrentProject,
+  keepCurrentProject,
+  projectHasContent,
   consolidateIssues,
 } from '@/services/projectConferenceService';
 import { SAMPLE_PROJECT_DATA } from '@/services/projectSampleData';
+import { guessDocType } from '@/services/projectAiService';
+import { projectMemory } from '@/services/projectMemory';
 
 const MatriculaAnalysis: React.FC = () => {
   const analysis = useMatriculaAnalysis();
@@ -48,19 +51,21 @@ const MatriculaAnalysis: React.FC = () => {
   // - 'projeto': Conferência Técnica de Projetos
   // - 'matricula': Auditoria de Certidão em PDF
   // - 'hub': Hub Central Orientado a Procedimentos (Padrão para novos acessos)
+  // O Hub escolhido explicitamente (?modulo=hub) vale mesmo com um relatório de matrícula em memória: ao voltar para
+  // a matrícula, o relatório continua lá
   const activeModule: 'hub' | 'matricula' | 'projeto' =
-    moduloParam === 'projeto' || isProjectSample
+    moduloParam === 'hub'
+      ? 'hub'
+      : moduloParam === 'projeto' || isProjectSample
       ? 'projeto'
       : moduloParam === 'matricula' || analysis.file || analysis.report || analysis.isProcessing || sampleType
       ? 'matricula'
-      : moduloParam === 'hub'
-      ? 'hub'
       : 'hub';
 
   const setModule = (mod: 'hub' | 'matricula' | 'projeto') => {
     const nextParams = new URLSearchParams(location.search);
     if (mod === 'hub') {
-      nextParams.delete('modulo');
+      nextParams.set('modulo', 'hub');
       nextParams.delete('proc');
       nextParams.delete('sample');
     } else if (mod === 'projeto') {
@@ -83,12 +88,6 @@ const MatriculaAnalysis: React.FC = () => {
     undefined,
     { noindex: true }
   );
-
-  React.useEffect(() => {
-    if (isProjectSample) {
-      saveProjectToStorage(SAMPLE_PROJECT_DATA);
-    }
-  }, [isProjectSample]);
 
   const { loadSampleReport } = analysis;
   React.useEffect(() => {
@@ -136,25 +135,24 @@ const MatriculaAnalysis: React.FC = () => {
     navigate('/');
   };
 
-  // Detecção de projeto salvo em andamento para o Hub
+  // Projeto aberto nesta aba (só na memória) para o Hub oferecer a retomada
   const savedProjectData = React.useMemo(() => {
+    void activeModule; // recalcula ao voltar para o Hub
     try {
-      const saved = loadProjectFromStorage();
-      if (saved && (saved.info.nome?.trim() || saved.info.matricula?.trim() || Boolean(saved.polygon?.rawCoords?.trim()) || (saved.neighbors && saved.neighbors.length > 0))) {
-        const issues = consolidateIssues(saved);
-        return {
-          nome: saved.info.nome || 'Projeto Sem Título',
-          matricula: saved.info.matricula || 'S/N',
-          cartorio: saved.info.cartorio || 'Cartório de Registro de Imóveis',
-          data: saved.info.data || 'Recente',
-          issuesCount: issues.length,
-        };
-      }
-      return null;
+      const saved = loadCurrentProject();
+      if (!projectHasContent(saved)) return null;
+      return {
+        nome: saved.info.nome || 'Projeto Sem Título',
+        matricula: saved.info.matricula || 'S/N',
+        cartorio: saved.info.cartorio || 'Cartório de Registro de Imóveis',
+        data: saved.info.data || 'Recente',
+        issuesCount: consolidateIssues(saved).length,
+      };
     } catch {
       return null;
     }
   }, [activeModule]);
+
 
   // Manipuladores de ação rápida no Hub
   const handleSelectProcedure = (proc: ProcedureType) => {
@@ -169,11 +167,18 @@ const MatriculaAnalysis: React.FC = () => {
     }
   };
 
-  const handleLoadSampleProject = () => {
-    saveProjectToStorage(SAMPLE_PROJECT_DATA);
+  const openSampleProject = () => {
+    keepCurrentProject(SAMPLE_PROJECT_DATA);
     const nextParams = new URLSearchParams(location.search);
     nextParams.set('modulo', 'projeto');
     navigate({ search: nextParams.toString() }, { replace: true });
+  };
+  // O exemplo substitui o projeto aberto: com um projeto real em andamento, pede confirmação
+  const [confirmSampleProject, setConfirmSampleProject] = useState(false);
+  const handleLoadSampleProject = () => {
+    const current = loadCurrentProject();
+    if (!current.isSample && projectHasContent(current)) setConfirmSampleProject(true);
+    else openSampleProject();
   };
 
   const handleLoadSampleMatricula = (type: 'risk' | 'safe') => {
@@ -184,15 +189,24 @@ const MatriculaAnalysis: React.FC = () => {
     loadSampleReport(type);
   };
 
+  // Arquivo solto no Hub: o nome do arquivo decide o caminho. Certidão de matrícula (ou PDF sem pista de projeto) vai
+  // para a análise de matrícula; planta, memorial e arquivos de coordenadas abrem a conferência de projetos já com o
+  // arquivo na lista da leitura com IA.
   const handleHubDropFile = (file: File) => {
     const nameLower = file.name.toLowerCase();
-    const isTopography = /planta|memorial|desdobro|retific|unific|lote|poligonal|\.(kml|dxf|txt|csv)$/i.test(nameLower);
+    const isMatricula = /matr[ií]cula|certid[ãa]o|inteiro.?teor|\bmat\b/i.test(nameLower);
+    const isTopography = !isMatricula &&
+      (/planta|memorial|desdobro|retific|unific|poligonal|levantamento|\.(kml|dxf|txt|csv|png|jpe?g)$/i.test(nameLower));
 
     if (isTopography) {
       let proc: ProcedureType = 'desdobro';
       if (/retific/i.test(nameLower)) proc = 'retificacao';
       else if (/unific/i.test(nameLower)) proc = 'unificacao';
 
+      projectMemory.setFiles([
+        ...projectMemory.getFiles(),
+        { id: `hub-${Date.now()}`, file, tipo: guessDocType(file.name) },
+      ]);
       handleSelectProcedure(proc);
     } else {
       setModule('matricula');
@@ -219,7 +233,7 @@ const MatriculaAnalysis: React.FC = () => {
           <nav aria-label="Módulos da Plataforma" className="hidden sm:flex items-center gap-1 p-1 bg-secondary rounded-2xl border border-border">
             <button
               type="button"
-              onClick={() => setModule('hub')}
+              onClick={() => setModule('hub')} disabled={analysis.isProcessing}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 activeModule === 'hub'
                   ? 'bg-card text-foreground shadow-soft border border-border'
@@ -294,7 +308,7 @@ const MatriculaAnalysis: React.FC = () => {
       <nav aria-label="Navegação rápida no celular" className="sm:hidden px-3 py-2 border-b border-border bg-card/80 backdrop-blur-sm flex items-center justify-center gap-1.5">
         <button
           type="button"
-          onClick={() => setModule('hub')}
+          onClick={() => setModule('hub')} disabled={analysis.isProcessing}
           className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeModule === 'hub'
               ? 'bg-primary text-primary-foreground shadow-soft'
@@ -338,12 +352,13 @@ const MatriculaAnalysis: React.FC = () => {
           savedProject={savedProjectData}
           onOpenSavedProject={() => setModule('projeto')}
           onDropFile={handleHubDropFile}
-          userName={user?.email}
+          userName={user?.name}
         />
       ) : activeModule === 'projeto' ? (
         <ProjectConferenceWorkspace
           onBackToHub={() => setModule('hub')}
           initialProcedure={initialProcedure}
+          startWithSample={isProjectSample}
         />
       ) : (
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 sm:py-10 space-y-8">
@@ -353,7 +368,7 @@ const MatriculaAnalysis: React.FC = () => {
               <li>
                 <button
                   type="button"
-                  onClick={() => setModule('hub')}
+                  onClick={() => setModule('hub')} disabled={analysis.isProcessing}
                   className="hover:text-foreground inline-flex items-center gap-1 py-1"
                 >
                   <Home className="w-3 h-3 text-primary" /> Hub Central
@@ -364,7 +379,7 @@ const MatriculaAnalysis: React.FC = () => {
             </ol>
             <button
               type="button"
-              onClick={() => setModule('hub')}
+              onClick={() => setModule('hub')} disabled={analysis.isProcessing}
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-semibold transition-colors py-1 px-2.5 rounded-lg hover:bg-secondary"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -508,6 +523,16 @@ const MatriculaAnalysis: React.FC = () => {
         actionLabel="Começar nova análise"
         onAction={() => { setConfirmDiscard(false); analysis.clearFile(); }}
         cancelLabel="Voltar ao relatório"
+      />
+
+      <ErrorModal
+        isOpen={confirmSampleProject}
+        onClose={() => setConfirmSampleProject(false)}
+        title="Abrir o exemplo no lugar do seu projeto?"
+        message="O exemplo substitui o projeto aberto nesta aba, que não fica salvo. Se quiser guardá-lo, abra o projeto e use Exportar antes."
+        actionLabel="Abrir o exemplo"
+        onAction={() => { setConfirmSampleProject(false); openSampleProject(); }}
+        cancelLabel="Cancelar"
       />
 
       <WhatsAppSupport variant="floating" />

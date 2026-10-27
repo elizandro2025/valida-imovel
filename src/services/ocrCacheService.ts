@@ -2,6 +2,8 @@
 // As análises não são guardadas: nem no servidor nem no navegador.
 
 const PREFIX = 'valida_cache_';
+// Conferência de projeto que uma versão de testes do módulo guardava no navegador
+const LEGACY_KEYS = ['valida_imovel_project_conf_v1'];
 
 export const ocrCacheService = {
   async computeHash(file: File): Promise<string> {
@@ -17,7 +19,7 @@ export const ocrCacheService = {
   // Apaga relatórios guardados no navegador por versões anteriores do site (chamado ao abrir o site e ao sair da conta)
   clearCache(): void {
     try {
-      Object.keys(localStorage).filter(k => k.startsWith(PREFIX)).forEach(k => localStorage.removeItem(k));
+      Object.keys(localStorage).filter(k => k.startsWith(PREFIX) || LEGACY_KEYS.includes(k)).forEach(k => localStorage.removeItem(k));
     } catch {
       // armazenamento indisponível (modo privado): nada a limpar
     }

@@ -6,6 +6,7 @@
  * azimutes, fechamento de poligonal, sentido horário (NBR 17047/2022)
  * e teste geométrico de autointerseção.
  */
+import { parseBrNumber } from '@/lib/brNumber';
 
 export interface Vertex {
   id: string;
@@ -196,7 +197,7 @@ export const geodesyService = {
       let valB = '';
 
       const isNumericToken = (x: string) => {
-        const v = isGeo ? geodesyService.parseDMS(x) : parseFloat(x.replace(',', '.'));
+        const v = isGeo ? geodesyService.parseDMS(x) : parseBrNumber(x);
         return isFinite(v);
       };
 
@@ -221,11 +222,16 @@ export const geodesyService = {
         valB = tokens[1];
       }
 
-      const x = isGeo ? geodesyService.parseDMS(valA) : parseFloat(valA.replace(',', '.'));
-      const y = isGeo ? geodesyService.parseDMS(valB) : parseFloat(valB.replace(',', '.'));
+      const x = isGeo ? geodesyService.parseDMS(valA) : parseBrNumber(valA);
+      const y = isGeo ? geodesyService.parseDMS(valB) : parseBrNumber(valB);
 
       if (!isFinite(x) || !isFinite(y)) {
         errors.push(`Linha ${lineIdx + 1}: coordenadas inválidas ("${valA}", "${valB}")`);
+        return;
+      }
+      // Latitude vai até 90° e longitude até 180°: valores maiores são coordenadas planas (UTM) marcadas como geográficas
+      if (isGeo && (Math.abs(x) > 180 || Math.abs(y) > 180 || Math.min(Math.abs(x), Math.abs(y)) > 90)) {
+        errors.push(`Linha ${lineIdx + 1}: "${valA}", "${valB}" não são latitude e longitude. Se forem coordenadas UTM (em metros), desmarque a opção de coordenadas geográficas.`);
         return;
       }
 

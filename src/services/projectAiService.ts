@@ -76,7 +76,8 @@ async function ocrFile(file: File): Promise<{ text: string; model: string | null
   const hit = ocrCache.get(key);
   if (hit) return hit;
   if (isTextFile(file)) {
-    const text = (await file.text()).replace(/\u0000/g, '');
+    // Arquivos de texto às vezes trazem bytes nulos, que quebrariam o JSON enviado à IA
+    const text = (await file.text()).split('\0').join('');
     const value = { text: `--- Página 1 ---\n${text}`, model: null };
     ocrCache.set(key, value);
     return value;

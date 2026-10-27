@@ -9,6 +9,10 @@
 import { geodesyService, Vertex } from './geodesyService';
 import { NeighborRow, nominalDiffService } from './nominalDiffService';
 import { PROCEDURE_CHECKLISTS, ChecklistAnswer } from './projectChecklists';
+import { projectMemory } from './projectMemory';
+import { parseBrNumber } from '@/lib/brNumber';
+
+const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export interface ProjectInfo {
   nome: string;
@@ -142,6 +146,8 @@ export interface ProjectData {
     /** 'ia' = apontamento gerado pela conferência automática; ausente = lançado pelo conferente */
     origem?: 'ia' | 'manual';
   }[];
+  /** Projeto de exemplo, com dados fictícios: a tela e os relatórios exportados avisam isso */
+  isSample?: boolean;
   /** Resultado da última conferência automática por IA */
   ai?: {
     ranAt: string;
@@ -161,8 +167,6 @@ export interface ProjectData {
     depDocumento: string;
   };
 }
-
-const STORAGE_KEY = 'valida_imovel_project_conf_v1';
 
 export const projectConferenceService = {
   createBlankProject(): ProjectData {
@@ -218,33 +222,38 @@ export const projectConferenceService = {
     };
   },
 
-  saveToLocalStorage(data: ProjectData): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.warn('Erro ao salvar projeto localmente:', e);
-    }
+  // O projeto aberto fica só na memória desta aba (ver projectMemory): não é guardado no navegador nem no servidor
+  keepCurrent(data: ProjectData): void {
+    projectMemory.setProject(data);
   },
 
-  loadFromLocalStorage(): ProjectData {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        const blank = projectConferenceService.createBlankProject();
-        const merged = { ...blank, ...parsed };
-        if (!merged.info?.procedimentos || merged.info.procedimentos.length === 0) {
-          merged.info = {
-            ...merged.info,
-            procedimentos: ['desdobro'],
-          };
-        }
-        return merged;
-      }
-    } catch (e) {
-      console.warn('Erro ao carregar projeto salvo:', e);
-    }
-    return projectConferenceService.createBlankProject();
+  loadCurrent(): ProjectData {
+    const saved = projectMemory.getProject();
+    if (!saved) return projectConferenceService.createBlankProject();
+    if (saved.info.procedimentos.length > 0) return saved;
+    return { ...saved, info: { ...saved.info, procedimentos: ['desdobro'] } };
+  },
+
+  // Valores declarados e tolerâncias da poligonal, no formato em que foram digitados ou lidos ("389.313,03").
+  // A aba de medidas, o painel e o parecer usam a mesma leitura.
+  polygonParams(polygon: ProjectData['polygon']) {
+    return {
+      areaPlanta: parseBrNumber(polygon.areaPlanta),
+      areaMemorial: parseBrNumber(polygon.areaMemorial),
+      perimPlanta: parseBrNumber(polygon.perimPlanta),
+      perimMemorial: parseBrNumber(polygon.perimMemorial),
+      tolDist: parseBrNumber(polygon.tolDist),
+      tolArea: parseBrNumber(polygon.tolArea),
+      tolAz: parseBrNumber(polygon.tolAz),
+    };
+  },
+
+  // Projeto com algum dado digitado ou lido (o Hub oferece retomar; trocar pelo exemplo pede confirmação)
+  hasContent(data: ProjectData): boolean {
+    return Boolean(
+      data.info.nome.trim() || data.info.matricula.trim() || data.polygon.rawCoords.trim() ||
+      data.neighbors.length > 0 || data.docs.length > 0 || data.ai,
+    );
   },
 
   /**
@@ -382,14 +391,7 @@ export const projectConferenceService = {
     } else {
       const polyRes = geodesyService.calculatePolygon(
         vertices,
-        {
-          areaPlanta: parseFloat(data.polygon.areaPlanta.replace(',', '.')),
-          areaMemorial: parseFloat(data.polygon.areaMemorial.replace(',', '.')),
-          perimPlanta: parseFloat(data.polygon.perimPlanta.replace(',', '.')),
-          perimMemorial: parseFloat(data.polygon.perimMemorial.replace(',', '.')),
-          tolDist: parseFloat(data.polygon.tolDist.replace(',', '.')),
-          tolArea: parseFloat(data.polygon.tolArea.replace(',', '.')),
-        },
+        projectConferenceService.polygonParams(data.polygon),
         data.polygon.declaredSegments
       );
 
@@ -583,8 +585,8 @@ export const projectConferenceService = {
           providencia: 'Inserir a informação no texto do memorial descritivo.',
         });
       } else if (f.isNumeric) {
-        const numP = parseFloat(p.replace(/\./g, '').replace(',', '.'));
-        const numM = parseFloat(m.replace(/\./g, '').replace(',', '.'));
+        const numP = parseBrNumber(p);
+        const numM = parseBrNumber(m);
         if (isFinite(numP) && isFinite(numM) && Math.abs(numP - numM) > 0.001) {
           list.push({
             origem: 'Planta × Memorial',
@@ -692,12 +694,23 @@ export const projectConferenceService = {
   },
 
   /**
+   * Parecer que vale: o escolhido pelo conferente, que pode ser mais severo que o automático, nunca mais favorável.
+   * Com divergências ou pendências, "DOCUMENTAÇÃO COMPATÍVEL" é ignorado e vale o parecer automático.
+   */
+  finalOpinion(data: ProjectData): string {
+    const { opinion } = projectConferenceService.computeAutomaticOpinion(data);
+    const chosen = data.parecer.final;
+    if (!chosen) return opinion;
+    if (chosen === 'DOCUMENTAÇÃO COMPATÍVEL' && opinion !== 'DOCUMENTAÇÃO COMPATÍVEL') return opinion;
+    return chosen;
+  },
+
+  /**
    * Constrói o texto do relatório técnico completo em Markdown
    */
   generateReportMarkdown(data: ProjectData): string {
     const issues = projectConferenceService.consolidateIssues(data);
-    const { opinion } = projectConferenceService.computeAutomaticOpinion(data);
-    const finalOpinion = data.parecer.final || opinion;
+    const finalOpinion = projectConferenceService.finalOpinion(data);
     const stats = nominalDiffService.calculateStats(data.neighbors);
     const petitionText = nominalDiffService.generateRegistryPetition(data.neighbors);
 
@@ -705,10 +718,10 @@ export const projectConferenceService = {
       .map(k => PROCEDURE_CHECKLISTS.find(c => c.key === k)?.name || k)
       .join(', ');
 
-    return `# LAUDO PERICIAL DE AUDITORIA TÉCNICA E REGISTRAL
-**ValidaImóvel Pericial AI — Auditoria Georreferenciada e Notarial Integrada**
-*Elaborado em estrita conformidade com a ABNT NBR 17047/2022, Lei nº 6.015/73 e Provimento CNJ nº 149/2023*
-
+    return `# RELATÓRIO DE CONFERÊNCIA TÉCNICA E REGISTRAL
+**ValidaImóvel — conferência pré-cartorária assistida por IA**
+*Referências: ABNT NBR 17047, Lei nº 6.015/73 e normas da Corregedoria. Não substitui a qualificação do Oficial de Registro nem a responsabilidade do responsável técnico.*
+${data.isSample ? '\n> **EXEMPLO COM DADOS FICTÍCIOS.** Pessoas, documentos e registros deste relatório não existem e o resultado não foi gerado por IA. Não use este documento para nenhum fim real.\n' : ''}
 ---
 
 ### Qualificação do Projeto e Identificação Notarial
@@ -718,12 +731,12 @@ export const projectConferenceService = {
 * **Localização / Comarca / UF:** ${[data.info.municipio, data.info.comarca, data.info.uf].filter(Boolean).join(' / ')}
 * **Responsável Técnico (RT):** ${data.info.rt || 'Não informado'} (${data.info.prof || 'RT'} - ${data.info.reg || 'Reg.'}) · **ART/RRT:** ${data.info.art || 'N/A'}
 * **Procedimento(s) Cartorário(s):** ${procsText || 'Não informado'}
-* **Data da Perícia:** ${data.info.data ? data.info.data.split('-').reverse().join('/') : ''} · **Auditoria:** ${data.info.conferente || 'ValidaImóvel Pericial AI'}
+* **Data da conferência:** ${data.info.data ? data.info.data.split('-').reverse().join('/') : ''} · **Conferente:** ${data.info.conferente || 'Não informado'}
 * **Rigor da Análise:** ${data.info.modoMax ? 'Modo Rigor Máximo Notarial (Tolerância Zero para Discrepâncias)' : 'Padrão'}
 
 ---
 
-## 📌 Conclusão Pericial & Parecer Notarial: ${finalOpinion}
+## 📌 Parecer da conferência: ${finalOpinion}
 ${data.parecer.resumo ? `\n> ${data.parecer.resumo}\n` : ''}
 
 * **Possibilidade de Exigência Cartorária:** ${data.parecer.exigenciaCartorio || issues.length > 0 ? 'SIM — há pendências impeditivas identificadas' : 'Baixo risco'}
@@ -789,32 +802,63 @@ ${(() => {
 * **Confrontantes Compatíveis:** ${stats.countOk} | **Divergentes:** ${stats.countErr} | **Sem Matrícula:** ${stats.missingTitles.length}
 * **Depende de Software Técnico:** ${data.parecer.depSoftware || 'Conferência de sobreposição espacial'}
 * **Limitação:** Este parecer é instrumento técnico pré-cartorário e não substitui a qualificação formal do Oficial de Registro de Imóveis.
-${data.ai ? `* **Leitura dos documentos:** realizada por IA em ${new Date(data.ai.ranAt).toLocaleString('pt-BR')}; os dados extraídos devem ser conferidos pelo responsável técnico antes do protocolo.` : ''}
+${data.isSample
+  ? '* **Leitura dos documentos:** resultado ilustrativo do exemplo, não gerado por IA.'
+  : data.ai ? `* **Leitura dos documentos:** realizada por IA em ${new Date(data.ai.ranAt).toLocaleString('pt-BR')}; os dados extraídos devem ser conferidos pelo responsável técnico antes do protocolo.` : ''}
 `;
+  },
+
+  /**
+   * Converte o Markdown do relatório em HTML para o Word. O texto digitado ou lido (nomes, observações) é escapado, e as
+   * linhas de tabela viram uma <table> de verdade, sem a linha separadora "|---|".
+   */
+  reportHtml(md: string): string {
+    const inline = (text: string) => escapeHtml(text)
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/\*(.+?)\*/g, '<i>$1</i>')
+      .replace(/(^|\s)_(.+?)_(?=\s|$)/g, '$1<i>$2</i>');
+    const cell = 'border:1px solid #aaa;padding:4pt 6pt;font-size:9.5pt;';
+    const out: string[] = [];
+    let table: string[][] = [];
+
+    const flushTable = () => {
+      if (table.length === 0) return;
+      const rows = table.map((cells, i) =>
+        `<tr>${cells.map(c => (i === 0 ? `<th style="${cell}">${inline(c)}</th>` : `<td style="${cell}">${inline(c)}</td>`)).join('')}</tr>`);
+      out.push(`<table>${rows.join('')}</table>`);
+      table = [];
+    };
+
+    for (const raw of md.split('\n')) {
+      const line = raw.trim();
+      if (/^\|.*\|$/.test(line)) {
+        if (!/^\|[\s:|-]+\|$/.test(line)) table.push(line.slice(1, -1).split('|').map(c => c.trim()));
+        continue;
+      }
+      flushTable();
+      if (line.startsWith('### ')) out.push(`<h3 style="color:#333;font-size:12pt;margin-top:10pt;">${inline(line.slice(4))}</h3>`);
+      else if (line.startsWith('## ')) out.push(`<h2 style="color:#1f5f4a;font-size:14pt;margin-top:14pt;border-bottom:1px solid #ccc;padding-bottom:3pt;">${inline(line.slice(3))}</h2>`);
+      else if (line.startsWith('# ')) out.push(`<h1 style="color:#1d2320;font-size:18pt;margin-bottom:6pt;">${inline(line.slice(2))}</h1>`);
+      else if (line === '---') out.push('<hr/>');
+      else if (line.startsWith('> ')) out.push(`<p style="border-left:3px solid #c80;padding-left:6pt;">${inline(line.slice(2))}</p>`);
+      else if (line.startsWith('* ')) out.push(`<p style="margin:2pt 0 2pt 12pt;">• ${inline(line.slice(2))}</p>`);
+      else if (line) out.push(`<p>${inline(line)}</p>`);
+    }
+    flushTable();
+    return out.join('\n');
   },
 
   /**
    * Exporta o relatório completo como documento Word (.doc)
    */
   exportToWord(data: ProjectData): void {
-    const md = projectConferenceService.generateReportMarkdown(data);
-    const htmlBody = md
-      .replace(/^# (.*$)/gim, '<h1 style="color:#1d2320;font-size:18pt;margin-bottom:6pt;">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 style="color:#1f5f4a;font-size:14pt;margin-top:14pt;border-bottom:1px solid #ccc;padding-bottom:3pt;">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 style="color:#333;font-size:12pt;margin-top:10pt;">$1</h3>')
-      .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
-      .replace(/\*(.*?)\*/gim, '<i>$1</i>')
-      .replace(/\| (.*) \|/g, (match) => {
-        const cells = match.split('|').slice(1, -1).map(c => `<td style="border:1px solid #aaa;padding:4pt 6pt;font-size:9.5pt;">${c.trim()}</td>`).join('');
-        return `<tr>${cells}</tr>`;
-      })
-      .replace(/\n/g, '<br/>');
+    const htmlBody = projectConferenceService.reportHtml(projectConferenceService.generateReportMarkdown(data));
 
     const htmlContent = `
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
         <head>
           <meta charset="utf-8">
-          <title>${data.info.nome || 'Relatório de Conferência'}</title>
+          <title>${escapeHtml(data.info.nome || 'Relatório de Conferência')}</title>
           <style>
             @page WordSection1 { size: 842pt 595pt; mso-page-orientation: landscape; margin: 36pt; }
             div.WordSection1 { page: WordSection1; }
@@ -847,10 +891,13 @@ ${data.ai ? `* **Leitura dos documentos:** realizada por IA em ${new Date(data.a
 };
 
 export const createEmptyProject = projectConferenceService.createBlankProject;
-export const loadProjectFromStorage = projectConferenceService.loadFromLocalStorage;
-export const saveProjectToStorage = projectConferenceService.saveToLocalStorage;
+export const loadCurrentProject = projectConferenceService.loadCurrent;
+export const keepCurrentProject = projectConferenceService.keepCurrent;
+export const projectHasContent = projectConferenceService.hasContent;
+export const polygonParams = projectConferenceService.polygonParams;
 export const consolidateIssues = projectConferenceService.consolidateIssues;
 export const computeAutomaticOpinion = projectConferenceService.computeAutomaticOpinion;
 export const generateReportMarkdown = projectConferenceService.generateReportMarkdown;
+export const finalOpinion = projectConferenceService.finalOpinion;
 export const exportToWord = projectConferenceService.exportToWord;
 

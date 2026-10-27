@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ProjectData, ConsolidatedIssue } from '@/services/projectConferenceService';
+import { ProjectData, ConsolidatedIssue, polygonParams } from '@/services/projectConferenceService';
 import { geodesyService } from '@/services/geodesyService';
 import { PROCEDURE_CHECKLISTS } from '@/services/projectChecklists';
 import { WorkspaceTab } from './ProjectConferenceWorkspace';
@@ -41,14 +41,7 @@ export const ExecutiveCockpit: React.FC<ExecutiveCockpitProps> = ({
       data.polygon.isGeo,
       data.polygon.order
     );
-    return geodesyService.calculatePolygon(
-      vertices,
-      {
-        areaPlanta: parseFloat(data.polygon.areaPlanta.replace(',', '.')),
-        areaMemorial: parseFloat(data.polygon.areaMemorial.replace(',', '.')),
-      },
-      data.polygon.declaredSegments
-    );
+    return geodesyService.calculatePolygon(vertices, polygonParams(data.polygon), data.polygon.declaredSegments);
   }, [data.polygon]);
 
   // Contagens dos Checklists
@@ -114,10 +107,10 @@ export const ExecutiveCockpit: React.FC<ExecutiveCockpitProps> = ({
               variant="outline"
               size="sm"
               className="gap-2"
-              title="Carregar caso demonstrativo de São Paulo (SP) — Oscar Freire / 14º RI da Capital"
+              title="Abrir um projeto de exemplo, com dados fictícios"
             >
               <Sparkles className="w-3.5 h-3.5 text-primary" />
-              Simular Caso SP (Jardins)
+              Ver exemplo (dados fictícios)
             </Button>
 
             <Button

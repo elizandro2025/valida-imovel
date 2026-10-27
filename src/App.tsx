@@ -81,8 +81,9 @@ const PageFallback = () => (
 );
 
 /**
- * Rota protegida — exige login e assinatura ativa para o workspace.
- * Exceção: a demonstração pública (?sample=safe ou ?sample=risk), com dados fictícios.
+ * Rota protegida — exige login e assinatura ativa para o workspace (matrícula e conferência de projetos).
+ * Exceção: as demonstrações públicas com dados fictícios (?sample=safe|risk para matrícula, ?sample=desdobro|projeto
+ * para projetos). A IA continua exigindo login e assinatura no servidor.
  */
 const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -90,16 +91,14 @@ const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const params = new URLSearchParams(location.search);
   const isSampleDemo = ['safe', 'risk', 'true', 'desdobro', 'projeto'].includes(params.get('sample') || '');
-  const isProjeto = params.get('modulo') === 'projeto' || location.pathname.startsWith('/projeto');
-  const isDev = import.meta.env.DEV;
 
   if (isLoading) return <PageFallback />;
 
-  if (!user && !isSampleDemo && !isProjeto && !isDev) {
+  if (!user && !isSampleDemo) {
     return <Navigate to="/auth?tab=register" state={{ from: location }} replace />;
   }
 
-  if (user && !user.hasSubscription && !isSampleDemo && !isProjeto && !isDev) {
+  if (user && !user.hasSubscription && !isSampleDemo) {
     return <Navigate to="/pagamento" state={{ from: location }} replace />;
   }
 
@@ -122,7 +121,7 @@ const App = () => (
             <Route path="/privacidade" element={<PrivacyPage />} />
             <Route path="/guia" element={<GuidesIndexPage />} />
             <Route path="/guia/:slug" element={<GuidePage />} />
-            {/* Exige login e assinatura, exceto a demonstração pública (?sample=safe ou ?sample=risk) */}
+            {/* Exige login e assinatura, exceto as demonstrações públicas (?sample=...) */}
             <Route path="/app" element={<ProtectedRoute><MatriculaAnalysis /></ProtectedRoute>} />
             <Route path="/projeto" element={<Navigate to="/app?modulo=projeto" replace />} />
             <Route path="/projetos" element={<Navigate to="/app?modulo=projeto" replace />} />

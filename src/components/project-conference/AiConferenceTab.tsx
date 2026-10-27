@@ -1,8 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   ProjectData,
+  createEmptyProject,
 } from '@/services/projectConferenceService';
+import { projectMemory } from '@/services/projectMemory';
 import { PROCEDURE_CHECKLISTS } from '@/services/projectChecklists';
 import {
   PROJECT_DOC_TYPES, PROJECT_LIMITS, ProjectUploadFile, askAboutProject, guessDocType, runProjectConference, validateProjectFile,
@@ -21,7 +23,9 @@ interface AiConferenceTabProps {
 let fileCounter = 0;
 
 export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate, onFinished }) => {
-  const [files, setFiles] = useState<ProjectUploadFile[]>([]);
+  // A lista fica na memória da aba: sobrevive à troca de aba e recebe o arquivo solto no Hub
+  const [files, setFiles] = useState<ProjectUploadFile[]>(() => projectMemory.getFiles());
+  useEffect(() => { projectMemory.setFiles(files); }, [files]);
   const [procedimentos, setProcedimentos] = useState<string[]>(
     data.info.procedimentos.length ? data.info.procedimentos : ['retificacao'],
   );
@@ -73,11 +77,13 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
     setFinished(false);
     setProgress({ step: 'Iniciando...', value: 2 });
     try {
+      // Documentos reais nunca se misturam com o exemplo: a leitura parte de um projeto em branco
+      const base = data.isSample ? createEmptyProject() : data;
       const merged = await runProjectConference(
-        { files, procedimentos, base: data, observacoes },
+        { files, procedimentos, base, observacoes },
         (step, value) => setProgress({ step, value }),
       );
-      onUpdate(() => merged);
+      onUpdate(() => ({ ...merged, isSample: false }));
       setFinished(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Não foi possível concluir a conferência. Tente novamente.');
@@ -110,9 +116,12 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
         <div className="flex items-start gap-3">
           <div className="p-2.5 rounded-xl bg-primary/10 text-primary"><Wand2 className="w-5 h-5" /></div>
           <div>
-            <h2 className="text-lg font-bold text-foreground">Central Autônoma de Auditoria Pericial Georreferenciada por IA</h2>
+            <h2 className="text-lg font-bold text-foreground">Leitura dos documentos com IA</h2>
             <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed mt-0.5">
-              O motor de inteligência pericial analisa simultaneamente as peças gráficas e descritivas (Planta e Memorial), executa o cálculo de fechamento de Gauss em UTM SIRGAS 2000, cruza nominalmente os confrontantes (7D), audita os 116 requisitos das Normas da Corregedoria Geral da Justiça e consolida o Laudo Técnico com indicação precisa das correções por documento.
+              A IA lê e organiza a planta, o memorial, as matrículas e os demais documentos. Depois, o sistema calcula a
+              área e o perímetro pelas coordenadas, compara planta e memorial, confere os nomes dos confrontantes e os itens
+              dos procedimentos escolhidos, e aponta o que corrigir em cada documento. O resultado deve ser validado pelo
+              responsável técnico.
             </p>
           </div>
         </div>
@@ -201,7 +210,7 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
             onChange={e => setObservacoes(e.target.value)}
             disabled={running}
             rows={3}
-            placeholder="Ex.: Retificação de área intra-muros e desdobro no 14º RI da Capital - SP (Matrícula 114.892); confrontante da testada é a Rua Oscar Freire (PMSP); divisa leste possui outorga uxória pendente..."
+            placeholder="Ex.: retificação de área e desdobro; o confrontante da frente é a via pública; falta a anuência do cônjuge do confrontante leste..."
             className="w-full text-sm rounded-xl border border-border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40"
           />
           <label className="mt-2 flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
@@ -236,10 +245,12 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
         <div className="flex flex-wrap items-center gap-3">
           <Button onClick={run} disabled={running || files.length === 0} className="gap-2 font-semibold shadow-xs">
             <Sparkles className="w-4 h-4 text-amber-300" />
-            {running ? 'Auditando Peças Técnicas por IA...' : data.ai ? 'Reexecutar Auditoria Pericial Completa' : 'Iniciar Auditoria Pericial Completa por IA'}
+            {running ? 'Lendo e conferindo os documentos...' : data.ai && !data.isSample ? 'Ler e conferir de novo' : 'Ler e conferir os documentos'}
           </Button>
           <span className="text-xs text-muted-foreground">
-            A reexecução atualiza os dados extraídos; os apontamentos periciais inseridos por você são preservados.
+            {data.isSample
+              ? 'Com documentos reais, a leitura começa um projeto novo: os dados do exemplo não são usados.'
+              : 'A nova leitura atualiza os dados extraídos; os apontamentos que você lançou são mantidos.'}
           </span>
         </div>
       </section>
@@ -248,7 +259,11 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
         <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 space-y-4">
           <div className="flex items-center gap-2 text-foreground">
             <CheckCircle2 className="w-5 h-5 text-primary" />
-            <h3 className="font-semibold">Última conferência automática — {new Date(data.ai.ranAt).toLocaleString('pt-BR')}</h3>
+            <h3 className="font-semibold">
+              {data.isSample
+                ? 'Resultado de exemplo (ilustrativo, não foi gerado por IA)'
+                : `Última conferência automática — ${new Date(data.ai.ranAt).toLocaleString('pt-BR')}`}
+            </h3>
           </div>
           {data.ai.resumo && <p className="text-sm text-muted-foreground leading-relaxed">{data.ai.resumo}</p>}
           <ul className="text-xs text-muted-foreground grid sm:grid-cols-2 gap-1">
@@ -277,7 +292,7 @@ export const AiConferenceTab: React.FC<AiConferenceTabProps> = ({ data, onUpdate
                 onChange={e => setQuestion(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') void ask(); }}
                 maxLength={2000}
-                placeholder="Ex.: Como suprir a anuência da matrícula 114.893 (Leste) segundo as NSCGJ-SP?"
+                placeholder="Ex.: Como suprir a anuência do confrontante leste?"
                 className="flex-1 text-sm rounded-xl border border-border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40"
                 aria-label="Pergunta complementar sobre a conferência"
               />

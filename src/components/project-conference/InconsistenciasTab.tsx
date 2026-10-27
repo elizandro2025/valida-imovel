@@ -30,6 +30,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+type ManualIssue = ProjectData['manualIssues'][number];
+
 interface InconsistenciasTabProps {
   data: ProjectData;
   onUpdate: (updater: (prev: ProjectData) => ProjectData) => void;
@@ -644,7 +646,7 @@ export const InconsistenciasTab: React.FC<InconsistenciasTabProps> = ({ data, on
                   <label className="text-muted-foreground font-medium block">Classificação:</label>
                   <select
                     value={manualForm.tipo}
-                    onChange={e => setManualForm({ ...manualForm, tipo: e.target.value as any })}
+                    onChange={e => setManualForm({ ...manualForm, tipo: e.target.value as ManualIssue['tipo'] })}
                     className="w-full h-8 px-2.5 rounded-lg border border-input bg-background font-medium"
                   >
                     <option value="div">❌ Divergência Notarial</option>
@@ -656,7 +658,7 @@ export const InconsistenciasTab: React.FC<InconsistenciasTabProps> = ({ data, on
                   <label className="text-muted-foreground font-medium block">Gravidade:</label>
                   <select
                     value={manualForm.prio}
-                    onChange={e => setManualForm({ ...manualForm, prio: e.target.value as any })}
+                    onChange={e => setManualForm({ ...manualForm, prio: e.target.value as ManualIssue['prio'] })}
                     className="w-full h-8 px-2.5 rounded-lg border border-input bg-background font-medium"
                   >
                     <option value="Alta">Alta (Impugnação Registral)</option>

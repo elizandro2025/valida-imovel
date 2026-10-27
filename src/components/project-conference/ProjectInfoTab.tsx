@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { ProjectData, projectConferenceService, ProjectDocItem } from '@/services/projectConferenceService';
 import { PROCEDURE_CHECKLISTS } from '@/services/projectChecklists';
-import { guessDocType } from '@/services/projectAiService';
+import { PROJECT_LIMITS, guessDocType, validateProjectFile } from '@/services/projectAiService';
+import { projectMemory } from '@/services/projectMemory';
 import { useDropzone } from 'react-dropzone';
 import {
   Plus,
@@ -184,6 +185,12 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
 
   const onDropFiles = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
+
+    // Esta lista só registra o que foi recebido; quem lê o conteúdo é a Leitura com IA, que já recebe os arquivos
+    const readable = acceptedFiles
+      .filter(file => !validateProjectFile(file))
+      .map((file, i) => ({ id: `doc-up-${Date.now()}-${i}`, file, tipo: guessDocType(file.name) }));
+    projectMemory.setFiles([...projectMemory.getFiles(), ...readable].slice(0, PROJECT_LIMITS.maxFiles));
 
     onUpdate(prev => {
       const newDocs: ProjectDocItem[] = acceptedFiles.map(file => {
@@ -670,7 +677,8 @@ export const ProjectInfoTab: React.FC<ProjectInfoTabProps> = ({ data, onUpdate }
                   : 'Arraste e solte as peças do projeto aqui'}
               </p>
               <p className="text-[11px] text-muted-foreground mt-0.5">
-                PDF, JPG/PNG, KML, TXT ou DXF (Planta, Memorial, Matrícula, ART, Alvará) · Reconhecimento e inventário automáticos
+                PDF, JPG/PNG, KML, TXT ou DXF (Planta, Memorial, Matrícula, ART, Alvará) · O tipo é sugerido pelo nome do
+                arquivo; o conteúdo é lido na etapa Leitura com IA, onde os arquivos já ficam na lista
               </p>
             </div>
             <Button

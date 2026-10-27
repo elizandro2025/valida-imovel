@@ -5,6 +5,7 @@ import {
   PlantaMemorialField,
 } from '@/services/projectConferenceService';
 import { nominalDiffService } from '@/services/nominalDiffService';
+import { parseBrNumber } from '@/lib/brNumber';
 import {
   CheckCircle2,
   XCircle,
@@ -125,8 +126,8 @@ export const PlantaMemorialTab: React.FC<PlantaMemorialTabProps> = ({ data, onUp
     }
 
     if (field.isNumeric) {
-      const numP = parseFloat(p.replace(/\./g, '').replace(',', '.'));
-      const numM = parseFloat(m.replace(/\./g, '').replace(',', '.'));
+      const numP = parseBrNumber(p);
+      const numM = parseBrNumber(m);
       if (isFinite(numP) && isFinite(numM)) {
         const diff = Math.abs(numP - numM);
         if (diff < 0.001) {

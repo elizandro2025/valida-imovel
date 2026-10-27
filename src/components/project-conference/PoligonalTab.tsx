@@ -1,5 +1,6 @@
 import React, { useRef, useMemo } from 'react';
-import { ProjectData } from '@/services/projectConferenceService';
+import { ProjectData, polygonParams } from '@/services/projectConferenceService';
+import { parseBrNumber } from '@/lib/brNumber';
 import { geodesyService, CalculatedSegment } from '@/services/geodesyService';
 import { PolygonVisualizer } from './PolygonVisualizer';
 import { SAMPLE_PROJECT_DATA } from '@/services/projectSampleData';
@@ -43,7 +44,7 @@ export const PoligonalTab: React.FC<PoligonalTabProps> = ({ data, onUpdate }) =>
       const current = segs[key] || {};
       segs[key] = {
         ...current,
-        [field]: field.startsWith('dist') ? parseFloat(value.replace(',', '.')) || undefined : value,
+        [field]: field.startsWith('dist') ? parseBrNumber(value) || undefined : value,
       };
       return {
         ...prev,
@@ -72,19 +73,7 @@ export const PoligonalTab: React.FC<PoligonalTabProps> = ({ data, onUpdate }) =>
       data.polygon.order
     );
 
-    const calc = geodesyService.calculatePolygon(
-      vertices,
-      {
-        areaPlanta: parseFloat(data.polygon.areaPlanta.replace(',', '.')),
-        areaMemorial: parseFloat(data.polygon.areaMemorial.replace(',', '.')),
-        perimPlanta: parseFloat(data.polygon.perimPlanta.replace(',', '.')),
-        perimMemorial: parseFloat(data.polygon.perimMemorial.replace(',', '.')),
-        tolDist: parseFloat(data.polygon.tolDist.replace(',', '.')),
-        tolArea: parseFloat(data.polygon.tolArea.replace(',', '.')),
-        tolAz: parseFloat(data.polygon.tolAz.replace(',', '.')),
-      },
-      data.polygon.declaredSegments
-    );
+    const calc = geodesyService.calculatePolygon(vertices, polygonParams(data.polygon), data.polygon.declaredSegments);
 
     return { ...calc, parseNotes: notes, parseErrors: errors };
   }, [data.polygon]);
@@ -105,12 +94,15 @@ export const PoligonalTab: React.FC<PoligonalTabProps> = ({ data, onUpdate }) =>
     }, 400);
   };
 
+  // Só com o campo vazio: nunca mistura as coordenadas do exemplo com as de um projeto real
   const loadSampleCoordinates = () => {
-    onUpdate(prev => ({
+    onUpdate(prev => prev.polygon.rawCoords.trim() ? prev : ({
       ...prev,
       polygon: {
         ...prev.polygon,
         rawCoords: SAMPLE_PROJECT_DATA.polygon.rawCoords,
+        isGeo: SAMPLE_PROJECT_DATA.polygon.isGeo,
+        order: SAMPLE_PROJECT_DATA.polygon.order,
         areaPlanta: SAMPLE_PROJECT_DATA.polygon.areaPlanta,
         areaMemorial: SAMPLE_PROJECT_DATA.polygon.areaMemorial,
         perimPlanta: SAMPLE_PROJECT_DATA.polygon.perimPlanta,
@@ -135,15 +127,18 @@ export const PoligonalTab: React.FC<PoligonalTabProps> = ({ data, onUpdate }) =>
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadSampleCoordinates}
-              className="text-xs gap-1.5 font-medium"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              Carregar Exemplo
-            </Button>
+            {!data.polygon.rawCoords.trim() && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadSampleCoordinates}
+                className="text-xs gap-1.5 font-medium"
+                title="Preenche o campo vazio com as coordenadas fictícias do projeto de exemplo"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                Usar coordenadas de exemplo
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
